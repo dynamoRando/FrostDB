@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface ILocation
+    public interface IRowValue
     {
-        string IpAddress { get; set; }
-        int PortNumber { get; set; }
+        public IColumn Column { get; }
+        public object Value { get; set; }
     }
 }

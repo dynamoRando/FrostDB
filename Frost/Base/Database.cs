@@ -5,37 +5,42 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Process : IProcess
+    public class Database : IDatabase
     {
+
         #region Private Fields
-        private IConfiguration _configuration;
-        private ICommService _commService;
-        private Guid _id;
         private string _name;
-        private IDatabaseManager _databaseManager;
+        private List<ITable> _tables;
         #endregion
 
         #region Public Properties
-        public List<IDatabase> Databases { get { return _databaseManager.Databases; } }
-        public Guid Id { get { return _id; } }
+        public Guid Id { get; }
         public string Name { get { return _name; } }
-        public IConfiguration Configuration { get { return _configuration; } }
+        public List<ITable> Tables { get { return _tables; } }
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Process()
+        public Database(string name)
         {
+            Id = Guid.NewGuid();
+            _name = name;
+            _tables = new List<ITable>();
         }
         #endregion
 
         #region Public Methods
+        public void AddTable(ITable table)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
         #endregion
+
 
     }
 }

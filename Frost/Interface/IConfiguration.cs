@@ -6,8 +6,8 @@ namespace FrostDB.Interface
 {
     public interface IConfiguration
     {
-        public string FileLocation { get; set; }
-        public string DatabaseFolder { get; set; }
-        public ILocation GetLocation();
+        string FileLocation { get; set; }
+        string DatabaseFolder { get; set; }
+        ILocation GetLocation();
     }
 }

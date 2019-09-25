@@ -6,7 +6,7 @@ namespace FrostDB.Interface
 {
     public interface INetworkConfiguration
     {
-        public string Address { get; set; }
-        public int ServerPort { get; set; }
+        string Address { get; set; }
+        int ServerPort { get; set; }
     }
 }

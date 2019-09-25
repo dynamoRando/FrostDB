@@ -6,7 +6,7 @@ namespace FrostDB.Interface
 {
     public interface IFrostObject
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        Guid Id { get; set; }
+        string Name { get; set; }
     }
 }
