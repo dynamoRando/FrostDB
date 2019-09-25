@@ -1,30 +1,26 @@
-﻿using FrostDB.Interface;
+﻿using FrostDB.Base;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Base
+namespace FrostDB.Instance
 {
-    public class Column : IColumn
+    public class CooperativeTable : Table
     {
         #region Private Fields
-        private Guid _id;
-        private string _name;
         #endregion
 
         #region Public Properties
-        public Guid Id => _id;
-        public string Name => _name;
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Column(string name)
+        public CooperativeTable(string tableName, List<Column> columns) : base (tableName, columns)
         {
-            _id = Guid.NewGuid();
-            _name = name;
+
         }
         #endregion
 
@@ -34,6 +30,8 @@ namespace FrostDB.Base
         #region Private Methods
         #endregion
 
-       
+
+
+
     }
 }

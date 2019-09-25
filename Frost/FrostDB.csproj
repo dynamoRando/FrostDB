@@ -8,4 +8,8 @@
     <OutputPath>C:\Projects\Programming\FrostDB_Output\</OutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
 </Project>

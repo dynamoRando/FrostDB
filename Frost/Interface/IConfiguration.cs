@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IConfiguration
+    public interface IConfiguration : IFrostObjectGet
     {
         string FileLocation { get; set; }
         string DatabaseFolder { get; set; }

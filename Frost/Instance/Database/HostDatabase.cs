@@ -1,11 +1,12 @@
-﻿using FrostDB.Interface;
+﻿using FrostDB.Base;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Base
+namespace FrostDB.Instance.Database
 {
-    public class Database : IDatabase
+    public class HostDatabase : Base.Database
     {
         #region Private Fields
         private string _name;
@@ -14,34 +15,28 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public Guid Id { get; }
-        public string Name { get { return _name; } }
-        public List<ITable<Column>> Tables { get { return _tables; } }
-        public IContract Contract { get { return _contract; } }
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Database(string name)
+        public HostDatabase(string databaseName) : base(databaseName)
         {
-            Id = Guid.NewGuid();
-            _name = name;
             _tables = new List<ITable<Column>>();
+            _name = databaseName;
         }
         #endregion
 
         #region Public Methods
-        public void AddTable(ITable<Column> table)
+        public void AddTable(CooperativeTable table)
         {
-            throw new NotImplementedException();
+            _tables.Add((ITable<Column>)table);
         }
         #endregion
 
         #region Private Methods
         #endregion
-
 
     }
 }

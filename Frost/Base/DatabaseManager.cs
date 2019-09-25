@@ -1,7 +1,9 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -28,27 +30,27 @@ namespace FrostDB.Base
         #region Public Methods
         public void AddDatabase(IDatabase database)
         {
-            throw new NotImplementedException();
+            _databases.Add(database);
         }
 
         public IDatabase GetDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            return _databases.Where(d => d.Name == databaseName).First();
         }
 
         public IDatabase GetDatabase(Guid guid)
         {
-            throw new NotImplementedException();
+            return _databases.Where(d => d.Id == guid).First();
         }
 
         public bool HasDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            return _databases.Any(d => d.Name == databaseName);
         }
 
         public bool HasDatabase(Guid guid)
         {
-            throw new NotImplementedException();
+            return _databases.Any(d => d.Id == guid);
         }
 
         public void RemoveDatabase(Guid guid)
@@ -60,9 +62,28 @@ namespace FrostDB.Base
         {
             throw new NotImplementedException();
         }
+
+        public int LoadDatabases(string databaseFolderLocation)
+        {
+            int count = 0;
+
+            foreach (var file in Directory.GetFiles(databaseFolderLocation))
+            {
+                var database = GetDatabaseFromDisk(file);
+                _databases.Add(database);
+                count = _databases.Count;
+            }
+
+            return count;
+        }
+
         #endregion
 
         #region Private Methods
+        private IDatabase GetDatabaseFromDisk(string file)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 

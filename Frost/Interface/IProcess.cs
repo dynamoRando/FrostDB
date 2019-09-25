@@ -7,5 +7,9 @@ namespace FrostDB.Interface
     public interface IProcess : IFrostObjectGet
     {
         List<IDatabase> Databases { get; }
+        void AddDatabase(IDatabase database);
+        void RemoveDatabase(Guid guid);
+        void RemoveDatabase(string databaseName);
+        int LoadDatabases();
     }
 }

@@ -16,6 +16,8 @@ namespace FrostDB.Base
         public string DatabaseFolder { get; set; }
         public string Address { get; set; }
         public int ServerPort { get; set; }
+        public string Name { get { return _process.Name; } }
+        public Guid Id { get { return _process.Id; } }
         #endregion
 
         #region Events

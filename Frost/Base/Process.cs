@@ -28,6 +28,27 @@ namespace FrostDB.Base
         #region Constructors
         public Process()
         {
+            _databaseManager = new DatabaseManager();
+        }
+
+        public void AddDatabase(IDatabase database)
+        {
+            _databaseManager.AddDatabase(database);
+        }
+
+        public void RemoveDatabase(Guid guid)
+        {
+            _databaseManager.RemoveDatabase(guid);
+        }
+
+        public void RemoveDatabase(string databaseName)
+        {
+            _databaseManager.RemoveDatabase(databaseName);
+        }
+
+        public int LoadDatabases()
+        {
+            return _databaseManager.LoadDatabases(_configuration.DatabaseFolder);
         }
         #endregion
 

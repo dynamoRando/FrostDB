@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Store
+namespace FrostDB.Instance
 {
-    public class Store : Process
+    public class Host : Process
     {
     }
 }

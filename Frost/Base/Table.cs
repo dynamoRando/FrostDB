@@ -5,17 +5,17 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Table : ITable
+    public class Table : ITable<Column>
     {
         #region Private Fields
-        private List<IColumn> _columns;
+        private List<Column> _columns;
         private List<IRow> _rows;
         private Guid _id;
         private string _name;
         #endregion
 
         #region Public Properties
-        public List<IColumn> Columns => _columns;
+        public List<Column> Columns => _columns;
         public List<IRow> Rows => _rows;
         public Guid Id => _id;
         public string Name => _name;
@@ -25,7 +25,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public Table(string name, List<IColumn> columns)
+        public Table(string name, List<Column> columns)
         {
             _name = name;
             _id = Guid.NewGuid();

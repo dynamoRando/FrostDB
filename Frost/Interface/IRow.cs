@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IRow
+    public interface IRow : IDBObject
     {
         public Guid Id { get; }
         public List<IColumn> Columns { get; }

@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Instance
+namespace FrostDB.DataStore
 {
-    public class Instance : Process
+    public class Store : Process
     {
     }
 }
