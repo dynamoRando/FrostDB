@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FrostDB.Base;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Frost.Store
+namespace FrostDB.Store
 {
-    class Store
+    public class Store : Process
     {
     }
 }

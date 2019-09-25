@@ -5,27 +5,28 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Process : IProcess
+    public class Location : ILocation, IFrostObject
     {
         #region Private Fields
-        private IConfiguration _configuration;
-        private ICommService _commService;
-        private Guid _id;
-        private string _name;
         #endregion
 
         #region Public Properties
-        public Guid Id { get { return _id; } }
-        public string Name { get { return _name; } }
-        public IConfiguration Configuration { get { return _configuration; } }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string IpAddress { get; set; }
+        public int PortNumber { get; set; }
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Process()
+        public Location(Guid id, string ipAddress, int portNumber, string name)
         {
+            Id = id;
+            IpAddress = ipAddress;
+            PortNumber = portNumber;
+            Name = name;
         }
         #endregion
 
@@ -34,6 +35,7 @@ namespace FrostDB.Base
 
         #region Private Methods
         #endregion
+
 
     }
 }
