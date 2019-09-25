@@ -35,7 +35,5 @@ namespace FrostDB.Base
 
         #region Private Methods
         #endregion
-
-
     }
 }
