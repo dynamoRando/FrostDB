@@ -20,6 +20,9 @@ namespace FrostDB.Scratch
 
             var columns = new List<Column>();
 
+            // if ITable had List<IColumn> instead of List<Column>, we would've had to do this --
+            //var regularTable = new Table("test", columns.ConvertAll(t => (IColumn)t));
+            
             var regularTable = new Table("test", columns);
             var coopTable = new CooperativeTable("test", columns);
 
