@@ -78,6 +78,7 @@ namespace FrostDB.Base
 
             return count;
         }
+
         public void AddToInbox(IMessage message)
         {
             _inboxManager.AddToInbox((DataMessage)message);
@@ -91,7 +92,6 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        
         #endregion
 
 
