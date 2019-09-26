@@ -14,17 +14,18 @@ namespace FrostDB.Scratch
         public void Foo()
         {
             var host = new Host();
+            var manager = new DatabaseManager();
 
-            var database = new Database("foo");
-            var hostDatabase = new HostDatabase("bar");
+            var database = new Database("foo", manager);
+            var hostDatabase = new HostDatabase("bar", manager);
 
             var columns = new List<Column>();
 
             // if ITable had List<IColumn> instead of List<Column>, we would've had to do this --
             //var regularTable = new Table("test", columns.ConvertAll(t => (IColumn)t));
             
-            var regularTable = new Table("test", columns);
-            var coopTable = new CooperativeTable("test", columns);
+            var regularTable = new Table("test", columns, database);
+            var coopTable = new CooperativeTable("test", columns, database);
 
             hostDatabase.AddTable(coopTable);
             hostDatabase.AddTable(regularTable);

@@ -16,6 +16,7 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<IDatabase> Databases => _databases;
+        public DataInboxManager Inbox => _inboxManager;
         #endregion
 
         #region Events
@@ -30,7 +31,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
-        public void AddDatabase(IDatabase database)
+        public void AddDatabase(Database database)
         {
             _databases.Add(database);
         }

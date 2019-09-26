@@ -11,7 +11,6 @@ namespace FrostDB.Base
 {
     public class DataInboxManager : IManager, IDataInboxManager
     {
-
         #region Private Fields
         private ConcurrentBag<DataMessage> _messages;
         private ConcurrentBag<Guid> _messageIds;
@@ -42,7 +41,15 @@ namespace FrostDB.Base
             _messageIds.Add(message.Id);
         }
 
-        public IDBObject GetInboxMessageData(Guid id)
+        public async Task<IDBObject> GetInboxMessageDataAsync(Guid id)
+        {
+            return await Task.Run(() => GetData(id));
+        }
+
+        #endregion
+
+        #region Private Methods
+        private IDBObject GetData(Guid id)
         {
             DataMessage message = new DataMessage();
             Stopwatch watch = new Stopwatch();
@@ -59,9 +66,6 @@ namespace FrostDB.Base
             return data;
         }
 
-        #endregion
-
-        #region Private Methods
         private DataMessage WaitForMessage(Guid id, DataMessage message, Stopwatch watch)
         {
             watch.Start();

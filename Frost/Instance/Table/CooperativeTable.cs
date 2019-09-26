@@ -9,6 +9,7 @@ namespace FrostDB.Instance
     public class CooperativeTable : Table
     {
         #region Private Fields
+        private Base.Database _database;
         #endregion
 
         #region Public Properties
@@ -18,9 +19,9 @@ namespace FrostDB.Instance
         #endregion
 
         #region Constructors
-        public CooperativeTable(string tableName, List<Column> columns) : base (tableName, columns)
+        public CooperativeTable(string tableName, List<Column> columns, Base.Database database) : base(tableName, columns, database)
         {
-
+            _database = database;
         }
         #endregion
 
@@ -28,6 +29,14 @@ namespace FrostDB.Instance
         #endregion
 
         #region Private Methods
+        public Row GetRow()
+        {
+            // this is just an example, should use the actual row id of the data
+            Guid id = Guid.NewGuid(); 
+            var data = _database.Manager.Inbox.GetInboxMessageDataAsync(id);
+
+            return (Row)data.Result;
+        }
         #endregion
 
 

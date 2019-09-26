@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB.Interface
 {
@@ -9,6 +10,6 @@ namespace FrostDB.Interface
     {
         public void AddToInbox(DataMessage message);
         public bool CheckInbox(Guid id);
-        public IDBObject GetInboxMessageData(Guid id);
+        public Task<IDBObject> GetInboxMessageDataAsync(Guid id);
     }
 }

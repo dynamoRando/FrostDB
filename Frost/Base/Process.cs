@@ -31,7 +31,7 @@ namespace FrostDB.Base
             _databaseManager = new DatabaseManager();
         }
 
-        public void AddDatabase(IDatabase database)
+        public void AddDatabase(Database database)
         {
             _databaseManager.AddDatabase(database);
         }

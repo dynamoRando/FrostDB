@@ -12,6 +12,7 @@ namespace FrostDB.Instance.Database
         private string _name;
         private List<ITable<Column>> _tables;
         private IContract _contract;
+        private DatabaseManager _manager;
         #endregion
 
         #region Public Properties
@@ -21,10 +22,11 @@ namespace FrostDB.Instance.Database
         #endregion
 
         #region Constructors
-        public HostDatabase(string databaseName) : base(databaseName)
+        public HostDatabase(string databaseName, DatabaseManager manager) : base(databaseName, manager)
         {
             _tables = new List<ITable<Column>>();
             _name = databaseName;
+            _manager = manager;
         }
         #endregion
 
