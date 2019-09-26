@@ -11,6 +11,7 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private List<IDatabase> _databases;
+        private DataInboxManager _inboxManager;
         #endregion
 
         #region Public Properties
@@ -24,6 +25,7 @@ namespace FrostDB.Base
         public DatabaseManager()
         {
             _databases = new List<IDatabase>();
+            _inboxManager = new DataInboxManager();
         }
         #endregion
 
@@ -76,6 +78,10 @@ namespace FrostDB.Base
 
             return count;
         }
+        public void AddToInbox(IMessage message)
+        {
+            _inboxManager.AddToInbox((DataMessage)message);
+        }
 
         #endregion
 
@@ -84,6 +90,8 @@ namespace FrostDB.Base
         {
             throw new NotImplementedException();
         }
+
+        
         #endregion
 
 
