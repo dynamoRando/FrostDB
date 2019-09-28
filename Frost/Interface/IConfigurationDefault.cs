@@ -10,6 +10,8 @@ namespace FrostDB.Interface
         string DatabaseFolder { get; }
         string DatabaseExtension { get; }
         string Name { get; }
+        string IPAddress { get; }
+        int PortNumber { get; }
         bool ConfigFileExists();
     }
 }

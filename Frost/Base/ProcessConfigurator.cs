@@ -13,6 +13,7 @@ namespace FrostDB.Base
         #region Private Fields
         private IProcessInfo _info;
         private Process _process;
+        private IConfigurationDefault _default;
         #endregion
 
         #region Public Properties
@@ -25,6 +26,7 @@ namespace FrostDB.Base
         public ProcessConfigurator(OSPlatform os, ProcessType type, Process process)
         {
             _info = new ProcessInfo(os, type);
+            _default = new ConfigurationDefault(_info);
             _process = process;
         }
         #endregion
@@ -34,17 +36,16 @@ namespace FrostDB.Base
         {
             var config = new Configuration(_process);
 
-            var def = new ConfigurationDefault(_info);
-            if (!def.ConfigFileExists())
+            if (!_default.ConfigFileExists())
             {
-                config.DatabaseFolder = def.DatabaseFolder;
-                config.FileLocation = def.ConfigurationFileLocation;
-                config.Address = def.IPAddress;
-                config.ServerPort = def.PortNumber;
+                config.DatabaseFolder = _default.DatabaseFolder;
+                config.FileLocation = _default.ConfigurationFileLocation;
+                config.Address = _default.IPAddress;
+                config.ServerPort = _default.PortNumber;
             }
             else
             {
-                config = GetConcreteConfiguration(def);
+                config = GetConcreteConfiguration(_default);
             }
 
             return config;
@@ -61,7 +62,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private static Configuration GetConcreteConfiguration(ConfigurationDefault def)
+        private static Configuration GetConcreteConfiguration(IConfigurationDefault def)
         {
             return (Configuration)ConfigurationManager.LoadConfiguration(def.ConfigurationFileLocation);
         }
