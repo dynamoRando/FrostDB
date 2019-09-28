@@ -10,7 +10,6 @@ namespace FrostDB.Base
     public class Process : IProcess
     {
         #region Private Fields
-        private IProcessConfiguration _configuration;
         private ICommService _commService;
         private IDatabaseManager _databaseManager;
         private IProcessInfo _info;
@@ -18,9 +17,9 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<IDatabase> Databases => _databaseManager.Databases;
-        public Guid? Id { get => _configuration.Id; }
-        public string Name { get => _configuration.Name; }
-        public IProcessConfiguration Configuration => _configuration;
+        public Guid? Id { get => Configuration.Id; }
+        public string Name { get => Configuration.Name; }
+        public IProcessConfiguration Configuration { get; private set; }
         public ProcessType ProcessType => _info.Type;
 
         #endregion
@@ -53,7 +52,7 @@ namespace FrostDB.Base
 
         public virtual int LoadDatabases()
         {
-            return _databaseManager.LoadDatabases(_configuration.DatabaseFolder);
+            return _databaseManager.LoadDatabases(Configuration.DatabaseFolder);
         }
         #endregion
 
@@ -69,7 +68,7 @@ namespace FrostDB.Base
         private void Configure()
         {
             var configurator = new ProcessConfigurator(_info);
-            _configuration = configurator.GetConfiguration();
+            Configuration = configurator.GetConfiguration();
         }
         #endregion
 
