@@ -10,7 +10,7 @@ namespace FrostDB.Base
     public class Process : IProcess
     {
         #region Private Fields
-        private IConfiguration _configuration;
+        private IProcessConfiguration _configuration;
         private ICommService _commService;
         private Guid? _id;
         private string _name;
@@ -22,7 +22,7 @@ namespace FrostDB.Base
         public List<IDatabase> Databases => _databaseManager.Databases;
         public Guid? Id => _id;
         public string Name => _name;
-        public IConfiguration Configuration => _configuration;
+        public IProcessConfiguration Configuration => _configuration;
         public ProcessType ProcessType => _info.Type;
         #endregion
 

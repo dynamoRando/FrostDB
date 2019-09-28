@@ -32,7 +32,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
-        public virtual IConfiguration GetConfiguration()
+        public virtual IProcessConfiguration GetConfiguration()
         {
             var config = new Configuration(_process);
 
@@ -51,7 +51,7 @@ namespace FrostDB.Base
             return config;
         }
 
-        public virtual IConfiguration GetConfiguration(ref Guid? guid, ref string name)
+        public virtual IProcessConfiguration GetConfiguration(ref Guid? guid, ref string name)
         {
             var config = this.GetConfiguration();
             SetInternalDefaults(ref guid, ref name);
@@ -67,7 +67,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private void SaveConfiguration(IConfiguration configuration)
+        private void SaveConfiguration(IProcessConfiguration configuration)
         {
             ConfigurationManager.SaveConfiguration(configuration);
         }

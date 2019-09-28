@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Configuration : IConfiguration, INetworkConfiguration
+    public class Configuration : IProcessConfiguration
     {
         #region Private Fields
         private IProcess _process;
