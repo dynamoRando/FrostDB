@@ -11,8 +11,7 @@ namespace FrostDB.Base
     public class ProcessConfigurator : IProcessConfigurator
     {
         #region Private Fields
-        private OSPlatform _operatingSystem;
-        private ProcessType _processType;
+        private IProcessInfo _info;
         private Process _process;
         #endregion
 
@@ -25,8 +24,7 @@ namespace FrostDB.Base
         #region Constructors
         public ProcessConfigurator(OSPlatform os, ProcessType type, Process process)
         {
-            _operatingSystem = os;
-            _processType = type;
+            _info = new ProcessInfo(os, type);
             _process = process;
         }
         #endregion
@@ -36,15 +34,17 @@ namespace FrostDB.Base
         {
             var config = new Configuration(_process);
 
-            var def = new ConfigurationDefault(_operatingSystem, _processType);
+            var def = new ConfigurationDefault(_info);
             if (!def.ConfigFileExists())
             {
                 config.DatabaseFolder = def.DatabaseFolder;
                 config.FileLocation = def.ConfigurationFileLocation;
+                config.Address = def.IPAddress;
+                config.ServerPort = def.PortNumber;
             }
             else
             {
-                config = (Configuration)ConfigurationManager.LoadConfiguration(def.ConfigurationFileLocation);
+                config = GetConcreteConfiguration(def);
             }
 
             return config;
@@ -58,13 +58,17 @@ namespace FrostDB.Base
             return config;
         }
 
-
         #endregion
 
         #region Private Methods
+        private static Configuration GetConcreteConfiguration(ConfigurationDefault def)
+        {
+            return (Configuration)ConfigurationManager.LoadConfiguration(def.ConfigurationFileLocation);
+        }
+
         private void SetInternalDefaults(ref Guid? guid, ref string name)
         {
-            var def = new ConfigurationDefault(_operatingSystem, _processType);
+            var def = new ConfigurationDefault(_info);
 
             if (!def.ConfigFileExists())
             {
@@ -79,7 +83,7 @@ namespace FrostDB.Base
             }
             else
             {
-                var cfg = (Configuration)ConfigurationManager.LoadConfiguration(def.ConfigurationFileLocation);
+                var cfg = GetConcreteConfiguration(def);
                 guid = cfg.Id;
                 name = cfg.Name;
             }

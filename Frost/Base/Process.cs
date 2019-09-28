@@ -15,7 +15,7 @@ namespace FrostDB.Base
         private Guid? _id;
         private string _name;
         private IDatabaseManager _databaseManager;
-        private ProcessType _processType;
+        private IProcessInfo _info;
         #endregion
 
         #region Public Properties
@@ -23,7 +23,7 @@ namespace FrostDB.Base
         public Guid? Id => _id;
         public string Name => _name;
         public IConfiguration Configuration => _configuration;
-        public ProcessType ProcessType => _processType;
+        public ProcessType ProcessType => _info.Type;
         #endregion
 
         #region Events
@@ -36,8 +36,8 @@ namespace FrostDB.Base
         }
         public Process(ProcessType type) : base()
         {
-            _processType = type;   
-            Configure(_processType);
+            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
+            Configure(_info.Type);
         }
 
         public virtual void AddDatabase(Database database)
@@ -76,6 +76,17 @@ namespace FrostDB.Base
             var configurator = new ProcessConfigurator(operatingSystem, type, this);
 
             _configuration = configurator.GetConfiguration(ref _id, ref _name);
+
+            SaveConfigIfNeeded(type, operatingSystem);
+        }
+
+        private void SaveConfigIfNeeded(ProcessType type, OSPlatform operatingSystem)
+        {
+            var def = new ConfigurationDefault(_info);
+            if (!def.ConfigFileExists())
+            {
+                ConfigurationManager.SaveConfiguration(_configuration);
+            }
         }
 
         #endregion

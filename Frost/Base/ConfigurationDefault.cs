@@ -11,12 +11,13 @@ namespace FrostDB.Base
     public class ConfigurationDefault : IConfigurationDefault
     {
         #region Private Fields
-        private OSPlatform _os;
+        private IProcessInfo _info;
         private string _configFileLocation;
         private string _dbFolder;
-        private ProcessType _type;
         private string _dbext;
         private string _name;
+        private string _ipAddress;
+        private int _portNumber;
         #endregion
 
         #region Public Properties
@@ -24,17 +25,19 @@ namespace FrostDB.Base
         public string DatabaseFolder => _dbFolder;
         public string DatabaseExtension => _dbext;
         public string Name => _name;
+        public string IPAddress => _ipAddress;
+        public int PortNumber => _portNumber;
+
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public ConfigurationDefault(OSPlatform os, ProcessType type)
+        public ConfigurationDefault(IProcessInfo info)
         {
-            _os = os;
-            _type = type;
-            SetDefault();
+            _info = info;
+            SetDefaults();
         }
         #endregion
 
@@ -46,21 +49,25 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private void SetDefault()
+        private void SetDefaults()
         {
-            if (_os == OSPlatform.Windows && _type == ProcessType.Host)
+            if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Host)
             {
                 _configFileLocation = @"C:\FrostDB\config\frost.config";
                 _dbFolder = @"C:\FrostDB\dbs\";
                 _dbext = ".frost";
                 _name = "FrostHost";
+                _portNumber = 516;
+                _ipAddress = "127.0.0.1";
             }
-            if (_os == OSPlatform.Windows && _type == ProcessType.Store)
+            if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Store)
             {
                 _configFileLocation = @"C:\FrostDB\partner\config\frostStore.config";
                 _dbFolder = @"C:\FrostDB\partner\dbs\";
                 _dbext = ".frostPart";
                 _name = "FrostStore";
+                _ipAddress = "127.0.0.1";
+                _portNumber = 517;
             }
             else
             {
