@@ -4,9 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IFrostObjectGet
+    public interface IProcessConfigurator
     {
-        Guid? Id { get; }
-        string Name { get; }
     }
 }

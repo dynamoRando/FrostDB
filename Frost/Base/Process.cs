@@ -1,6 +1,8 @@
-﻿using FrostDB.Interface;
+﻿using FrostDB.Enum;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace FrostDB.Base
@@ -10,43 +12,48 @@ namespace FrostDB.Base
         #region Private Fields
         private IConfiguration _configuration;
         private ICommService _commService;
-        private Guid _id;
+        private Guid? _id;
         private string _name;
         private IDatabaseManager _databaseManager;
+        private ProcessType _processType;
         #endregion
 
         #region Public Properties
-        public List<IDatabase> Databases { get { return _databaseManager.Databases; } }
-        public Guid Id { get { return _id; } }
-        public string Name { get { return _name; } }
-        public IConfiguration Configuration { get { return _configuration; } }
+        public List<IDatabase> Databases => _databaseManager.Databases;
+        public Guid? Id => _id;
+        public string Name => _name;
+        public IConfiguration Configuration => _configuration;
+        public ProcessType ProcessType => _processType;
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Process()
+        public Process(ProcessType type)
         {
-            _databaseManager = new DatabaseManager();
+            _processType = type;
+
+            NewInternalFields();
+            Configure(_processType);
         }
 
-        public void AddDatabase(Database database)
+        public virtual void AddDatabase(Database database)
         {
             _databaseManager.AddDatabase(database);
         }
 
-        public void RemoveDatabase(Guid guid)
+        public virtual void RemoveDatabase(Guid guid)
         {
             _databaseManager.RemoveDatabase(guid);
         }
 
-        public void RemoveDatabase(string databaseName)
+        public virtual void RemoveDatabase(string databaseName)
         {
             _databaseManager.RemoveDatabase(databaseName);
         }
 
-        public int LoadDatabases()
+        public virtual int LoadDatabases()
         {
             return _databaseManager.LoadDatabases(_configuration.DatabaseFolder);
         }
@@ -56,6 +63,19 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
+        private void NewInternalFields()
+        {
+            _databaseManager = new DatabaseManager();
+        }
+
+        private void Configure(ProcessType type)
+        {
+            var operatingSystem = OperatingSystem.GetOSPlatform();
+            var configurator = new ProcessConfigurator(operatingSystem, type, this);
+
+            _configuration = configurator.GetConfiguration(ref _id, ref _name);
+        }
+
         #endregion
 
     }

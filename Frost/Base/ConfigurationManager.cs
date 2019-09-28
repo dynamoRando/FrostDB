@@ -20,10 +20,10 @@ namespace FrostDB.Base
             }
         }
 
-        public static void LoadConfiguration(IConfiguration config, string configFileLocation)
+        public static IConfiguration LoadConfiguration(string configFileLocation)
         {
             var json = System.IO.File.ReadAllText(configFileLocation);
-            config = JsonConvert.DeserializeObject<IConfiguration>(json);
+            return JsonConvert.DeserializeObject<IConfiguration>(json);
         }
     }
 }

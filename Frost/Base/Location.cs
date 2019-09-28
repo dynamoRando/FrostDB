@@ -11,7 +11,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public string IpAddress { get; set; }
         public int PortNumber { get; set; }
@@ -21,7 +21,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public Location(Guid id, string ipAddress, int portNumber, string name)
+        public Location(Guid? id, string ipAddress, int portNumber, string name)
         {
             Id = id;
             IpAddress = ipAddress;
