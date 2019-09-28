@@ -37,7 +37,7 @@ namespace FrostDB.Base
         public Process(ProcessType type) : base()
         {
             _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
-            Configure(_info.Type);
+            Configure();
         }
 
         public virtual void AddDatabase(Database database)
@@ -70,25 +70,13 @@ namespace FrostDB.Base
             _databaseManager = new DatabaseManager();
         }
 
-        private void Configure(ProcessType type)
+        private void Configure()
         {
-            var operatingSystem = OperatingSystem.GetOSPlatform();
-            var configurator = new ProcessConfigurator(operatingSystem, type, this);
+            var operatingSystem = _info.OS;
+            var configurator = new ProcessConfigurator(_info, this);
 
             _configuration = configurator.GetConfiguration(ref _id, ref _name);
-
-            SaveConfigIfNeeded(type, operatingSystem);
         }
-
-        private void SaveConfigIfNeeded(ProcessType type, OSPlatform operatingSystem)
-        {
-            var def = new ConfigurationDefault(_info);
-            if (!def.ConfigFileExists())
-            {
-                ConfigurationManager.SaveConfiguration(_configuration);
-            }
-        }
-
         #endregion
 
     }

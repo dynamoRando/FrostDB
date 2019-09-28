@@ -23,9 +23,9 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public ProcessConfigurator(OSPlatform os, ProcessType type, Process process)
+        public ProcessConfigurator(IProcessInfo info, Process process)
         {
-            _info = new ProcessInfo(os, type);
+            _info = info;
             _default = new ConfigurationDefault(_info);
             _process = process;
         }
@@ -56,12 +56,21 @@ namespace FrostDB.Base
             var config = this.GetConfiguration();
             SetInternalDefaults(ref guid, ref name);
 
+            if (!_default.ConfigFileExists())
+            {
+                SaveConfiguration(config);
+            }
+
             return config;
         }
 
         #endregion
 
         #region Private Methods
+        private void SaveConfiguration(IConfiguration configuration)
+        {
+            ConfigurationManager.SaveConfiguration(configuration);
+        }
         private static Configuration GetConcreteConfiguration(IConfigurationDefault def)
         {
             return (Configuration)ConfigurationManager.LoadConfiguration(def.ConfigurationFileLocation);
@@ -69,13 +78,11 @@ namespace FrostDB.Base
 
         private void SetInternalDefaults(ref Guid? guid, ref string name)
         {
-            var def = new ConfigurationDefault(_info);
-
-            if (!def.ConfigFileExists())
+            if (!_default.ConfigFileExists())
             {
                 if (String.IsNullOrEmpty(name))
                 {
-                    name = def.Name;
+                    name = _default.Name;
                 }
                 if (guid is null)
                 {
@@ -84,12 +91,11 @@ namespace FrostDB.Base
             }
             else
             {
-                var cfg = GetConcreteConfiguration(def);
+                var cfg = GetConcreteConfiguration(_default);
                 guid = cfg.Id;
                 name = cfg.Name;
             }
         }
         #endregion
-
     }
 }
