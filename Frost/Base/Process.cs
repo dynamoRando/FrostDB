@@ -12,8 +12,6 @@ namespace FrostDB.Base
         #region Private Fields
         private IProcessConfiguration _configuration;
         private ICommService _commService;
-        private Guid? _id;
-        private string _name;
         private IDatabaseManager _databaseManager;
         private IProcessInfo _info;
         #endregion
@@ -66,8 +64,6 @@ namespace FrostDB.Base
         private void NewInternalFields()
         {
             _databaseManager = new DatabaseManager();
-            _id = Guid.NewGuid();
-            _name = string.Empty;
         }
 
         private void Configure()
