@@ -1,4 +1,5 @@
 ﻿using FrostDB.Base;
+using FrostDB.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,9 +18,8 @@ namespace FrostDB.Instance
         #endregion
 
         #region Constructors
-        public Host()
+        public Host() : base(ProcessType.Host)
         {
-
         }
         #endregion
 

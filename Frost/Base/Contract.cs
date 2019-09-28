@@ -16,7 +16,7 @@ namespace FrostDB.Base
         public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<IDBObject> StoreObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<IDBObject> InstanceObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Guid Id => throw new NotImplementedException();
+        public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
         #endregion
 

@@ -10,7 +10,7 @@ namespace FrostDB.Base
         #region Private Fields
         private List<Column> _columns;
         private List<IRow> _rows;
-        private Guid _id;
+        private Guid? _id;
         private string _name;
         private Database _database;
         #endregion
@@ -18,7 +18,7 @@ namespace FrostDB.Base
         #region Public Properties
         public List<Column> Columns => _columns;
         public List<IRow> Rows => _rows;
-        public Guid Id => _id;
+        public Guid? Id => _id;
         public string Name => _name;
         #endregion
 

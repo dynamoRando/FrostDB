@@ -30,11 +30,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public Process(ProcessType type)
+        public Process()
         {
-            _processType = type;
-
             NewInternalFields();
+        }
+        public Process(ProcessType type) : base()
+        {
+            _processType = type;   
             Configure(_processType);
         }
 

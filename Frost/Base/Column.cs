@@ -8,12 +8,12 @@ namespace FrostDB.Base
     public class Column : IColumn
     {
         #region Private Fields
-        private Guid _id;
+        private Guid? _id;
         private string _name;
         #endregion
 
         #region Public Properties
-        public Guid Id => _id;
+        public Guid? Id => _id;
         public string Name => _name;
         #endregion
 

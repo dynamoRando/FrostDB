@@ -15,7 +15,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public Guid Id { get; }
+        public Guid? Id { get; }
         public string Name { get { return _name; } }
         public List<ITable<Column>> Tables { get { return _tables; } }
         public IContract Contract { get { return _contract; } }
