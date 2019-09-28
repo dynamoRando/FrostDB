@@ -20,22 +20,20 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<IDatabase> Databases => _databaseManager.Databases;
-        public Guid? Id => _id;
-        public string Name => _name;
+        public Guid? Id { get => _configuration.Id; }
+        public string Name { get => _configuration.Name; }
         public IProcessConfiguration Configuration => _configuration;
         public ProcessType ProcessType => _info.Type;
+
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Process()
+        public Process(ProcessType type)
         {
             NewInternalFields();
-        }
-        public Process(ProcessType type) : base()
-        {
             _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
             Configure();
         }
@@ -68,14 +66,14 @@ namespace FrostDB.Base
         private void NewInternalFields()
         {
             _databaseManager = new DatabaseManager();
+            _id = Guid.NewGuid();
+            _name = string.Empty;
         }
 
         private void Configure()
         {
-            var operatingSystem = _info.OS;
-            var configurator = new ProcessConfigurator(_info, this);
-
-            _configuration = configurator.GetConfiguration(ref _id, ref _name);
+            var configurator = new ProcessConfigurator(_info);
+            _configuration = configurator.GetConfiguration();
         }
         #endregion
 

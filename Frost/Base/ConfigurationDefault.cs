@@ -60,7 +60,7 @@ namespace FrostDB.Base
                 _portNumber = 516;
                 _ipAddress = "127.0.0.1";
             }
-            if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Store)
+            else if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Store)
             {
                 _configFileLocation = @"C:\FrostDB\partner\config\frostStore.config";
                 _dbFolder = @"C:\FrostDB\partner\dbs\";

@@ -9,7 +9,7 @@ namespace FrostDB.Base
 {
     public class ConfigurationManager : IManager
     {
-        public static void SaveConfiguration(IProcessConfiguration config)
+        public static void SaveConfiguration(Configuration config)
         {
             var seralizer = new JsonSerializer();
 
@@ -23,7 +23,7 @@ namespace FrostDB.Base
         public static IProcessConfiguration LoadConfiguration(string configFileLocation)
         {
             var json = File.ReadAllText(configFileLocation);
-            return JsonConvert.DeserializeObject<IProcessConfiguration>(json);
+            return JsonConvert.DeserializeObject<Configuration>(json);
         }
     }
 }

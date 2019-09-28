@@ -9,7 +9,6 @@ namespace FrostDB.Base
     public class Configuration : IProcessConfiguration
     {
         #region Private Fields
-        private IProcess _process;
         #endregion
 
         #region Public Properties
@@ -17,28 +16,42 @@ namespace FrostDB.Base
         public string DatabaseFolder { get; set; }
         public string Address { get; set; }
         public int ServerPort { get; set; }
-        public string Name => _process.Name;
-        public Guid? Id => _process.Id;
+        public string Name { get; set; }
+        public Guid? Id { get; set; }
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Configuration(IProcess process)
+        public Configuration()
         {
-            _process = process;
         }
         #endregion
 
         #region Public Methods
         public ILocation GetLocation()
         {
-            return new Location(_process.Id, Address, ServerPort, _process.Name) ;
+            return new Location(Id, Address, ServerPort, Name) ;
+        }
+
+        public void Get(string configLocation)
+        {
+            var loadedConfig = (Configuration)ConfigurationManager.LoadConfiguration(configLocation);
+            Map(loadedConfig);
         }
         #endregion
 
         #region Private Methods
+        private void Map(Configuration config)
+        {
+            this.DatabaseFolder = config.DatabaseFolder;
+            this.FileLocation = config.FileLocation;
+            this.Address = config.Address;
+            this.ServerPort = config.ServerPort;
+            this.Id = config.Id;
+            this.Name = config.Name;
+        }
         #endregion
     }
 }

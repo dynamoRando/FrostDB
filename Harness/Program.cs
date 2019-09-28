@@ -4,9 +4,18 @@ namespace Harness
 {
     class Program
     {
+        
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var app = new App();
+
+            Console.WriteLine("FrostDB Harness");
+
+            while (app.Running)
+            {
+                app.PromptForMode();
+            }
         }
     }
 }
