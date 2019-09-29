@@ -9,6 +9,7 @@ namespace FrostDB.Base
     public class Configuration : IProcessConfiguration
     {
         #region Private Fields
+        private IConfigurationManager<Configuration> _configManager;
         #endregion
 
         #region Public Properties
@@ -26,6 +27,7 @@ namespace FrostDB.Base
         #region Constructors
         public Configuration()
         {
+            _configManager = new ConfigurationManager();
         }
         #endregion
 
@@ -37,13 +39,13 @@ namespace FrostDB.Base
 
         public void Get(string configLocation)
         {
-            var loadedConfig = (Configuration)ConfigurationManager.LoadConfiguration(configLocation);
+            var loadedConfig = _configManager.LoadConfiguration(configLocation);
             Map(loadedConfig);
         }
         #endregion
 
         #region Private Methods
-        private void Map(Configuration config)
+        private void Map(IProcessConfiguration config)
         {
             this.DatabaseFolder = config.DatabaseFolder;
             this.FileLocation = config.FileLocation;

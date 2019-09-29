@@ -8,11 +8,12 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class ProcessConfigurator : IProcessConfigurator
+    public class ProcessConfigurator : IProcessConfigurator<Configuration>
     {
         #region Private Fields
         private IProcessInfo _info;
         private IConfigurationDefault _default;
+        private IConfigurationManager<Configuration> _configManager;
         #endregion
 
         #region Public Properties
@@ -26,11 +27,12 @@ namespace FrostDB.Base
         {
             _info = info;
             _default = new ConfigurationDefault(_info);
+            _configManager = new ConfigurationManager();
         }
         #endregion
 
         #region Public Methods
-        public virtual IProcessConfiguration GetConfiguration()
+        public virtual Configuration GetConfiguration()
         {
             var config = new Configuration();
 
@@ -56,9 +58,9 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private void SaveConfiguration(IProcessConfiguration configuration)
+        private void SaveConfiguration(Configuration configuration)
         {
-            ConfigurationManager.SaveConfiguration((Configuration)configuration);
+            _configManager.SaveConfiguration(configuration);
         }
         #endregion
     }

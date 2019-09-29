@@ -25,6 +25,10 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        public Message()
+        {
+
+        }
         public Message(ILocation destination, ILocation orgin, IMessageContent content)
         {
             CreatedDateTime = DateTime.Now;

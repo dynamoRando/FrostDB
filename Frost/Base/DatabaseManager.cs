@@ -10,13 +10,12 @@ namespace FrostDB.Base
     public class DatabaseManager : IDatabaseManager
     {
         #region Private Fields
-        private List<IDatabase> _databases;
-        private DataInboxManager _inboxManager;
+        private IDataFileManager<DataFile> _dataFileManager;
         #endregion
 
         #region Public Properties
-        public List<IDatabase> Databases => _databases;
-        public DataInboxManager Inbox => _inboxManager;
+        public List<IDatabase> Databases { get; }
+        public DataInboxManager Inbox { get; }
         #endregion
 
         #region Events
@@ -25,35 +24,36 @@ namespace FrostDB.Base
         #region Constructors
         public DatabaseManager()
         {
-            _databases = new List<IDatabase>();
-            _inboxManager = new DataInboxManager();
+            Databases = new List<IDatabase>();
+            Inbox = new DataInboxManager();
+            _dataFileManager = new DataFileManager();
         }
         #endregion
 
         #region Public Methods
         public void AddDatabase(Database database)
         {
-            _databases.Add(database);
+            Databases.Add(database);
         }
 
         public IDatabase GetDatabase(string databaseName)
         {
-            return _databases.Where(d => d.Name == databaseName).First();
+            return Databases.Where(d => d.Name == databaseName).First();
         }
 
         public IDatabase GetDatabase(Guid guid)
         {
-            return _databases.Where(d => d.Id == guid).First();
+            return Databases.Where(d => d.Id == guid).First();
         }
 
         public bool HasDatabase(string databaseName)
         {
-            return _databases.Any(d => d.Name == databaseName);
+            return Databases.Any(d => d.Name == databaseName);
         }
 
         public bool HasDatabase(Guid guid)
         {
-            return _databases.Any(d => d.Id == guid);
+            return Databases.Any(d => d.Id == guid);
         }
 
         public void RemoveDatabase(Guid guid)
@@ -73,8 +73,8 @@ namespace FrostDB.Base
             foreach (var file in Directory.GetFiles(databaseFolderLocation))
             {
                 var database = GetDatabaseFromDisk(file);
-                _databases.Add(database);
-                count = _databases.Count;
+                Databases.Add(database);
+                count = Databases.Count;
             }
 
             return count;
@@ -82,7 +82,7 @@ namespace FrostDB.Base
 
         public void AddToInbox(IMessage message)
         {
-            _inboxManager.AddToInbox((DataMessage)message);
+            Inbox.AddToInbox((DataMessage)message);
         }
 
         #endregion
@@ -90,6 +90,7 @@ namespace FrostDB.Base
         #region Private Methods
         private IDatabase GetDatabaseFromDisk(string file)
         {
+            var dataFile = _dataFileManager.GetDataFile(file);
             throw new NotImplementedException();
         }
 

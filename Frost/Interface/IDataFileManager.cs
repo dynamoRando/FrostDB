@@ -4,8 +4,8 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IProcessConfigurator<T> where T : IProcessConfiguration
+    public interface IDataFileManager<T> where T : IDataFile
     {
-        T GetConfiguration();
+        T GetDataFile(string fileLocation);
     }
 }

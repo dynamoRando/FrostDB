@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IProcessConfiguration : IConfiguration, INetworkConfiguration
-    {        
+    public interface IDataFile
+    {
     }
 }

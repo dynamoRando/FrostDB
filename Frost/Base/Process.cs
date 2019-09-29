@@ -13,7 +13,7 @@ namespace FrostDB.Base
         private ICommService _commService;
         private IDatabaseManager _databaseManager;
         private IProcessInfo _info;
-        private IProcessConfigurator _configurator;
+        private IProcessConfigurator<Configuration> _configurator;
         #endregion
 
         #region Public Properties
