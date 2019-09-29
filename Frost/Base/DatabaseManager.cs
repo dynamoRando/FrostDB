@@ -11,6 +11,7 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private IDataFileManager<DataFile> _dataFileManager;
+        private IDatabaseFileMapper<IDatabase, IDataFile, DatabaseManager> _databaseFileMapper;
         #endregion
 
         #region Public Properties
@@ -27,6 +28,7 @@ namespace FrostDB.Base
             Databases = new List<IDatabase>();
             Inbox = new DataInboxManager();
             _dataFileManager = new DataFileManager();
+            _databaseFileMapper = new DatabaseFileMapper();
         }
         #endregion
 
@@ -91,7 +93,7 @@ namespace FrostDB.Base
         private IDatabase GetDatabaseFromDisk(string file)
         {
             var dataFile = _dataFileManager.GetDataFile(file);
-            throw new NotImplementedException();
+            return _databaseFileMapper.Map(dataFile, this);
         }
 
         #endregion

@@ -7,5 +7,7 @@ namespace FrostDB.Base
 {
     public class DataFile : IDataFile
     {
+        public Guid? Id { get; set; }
+        public string Name { get; set; }
     }
 }

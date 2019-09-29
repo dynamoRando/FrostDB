@@ -33,6 +33,13 @@ namespace FrostDB.Base
             _tables = new List<ITable<Column>>();
             _manager = manager;
         }
+        public Database(string name, DatabaseManager manager, Guid id)
+        {
+            Id = id;
+            _name = name;
+            _tables = new List<ITable<Column>>();
+            _manager = manager;
+        }
         #endregion
 
         #region Public Methods
