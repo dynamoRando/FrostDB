@@ -38,7 +38,7 @@ namespace FrostDB.Base
 
             if (_default.ConfigFileExists())
             {
-                config.Get(_default.ConfigurationFileLocation);
+                config = _configManager.LoadConfiguration(_default.ConfigurationFileLocation);
             }
             else
             {
@@ -55,7 +55,6 @@ namespace FrostDB.Base
 
             return config;
         }
-
         #endregion
 
         #region Private Methods

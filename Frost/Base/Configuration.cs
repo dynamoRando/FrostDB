@@ -38,24 +38,9 @@ namespace FrostDB.Base
             return new Location(Id, Address, ServerPort, Name) ;
         }
 
-        public void Get(string configLocation)
-        {
-            var loadedConfig = _configManager.LoadConfiguration(configLocation);
-            Map(loadedConfig);
-        }
         #endregion
 
         #region Private Methods
-        private void Map(IProcessConfiguration config)
-        {
-            this.DatabaseFolder = config.DatabaseFolder;
-            this.FileLocation = config.FileLocation;
-            this.Address = config.Address;
-            this.ServerPort = config.ServerPort;
-            this.Id = config.Id;
-            this.Name = config.Name;
-            this.DatabaseExtension = config.DatabaseExtension;
-        }
         #endregion
     }
 }
