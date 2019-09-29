@@ -16,7 +16,7 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<Database> Databases { get; }
-        public DataInboxManager Inbox { get; }
+        public IDataInboxManager Inbox { get; }
         #endregion
 
         #region Events

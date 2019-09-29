@@ -17,6 +17,6 @@ namespace FrostDB.Interface
         void RemoveDatabase(string databaseName);
         int LoadDatabases(string databaseFolderLocation);
         void AddToInbox(IMessage message);
-        DataInboxManager Inbox { get; }
+        IDataInboxManager Inbox { get; }
     }
 }
