@@ -1,4 +1,8 @@
 ﻿using FrostDB.Base;
+using Harness.Base;
+using Harness.Host;
+using Harness.Interface;
+using Harness.Store;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,12 +16,14 @@ namespace Harness
         private string _consoleLine;
         private bool _running;
         private Process _process;
+        private IMode _mode;
         #endregion
 
         #region Public Properties
         public string ConsoleLine { get => _consoleLine; set => _consoleLine = value; }
         public bool Running { get => _running; set => _running = value; }
         public Process Process { get => _process; set => _process = value; }
+        public IMode Mode { get => _mode; set => _mode = value; }
         #endregion
 
         #region Events
@@ -39,7 +45,7 @@ namespace Harness
             switch (Prompt())
             {
                 case "c":
-                    CreateNewDb();
+                    Mode.CreateNewDb();
                     break;
             }
         }
@@ -56,11 +62,14 @@ namespace Harness
                     Write("Starting app in Host mode...");
                     _process = new FrostDB.Instance.Host();
                     totalDBs = _process.LoadDatabases();
+                    _mode = new HostMode(this);
                     break;
                 case "s":
                     Write("Starting app in Store mode...");
                     _process = new FrostDB.DataStore.Store();
                     totalDBs = _process.LoadDatabases();
+                    var m = new StoreMode(this);
+                    _mode = m;
                     break;
             }
 
@@ -103,31 +112,14 @@ namespace Harness
 
             return _consoleLine;
         }
-        #endregion
-
-        #region Private Methods
-        private void Write(string value)
+        public void Write(string value)
         {
             Console.Write(value);
             Console.WriteLine();
         }
+        #endregion
 
-        private void CreateNewDb()
-        {
-            string result = string.Empty;
-            string dbName = string.Empty;
-
-            while (result != "y")
-            {
-                dbName = Prompt("enter db name:");
-                result = Prompt($"db will be named {dbName} - (y) to confirm, otherwise no");
-            }
-
-            _process.AddDatabase(dbName);
-
-            Write($"Db named {dbName} created");
-        }
-
+        #region Private Methods
         #endregion
 
 

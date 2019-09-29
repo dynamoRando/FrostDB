@@ -1,10 +1,16 @@
-﻿using System;
+﻿using Harness.Base;
+using Harness.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Harness.Store
 {
-    class StoreMode
+    public class StoreMode : Mode
     {
+        public StoreMode(App app) : base(app)
+        {
+
+        }
     }
 }
