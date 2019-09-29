@@ -11,7 +11,9 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private IDataFileManager<DataFile> _dataFileManager;
-        private IDatabaseFileMapper<Database, IDataFile, DatabaseManager> _databaseFileMapper;
+        private IDatabaseFileMapper<Database, DataFile, DatabaseManager> _databaseFileMapper;
+        private string _databaseFolder;
+        private string _databaseExtension;
         #endregion
 
         #region Public Properties
@@ -23,19 +25,28 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public DatabaseManager()
+        public DatabaseManager() { }
+
+        public DatabaseManager(string databaseFolder, string databaseExtension)
         {
             Databases = new List<Database>();
             Inbox = new DataInboxManager();
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = new DatabaseFileMapper();
+
+            _databaseFolder = databaseFolder;
+            _databaseExtension = databaseExtension;
         }
         #endregion
 
         #region Public Methods
         public void AddDatabase(Database database)
         {
-            Databases.Add(database);
+            if (!HasDatabase(database.Name))
+            {
+                Databases.Add(database);
+                SaveToDisk(database);
+            }
         }
 
         public Database GetDatabase(string databaseName)
@@ -94,6 +105,21 @@ namespace FrostDB.Base
         {
             var dataFile = _dataFileManager.GetDataFile(file);
             return _databaseFileMapper.Map(dataFile, this);
+        }
+
+        private void SaveToDisk(Database database)
+        {
+            var fileName = _databaseFolder + database.Name + _databaseExtension;
+
+            if (!File.Exists(fileName))
+            {
+                var file = _databaseFileMapper.Map(database);
+                _dataFileManager.SaveDataFile(fileName, file);
+            }
+            else
+            {
+                throw new IOException("database already exists");
+            }
         }
 
         #endregion

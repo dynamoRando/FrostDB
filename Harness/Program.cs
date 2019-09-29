@@ -5,7 +5,6 @@ namespace Harness
     class Program
     {
         
-
         static void Main(string[] args)
         {
             Console.WriteLine("FrostDB Harness");
@@ -15,7 +14,7 @@ namespace Harness
 
             while (app.Running)
             {
-                app.Prompt("noting to do. Exit?");
+                app.PromptForActions();
             }
         }
     }

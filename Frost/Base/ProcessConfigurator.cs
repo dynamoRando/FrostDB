@@ -46,6 +46,7 @@ namespace FrostDB.Base
                 config.FileLocation = _default.ConfigurationFileLocation;
                 config.Address = _default.IPAddress;
                 config.ServerPort = _default.PortNumber;
+                config.DatabaseExtension = _default.DatabaseExtension;
                 config.Id = Guid.NewGuid();
                 config.Name = _default.Name;
 

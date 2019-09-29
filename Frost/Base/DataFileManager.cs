@@ -14,5 +14,11 @@ namespace FrostDB.Base
             var dbJson = File.ReadAllText(fileLocation);
             return JsonConvert.DeserializeObject<DataFile>(dbJson);
         }
+
+        public void SaveDataFile(string fileLocation, DataFile dataFile)
+        {
+            var text = JsonConvert.SerializeObject(dataFile);
+            File.WriteAllText(fileLocation, text);
+        }
     }
 }

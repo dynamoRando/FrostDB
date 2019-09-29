@@ -12,5 +12,6 @@ namespace FrostDB.Interface
         void RemoveDatabase(Guid guid);
         void RemoveDatabase(string databaseName);
         int LoadDatabases();
+        T GetDatabase(string databaseName);
     }
 }

@@ -15,6 +15,7 @@ namespace FrostDB.Base
         #region Public Properties
         public string FileLocation { get; set; }
         public string DatabaseFolder { get; set; }
+        public string DatabaseExtension { get; set; }
         public string Address { get; set; }
         public int ServerPort { get; set; }
         public string Name { get; set; }
@@ -53,6 +54,7 @@ namespace FrostDB.Base
             this.ServerPort = config.ServerPort;
             this.Id = config.Id;
             this.Name = config.Name;
+            this.DatabaseExtension = config.DatabaseExtension;
         }
         #endregion
     }

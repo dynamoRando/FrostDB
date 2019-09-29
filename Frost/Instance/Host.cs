@@ -1,12 +1,13 @@
 ﻿using FrostDB.Base;
 using FrostDB.Enum;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FrostDB.Instance
 {
-    public class Host : Process
+    public class Host : Process, IProcess<Base.Database>
     {
         #region Private Fields
         #endregion
@@ -24,6 +25,7 @@ namespace FrostDB.Instance
         #endregion
 
         #region Public Methods
+       
         #endregion
 
         #region Private Methods

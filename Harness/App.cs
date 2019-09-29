@@ -31,24 +31,42 @@ namespace Harness
         #endregion
 
         #region Public Methods
+
+        public void PromptForActions()
+        {
+            Write("Specify action: (c)reate db, (exit)");
+
+            switch (Prompt())
+            {
+                case "c":
+                    CreateNewDb();
+                    break;
+            }
+        }
+
         public void PromptForMode()
         {
             Write("Specify which mode to run: (h)ost or (s)store, (exit) to quit");
-            
-            switch(Prompt())
+
+            var totalDBs = 0;
+
+            switch (Prompt())
             {
                 case "h":
                     Write("Starting app in Host mode...");
                     _process = new FrostDB.Instance.Host();
+                    totalDBs = _process.LoadDatabases();
                     break;
                 case "s":
                     Write("Starting app in Store mode...");
                     _process = new FrostDB.DataStore.Store();
+                    totalDBs = _process.LoadDatabases();
                     break;
             }
 
-            OutputProcessInfo();
+            Write("Total DBs loaded: " + totalDBs.ToString());
 
+            OutputProcessInfo();
         }
 
         public void OutputProcessInfo()
@@ -92,6 +110,22 @@ namespace Harness
         {
             Console.Write(value);
             Console.WriteLine();
+        }
+
+        private void CreateNewDb()
+        {
+            string result = string.Empty;
+            string dbName = string.Empty;
+
+            while (result != "y")
+            {
+                dbName = Prompt("enter db name:");
+                result = Prompt($"db will be named {dbName} - (y) to confirm, otherwise no");
+            }
+
+            _process.AddDatabase(dbName);
+
+            Write($"Db named {dbName} created");
         }
 
         #endregion

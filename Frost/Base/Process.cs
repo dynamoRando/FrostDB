@@ -31,8 +31,10 @@ namespace FrostDB.Base
         #region Constructors
         public Process(ProcessType type)
         {
-            NewInternalFields(type);
-            Configure();
+            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
+            _configurator = new ProcessConfigurator(_info);
+            Configuration = _configurator.GetConfiguration();
+            _databaseManager = new DatabaseManager(Configuration.DatabaseFolder, Configuration.DatabaseExtension);
         }
 
         public virtual void AddDatabase(string databaseName)
@@ -59,7 +61,7 @@ namespace FrostDB.Base
         {
             return _databaseManager.GetDatabase(id);
         }
-        public virtual IDatabase GetDatabase(string databaseName)
+        public virtual Database GetDatabase(string databaseName)
         {
             return _databaseManager.GetDatabase(databaseName);
         }
@@ -69,17 +71,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private void NewInternalFields(ProcessType type)
-        {
-            _databaseManager = new DatabaseManager();
-            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
-            _configurator = new ProcessConfigurator(_info);
-        }
 
-        private void Configure()
-        {   
-            Configuration = _configurator.GetConfiguration();
-        }
         #endregion
 
     }

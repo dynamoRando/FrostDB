@@ -33,12 +33,9 @@ namespace FrostDB.Base
             _tables = new List<ITable<Column>>();
             _manager = manager;
         }
-        public Database(string name, DatabaseManager manager, Guid id)
+        public Database(string name, DatabaseManager manager, Guid id) : this(name, manager)
         {
             Id = id;
-            _name = name;
-            _tables = new List<ITable<Column>>();
-            _manager = manager;
         }
         #endregion
 

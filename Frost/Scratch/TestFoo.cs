@@ -21,8 +21,8 @@ namespace FrostDB.Scratch
             host.AddDatabase(testName1);
             host.AddDatabase(testName2);
 
-            Database hostDatabase = (Database)host.GetDatabase(testName1);
-
+            var hostDatabase = host.GetDatabase(testName1);
+            
             var columns = new List<Column>();
 
             // if ITable had List<IColumn> instead of List<Column>, we would've had to do this --
