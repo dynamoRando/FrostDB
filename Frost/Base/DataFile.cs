@@ -9,5 +9,9 @@ namespace FrostDB.Base
     {
         public Guid? Id { get; set; }
         public string Name { get; set; }
+        /*
+         * public List<Table> RegularTables {get; set;}
+         * public List<CooperativeTable> CoopTables {get; set;}
+         */
     }
 }

@@ -20,6 +20,12 @@ namespace FrostDB.Base
         {
             // TODO need to map tables, etc
             return new DataFile { Id = database.Id, Name = database.Name };
+            /*
+             * foreach table in Itables
+             * switch (table.type)
+             * case when type == regular, add to regular tables
+             * case when type == coop, add to coop tables
+             */
         }
     }
 }
