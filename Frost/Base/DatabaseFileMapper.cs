@@ -18,6 +18,7 @@ namespace FrostDB.Base
 
         public DataFile Map(Database database)
         {
+            // TODO need to map tables, etc
             return new DataFile { Id = database.Id, Name = database.Name };
         }
     }
