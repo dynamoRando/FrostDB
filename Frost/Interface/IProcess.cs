@@ -5,10 +5,10 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IProcess : IFrostObjectGet
+    public interface IProcess<T> where T : IDatabase, IFrostObjectGet
     {
-        List<IDatabase> Databases { get; }
-        void AddDatabase(Database database);
+        List<T> Databases { get; }
+        void AddDatabase(string databaseName);
         void RemoveDatabase(Guid guid);
         void RemoveDatabase(string databaseName);
         int LoadDatabases();

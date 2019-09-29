@@ -7,22 +7,22 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Process : IProcess
+    public class Process : IProcess<Database>
     {
         #region Private Fields
         private ICommService _commService;
-        private IDatabaseManager _databaseManager;
+        private IDatabaseManager<Database> _databaseManager;
         private IProcessInfo _info;
         private IProcessConfigurator<Configuration> _configurator;
         #endregion
 
         #region Public Properties
-        public List<IDatabase> Databases => _databaseManager.Databases;
+        public List<Database> Databases => _databaseManager.Databases;
+        public IDatabaseManager<Database> DatabaseManager => _databaseManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
         public ProcessType ProcessType => _info.Type;
-
         #endregion
 
         #region Events
@@ -35,9 +35,9 @@ namespace FrostDB.Base
             Configure();
         }
 
-        public virtual void AddDatabase(Database database)
+        public virtual void AddDatabase(string databaseName)
         {
-            _databaseManager.AddDatabase(database);
+            _databaseManager.AddDatabase(new Database(databaseName, _databaseManager));
         }
 
         public virtual void RemoveDatabase(Guid guid)
@@ -53,6 +53,15 @@ namespace FrostDB.Base
         public virtual int LoadDatabases()
         {
             return _databaseManager.LoadDatabases(Configuration.DatabaseFolder);
+        }
+
+        public virtual IDatabase GetDatabase(Guid id)
+        {
+            return _databaseManager.GetDatabase(id);
+        }
+        public virtual IDatabase GetDatabase(string databaseName)
+        {
+            return _databaseManager.GetDatabase(databaseName);
         }
         #endregion
 

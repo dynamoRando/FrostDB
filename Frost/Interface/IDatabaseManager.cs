@@ -5,17 +5,18 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IDatabaseManager
+    public interface IDatabaseManager<T> where T : IDatabase
     {
-        List<IDatabase> Databases { get; }
+        List<T> Databases { get; }
         bool HasDatabase(string databaseName);
         bool HasDatabase(Guid guid);
-        IDatabase GetDatabase(string databaseName);
-        IDatabase GetDatabase(Guid guid);
+        T GetDatabase(string databaseName);
+        T GetDatabase(Guid guid);
         void AddDatabase(Database database);
         void RemoveDatabase(Guid guid);
         void RemoveDatabase(string databaseName);
         int LoadDatabases(string databaseFolderLocation);
         void AddToInbox(IMessage message);
+        DataInboxManager Inbox { get; }
     }
 }

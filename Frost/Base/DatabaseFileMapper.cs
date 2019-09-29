@@ -5,12 +5,14 @@ using FrostDB.Interface;
 
 namespace FrostDB.Base
 {
-    public class DatabaseFileMapper : IDatabaseFileMapper<IDatabase, IDataFile, DatabaseManager>
+    public class DatabaseFileMapper : IDatabaseFileMapper<Database, IDataFile, DatabaseManager>
     {
-        public IDatabase Map(IDataFile file, DatabaseManager manager)
+        public Database Map(IDataFile file, DatabaseManager manager)
         {
             var database = new Database(file.Name, manager, file.Id.Value);
             
+            // TODO Need to map tables, etc.
+
             return database;
         }
     }

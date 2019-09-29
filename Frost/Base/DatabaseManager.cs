@@ -7,15 +7,15 @@ using System.Linq;
 
 namespace FrostDB.Base
 {
-    public class DatabaseManager : IDatabaseManager
+    public class DatabaseManager : IDatabaseManager<Database>
     {
         #region Private Fields
         private IDataFileManager<DataFile> _dataFileManager;
-        private IDatabaseFileMapper<IDatabase, IDataFile, DatabaseManager> _databaseFileMapper;
+        private IDatabaseFileMapper<Database, IDataFile, DatabaseManager> _databaseFileMapper;
         #endregion
 
         #region Public Properties
-        public List<IDatabase> Databases { get; }
+        public List<Database> Databases { get; }
         public DataInboxManager Inbox { get; }
         #endregion
 
@@ -25,7 +25,7 @@ namespace FrostDB.Base
         #region Constructors
         public DatabaseManager()
         {
-            Databases = new List<IDatabase>();
+            Databases = new List<Database>();
             Inbox = new DataInboxManager();
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = new DatabaseFileMapper();
@@ -38,12 +38,12 @@ namespace FrostDB.Base
             Databases.Add(database);
         }
 
-        public IDatabase GetDatabase(string databaseName)
+        public Database GetDatabase(string databaseName)
         {
             return Databases.Where(d => d.Name == databaseName).First();
         }
 
-        public IDatabase GetDatabase(Guid guid)
+        public Database GetDatabase(Guid guid)
         {
             return Databases.Where(d => d.Id == guid).First();
         }
@@ -90,7 +90,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private IDatabase GetDatabaseFromDisk(string file)
+        private Database GetDatabaseFromDisk(string file)
         {
             var dataFile = _dataFileManager.GetDataFile(file);
             return _databaseFileMapper.Map(dataFile, this);
