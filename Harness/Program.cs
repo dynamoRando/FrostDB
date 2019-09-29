@@ -8,13 +8,14 @@ namespace Harness
 
         static void Main(string[] args)
         {
-            var app = new App();
-
             Console.WriteLine("FrostDB Harness");
+
+            var app = new App();
+            app.PromptForMode();
 
             while (app.Running)
             {
-                app.PromptForMode();
+                app.Prompt("noting to do. Exit?");
             }
         }
     }

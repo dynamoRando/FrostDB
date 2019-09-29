@@ -46,12 +46,20 @@ namespace Harness
                     _process = new FrostDB.DataStore.Store();
                     break;
             }
-        }
-        #endregion
 
-        #region Private Methods
-        private string Prompt()
+            OutputProcessInfo();
+
+        }
+
+        public void OutputProcessInfo()
         {
+            Console.WriteLine($"Process Named: {_process.Name} with Id: {_process.Id}");
+            Console.WriteLine($"Process IP Address: {_process.Configuration.Address} with Port: {_process.Configuration.ServerPort}");
+        }
+
+        public string Prompt(string message)
+        {
+            Console.WriteLine(message);
             Console.Write("==>");
             _consoleLine = Console.ReadLine();
 
@@ -64,6 +72,22 @@ namespace Harness
             return _consoleLine;
         }
 
+        public string Prompt()
+        {
+            Console.Write("==>");
+            _consoleLine = Console.ReadLine();
+
+            if (_consoleLine == "exit")
+            {
+                Write("Quitting...");
+                _running = false;
+            }
+
+            return _consoleLine;
+        }
+        #endregion
+
+        #region Private Methods
         private void Write(string value)
         {
             Console.Write(value);

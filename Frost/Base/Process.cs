@@ -13,6 +13,7 @@ namespace FrostDB.Base
         private ICommService _commService;
         private IDatabaseManager _databaseManager;
         private IProcessInfo _info;
+        private IProcessConfigurator _configurator;
         #endregion
 
         #region Public Properties
@@ -30,8 +31,7 @@ namespace FrostDB.Base
         #region Constructors
         public Process(ProcessType type)
         {
-            NewInternalFields();
-            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
+            NewInternalFields(type);
             Configure();
         }
 
@@ -60,15 +60,16 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private void NewInternalFields()
+        private void NewInternalFields(ProcessType type)
         {
             _databaseManager = new DatabaseManager();
+            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
+            _configurator = new ProcessConfigurator(_info);
         }
 
         private void Configure()
-        {
-            var configurator = new ProcessConfigurator(_info);
-            Configuration = configurator.GetConfiguration();
+        {   
+            Configuration = _configurator.GetConfiguration();
         }
         #endregion
 

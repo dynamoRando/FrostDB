@@ -6,5 +6,6 @@ namespace FrostDB.Interface
 {
     public interface IProcessConfigurator
     {
+        IProcessConfiguration GetConfiguration();
     }
 }
