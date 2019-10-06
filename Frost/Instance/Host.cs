@@ -19,7 +19,7 @@ namespace FrostDB.Instance
         #endregion
 
         #region Constructors
-        public Host() : base(ProcessType.Host)
+        public Host() : base()
         {
         }
         #endregion

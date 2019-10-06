@@ -11,22 +11,19 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private OSPlatform _operatingSystem;
-        private ProcessType _processType;
         #endregion
 
         #region Public Properties
         public OSPlatform OS => _operatingSystem;
-        public ProcessType Type => _processType;
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public ProcessInfo(OSPlatform os, ProcessType type)
+        public ProcessInfo(OSPlatform os)
         {
             _operatingSystem = os;
-            _processType = type;
         }
         #endregion
 

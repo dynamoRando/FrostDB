@@ -8,7 +8,7 @@ namespace FrostDB.DataStore
 {
     public class Store : Process
     {
-        public Store() : base(ProcessType.Store)
+        public Store() : base()
         {
         }
     }

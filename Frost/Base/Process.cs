@@ -22,16 +22,15 @@ namespace FrostDB.Base
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
-        public ProcessType ProcessType => _info.Type;
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Process(ProcessType type)
+        public Process()
         {
-            _info = new ProcessInfo(OperatingSystem.GetOSPlatform(), type);
+            _info = new ProcessInfo(OperatingSystem.GetOSPlatform());
             _configurator = new ProcessConfigurator(_info);
             Configuration = _configurator.GetConfiguration();
             _databaseManager = new DatabaseManager(Configuration.DatabaseFolder, Configuration.DatabaseExtension);

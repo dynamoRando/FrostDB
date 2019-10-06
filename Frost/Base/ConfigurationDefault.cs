@@ -18,6 +18,9 @@ namespace FrostDB.Base
         private string _name;
         private string _ipAddress;
         private int _portNumber;
+        private string _appPath;
+        private string _contractFolder;
+        private string _contractext;
         #endregion
 
         #region Public Properties
@@ -27,7 +30,9 @@ namespace FrostDB.Base
         public string Name => _name;
         public string IPAddress => _ipAddress;
         public int PortNumber => _portNumber;
-
+        public string AppPath => _appPath;
+        public string ContractFolder => _contractFolder;
+        public string ContractExtension => _contractext;
         #endregion
 
         #region Events
@@ -37,6 +42,7 @@ namespace FrostDB.Base
         public ConfigurationDefault(IProcessInfo info)
         {
             _info = info;
+            _appPath = Directory.GetCurrentDirectory();
             SetDefaults();
         }
         #endregion
@@ -51,23 +57,16 @@ namespace FrostDB.Base
         #region Private Methods
         private void SetDefaults()
         {
-            if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Host)
+            if (_info.OS == OSPlatform.Windows)
             {
-                _configFileLocation = @"C:\FrostDB\config\frost.config";
-                _dbFolder = @"C:\FrostDB\dbs\";
+                _configFileLocation = _appPath + "frost.config";
+                _dbFolder = _appPath + @"dbs\";
+                _contractFolder = _appPath + @"contracts\";
                 _dbext = ".frost";
+                _contractext = ".frostContract";
                 _name = "FrostHost";
                 _portNumber = 516;
                 _ipAddress = "127.0.0.1";
-            }
-            else if (_info.OS == OSPlatform.Windows && _info.Type == ProcessType.Store)
-            {
-                _configFileLocation = @"C:\FrostDB\partner\config\frostStore.config";
-                _dbFolder = @"C:\FrostDB\partner\dbs\";
-                _dbext = ".frostPart";
-                _name = "FrostStore";
-                _ipAddress = "127.0.0.1";
-                _portNumber = 517;
             }
             else
             {

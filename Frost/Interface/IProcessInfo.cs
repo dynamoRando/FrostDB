@@ -9,6 +9,5 @@ namespace FrostDB.Interface
     public interface IProcessInfo
     {
         OSPlatform OS { get; }
-        ProcessType Type { get; }
     }
 }
