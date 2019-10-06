@@ -44,6 +44,7 @@ namespace FrostDB.Base
             _info = info;
             _appPath = Directory.GetCurrentDirectory();
             SetDefaults();
+            CreateDirectories();
         }
         #endregion
 
@@ -59,9 +60,9 @@ namespace FrostDB.Base
         {
             if (_info.OS == OSPlatform.Windows)
             {
-                _configFileLocation = _appPath + "frost.config";
-                _dbFolder = _appPath + @"dbs\";
-                _contractFolder = _appPath + @"contracts\";
+                _configFileLocation = _appPath + @"\frost.config";
+                _dbFolder = _appPath + @"\dbs\";
+                _contractFolder = _appPath + @"\contracts\";
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
@@ -72,6 +73,12 @@ namespace FrostDB.Base
             {
                 throw new NotImplementedException("default not set for OS and process type");
             }
+        }
+
+        private void CreateDirectories()
+        {
+            Directory.CreateDirectory(_dbFolder);
+            Directory.CreateDirectory(_contractFolder);
         }
         #endregion
     }
