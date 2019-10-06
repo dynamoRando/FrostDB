@@ -52,7 +52,7 @@ namespace Harness
 
         public void PromptForMode()
         {
-            Write("Specify which mode to run: (h)ost or (s)store, (exit) to quit");
+            Write("Specify which mode to run: (h)ost, (exit) to quit");
 
             var totalDBs = 0;
 
@@ -64,12 +64,8 @@ namespace Harness
                     totalDBs = _process.LoadDatabases();
                     _mode = new HostMode(this);
                     break;
-                case "s":
-                    Write("Starting app in Store mode...");
-                    _process = new FrostDB.DataStore.Store();
-                    totalDBs = _process.LoadDatabases();
-                    var m = new StoreMode(this);
-                    _mode = m;
+                default:
+                    Write("Unknown mode");
                     break;
             }
 

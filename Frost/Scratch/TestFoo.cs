@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FrostDB.Instance;
-using FrostDB.DataStore;
 using System.Text;
 using FrostDB.Base;
 using FrostDB.Instance.Database;
@@ -34,7 +33,6 @@ namespace FrostDB.Scratch
             hostDatabase.AddTable(coopTable);
             hostDatabase.AddTable(regularTable);
 
-            var store = new Store();
         }
     }
 }
