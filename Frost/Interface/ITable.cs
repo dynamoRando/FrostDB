@@ -8,14 +8,14 @@ namespace FrostDB.Interface
         IDBObject where TColumn : IColumn
         where YRow : IRow
     {
-        public List<TColumn> Columns { get; }
-        public List<YRow> Rows { get; }
-        public bool HasRow(YRow row);
-        public bool HasRow(Guid guid);
-        public YRow GetNewRow();
-        public void AddRow(YRow row);
-        public void DeleteRow(YRow row);
-        public void UpdateRow(YRow row);
+        List<TColumn> Columns { get; }
+        bool HasRow(YRow row);
+        bool HasRow(Guid guid);
+        YRow GetNewRow();
+        void AddRow(YRow row);
+        void DeleteRow(YRow row);
+        void UpdateRow(YRow row);
+        List<YRow> GetRows(string condition);
     }
 }
 /*

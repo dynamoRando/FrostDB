@@ -17,7 +17,6 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<Column> Columns => _columns;
-        public List<Row> Rows => _rows;
         public Guid? Id => _id;
         public string Name => _name;
 
@@ -64,6 +63,11 @@ namespace FrostDB.Base
         }
 
         public void UpdateRow(Row row)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Row> GetRows(string condition)
         {
             throw new NotImplementedException();
         }

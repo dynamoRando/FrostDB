@@ -45,15 +45,11 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public void AddTable(ITable<Column, RemoteRow> table)
-        {
-            throw new NotImplementedException();
-        }
-
         public void AddTable(ITable<Column, IRow> table)
         {
             throw new NotImplementedException();
         }
+
         #endregion
 
         #region Private Methods

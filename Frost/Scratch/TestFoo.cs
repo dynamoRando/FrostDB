@@ -28,6 +28,8 @@ namespace FrostDB.Scratch
             regularDB.AddTable(virtualTable);
             regularDB.AddTable(regularTable);
 
+            var remoteRow = virtualTable.GetNewRow();
+            var row = virtualTable.GetRow(new Row());
         }
     }
 }

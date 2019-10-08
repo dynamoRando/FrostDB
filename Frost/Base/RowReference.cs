@@ -5,12 +5,9 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class RemoteRow : IRow
+    public class RowReference 
     {
         public Guid Id => throw new NotImplementedException();
-
-        public List<IColumn> Columns => throw new NotImplementedException();
-
-        public List<IRowValue> Values => throw new NotImplementedException();
+        public Location Location => throw new NotImplementedException();
     }
 }
