@@ -9,6 +9,7 @@ namespace FrostDB.Interface
         string ConfigurationFileLocation { get; }
         string DatabaseFolder { get; }
         string DatabaseExtension { get; }
+        string PartialDatabaseExtension { get; }
         string ContractFolder { get; }
         string Name { get; }
         string IPAddress { get; }

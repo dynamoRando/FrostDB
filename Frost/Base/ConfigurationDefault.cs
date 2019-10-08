@@ -21,6 +21,7 @@ namespace FrostDB.Base
         private string _appPath;
         private string _contractFolder;
         private string _contractext;
+        private string _partialDBextension;
         #endregion
 
         #region Public Properties
@@ -33,6 +34,7 @@ namespace FrostDB.Base
         public string AppPath => _appPath;
         public string ContractFolder => _contractFolder;
         public string ContractExtension => _contractext;
+        public string PartialDatabaseExtension => _partialDBextension;
         #endregion
 
         #region Events
@@ -68,10 +70,11 @@ namespace FrostDB.Base
                 _name = "FrostHost";
                 _portNumber = 516;
                 _ipAddress = "127.0.0.1";
+                _partialDBextension = ".frostPart";
             }
             else
             {
-                throw new NotImplementedException("default not set for OS and process type");
+                throw new NotImplementedException("default not set for OS");
             }
         }
 

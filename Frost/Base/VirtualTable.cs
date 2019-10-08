@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Instance
+namespace FrostDB.Base
 {
-    public class CooperativeTable : Table
+    public class VirtualTable : Table
     {
         #region Private Fields
         private Base.Database _database;
@@ -19,7 +19,7 @@ namespace FrostDB.Instance
         #endregion
 
         #region Constructors
-        public CooperativeTable(string tableName, List<Column> columns, Base.Database database) : base(tableName, columns, database)
+        public VirtualTable(string tableName, List<Column> columns, Base.Database database) : base(tableName, columns, database)
         {
             _database = database;
         }

@@ -20,6 +20,7 @@ namespace FrostDB.Base
         public int ServerPort { get; set; }
         public string Name { get; set; }
         public Guid? Id { get; set; }
+        public string PartialDatabaseExtension { get; set; }
         #endregion
 
         #region Events
@@ -35,7 +36,7 @@ namespace FrostDB.Base
         #region Public Methods
         public ILocation GetLocation()
         {
-            return new Location(Id, Address, ServerPort, Name) ;
+            return new Location(Id, Address, ServerPort, Name);
         }
 
         #endregion

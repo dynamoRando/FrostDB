@@ -7,11 +7,12 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Process : IProcess<Database>
+    public class Process : IProcess<Database, PartialDatabase>
     {
         #region Private Fields
         private ICommService _commService;
         private IDatabaseManager<Database> _databaseManager;
+        private IDatabaseManager<PartialDatabase> _partialDatabaseManager;
         private IProcessInfo _info;
         private IProcessConfigurator<Configuration> _configurator;
         #endregion
@@ -19,6 +20,7 @@ namespace FrostDB.Base
         #region Public Properties
         public List<Database> Databases => _databaseManager.Databases;
         public IDatabaseManager<Database> DatabaseManager => _databaseManager;
+        public IDatabaseManager<PartialDatabase> PartialDatabaseManager => _partialDatabaseManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
@@ -33,7 +35,10 @@ namespace FrostDB.Base
             _info = new ProcessInfo(OperatingSystem.GetOSPlatform());
             _configurator = new ProcessConfigurator(_info);
             Configuration = _configurator.GetConfiguration();
-            _databaseManager = new DatabaseManager(Configuration.DatabaseFolder, Configuration.DatabaseExtension);
+            _databaseManager = new DatabaseManager(Configuration.DatabaseFolder, 
+                Configuration.DatabaseExtension);
+            _partialDatabaseManager = new PartialDatabaseManager(Configuration.DatabaseFolder, 
+                Configuration.PartialDatabaseExtension);
         }
 
         public virtual void AddDatabase(string databaseName)
@@ -64,13 +69,17 @@ namespace FrostDB.Base
         {
             return _databaseManager.GetDatabase(databaseName);
         }
+
+        public virtual PartialDatabase GetPartialDatabase(string databaseName)
+        {
+            return _partialDatabaseManager.GetDatabase(databaseName);
+        }
         #endregion
 
         #region Public Methods
         #endregion
 
         #region Private Methods
-
         #endregion
 
     }

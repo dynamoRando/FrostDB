@@ -12,7 +12,7 @@ namespace FrostDB.Interface
         bool HasDatabase(Guid guid);
         T GetDatabase(string databaseName);
         T GetDatabase(Guid guid);
-        void AddDatabase(Database database);
+        void AddDatabase(T database);
         void RemoveDatabase(Guid guid);
         void RemoveDatabase(string databaseName);
         int LoadDatabases(string databaseFolderLocation);

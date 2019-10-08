@@ -52,15 +52,15 @@ namespace Harness
 
         public void PromptForMode()
         {
-            Write("Specify which mode to run: (h)ost, (exit) to quit");
+            Write("Specify action: (s)tart, (exit) to quit");
 
             var totalDBs = 0;
 
             switch (Prompt())
             {
-                case "h":
-                    Write("Starting app in Host mode...");
-                    _process = new FrostDB.Instance.Host();
+                case "s":
+                    Write("Starting app...");
+                    _process = new FrostDB.Base.Process();
                     totalDBs = _process.LoadDatabases();
                     _mode = new HostMode(this);
                     break;

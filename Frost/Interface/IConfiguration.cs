@@ -9,6 +9,7 @@ namespace FrostDB.Interface
         string FileLocation { get; set; }
         string DatabaseFolder { get; set; }
         string DatabaseExtension { get; set; }
+        string PartialDatabaseExtension { get; set; }
         ILocation GetLocation();
     }
 }

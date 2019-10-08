@@ -1,10 +1,5 @@
-﻿using System;
+﻿using FrostDB.Base;
 using System.Collections.Generic;
-using FrostDB.Instance;
-using System.Text;
-using FrostDB.Base;
-using FrostDB.Instance.Database;
-using FrostDB.Interface;
 
 namespace FrostDB.Scratch
 {
@@ -12,26 +7,26 @@ namespace FrostDB.Scratch
     {
         public void Foo()
         {
-            var host = new Host();
+            var process = new Process();
 
             var testName1 = "foo";
             var testName2 = "bar";
 
-            host.AddDatabase(testName1);
-            host.AddDatabase(testName2);
+            process.AddDatabase(testName1);
+            process.AddDatabase(testName2);
 
-            var hostDatabase = host.GetDatabase(testName1);
+            var regularDB = process.GetDatabase(testName1);
             
             var columns = new List<Column>();
 
             // if ITable had List<IColumn> instead of List<Column>, we would've had to do this --
             //var regularTable = new Table("test", columns.ConvertAll(t => (IColumn)t));
             
-            var regularTable = new Table("test", columns, hostDatabase);
-            var coopTable = new CooperativeTable("test", columns, hostDatabase);
+            var regularTable = new Table("test", columns, regularDB);
+            var virtualTable = new VirtualTable("test", columns, regularDB);
 
-            hostDatabase.AddTable(coopTable);
-            hostDatabase.AddTable(regularTable);
+            regularDB.AddTable(virtualTable);
+            regularDB.AddTable(regularTable);
 
         }
     }
