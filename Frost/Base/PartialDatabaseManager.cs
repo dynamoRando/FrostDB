@@ -7,7 +7,6 @@ namespace FrostDB.Base
 {
     public class PartialDatabaseManager : IDatabaseManager<PartialDatabase>
     {
-
         #region Private Fields
         private string _databaseFolder;
         private string _databaseExtension;
