@@ -72,6 +72,18 @@ namespace FrostDB.Base
                 _ipAddress = "127.0.0.1";
                 _partialDBextension = ".frostPart";
             }
+            else if (_info.OS == OSPlatform.Linux)
+            {
+                _configFileLocation = _appPath + @"\frost.config";
+                _dbFolder = _appPath + @"\dbs\";
+                _contractFolder = _appPath + @"\contracts\";
+                _dbext = ".frost";
+                _contractext = ".frostContract";
+                _name = "FrostHost";
+                _portNumber = 516;
+                _ipAddress = "127.0.0.1";
+                _partialDBextension = ".frostPart";
+            }
             else
             {
                 throw new NotImplementedException("default not set for OS");
