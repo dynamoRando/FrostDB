@@ -49,6 +49,7 @@ namespace FrostDB.Base
                 config.DatabaseExtension = _default.DatabaseExtension;
                 config.Id = Guid.NewGuid();
                 config.Name = _default.Name;
+                config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
 
                 SaveConfiguration(config);
             }
