@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Table : ITable<Column>
+    public class Table : ITable<Column, Row>
     {
         #region Private Fields
         private List<Column> _columns;
-        private List<IRow> _rows;
+        private List<Row> _rows;
         private Guid? _id;
         private string _name;
         private Database _database;
@@ -17,9 +17,10 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<Column> Columns => _columns;
-        public List<IRow> Rows => _rows;
+        public List<Row> Rows => _rows;
         public Guid? Id => _id;
         public string Name => _name;
+
         #endregion
 
         #region Events
@@ -30,29 +31,29 @@ namespace FrostDB.Base
         {
             _name = name;
             _id = Guid.NewGuid();
-            _rows = new List<IRow>();
+            _rows = new List<Row>();
             _columns = columns;
             _database = database;
         }
         #endregion
 
         #region Public Methods
-        public void AddRow(IRow row)
+        public void AddRow(Row row)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteRow(IRow row)
+        public void DeleteRow(Row row)
         {
             throw new NotImplementedException();
         }
 
-        public IRow GetNewRow()
+        public Row GetNewRow()
         {
             throw new NotImplementedException();
         }
 
-        public bool HasRow(IRow row)
+        public bool HasRow(Row row)
         {
             throw new NotImplementedException();
         }
@@ -62,7 +63,7 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public void UpdateRow(IRow row)
+        public void UpdateRow(Row row)
         {
             throw new NotImplementedException();
         }

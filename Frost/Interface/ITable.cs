@@ -4,16 +4,18 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface ITable<TColumn> : IFrostObjectGet, IDBObject where TColumn : IColumn 
+    public interface ITable<TColumn, YRow> : IFrostObjectGet, 
+        IDBObject where TColumn : IColumn
+        where YRow : IRow
     {
         public List<TColumn> Columns { get; }
-        public List<IRow> Rows { get; }
-        public bool HasRow(IRow row);
+        public List<YRow> Rows { get; }
+        public bool HasRow(YRow row);
         public bool HasRow(Guid guid);
-        public IRow GetNewRow();
-        public void AddRow(IRow row);
-        public void DeleteRow(IRow row);
-        public void UpdateRow(IRow row);
+        public YRow GetNewRow();
+        public void AddRow(YRow row);
+        public void DeleteRow(YRow row);
+        public void UpdateRow(YRow row);
     }
 }
 /*

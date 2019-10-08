@@ -7,8 +7,8 @@ namespace FrostDB.Interface
 {
     public interface IDatabase : IFrostObjectGet, IDBObject
     {
-        public List<ITable<Column>> Tables { get; }
+        public List<ITable<Column, IRow>> Tables { get; }
         public IContract Contract { get; }
-        public void AddTable(ITable<Column> table);
+        public void AddTable(ITable<Column, IRow> table);
     }
 }

@@ -9,7 +9,7 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private string _name;
-        private List<ITable<Column>> _tables;
+        private List<ITable<Column, IRow>> _tables;
         private IContract _contract;
         private IDatabaseManager<Database> _manager;
         #endregion
@@ -17,7 +17,7 @@ namespace FrostDB.Base
         #region Public Properties
         public Guid? Id { get; }
         public string Name { get { return _name; } }
-        public List<ITable<Column>> Tables { get { return _tables; } }
+        public List<ITable<Column, IRow>> Tables { get { return _tables; } }
         public IContract Contract { get { return _contract; } }
         public IDatabaseManager<Database> Manager { get { return _manager; } }
         #endregion
@@ -30,7 +30,7 @@ namespace FrostDB.Base
         {
             Id = Guid.NewGuid();
             _name = name;
-            _tables = new List<ITable<Column>>();
+            _tables = new List<ITable<Column, IRow>>();
             _manager = manager;
         }
         public Database(string name, DatabaseManager manager, Guid id) : this(name, manager)
@@ -40,7 +40,17 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
-        public void AddTable(ITable<Column> table)
+        public void AddTable(ITable<Column, Row> table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddTable(ITable<Column, RemoteRow> table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddTable(ITable<Column, IRow> table)
         {
             throw new NotImplementedException();
         }
