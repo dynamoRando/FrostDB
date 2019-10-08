@@ -74,9 +74,9 @@ namespace FrostDB.Base
             }
             else if (_info.OS == OSPlatform.Linux)
             {
-                _configFileLocation = _appPath + @"\frost.config";
-                _dbFolder = _appPath + @"\dbs\";
-                _contractFolder = _appPath + @"\contracts\";
+                _configFileLocation = _appPath + @"/frost.config";
+                _dbFolder = _appPath + @"/dbs/";
+                _contractFolder = _appPath + @"/contracts/";
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
