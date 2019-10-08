@@ -6,10 +6,10 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class VirtualTable : ITable<Column, RemoteRow>
+    public class VirtualTable : ITable<Column, RemoteRow>, IVirtualTable
     {
         #region Private Fields
-        private Base.Database _database;
+        private Database _database;
         #endregion
 
         #region Public Properties
@@ -23,7 +23,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public VirtualTable(string tableName, List<Column> columns, Base.Database database)
+        public VirtualTable(string tableName, List<Column> columns, Database database)
         {
             _database = database;
         }
@@ -72,7 +72,6 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-
         #endregion
 
 
