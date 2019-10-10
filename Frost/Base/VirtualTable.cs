@@ -6,6 +6,7 @@ using System.Text;
 using FrostDB.Base.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace FrostDB.Base
 {
@@ -19,7 +20,7 @@ namespace FrostDB.Base
         public List<Column> Columns => throw new NotImplementedException();
         public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
-        public List<RowReference> Rows { get; }
+        public ConcurrentBag<RowReference> Rows { get; }
         #endregion
 
         #region Events
@@ -29,7 +30,7 @@ namespace FrostDB.Base
         public VirtualTable(string tableName, List<Column> columns, Database database)
         {
             _database = database;
-            Rows = new List<RowReference>();
+            Rows = new ConcurrentBag<RowReference>();
         }
         #endregion
 
@@ -96,14 +97,14 @@ namespace FrostDB.Base
         #region Private Methods
         private List<Row> GetRows()
         {
-            List<Row> results = new List<Row>();
+            var rowData = new ConcurrentBag<Row>();
 
             Parallel.ForEach(Rows, (reference) =>
             {
-                results.Add(reference.GetData());
+                Task.Run(() => rowData.Add(reference.GetData()));
             });
 
-            return results;
+            return rowData.ToList();
         }
         #endregion
 
