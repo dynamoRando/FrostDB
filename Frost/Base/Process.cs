@@ -38,7 +38,8 @@ namespace FrostDB.Base
             
             Configuration = _configurator.GetConfiguration();
 
-            _databaseManager = new DatabaseManager(new DatabaseFileMapper(),
+            _databaseManager = new DatabaseManager(
+                new DatabaseFileMapper(),
                 Configuration.DatabaseFolder,
                 Configuration.DatabaseExtension);
 
