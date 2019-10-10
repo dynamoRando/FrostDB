@@ -11,16 +11,12 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private ICommService _commService;
-        private DataManager<Database> _databaseManager;
-        private DataManager<PartialDatabase> _partialDatabaseManager;
-        private IProcessInfo _info;
-        private IProcessConfigurator<Configuration> _configurator;
         #endregion
 
         #region Public Properties
-        public List<Database> Databases => _databaseManager.Databases;
-        public DataManager<Database> DatabaseManager => _databaseManager;
-        public DataManager<PartialDatabase> PartialDatabaseManager => _partialDatabaseManager;
+        public List<Database> Databases => DatabaseManager.Databases;
+        public DataManager<Database> DatabaseManager { get; }
+        public DataManager<PartialDatabase> PartialDatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
@@ -32,18 +28,14 @@ namespace FrostDB.Base
         #region Constructors
         public Process()
         {
-            _info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+            SetConfiguration();
 
-            _configurator = new ProcessConfigurator(_info);
-            
-            Configuration = _configurator.GetConfiguration();
-
-            _databaseManager = new DatabaseManager(
+            DatabaseManager = new DatabaseManager(
                 new DatabaseFileMapper(),
                 Configuration.DatabaseFolder,
                 Configuration.DatabaseExtension);
 
-            _partialDatabaseManager = new PartialDatabaseManager(
+            PartialDatabaseManager = new PartialDatabaseManager(
                 new PartialDatabaseFileMapper(),
                 Configuration.DatabaseFolder,
                 Configuration.PartialDatabaseExtension);
@@ -51,43 +43,43 @@ namespace FrostDB.Base
 
         public virtual void AddDatabase(string databaseName)
         {
-            _databaseManager.AddDatabase(
-                new Database(databaseName, _databaseManager));
+            DatabaseManager.AddDatabase(
+                new Database(databaseName, DatabaseManager));
         }
 
         public virtual void AddPartialDatabase(string databaseName)
         {
-            _partialDatabaseManager.AddDatabase(
-                new PartialDatabase(databaseName, _partialDatabaseManager));
+            PartialDatabaseManager.AddDatabase(
+                new PartialDatabase(databaseName, PartialDatabaseManager));
         }
 
         public virtual void RemoveDatabase(Guid guid)
         {
-            _databaseManager.RemoveDatabase(guid);
+            DatabaseManager.RemoveDatabase(guid);
         }
 
         public virtual void RemoveDatabase(string databaseName)
         {
-            _databaseManager.RemoveDatabase(databaseName);
+            DatabaseManager.RemoveDatabase(databaseName);
         }
 
         public virtual int LoadDatabases()
         {
-            return _databaseManager.LoadDatabases(Configuration.DatabaseFolder);
+            return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder);
         }
 
         public virtual IDatabase GetDatabase(Guid id)
         {
-            return _databaseManager.GetDatabase(id);
+            return DatabaseManager.GetDatabase(id);
         }
         public virtual Database GetDatabase(string databaseName)
         {
-            return _databaseManager.GetDatabase(databaseName);
+            return DatabaseManager.GetDatabase(databaseName);
         }
 
         public virtual PartialDatabase GetPartialDatabase(string databaseName)
         {
-            return _partialDatabaseManager.GetDatabase(databaseName);
+            return PartialDatabaseManager.GetDatabase(databaseName);
         }
         #endregion
 
@@ -95,6 +87,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
+        private void SetConfiguration()
+        {
+            var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+            var configurator = new ProcessConfigurator(info);
+
+            Configuration = configurator.GetConfiguration();
+        }
         #endregion
     }
 }

@@ -42,28 +42,33 @@ namespace FrostDB.Base
             }
             else
             {
-                config.DatabaseFolder = _default.DatabaseFolder;
-                config.FileLocation = _default.ConfigurationFileLocation;
-                config.Address = _default.IPAddress;
-                config.ServerPort = _default.PortNumber;
-                config.DatabaseExtension = _default.DatabaseExtension;
-                config.Id = Guid.NewGuid();
-                config.Name = _default.Name;
-                config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
-                config.ContractExtension = _default.ContractExtension;
-                config.ContractFolder = _default.ContractFolder;
-                
+                SetDefaultValues(config);
                 SaveConfiguration(config);
             }
 
             return config;
         }
+
         #endregion
 
         #region Private Methods
         private void SaveConfiguration(Configuration configuration)
         {
             _configManager.SaveConfiguration(configuration);
+        }
+
+        private void SetDefaultValues(Configuration config)
+        {
+            config.DatabaseFolder = _default.DatabaseFolder;
+            config.FileLocation = _default.ConfigurationFileLocation;
+            config.Address = _default.IPAddress;
+            config.ServerPort = _default.PortNumber;
+            config.DatabaseExtension = _default.DatabaseExtension;
+            config.Id = Guid.NewGuid();
+            config.Name = _default.Name;
+            config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
+            config.ContractExtension = _default.ContractExtension;
+            config.ContractFolder = _default.ContractFolder;
         }
         #endregion
     }
