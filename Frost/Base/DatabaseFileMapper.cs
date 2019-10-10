@@ -5,9 +5,9 @@ using FrostDB.Interface;
 
 namespace FrostDB.Base
 {
-    public class DatabaseFileMapper : IDatabaseFileMapper<Database, DataFile, DatabaseManager>
+    public class DatabaseFileMapper : IDatabaseFileMapper<Database, DataFile, DataManager<Database>>
     {
-        public Database Map(DataFile file, DatabaseManager manager)
+        public Database Map(DataFile file, DataManager<Database> manager)
         {
             var database = new Database(file.Name, manager, file.Id.Value);
 

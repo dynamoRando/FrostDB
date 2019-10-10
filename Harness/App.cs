@@ -1,11 +1,7 @@
 ﻿using FrostDB.Base;
 using Harness.Base;
-using Harness.Host;
 using Harness.Interface;
-using Harness.Store;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 
 namespace Harness
@@ -62,7 +58,7 @@ namespace Harness
                     Write("Starting app...");
                     _process = new FrostDB.Base.Process();
                     totalDBs = _process.LoadDatabases();
-                    _mode = new HostMode(this);
+                    _mode = new Mode(this);
                     break;
                 default:
                     Write("Unknown mode");

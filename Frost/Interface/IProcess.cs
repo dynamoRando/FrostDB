@@ -9,6 +9,7 @@ namespace FrostDB.Interface
     {
         List<T> Databases { get; }
         void AddDatabase(string databaseName);
+        void AddPartialDatabase(string databaseName);
         void RemoveDatabase(Guid guid);
         void RemoveDatabase(string databaseName);
         int LoadDatabases();

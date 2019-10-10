@@ -29,5 +29,21 @@ namespace Harness.Base
 
             App.Write($"Db named {dbName} created");
         }
+
+        public void CreateNewPartialDb()
+        {
+            string result = string.Empty;
+            string dbName = string.Empty;
+
+            while (result != "y")
+            {
+                dbName = App.Prompt("enter partial db name:");
+                result = App.Prompt($"partial db will be named {dbName} - (y) to confirm, otherwise no");
+            }
+
+            App.Process.AddPartialDatabase(dbName);
+
+            App.Write($"Db named {dbName} created");
+        }
     }
 }

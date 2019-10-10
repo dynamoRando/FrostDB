@@ -8,7 +8,7 @@ namespace FrostDB.Interface
     public interface IDatabaseFileMapper<TDatabase, YFile, ZManager> 
         where TDatabase : IDatabase 
         where YFile : IDataFile 
-        where ZManager : IDatabaseManager<Database>
+        where ZManager : DataManager<TDatabase>
     {
         TDatabase Map(YFile file, ZManager manager);
         YFile Map(TDatabase database);

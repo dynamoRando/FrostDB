@@ -8,6 +8,8 @@ namespace FrostDB.Base
     public class PartialDatabase : IDatabase
     {
         #region Private Fields
+        private DataManager<PartialDatabase> _manager;
+        private string _name;
         #endregion
 
         #region Public Properties
@@ -15,12 +17,18 @@ namespace FrostDB.Base
         public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
         List<ITable<Column, IRow>> IDatabase.Tables => throw new NotImplementedException();
+        public DataManager<PartialDatabase> Manager { get { return _manager; } }
         #endregion
 
         #region Events
         #endregion
 
-        #region Constructors
+        #region 
+        public PartialDatabase(string databaseName, DataManager<PartialDatabase> manager)
+        {
+            _name = databaseName;
+            _manager = manager;
+        }
         #endregion
 
         #region Public Methods

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,5 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Frost\FrostDB.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /y C:\Projects\Programming\FrostDB_TestHarness\netcoreapp3.0\*.dll c:\temp\Frost\*&#xD;&#xA;copy /y C:\Projects\Programming\FrostDB_TestHarness\netcoreapp3.0\*.exe c:\temp\Frost\*&#xD;&#xA;copy /y C:\Projects\Programming\FrostDB_TestHarness\netcoreapp3.0\*.pdb c:\temp\Frost\*&#xD;&#xA;copy /y C:\Projects\Programming\FrostDB_TestHarness\netcoreapp3.0\*.json c:\temp\Frost\*" />
+  </Target>
 
 </Project>

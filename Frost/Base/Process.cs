@@ -11,16 +11,16 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private ICommService _commService;
-        private IDatabaseManager<Database> _databaseManager;
-        private IDatabaseManager<PartialDatabase> _partialDatabaseManager;
+        private DataManager<Database> _databaseManager;
+        private DataManager<PartialDatabase> _partialDatabaseManager;
         private IProcessInfo _info;
         private IProcessConfigurator<Configuration> _configurator;
         #endregion
 
         #region Public Properties
         public List<Database> Databases => _databaseManager.Databases;
-        public IDatabaseManager<Database> DatabaseManager => _databaseManager;
-        public IDatabaseManager<PartialDatabase> PartialDatabaseManager => _partialDatabaseManager;
+        public DataManager<Database> DatabaseManager => _databaseManager;
+        public DataManager<PartialDatabase> PartialDatabaseManager => _partialDatabaseManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
@@ -33,17 +33,31 @@ namespace FrostDB.Base
         public Process()
         {
             _info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+
             _configurator = new ProcessConfigurator(_info);
+            
             Configuration = _configurator.GetConfiguration();
-            _databaseManager = new DatabaseManager(Configuration.DatabaseFolder, 
+
+            _databaseManager = new DatabaseManager(new DatabaseFileMapper(),
+                Configuration.DatabaseFolder,
                 Configuration.DatabaseExtension);
-            _partialDatabaseManager = new PartialDatabaseManager(Configuration.DatabaseFolder, 
+
+            _partialDatabaseManager = new PartialDatabaseManager(
+                new PartialDatabaseFileMapper(),
+                Configuration.DatabaseFolder,
                 Configuration.PartialDatabaseExtension);
         }
 
         public virtual void AddDatabase(string databaseName)
         {
-            _databaseManager.AddDatabase(new Database(databaseName, _databaseManager));
+            _databaseManager.AddDatabase(
+                new Database(databaseName, _databaseManager));
+        }
+
+        public virtual void AddPartialDatabase(string databaseName)
+        {
+            _partialDatabaseManager.AddDatabase(
+                new PartialDatabase(databaseName, _partialDatabaseManager));
         }
 
         public virtual void RemoveDatabase(Guid guid)
@@ -81,6 +95,5 @@ namespace FrostDB.Base
 
         #region Private Methods
         #endregion
-
     }
 }

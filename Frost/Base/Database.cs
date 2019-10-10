@@ -11,7 +11,7 @@ namespace FrostDB.Base
         private string _name;
         private List<ITable<Column, IRow>> _tables;
         private IContract _contract;
-        private IDatabaseManager<Database> _manager;
+        private DataManager<Database> _manager;
         #endregion
 
         #region Public Properties
@@ -19,21 +19,21 @@ namespace FrostDB.Base
         public string Name { get { return _name; } }
         public List<ITable<Column, IRow>> Tables { get { return _tables; } }
         public IContract Contract { get { return _contract; } }
-        public IDatabaseManager<Database> Manager { get { return _manager; } }
+        public DataManager<Database> Manager { get { return _manager; } }
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public Database(string name, IDatabaseManager<Database> manager)
+        public Database(string name, DataManager<Database> manager)
         {
             Id = Guid.NewGuid();
             _name = name;
             _tables = new List<ITable<Column, IRow>>();
             _manager = manager;
         }
-        public Database(string name, DatabaseManager manager, Guid id) : this(name, manager)
+        public Database(string name, DataManager<Database> manager, Guid id) : this(name, manager)
         {
             Id = id;
         }
