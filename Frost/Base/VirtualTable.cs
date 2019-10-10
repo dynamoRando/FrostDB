@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using FrostDB.Base.Extensions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FrostDB.Base
 {
@@ -12,14 +13,13 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private Database _database;
-        private List<RowReference> _rows;
         #endregion
 
         #region Public Properties
         public List<Column> Columns => throw new NotImplementedException();
         public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
-        public List<RowReference> Rows => _rows;
+        public List<RowReference> Rows { get; }
         #endregion
 
         #region Events
@@ -29,7 +29,7 @@ namespace FrostDB.Base
         public VirtualTable(string tableName, List<Column> columns, Database database)
         {
             _database = database;
-            _rows = new List<RowReference>();
+            Rows = new List<RowReference>();
         }
         #endregion
 
@@ -98,9 +98,9 @@ namespace FrostDB.Base
         {
             List<Row> results = new List<Row>();
 
-            _rows.ForEach(r =>
+            Parallel.ForEach(Rows, (reference) =>
             {
-                results.Add(r.Fetch());
+                results.Add(reference.GetData());
             });
 
             return results;
