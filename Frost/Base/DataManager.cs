@@ -37,7 +37,6 @@ namespace FrostDB.Base
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = mapper;
 
-
             _databaseFolder = databaseFolder;
             _databaseExtension = databaseExtension;
         }
