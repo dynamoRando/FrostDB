@@ -132,7 +132,5 @@ namespace Harness
 
         #region Private Methods
         #endregion
-
-
     }
 }
