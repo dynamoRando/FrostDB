@@ -11,7 +11,6 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
-        private ColumnMode _colummMode;
         #endregion
 
         #region Public Properties
@@ -117,14 +116,14 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), PartialDatabase);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
                 }
 
                 if (PartialDatabase is null)
                 {
-                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), Database);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }   
