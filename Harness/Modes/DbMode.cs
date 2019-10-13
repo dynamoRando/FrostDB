@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using FrostDB.Base;
+using Harness.Interface;
 
 namespace Harness.Modes
 {
@@ -12,11 +13,15 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
+        private TableMode _tableMode;
         #endregion
 
         #region Public Properties
-        public IDatabase Database { get; set; }
+        public Database Database { get; set; }
+        public PartialDatabase PartialDatabase { get; set; }
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
+        public string PartialDatabaseName =>
+            (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
         #endregion
 
         #region Events
@@ -30,12 +35,13 @@ namespace Harness.Modes
         public override void Prompt()
         {
             _stayInMode = true;
+            IDatabase db = null;
 
             while (_stayInMode)
             {
                 if (Database is null)
                 {
-                    UseDb();
+                    db = UseDb();
                 }
 
                 var result = this.Prompt("Would you like to (s)witch dbs, or take (a)ction on db?");
@@ -43,22 +49,49 @@ namespace Harness.Modes
                 switch (result)
                 {
                     case "s":
-                        UseDb();
+                        db = UseDb();
                         break;
                     case "a":
-                        PerformActionOnDb();
+                        if (db is Database)
+                        {
+                            PerformActionOnDb();
+                        }
+                        else if (db is PartialDatabase)
+                        {
+                            PerformActionOnPartialDb();
+                        }
                         break;
                 }
             }
         }
 
-        public void PerformActionOnDb()
+        public void PerformActionOnPartialDb()
         {
-            this.Prompt("PerformActionOnDb not filled out");
+
         }
 
-        public void UseDb()
+        public void PerformActionOnDb()
         {
+            var result = this.Prompt("Specify action: (v)iew tables, (m)odify tables, (l)eave prompt");
+            switch (result)
+            {
+                case "l":
+                    return;
+                case "m":
+                    _tableMode = new TableMode(App, Database);
+                    _tableMode.Prompt();
+                    break;
+                case "v":
+                    _tableMode = new TableMode(App, Database);
+                    _tableMode.ShowTables();
+                    break;
+            }
+        }
+
+        public IDatabase UseDb()
+        {
+            IDatabase database = null;
+
             App.Write("Listing databases. Use (em) to exit mode.");
 
             var db = Process.GetDatabases();
@@ -75,17 +108,27 @@ namespace Harness.Modes
             if (db.Contains(dbName))
             {
                 Database = Process.GetDatabase(dbName);
+                PartialDatabase = null;
+
                 App.Write($"Using Db {DatabaseName}");
+
+                return Database;
             }
             else if (pdb.Contains(dbName))
             {
-                Database = Process.GetPartialDatabase(dbName);
-                App.Write($"Using Db {DatabaseName}");
+                PartialDatabase = Process.GetPartialDatabase(dbName);
+                this.Database = null;
+
+                App.Write($"Using Db {PartialDatabaseName}");
+
+                return PartialDatabase;
             }
             else
             {
                 App.Write("unknown db name");
             }
+
+            return database;
         }
         #endregion
 
@@ -93,7 +136,7 @@ namespace Harness.Modes
         private string Prompt(string message)
         {
             Console.WriteLine(message);
-            Console.Write($"[DbMode ({DatabaseName})] (em) to exit ==>");
+            Console.Write($"[Mode -> Database: ({((DatabaseName == string.Empty) ? PartialDatabaseName : DatabaseName)})] [(em) to exit mode] ==>");
 
             var _consoleLine = Console.ReadLine();
 

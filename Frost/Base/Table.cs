@@ -12,7 +12,7 @@ namespace FrostDB.Base
         private List<Row> _rows;
         private Guid? _id;
         private string _name;
-        private Database _database;
+        private IDatabase _database;
         #endregion
 
         #region Public Properties
@@ -27,6 +27,14 @@ namespace FrostDB.Base
 
         #region Constructors
         public Table(string name, List<Column> columns, Database database)
+        {
+            _name = name;
+            _id = Guid.NewGuid();
+            _rows = new List<Row>();
+            _columns = columns;
+            _database = database;
+        }
+        public Table(string name, List<Column> columns, PartialDatabase database)
         {
             _name = name;
             _id = Guid.NewGuid();
