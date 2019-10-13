@@ -11,6 +11,7 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
+        private ColumnMode _colummMode;
         #endregion
 
         #region Public Properties
@@ -31,7 +32,7 @@ namespace Harness.Modes
             Database = db;
         }
 
-        public TableMode(App app, PartialDatabase db) : base(app)
+        public TableMode(App app, PartialDatabase db) : base(app) 
         {
             PartialDatabase = db;
         }
@@ -57,6 +58,9 @@ namespace Harness.Modes
                     case "a":
                         AddTable();
                         break;
+                    case "av":
+                        AddVirtualTable();
+                        break;
                 }
             }
         }
@@ -71,6 +75,32 @@ namespace Harness.Modes
         #endregion
 
         #region Private Methods
+        private void AddVirtualTable()
+        {
+            var result = this.Prompt("Specify table name, (q)uit to exit this prompt: ");
+
+            if (result == "q")
+            {
+                return;
+            }
+
+            var confirm = this.Prompt($"table will be named {result}, is this correct? (y), " +
+                $"otherwise will prompt again");
+
+            if (confirm == "y")
+            {
+                if (PartialDatabase is null)
+                {
+                    var table = new VirtualTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database);
+                    Database.AddTable(table);
+                    App.Write($"{Database.Name} added table {table.Name}");
+                }
+            }
+            else
+            {
+                AddVirtualTable();
+            }
+        }
         private void AddTable()
         {
             var result = this.Prompt("Specify table name, (q)uit to exit this prompt: ");
@@ -87,14 +117,14 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new Table(result, new List<Column>(), PartialDatabase);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), PartialDatabase);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
                 }
 
                 if (PartialDatabase is null)
                 {
-                    var table = new Table(result, new List<Column>(), Database);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), Database);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }   
@@ -104,6 +134,7 @@ namespace Harness.Modes
                 AddTable();
             }
         }
+
         private string Prompt(string message)
         {
             Console.WriteLine(message);
