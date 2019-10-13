@@ -12,7 +12,7 @@ namespace Harness.Modes
         #endregion
 
         #region Public Properties
-        
+
         #endregion
 
         #region Events
@@ -26,9 +26,25 @@ namespace Harness.Modes
         public static List<Column> CreateColumnsForTable(App app, string tableName, string databaseName)
         {
             var columns = new List<Column>();
+            string result;
 
-            var column = new Column(PromptForColumnName(app, tableName, databaseName), 
-                PromptForDataType(app, tableName, databaseName));
+            do
+            {
+                var message = "Would you like to add a column? (y), otherwise will return";
+                result = Prompt(app, message, tableName, databaseName);
+
+                if (result != "y")
+                {
+                    break;
+                }
+
+                var column = new Column(
+                    PromptForColumnName(app, tableName, databaseName),
+                    PromptForDataType(app, tableName, databaseName));
+
+                columns.Add(column);
+            }
+            while (result == "y");
 
             return columns;
         }
@@ -74,7 +90,7 @@ namespace Harness.Modes
             var message = "Enter a column name: ";
             var result = Prompt(app, message, tableName, databaseName);
 
-            message = $"ColumnName is {result}, correct? (y), otherwise will repeat";
+            message = $"Column Name is {result}, correct? (y), otherwise will repeat";
 
             var confirm = Prompt(app, message, tableName, databaseName);
 

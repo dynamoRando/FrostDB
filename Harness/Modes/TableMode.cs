@@ -109,7 +109,7 @@ namespace Harness.Modes
                 return;
             }
 
-            var confirm = this.Prompt($"table will be named {result}, is this correct? (y), " +
+            var confirm = this.Prompt($"Table will be named {result}, is this correct? (y), " +
                 $"otherwise will prompt again");
 
             if (confirm == "y")
