@@ -4,7 +4,6 @@ using Harness.Interface;
 using Harness.Modes;
 using System;
 
-
 namespace Harness
 {
     public class App
