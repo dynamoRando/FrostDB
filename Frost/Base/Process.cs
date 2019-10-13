@@ -15,6 +15,7 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<Database> Databases => DatabaseManager.Databases;
+        public List<PartialDatabase> PartialDatabases => PartialDatabaseManager.Databases;
         public DataManager<Database> DatabaseManager { get; }
         public DataManager<PartialDatabase> PartialDatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
@@ -40,7 +41,9 @@ namespace FrostDB.Base
                 Configuration.DatabaseFolder,
                 Configuration.PartialDatabaseExtension);
         }
+        #endregion
 
+        #region Public Methods
         public virtual void AddDatabase(string databaseName)
         {
             DatabaseManager.AddDatabase(
@@ -81,9 +84,28 @@ namespace FrostDB.Base
         {
             return PartialDatabaseManager.GetDatabase(databaseName);
         }
-        #endregion
 
-        #region Public Methods
+        public List<string> GetDatabases()
+        {
+            var dbs = new List<string>();
+
+            Databases.ForEach(d => {
+                dbs.Add(d.Name);
+            });
+
+            return dbs;
+        }
+
+        public List<string> GetPartialDatabases()
+        {
+            var dbs = new List<string>();
+
+            PartialDatabases.ForEach(d => {
+                dbs.Add(d.Name);
+            });
+
+            return dbs;
+        }
         #endregion
 
         #region Private Methods

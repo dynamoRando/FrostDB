@@ -1,6 +1,7 @@
 ﻿using FrostDB.Base;
 using Harness.Base;
 using Harness.Interface;
+using Harness.Modes;
 using System;
 
 
@@ -12,14 +13,12 @@ namespace Harness
         private string _consoleLine;
         private bool _running;
         private Process _process;
-        private IMode _mode;
         #endregion
 
         #region Public Properties
         public string ConsoleLine { get => _consoleLine; set => _consoleLine = value; }
         public bool Running { get => _running; set => _running = value; }
         public Process Process { get => _process; set => _process = value; }
-        public IMode Mode { get => _mode; set => _mode = value; }
         #endregion
 
         #region Events
@@ -34,19 +33,38 @@ namespace Harness
 
         #region Public Methods
 
-        public void PromptForActions()
+        public void Quit()
         {
-            Write("Specify action: (c)reate db, (exit)");
+            _running = false;
+        }
+
+        public IMode PromptForMode()
+        {
+            IMode mode = null;
+
+            Write("Specify action: " +
+                "(c) - create a db, " +
+                "(u) - use db, " +
+                "(i) - output process info " +
+                "or (exit)") ;
 
             switch (Prompt())
             {
                 case "c":
-                    Mode.CreateNewDb();
+                    mode = new MainMode(this);
+                    break;
+                case "u":
+                    mode = new DbMode(this);
+                    break;
+                case "i":
+                    OutputProcessInfo();
                     break;
             }
+
+            return mode;
         }
 
-        public void PromptForMode()
+        public void PromptForStartup()
         {
             Write("Specify action: (s)tart, (exit) to quit");
 
@@ -58,10 +76,9 @@ namespace Harness
                     Write("Starting app...");
                     _process = new FrostDB.Base.Process();
                     totalDBs = _process.LoadDatabases();
-                    _mode = new Mode(this);
                     break;
                 default:
-                    Write("Unknown mode");
+                    Write("Unknown startup");
                     break;
             }
 

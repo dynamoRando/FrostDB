@@ -6,6 +6,6 @@ namespace Harness.Interface
 {
     public interface IMode
     {
-        void CreateNewDb();
+        public void Prompt();
     }
 }
