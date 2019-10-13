@@ -74,7 +74,7 @@ namespace Harness
             {
                 case "s":
                     Write("Starting app...");
-                    _process = new FrostDB.Base.Process();
+                    _process = new Process();
                     totalDBs = _process.LoadDatabases();
                     break;
                 default:
