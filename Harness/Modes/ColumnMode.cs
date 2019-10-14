@@ -128,7 +128,5 @@ namespace Harness.Modes
             return _consoleLine;
         }
         #endregion
-
-
     }
 }
