@@ -38,7 +38,7 @@ namespace FrostDB.Scratch
         public void TestEvent()
         {
             //var listener = new Action<IEventArgs>(TableCreatedEventTest);
-            EventManager.StartListening(EventName.Table.Created, new Action<IEventArgs>(TableCreatedEventTest));
+            EventManager.StartListening(EventNameTable.Created, new Action<IEventArgs>(TableCreatedEventTest));
         }
 
         public void TableCreatedEventTest(IEventArgs e)
