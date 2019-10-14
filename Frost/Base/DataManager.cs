@@ -1,4 +1,5 @@
-﻿using FrostDB.Interface;
+﻿using FrostDB.EventArgs;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,11 +27,11 @@ namespace FrostDB.Base
         #region Constructors
         public DataManager()
         {
-
+            RegisterEvents();
         }
-        public DataManager(string databaseFolder, 
+        public DataManager(string databaseFolder,
             string databaseExtension,
-            IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> mapper)
+            IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> mapper) : this()
         {
             Databases = new List<TDatabase>();
 
@@ -112,18 +113,41 @@ namespace FrostDB.Base
         private void SaveToDisk(TDatabase database)
         {
             var fileName = _databaseFolder + database.Name + _databaseExtension;
+            Save(database, fileName);
 
-            if (!File.Exists(fileName))
+            //if (!File.Exists(fileName))
+            //{
+            //    Save(database, fileName);
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Database already exists");
+            //}
+        }
+
+        private void Save(TDatabase database, string fileName)
+        {
+            var file = _databaseFileMapper.Map(database);
+            _dataFileManager.SaveDataFile(fileName, file);
+        }
+
+        private void RegisterEvents()
+        {
+            EventManager.StartListening("Table_Created", new Action<IEventArgs>(HandleCreatedTableEvent));
+        }
+
+        private void HandleCreatedTableEvent(IEventArgs e)
+        {
+            if (e is TableCreatedEventArgs)
             {
-                var file = _databaseFileMapper.Map(database);
-                _dataFileManager.SaveDataFile(fileName, file);
-            }
-            else
-            {
-                throw new IOException("database already exists");
+                var args = (TableCreatedEventArgs)e;
+
+                if (args.Database is TDatabase)
+                {
+                    SaveToDisk((TDatabase)args.Database);
+                }
             }
         }
         #endregion
-
     }
 }
