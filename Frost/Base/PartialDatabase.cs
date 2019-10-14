@@ -16,7 +16,7 @@ namespace FrostDB.Base
         public IContract Contract => throw new NotImplementedException();
         public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
-        List<ITable<Column, IRow>> IDatabase.Tables => throw new NotImplementedException();
+        public List<ITable<Column, Row>> Tables => throw new NotImplementedException();
         public DataManager<PartialDatabase> Manager { get { return _manager; } }
         #endregion
 

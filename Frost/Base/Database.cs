@@ -1,7 +1,9 @@
-﻿using FrostDB.Interface;
+﻿using FrostDB.EventArgs;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB.Base
 {
@@ -9,7 +11,7 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private string _name;
-        private List<ITable<Column, IRow>> _tables;
+        private List<ITable<Column, Row>> _tables;
         private IContract _contract;
         private DataManager<Database> _manager;
         #endregion
@@ -17,12 +19,23 @@ namespace FrostDB.Base
         #region Public Properties
         public Guid? Id { get; }
         public string Name { get { return _name; } }
-        public List<ITable<Column, IRow>> Tables { get { return _tables; } }
+        public List<ITable<Column, Row>> Tables { get { return _tables; } }
         public IContract Contract { get { return _contract; } }
         public DataManager<Database> Manager { get { return _manager; } }
         #endregion
 
         #region Events
+        public event EventHandler<TableCreatedEventArgs> CreatedTable;
+        #endregion
+
+        #region Protected Methods
+        protected virtual void OnTableCreated(TableCreatedEventArgs e)
+        {
+            if (CreatedTable != null)
+            {
+                Task.Run(() => CreatedTable.Invoke(this, e));
+            }
+        }
         #endregion
 
         #region Constructors
@@ -30,7 +43,7 @@ namespace FrostDB.Base
         {
             Id = Guid.NewGuid();
             _name = name;
-            _tables = new List<ITable<Column, IRow>>();
+            _tables = new List<ITable<Column, Row>>();
             _manager = manager;
         }
         public Database(string name, DataManager<Database> manager, Guid id) : this(name, manager)
@@ -42,19 +55,20 @@ namespace FrostDB.Base
         #region Public Methods
         public void AddTable(ITable<Column, Row> table)
         {
-            throw new NotImplementedException();
+            _tables.Add(table);
+            EventManager.TriggerEvent("Table_Created", CreateTableCreatedEventArgs(table));
         }
-
-        public void AddTable(ITable<Column, IRow> table)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Private Methods
-        #endregion
-
-
+        private TableCreatedEventArgs CreateTableCreatedEventArgs(ITable<Column, Row> table)
+        {
+            var eventargs = new TableCreatedEventArgs();
+            eventargs.Table = table;
+            eventargs.Database = this;
+            //OnTableCreated(eventargs);
+            return eventargs;
+        }
     }
+    #endregion
 }

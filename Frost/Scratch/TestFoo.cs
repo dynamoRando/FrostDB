@@ -1,4 +1,7 @@
 ﻿using FrostDB.Base;
+using FrostDB.EventArgs;
+using FrostDB.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace FrostDB.Scratch
@@ -30,6 +33,26 @@ namespace FrostDB.Scratch
 
             var remoteRow = virtualTable.GetNewRow();
             var row = virtualTable.GetRow(new Row());
+        }
+
+        public void TestEvent()
+        {
+            var listener = new Action<IEventArgs>(TableCreatedEventTest);
+
+            EventManager.StartListening("Table_Created", listener);
+        }
+
+        public void TableCreatedEventTest(IEventArgs e)
+        {
+            //TableCreatedEventArgs
+
+            if (e is TableCreatedEventArgs)
+            {
+                var args = (TableCreatedEventArgs)e;
+                // handle table created event
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
