@@ -1,11 +1,13 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Column : IColumn
+    [Serializable]
+    public class Column : IColumn, ISerializable
     {
         #region Private Fields
         private Guid? _id;
@@ -29,6 +31,16 @@ namespace FrostDB.Base
             _name = name;
             _type = type;
         }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected Column(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Public Methods
@@ -37,6 +49,6 @@ namespace FrostDB.Base
         #region Private Methods
         #endregion
 
-       
+
     }
 }

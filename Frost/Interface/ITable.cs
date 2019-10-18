@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Interface
 {
     public interface ITable<TColumn, YRow> : IFrostObjectGet, 
         IDBObject where TColumn : IColumn
-        where YRow : IRow
+        where YRow : IRow,
+        ISerializable
     {
         List<TColumn> Columns { get; }
         bool HasRow(YRow row);

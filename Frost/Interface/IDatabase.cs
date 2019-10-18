@@ -1,11 +1,12 @@
 ﻿using FrostDB.Base;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IDatabase : IFrostObjectGet, IDBObject
+    public interface IDatabase : IFrostObjectGet, IDBObject, ISerializable
     {
         public List<ITable<Column, Row>> Tables { get; }
         public IContract Contract { get; }

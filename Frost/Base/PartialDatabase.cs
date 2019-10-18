@@ -1,10 +1,12 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Base
 {
+    [Serializable]
     public class PartialDatabase : IDatabase
     {
         #region Private Fields
@@ -38,6 +40,16 @@ namespace FrostDB.Base
         }
 
         public void AddTable(ITable<Column, IRow> table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             throw new NotImplementedException();
         }

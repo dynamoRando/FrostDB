@@ -26,6 +26,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        public Table() { }
         public Table(string name, List<Column> columns, Database database)
         {
             _name = name;

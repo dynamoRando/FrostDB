@@ -2,11 +2,13 @@
 using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FrostDB.Base
 {
+    [Serializable]
     public class Database : IDatabase
     {
         #region Private Fields
@@ -50,6 +52,13 @@ namespace FrostDB.Base
         {
             Id = id;
         }
+
+        public Database(string name, DataManager<Database> manager, Guid id,
+            List<ITable<Column, Row>> tables) : this(name, manager)
+        {
+            Id = id;
+            _tables = tables;
+        }
         #endregion
 
         #region Public Methods
@@ -69,6 +78,11 @@ namespace FrostDB.Base
             eventargs.Database = this;
             //OnTableCreated(eventargs);
             return eventargs;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
         }
     }
     #endregion
