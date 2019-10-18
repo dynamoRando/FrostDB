@@ -31,6 +31,7 @@ namespace FrostDB.Base
         #region Constructors
         public DataManager()
         {
+            _dataEventManager = new DataManagerEventManager<TDatabase>(this);
             RegisterEvents();
         }
         public DataManager(string databaseFolder,
@@ -44,8 +45,6 @@ namespace FrostDB.Base
 
             _databaseFolder = databaseFolder;
             _databaseExtension = databaseExtension;
-
-            _dataEventManager = new DataManagerEventManager<TDatabase>(this);
         }
         #endregion  
 
