@@ -23,6 +23,7 @@ namespace FrostDB.Base
             public const string Added = "Row_Added";
             public const string Modified = "Row_Modified";
             public const string Deleted = "Row_Deleted";
+            public const string Read = "Row_Read";
         }
     }
     
