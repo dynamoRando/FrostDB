@@ -56,7 +56,8 @@ namespace FrostDB.Base
         public void AddTable(ITable<Column, Row> table)
         {
             _tables.Add(table);
-            EventManager.TriggerEvent(EventName.Table.Created, CreateTableCreatedEventArgs(table));
+            EventManager.TriggerEvent(EventName.Table.Created, 
+                CreateTableCreatedEventArgs(table));
         }
         #endregion
 
