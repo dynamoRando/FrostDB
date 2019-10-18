@@ -15,6 +15,7 @@ namespace FrostDB.Base
         private string _databaseExtension;
         private IDataFileManager<DataFile> _dataFileManager;
         private IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> _databaseFileMapper;
+        private IDataManagerEventManager _dataEventManager;
         #endregion
 
         #region Public Properties
@@ -22,6 +23,9 @@ namespace FrostDB.Base
         #endregion
 
         #region Events
+        #endregion
+
+        #region Protected Methods
         #endregion
 
         #region Constructors
@@ -40,6 +44,8 @@ namespace FrostDB.Base
 
             _databaseFolder = databaseFolder;
             _databaseExtension = databaseExtension;
+
+            _dataEventManager = new DataManagerEventManager<TDatabase>(this);
         }
         #endregion  
 
@@ -101,6 +107,13 @@ namespace FrostDB.Base
         {
             throw new NotImplementedException();
         }
+
+        public void SaveToDisk(TDatabase database)
+        {
+            var fileName = _databaseFolder + database.Name + _databaseExtension;
+            var file = _databaseFileMapper.Map(database);
+            _dataFileManager.SaveDataFile(fileName, file);
+        }
         #endregion
 
         #region Private Methods
@@ -110,43 +123,9 @@ namespace FrostDB.Base
             return _databaseFileMapper.Map(dataFile, this);
         }
 
-        private void SaveToDisk(TDatabase database)
-        {
-            var fileName = _databaseFolder + database.Name + _databaseExtension;
-            Save(database, fileName);
-
-            //if (!File.Exists(fileName))
-            //{
-            //    Save(database, fileName);
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Database already exists");
-            //}
-        }
-
-        private void Save(TDatabase database, string fileName)
-        {
-            var file = _databaseFileMapper.Map(database);
-            _dataFileManager.SaveDataFile(fileName, file);
-        }
-
         private void RegisterEvents()
         {
-            EventManager.StartListening("Table_Created", new Action<IEventArgs>(HandleCreatedTableEvent));
-        }
-
-        private void HandleCreatedTableEvent(IEventArgs e)
-        {
-            if (e is TableCreatedEventArgs)
-            {
-                var args = (TableCreatedEventArgs)e;
-
-                if (args.Database is TDatabase)
-                {
-                    SaveToDisk((TDatabase)args.Database);
-                }
-            }
+            _dataEventManager.RegisterEvents();
         }
         #endregion
     }
