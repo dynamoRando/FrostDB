@@ -24,6 +24,11 @@ namespace FrostDB.Base
         {
             get
             {
+                if (eventManager is null)
+                {
+                    eventManager = new EventManager();
+                }
+
                 eventManager.Init();
                 return eventManager;
             }
@@ -31,7 +36,7 @@ namespace FrostDB.Base
 
         void Init()
         {
-            if (eventDictionary == null)
+            if (eventDictionary is null)
             {
                 eventDictionary = new Dictionary<string, Action<IEventArgs>>();
             }
