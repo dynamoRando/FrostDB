@@ -27,9 +27,9 @@ namespace FrostDB.Base
                 if (eventManager is null)
                 {
                     eventManager = new EventManager();
+                    eventManager.Init();
                 }
 
-                eventManager.Init();
                 return eventManager;
             }
         }
