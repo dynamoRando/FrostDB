@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FrostDB.Base
+﻿namespace FrostDB.Base
 {
     public class EventName
     {
@@ -24,6 +20,13 @@ namespace FrostDB.Base
             public const string Modified = "Row_Modified";
             public const string Deleted = "Row_Deleted";
             public const string Read = "Row_Read";
+        }
+
+        public class Columm
+        {
+            public const string Added = "Column_Added";
+            public const string Deleted = "Column_Deleted";
+            public const string DataTypeChanged = "Column_DataTypeChanged";
         }
     }
     
