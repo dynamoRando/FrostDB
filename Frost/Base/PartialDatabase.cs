@@ -25,11 +25,17 @@ namespace FrostDB.Base
         #region Events
         #endregion
 
-        #region 
+        #region Constructors
         public PartialDatabase(string databaseName, DataManager<PartialDatabase> manager)
         {
             _name = databaseName;
             _manager = manager;
+        }
+
+        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            //myProperty_value = (string) info.GetValue("props", typeof(string));
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -46,11 +52,7 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
-        }
-
-        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
-        {
+            //  info.AddValue("props", myProperty_value, typeof(string));
             throw new NotImplementedException();
         }
         #endregion

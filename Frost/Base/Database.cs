@@ -41,6 +41,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            Id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            _tables = (List<ITable<Column, Row>>)serializationInfo.GetValue
+                ("Tables", typeof(List<ITable<Column, Row>>));
+        }
         public Database(string name, DataManager<Database> manager)
         {
             Id = Guid.NewGuid();
@@ -62,6 +69,12 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Id", Id.Value, typeof(Guid));
+            info.AddValue("Name", Name, typeof(string));
+            info.AddValue("Tables", Tables, typeof(List<ITable<Column, Row>>));
+        }
         public void AddTable(ITable<Column, Row> table)
         {
             _tables.Add(table);
@@ -78,12 +91,7 @@ namespace FrostDB.Base
             eventargs.Database = this;
             //OnTableCreated(eventargs);
             return eventargs;
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            throw new NotImplementedException();
-        }
+        } 
     }
     #endregion
 }

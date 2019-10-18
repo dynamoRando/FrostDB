@@ -34,12 +34,17 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("Id", Id.Value, typeof(Guid));
+            info.AddValue("Name", Name, typeof(string));
+            info.AddValue("DataType", DataType, typeof(Type));
         }
 
         protected Column(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            throw new NotImplementedException();
+            _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            _type = (Type)serializationInfo.GetValue
+                ("DataType", typeof(Type));
         }
         #endregion
 
