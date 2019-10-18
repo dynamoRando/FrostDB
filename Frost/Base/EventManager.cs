@@ -18,7 +18,7 @@ namespace FrostDB.Base
     public class EventManager : IEventManager
     {
         private Dictionary<string, Action<IEventArgs>> eventDictionary;
-        private static readonly EventManager eventManager;
+        private static EventManager eventManager;
 
         public static EventManager Instance
         {
