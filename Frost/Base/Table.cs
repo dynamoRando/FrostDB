@@ -1,11 +1,13 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Table : ITable<Column, Row>
+    [Serializable]
+    public class Table : ITable<Column, Row>, ISerializable
     {
         #region Private Fields
         private List<Column> _columns;
@@ -27,6 +29,14 @@ namespace FrostDB.Base
 
         #region Constructors
         public Table() { }
+        protected Table(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            _columns = (List<Column>)serializationInfo.GetValue
+                ("Columns", typeof(List<Column>));
+        }
+
         public Table(string name, List<Column> columns, Database database)
         {
             _name = name;
@@ -79,6 +89,13 @@ namespace FrostDB.Base
         public List<Row> GetRows(string condition)
         {
             throw new NotImplementedException();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Id", Id, typeof(Guid));
+            info.AddValue("Columns", Columns, typeof(List<Column>));
+            info.AddValue("Name", Name, typeof(string));
         }
         #endregion
 

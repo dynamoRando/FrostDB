@@ -15,7 +15,9 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("Id", Id, typeof(Guid));
+            info.AddValue("Columns", Columns, typeof(List<Column>));
+            info.AddValue("Values", Values, typeof(List<IRowValue>));
         }
 
         protected Row(SerializationInfo serializationInfo, StreamingContext streamingContext)

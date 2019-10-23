@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/.vscode
+/Frost/bin/Debug/netstandard2.1
+/Frost/obj
+/Harness/bin/Debug/netcoreapp3.0
+/Harness/obj
