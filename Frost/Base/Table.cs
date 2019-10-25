@@ -93,7 +93,7 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id, typeof(Guid));
+            info.AddValue("Id", Id.Value, typeof(Guid));
             info.AddValue("Columns", Columns, typeof(List<Column>));
             info.AddValue("Name", Name, typeof(string));
         }
