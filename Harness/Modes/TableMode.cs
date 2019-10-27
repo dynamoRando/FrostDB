@@ -11,12 +11,13 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
+        private ITable<Column, IRow> _table;
         #endregion
 
         #region Public Properties
         public Database Database { get; }
         public PartialDatabase PartialDatabase { get; }
-        public ITable<Column, IRow> Table { get; }
+        public ITable<Column, IRow> Table => _table;
         public string TableName => (Table is null) ? string.Empty : Table.Name;
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName => (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -26,12 +27,12 @@ namespace Harness.Modes
         #endregion
 
         #region Constructors
-        public TableMode(App app, Database db) : base(app) 
+        public TableMode(App app, Database db) : base(app)
         {
             Database = db;
         }
 
-        public TableMode(App app, PartialDatabase db) : base(app) 
+        public TableMode(App app, PartialDatabase db) : base(app)
         {
             PartialDatabase = db;
         }
@@ -47,6 +48,7 @@ namespace Harness.Modes
             {
                 var result = this.Prompt("(a) - add regular table, " +
                     "(av) - add virtual table, " +
+                    "(ar) - add record to table, " +
                     "(em) to exit");
 
                 switch (result)
@@ -60,17 +62,20 @@ namespace Harness.Modes
                     case "av":
                         AddVirtualTable();
                         break;
+                    case "ar":
+                        AddRecordToTable();
+                        break;
                 }
             } while (_stayInMode);
         }
 
         public void ShowTables()
         {
-            Database.Tables.ForEach(t => 
+            Database.Tables.ForEach(t =>
             {
                 Console.WriteLine($"Table: {t.Name}");
 
-                t.Columns.ForEach(c => 
+                t.Columns.ForEach(c =>
                 {
                     Console.WriteLine($"Column: {c.Name}");
                     Console.WriteLine($"DataType: {c.DataType.ToString()}");
@@ -81,6 +86,34 @@ namespace Harness.Modes
         #endregion
 
         #region Private Methods
+        private bool IsPartialDatabase()
+        {
+            if (this.PartialDatabase is null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        private void AddRecordToTable()
+        {
+            ShowTables();
+
+            var tableName = this.Prompt("Specify table name to add record to:");
+
+            if (!IsPartialDatabase())
+            {
+                if (Database.HasTable(tableName))
+                {
+                    var table = Database.GetTable(tableName);
+                    _table = (ITable<Column, IRow>)table;
+                }
+            }
+            
+            throw new NotImplementedException();
+        }
         private void AddVirtualTable()
         {
             var result = this.Prompt("Specify table name, (q)uit to exit this prompt: ");
@@ -110,7 +143,7 @@ namespace Harness.Modes
         private void AddTable()
         {
             var result = this.Prompt("Specify table name, (q)uit to exit this prompt: ");
-            
+
             if (result == "q")
             {
                 return;
@@ -133,7 +166,7 @@ namespace Harness.Modes
                     var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
-                }   
+                }
             }
             else
             {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -81,6 +82,17 @@ namespace FrostDB.Base
             EventManager.TriggerEvent(EventName.Table.Created, 
                 CreateTableCreatedEventArgs(table));
         }
+
+        public bool HasTable(string tableName)
+        {
+            return this.Tables.Any(t => t.Name == tableName);
+        }
+
+        public ITable<Column, Row> GetTable(string tableName)
+        {
+            return this.Tables.
+                Where(t => t.Name == tableName).First();
+        }
         #endregion
 
         #region Private Methods
@@ -91,7 +103,7 @@ namespace FrostDB.Base
             eventargs.Database = this;
             //OnTableCreated(eventargs);
             return eventargs;
-        } 
+        }
     }
     #endregion
 }

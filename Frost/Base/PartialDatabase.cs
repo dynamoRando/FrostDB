@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -54,6 +55,17 @@ namespace FrostDB.Base
         {
             //  info.AddValue("props", myProperty_value, typeof(string));
             throw new NotImplementedException();
+        }
+
+        public bool HasTable(string tableName)
+        {
+            return this.Tables.Any(t => t.Name == tableName);
+        }
+
+        public ITable<Column, Row> GetTable(string tableName)
+        {
+            return this.Tables.
+                Where(t => t.Name == tableName).First();
         }
         #endregion
 
