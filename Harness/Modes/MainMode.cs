@@ -30,7 +30,7 @@ namespace Harness.Modes
         {
             _stayInMode = true;
 
-            while (_stayInMode)
+            do
             {
                 var result = Prompt("Would you like to create a (db) or partial (pdb)? " +
              "Use (em) to exit mode");
@@ -44,7 +44,7 @@ namespace Harness.Modes
                         CreateNewPartialDb();
                         break;
                 }
-            }
+            } while (_stayInMode);
         }
 
         public void CreateNewDb()

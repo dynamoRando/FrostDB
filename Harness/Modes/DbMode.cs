@@ -37,7 +37,7 @@ namespace Harness.Modes
             _stayInMode = true;
             IDatabase db = null;
 
-            while (_stayInMode)
+            do
             {
                 if (Database is null)
                 {
@@ -62,7 +62,7 @@ namespace Harness.Modes
                         }
                         break;
                 }
-            }
+            } while (_stayInMode);
         }
 
         public void PerformActionOnPartialDb()

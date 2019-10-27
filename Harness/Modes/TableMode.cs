@@ -43,7 +43,7 @@ namespace Harness.Modes
         {
             _stayInMode = true;
 
-            while (_stayInMode)
+            do
             {
                 var result = this.Prompt("(a) - add regular table, " +
                     "(av) - add virtual table, " +
@@ -61,7 +61,7 @@ namespace Harness.Modes
                         AddVirtualTable();
                         break;
                 }
-            }
+            } while (_stayInMode);
         }
 
         public void ShowTables()
