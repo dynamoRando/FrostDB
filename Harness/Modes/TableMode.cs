@@ -68,7 +68,14 @@ namespace Harness.Modes
         {
             Database.Tables.ForEach(t => 
             {
-                Console.WriteLine(t.Name);
+                Console.WriteLine($"Table: {t.Name}");
+
+                t.Columns.ForEach(c => 
+                {
+                    Console.WriteLine($"Column: {c.Name}");
+                    Console.WriteLine($"DataType: {c.DataType.ToString()}");
+                });
+
             });
         }
         #endregion
