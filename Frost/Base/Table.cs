@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Linq;
+using FrostDB.EventArgs;
 
 namespace FrostDB.Base
 {
@@ -21,6 +23,7 @@ namespace FrostDB.Base
         public List<Column> Columns => _columns;
         public Guid? Id => _id;
         public string Name => _name;
+        public List<Row> Rows => _rows;
 
         #endregion
 
@@ -35,6 +38,8 @@ namespace FrostDB.Base
             _name = (string)serializationInfo.GetValue("Name", typeof(string));
             _columns = (List<Column>)serializationInfo.GetValue
                 ("Columns", typeof(List<Column>));
+            _rows = (List<Row>)serializationInfo.GetValue
+                ("Rows", typeof(List<Row>));
         }
 
         public Table(string name, List<Column> columns, Database database)
@@ -58,7 +63,12 @@ namespace FrostDB.Base
         #region Public Methods
         public void AddRow(Row row)
         {
-            throw new NotImplementedException();
+            if (RowMatchesTableColumns(row))
+            {
+                this._rows.Add(row);
+                EventManager.TriggerEvent(EventName.Row.Added, 
+                    CreateRowAddedEventArgs(row));
+            }
         }
 
         public void DeleteRow(Row row)
@@ -68,7 +78,7 @@ namespace FrostDB.Base
 
         public Row GetNewRow()
         {
-            throw new NotImplementedException();
+            return new Row(this.Columns);
         }
 
         public bool HasRow(Row row)
@@ -96,10 +106,38 @@ namespace FrostDB.Base
             info.AddValue("Id", Id.Value, typeof(Guid));
             info.AddValue("Columns", Columns, typeof(List<Column>));
             info.AddValue("Name", Name, typeof(string));
+            info.AddValue("Rows", Name, typeof(List<Row>));
         }
         #endregion
 
         #region Private Methods
-        #endregion
+        private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
+        {
+            return new RowAddedEventArgs
+            {
+                Database = _database,
+                Table = this,
+                Row = row
+            };  
+        }
+
+    private bool RowMatchesTableColumns(Row row)
+    {
+        bool isMatch = true;
+
+        row.Columns.ForEach(c =>
+        {
+            isMatch = this.Columns.Any(tc => tc.Name == c.Name &&
+            tc.DataType == c.DataType);
+        });
+
+        if (!(row.Columns.Count == this.Columns.Count))
+        {
+            isMatch = false;
+        }
+
+        return isMatch;
     }
+    #endregion
+}
 }

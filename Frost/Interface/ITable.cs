@@ -11,6 +11,7 @@ namespace FrostDB.Interface
         ISerializable
     {
         List<TColumn> Columns { get; }
+        List<YRow> Rows { get; }
         bool HasRow(YRow row);
         bool HasRow(Guid guid);
         YRow GetNewRow();

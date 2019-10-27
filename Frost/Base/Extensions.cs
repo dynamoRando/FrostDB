@@ -8,7 +8,7 @@ namespace FrostDB.Base.Extensions
     {
         public static Row GetData(this RowReference reference)
         {
-            Guid id = reference.Id;
+            Guid? id = reference.Id;
             /*
              * write whatever logic needed here to connect to the remote location
              * for this row

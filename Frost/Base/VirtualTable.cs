@@ -7,20 +7,27 @@ using FrostDB.Base.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 namespace FrostDB.Base
 {
-    public class VirtualTable : ITable<Column, Row>, IVirtualTable
+    [Serializable]
+    public class VirtualTable : ITable<Column, Row>, IVirtualTable,
+        ISerializable
     {
         #region Private Fields
         private Database _database;
+        private ConcurrentBag<RowReference> _rows;
+        private Guid? _id;
+        private string _name;
+        private List<Column> _columns;
         #endregion
 
         #region Public Properties
-        public List<Column> Columns => throw new NotImplementedException();
-        public Guid? Id => throw new NotImplementedException();
-        public string Name => throw new NotImplementedException();
-        public ConcurrentBag<RowReference> Rows { get; }
+        public List<Column> Columns => _columns;
+        public Guid? Id => _id;
+        public string Name => _name;
+        public List<Row> Rows => GetRows();
         #endregion
 
         #region Events
@@ -30,7 +37,17 @@ namespace FrostDB.Base
         public VirtualTable(string tableName, List<Column> columns, Database database)
         {
             _database = database;
-            Rows = new ConcurrentBag<RowReference>();
+            _rows = new ConcurrentBag<RowReference>();
+        }
+
+        protected VirtualTable(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            _id = (Guid?)serializationInfo.GetValue("Id", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            _columns = (List<Column>)serializationInfo.GetValue
+                ("Columns", typeof(List<Column>));
+            _rows = (ConcurrentBag<RowReference>)serializationInfo.GetValue
+                ("Rows", typeof(ConcurrentBag<RowReference>));
         }
         #endregion
 
@@ -99,13 +116,23 @@ namespace FrostDB.Base
         {
             var rowData = new ConcurrentBag<Row>();
 
-            Parallel.ForEach(Rows, (reference) =>
+            Parallel.ForEach(_rows, (reference) =>
             {
                 Task.Run(() => rowData.Add(reference.GetData()));
             });
 
             return rowData.ToList();
         }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Id", Id.Value, typeof(Guid));
+            info.AddValue("Columns", Columns, typeof(List<Column>));
+            info.AddValue("Name", Name, typeof(string));
+            info.AddValue("Rows", Name, typeof(ConcurrentBag<RowReference>));
+        }
+
+
         #endregion
 
 
