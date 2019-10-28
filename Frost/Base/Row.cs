@@ -11,46 +11,51 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private Guid? _id;
-        private List<IColumn> _columns;
-        private List<IRowValue> _values;
+        private List<Column> _columns;
+        private List<RowValue> _values;
         #endregion
 
         #region Public Properties
         public Guid? Id => _id;
-        public List<IColumn> Columns => _columns;
-        public List<IRowValue> Values => _values;
+        public List<Column> Columns => _columns;
+        public List<RowValue> Values => _values;
         #endregion
 
         #region Public Methods
+        public void AddValue(Column column, object value)
+        {
+            _values.Add(new RowValue(column, value));
+        }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id.Value, typeof(Guid));
-            info.AddValue("Columns", Columns, typeof(List<IColumn>));
-            info.AddValue("Values", Values, typeof(List<IRowValue>));
+            info.AddValue("RowId", Id.Value, typeof(Guid));
+            info.AddValue("RowColumns", Columns, typeof(List<Column>));
+            info.AddValue("RowValues", Values, typeof(List<RowValue>));
         }
         #endregion
 
         #region Protected Methods
         protected Row(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
-            _values = (List<IRowValue>)serializationInfo.GetValue("Values", typeof(List<IRowValue>));
-            _columns = (List<IColumn>)serializationInfo.GetValue
-                ("Columns", typeof(List<IColumn>));
+            _id = (Guid)serializationInfo.GetValue("RowId", typeof(Guid));
+            _values = (List<RowValue>)serializationInfo.
+                GetValue("RowValues", typeof(List<RowValue>));
+            _columns = (List<Column>)serializationInfo.GetValue
+                ("RowColumns", typeof(List<Column>));
         }
         #endregion
 
         #region Constructors
         public Row()
         {
+            _columns = new List<Column>();
+            _values = new List<RowValue>();
+            _id = Guid.NewGuid();
         }
 
-        public Row(List<Column> columns)
+        public Row(List<Column> columns) : this()
         {
-            columns.ForEach(c => 
-            {
-                _columns.Add((Column)c);
-            });
+            _columns.AddRange(columns);
         }
         #endregion
     }

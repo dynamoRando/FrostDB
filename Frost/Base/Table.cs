@@ -31,30 +31,31 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public Table() { }
-        protected Table(SerializationInfo serializationInfo, StreamingContext streamingContext)
-        {
-            _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
-            _name = (string)serializationInfo.GetValue("Name", typeof(string));
-            _columns = (List<Column>)serializationInfo.GetValue
-                ("Columns", typeof(List<Column>));
-            _rows = (List<Row>)serializationInfo.GetValue
-                ("Rows", typeof(List<Row>));
-        }
-
-        public Table(string name, List<Column> columns, Database database)
-        {
-            _name = name;
+        public Table() {
             _id = Guid.NewGuid();
             _rows = new List<Row>();
+        }
+        protected Table(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            _rows = (List<Row>)serializationInfo.GetValue
+               ("TableRows", typeof(List<Row>));
+            _database = (IDatabase)serializationInfo.GetValue
+                ("TableDatabase", typeof(IDatabase));
+            _id = (Guid)serializationInfo.GetValue("TableId", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("TableName", typeof(string));
+            _columns = (List<Column>)serializationInfo.GetValue
+                ("TableColumns", typeof(List<Column>));
+        }
+
+        public Table(string name, List<Column> columns, Database database) : this()
+        {
+            _name = name;
             _columns = columns;
             _database = database;
         }
-        public Table(string name, List<Column> columns, PartialDatabase database)
+        public Table(string name, List<Column> columns, PartialDatabase database) : this()
         {
             _name = name;
-            _id = Guid.NewGuid();
-            _rows = new List<Row>();
             _columns = columns;
             _database = database;
         }
@@ -103,10 +104,12 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id.Value, typeof(Guid));
-            info.AddValue("Columns", Columns, typeof(List<Column>));
-            info.AddValue("Name", Name, typeof(string));
-            info.AddValue("Rows", Name, typeof(List<Row>));
+            info.AddValue("TableId", Id.Value, typeof(Guid));
+            info.AddValue("TableColumns", Columns, typeof(List<Column>));
+            info.AddValue("TableName", Name, typeof(string));
+            info.AddValue("TableRows", _rows, typeof(List<Row>));
+            info.AddValue("TableDatabase", _database, 
+                typeof(IDatabase));
         }
         #endregion
 

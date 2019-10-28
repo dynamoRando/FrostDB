@@ -39,6 +39,8 @@ namespace FrostDB.Base
             serializer.NullValueHandling = NullValueHandling.Ignore;
             serializer.TypeNameHandling = TypeNameHandling.Auto;
             serializer.Formatting = Formatting.Indented;
+            serializer.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
+            serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
 
             using (StreamWriter sw = new StreamWriter(fileLocation))
             using (JsonWriter writer = new JsonTextWriter(sw))

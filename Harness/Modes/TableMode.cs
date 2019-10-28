@@ -11,13 +11,13 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
-        private ITable<Column, IRow> _table;
+        private ITable<Column, Row> _table;
         #endregion
 
         #region Public Properties
         public Database Database { get; }
         public PartialDatabase PartialDatabase { get; }
-        public ITable<Column, IRow> Table => _table;
+        public ITable<Column, Row> Table => _table;
         public string TableName => (Table is null) ? string.Empty : Table.Name;
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName => (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -108,11 +108,26 @@ namespace Harness.Modes
                 if (Database.HasTable(tableName))
                 {
                     var table = Database.GetTable(tableName);
-                    _table = (ITable<Column, IRow>)table;
+                    _table = table;
+
+                    var row = _table.GetNewRow();
+
+                    row.Columns.ForEach(c =>
+                    {
+                        var val = this.Prompt($"For column " +
+                            $"{c.Name} for type " +
+                            $"{c.DataType.ToString()} " +
+                            $"Please enter a value: ");
+
+                        row.AddValue(c,
+                            Convert.ChangeType(val, c.DataType));
+
+                    });
+
+                    this.Prompt("Adding row");
+                    _table.AddRow(row);
                 }
             }
-            
-            throw new NotImplementedException();
         }
         private void AddVirtualTable()
         {
