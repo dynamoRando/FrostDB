@@ -9,6 +9,6 @@ namespace FrostDB.Interface
     {
         IColumn Column { get; set; }
         RowValueQuery QueryType { get; set; }
-        List<Object> Values { get; set; }
+        Object Value { get; set; }
     }
 }

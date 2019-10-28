@@ -11,7 +11,7 @@ namespace FrostDB.Base
         #region Public Properties
         public IColumn Column { get; set; }
         public RowValueQuery QueryType { get; set; }
-        public List<object> Values { get; set; }
+        public object Value { get; set; }
         public object MinValue { get; set; }
         public object MaxValue { get; set; }
         #endregion

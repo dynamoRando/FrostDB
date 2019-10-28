@@ -59,24 +59,24 @@ namespace FrostDB.Base
                 {
                     var value = items.Where(v => term.Contains(v.Column.Name)).First();
                     value.QueryType = Enum.RowValueQuery.Equals;
-                    value.Values.Add(Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType));
+                    value.Value = Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType);
                 }
 
                 if (term.Contains('>'))
                 {
                     var value = items.Where(v => term.Contains(v.Column.Name)).First();
                     value.QueryType = Enum.RowValueQuery.GreaterThan;
-                    value.Values.Add(Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType));
+                    value.Value = Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType);
                 }
 
                 if (term.Contains('<'))
                 {
                     var value = items.Where(v => term.Contains(v.Column.Name)).First();
                     value.QueryType = Enum.RowValueQuery.LessThan;
-                    value.Values.Add(Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType));
+                    value.Value = Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType);
                 }
 
                 if (term.Contains("BETWEEN"))
