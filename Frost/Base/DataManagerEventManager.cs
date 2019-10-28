@@ -34,10 +34,16 @@ namespace FrostDB.Base
         {
             RegisterTableCreatedEvents();
             RegisterRowAddedEvents();
+            RegisterRowDeletedEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterRowDeletedEvents()
+        {
+            EventManager.StartListening(EventName.Row.Deleted,
+              new Action<IEventArgs>(HandleRowDeletedEvent));
+        }
         private void RegisterTableCreatedEvents()
         {
             EventManager.StartListening(EventName.Table.Created, 
@@ -48,6 +54,19 @@ namespace FrostDB.Base
         {
             EventManager.StartListening(EventName.Row.Added,
                new Action<IEventArgs>(HandleRowAddedEvent));
+        }
+
+        private void HandleRowDeletedEvent(IEventArgs e)
+        {
+            if (e is RowDeletedEventArgs)
+            {
+                var args = (RowDeletedEventArgs)e;
+
+                if (args.Database is TDatabase)
+                {
+                    _dataManager.SaveToDisk((TDatabase)args.Database);
+                }
+            }
         }
 
         private void HandleRowAddedEvent(IEventArgs e)

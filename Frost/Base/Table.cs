@@ -31,7 +31,8 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public Table() {
+        public Table()
+        {
             _id = Guid.NewGuid();
             _rows = new List<Row>();
         }
@@ -67,14 +68,19 @@ namespace FrostDB.Base
             if (RowMatchesTableColumns(row))
             {
                 this._rows.Add(row);
-                EventManager.TriggerEvent(EventName.Row.Added, 
+                EventManager.TriggerEvent(EventName.Row.Added,
                     CreateRowAddedEventArgs(row));
             }
         }
 
         public void DeleteRow(Row row)
         {
-            throw new NotImplementedException();
+            if (HasRow(row))
+            {
+                this._rows.Remove(row);
+                EventManager.TriggerEvent(EventName.Row.Deleted,
+                    CreateRowDeletedsEventArgs(row));
+            }
         }
 
         public Row GetNewRow()
@@ -84,7 +90,24 @@ namespace FrostDB.Base
 
         public bool HasRow(Row row)
         {
-            throw new NotImplementedException();
+            bool hasRow = false;
+
+            _rows.ForEach(r =>
+            {
+                r.Values.ForEach(c =>
+                {
+                    row.Values.ForEach(p =>
+                    {
+                        if (c.Column.Name == p.Column.Name &&
+                        c.Value == p.Value)
+                        {
+                            hasRow = true;
+                        }
+                    });
+                });
+            });
+
+            return hasRow;
         }
 
         public bool HasRow(Guid guid)
@@ -108,12 +131,21 @@ namespace FrostDB.Base
             info.AddValue("TableColumns", Columns, typeof(List<Column>));
             info.AddValue("TableName", Name, typeof(string));
             info.AddValue("TableRows", _rows, typeof(List<Row>));
-            info.AddValue("TableDatabase", _database, 
+            info.AddValue("TableDatabase", _database,
                 typeof(IDatabase));
         }
         #endregion
 
         #region Private Methods
+        private RowDeletedEventArgs CreateRowDeletedsEventArgs(Row row)
+        {
+            return new RowDeletedEventArgs
+            {
+                Database = _database,
+                Table = this,
+                Row = row
+            };
+        }
         private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
         {
             return new RowAddedEventArgs
@@ -121,26 +153,31 @@ namespace FrostDB.Base
                 Database = _database,
                 Table = this,
                 Row = row
-            };  
+            };
         }
 
-    private bool RowMatchesTableColumns(Row row)
-    {
-        bool isMatch = true;
-
-        row.Columns.ForEach(c =>
+        private Row GetRow(Guid id)
         {
-            isMatch = this.Columns.Any(tc => tc.Name == c.Name &&
-            tc.DataType == c.DataType);
-        });
-
-        if (!(row.Columns.Count == this.Columns.Count))
-        {
-            isMatch = false;
+            return _rows.Where(r => r.Id == id).FirstOrDefault();
         }
 
-        return isMatch;
+        private bool RowMatchesTableColumns(Row row)
+        {
+            bool isMatch = true;
+
+            row.Columns.ForEach(c =>
+            {
+                isMatch = this.Columns.Any(tc => tc.Name == c.Name &&
+                tc.DataType == c.DataType);
+            });
+
+            if (!(row.Columns.Count == this.Columns.Count))
+            {
+                isMatch = false;
+            }
+
+            return isMatch;
+        }
+        #endregion
     }
-    #endregion
-}
 }
