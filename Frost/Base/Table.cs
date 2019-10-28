@@ -122,8 +122,15 @@ namespace FrostDB.Base
 
         public List<Row> GetRows(string condition)
         {
-            var values = Parser.GetValues(condition);
+            // TODO: Do we need a diff type to do matching?
+            // something to possibly handle > < and BETWEEN?
+            var values = new List<IRowValue>();
 
+            if (Parser.Validate(condition, this))
+            {
+                values = Parser.GetValues(condition, this);
+            }
+            
             var results = new List<Row>();
 
             _rows.ForEach(r =>

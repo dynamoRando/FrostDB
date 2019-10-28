@@ -19,13 +19,16 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public RowValue() { }
-        public RowValue(IColumn column)
+        public RowValue() 
+        {
+            Value = new object();
+        }
+        public RowValue(IColumn column) : this()
         {
             _column = column;
         }
 
-        public RowValue(IColumn column, object value)
+        public RowValue(IColumn column, object value) : this()
         {
             _column = column;
             Value = value;
