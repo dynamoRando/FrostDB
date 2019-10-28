@@ -122,7 +122,26 @@ namespace FrostDB.Base
 
         public List<Row> GetRows(string condition)
         {
-            throw new NotImplementedException();
+            var values = Parser.GetValues(condition);
+
+            var results = new List<Row>();
+
+            _rows.ForEach(r =>
+            {
+                r.Values.ForEach(v =>
+                {
+                    values.ForEach(val =>
+                    {
+                        if (v.Column.Name == val.Column.Name
+                        && v.Value == val.Value)
+                        {
+                            results.Add(r);
+                        }
+                    });
+                });
+            });
+
+            return results;
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
