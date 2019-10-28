@@ -9,12 +9,20 @@ namespace FrostDB.Base
 {
     public class Parser : IParser
     {
-        // (FirstName = "Randy") AND (Age = "34")
-        // (Age > "10") AND (Age < "50") or ...
-        // (Age BETWEEN "10" AND "50")
+        // will work
+        // (FirstName = "Randy"), (Age = "34")
+        // won't work
+        // (Age > "10"), (Age < "50") 
+        // will work
+        // (Age BETWEEN "10","50")
+        // (Age > "50")
+        // won't work
+        // (FirstName = "Randy") OR (Age = "34")
+        // won't work
+        // (((FirstName = "Randy") AND (Age = "34")) OR (FirstName = "Megan"))
 
         #region Public Methods
-        static public List<IRowValue> GetValues(string condition, Table table)
+        static public List<RowValueQueryParam> GetParameters(string condition, Table table)
         {
             var terms = GetTerms(condition);
             var results = GetColumnsForTerms(table, terms);
@@ -39,28 +47,53 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
-        private static List<IRowValue> EvaluateTerms(List<string> terms, List<IRowValue> values)
+        private static List<RowValueQueryParam> EvaluateTerms(List<string> terms,
+            List<RowValueQueryParam> values)
         {
-            var items = new List<IRowValue>();
+            var items = new List<RowValueQueryParam>();
             items.AddRange(values);
 
-            terms.ForEach(term => 
+            terms.ForEach(term =>
             {
                 if (term.Contains('='))
                 {
                     var value = items.Where(v => term.Contains(v.Column.Name)).First();
-                    value.Value = Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType);   
+                    value.QueryType = Enum.RowValueQuery.Equals;
+                    value.Values.Add(Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType));
                 }
 
-                // how to handle less than, greater than, and between?
+                if (term.Contains('>'))
+                {
+                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    value.QueryType = Enum.RowValueQuery.GreaterThan;
+                    value.Values.Add(Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType));
+                }
+
+                if (term.Contains('<'))
+                {
+                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    value.QueryType = Enum.RowValueQuery.LessThan;
+                    value.Values.Add(Convert.ChangeType
+                    (GetQueryValues(term).First(), value.Column.DataType));
+                }
+
+                if (term.Contains("BETWEEN"))
+                {
+                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    value.QueryType = Enum.RowValueQuery.Between;
+                    var ix = GetQueryValues(term);
+                    value.MinValue = ix.Min();
+                    value.MaxValue = ix.Max();
+                }
             });
 
             return items;
         }
-        private static List<IRowValue> GetColumnsForTerms(Table table, List<string> terms)
+        private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
         {
-            var results = new List<IRowValue>();
+            var results = new List<RowValueQueryParam>();
 
             terms.ForEach(term =>
             {
@@ -68,7 +101,7 @@ namespace FrostDB.Base
                 {
                     if (term.Contains(column.Name))
                     {
-                        results.Add(new RowValue(column));
+                        results.Add(new RowValueQueryParam(column));
                     }
                 });
             });

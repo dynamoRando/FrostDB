@@ -105,7 +105,7 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public List<Row> GetRows(string condition)
+        public List<Row> GetRows(string queryString)
         {
             throw new NotImplementedException();
         }

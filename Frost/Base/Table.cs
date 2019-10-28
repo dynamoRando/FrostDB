@@ -120,33 +120,17 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public List<Row> GetRows(string condition)
+        public List<Row> GetRows(string queryString)
         {
-            // TODO: Do we need a diff type to do matching?
-            // something to possibly handle > < and BETWEEN?
-            var values = new List<IRowValue>();
+            var parameters = new List<RowValueQueryParam>();
 
-            if (Parser.Validate(condition, this))
+            if (Parser.Validate(queryString, this))
             {
-                values = Parser.GetValues(condition, this);
+                parameters = Parser.GetParameters(queryString, this);
             }
-            
-            var results = new List<Row>();
 
-            _rows.ForEach(r =>
-            {
-                r.Values.ForEach(v =>
-                {
-                    values.ForEach(val =>
-                    {
-                        if (v.Column.Name == val.Column.Name
-                        && v.Value == val.Value)
-                        {
-                            results.Add(r);
-                        }
-                    });
-                });
-            });
+            var query = new QueryRunner();
+            var results = query.Execute(parameters, _rows);
 
             return results;
         }
