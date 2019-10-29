@@ -100,7 +100,7 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public void UpdateRow(Row row)
+        public void UpdateRow(Row oldRow, Row newRow)
         {
             throw new NotImplementedException();
         }

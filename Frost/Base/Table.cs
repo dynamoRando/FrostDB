@@ -93,9 +93,9 @@ namespace FrostDB.Base
         {
             bool hasRow = false;
 
-            Parallel.ForEach(_rows, (r) => 
+            Parallel.ForEach(_rows, (r) =>
             {
-                Parallel.ForEach(r.Values, (c) => 
+                Parallel.ForEach(r.Values, (c) =>
                 {
                     hasRow = row.Values.All(p =>
                      (p.Column.Name == c.Column.Name &&
@@ -111,9 +111,14 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public void UpdateRow(Row row)
+        public void UpdateRow(Row oldRow, Row newRow)
         {
-            throw new NotImplementedException();
+            if (HasRow(oldRow))
+            {
+                var refRow = GetRow(oldRow);
+                _rows.Remove(refRow);
+                _rows.Add(newRow);
+            }
         }
 
         public List<Row> GetRows(string queryString)
@@ -160,6 +165,26 @@ namespace FrostDB.Base
                 Table = this,
                 Row = row
             };
+        }
+
+        private Row GetRow(Row row)
+        {
+            Row returnRow = new Row();
+
+            Parallel.ForEach(_rows, (r) =>
+            {
+                Parallel.ForEach(r.Values, (c) =>
+                {
+                    if (row.Values.All(p =>
+                    (p.Column.Name == c.Column.Name &&
+                    p.Value == c.Value)))
+                    {
+                        returnRow = r;
+                    }
+                });
+            });
+
+            return returnRow;
         }
 
         private Row GetRow(Guid id)
