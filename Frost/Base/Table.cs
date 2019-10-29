@@ -17,7 +17,6 @@ namespace FrostDB.Base
         private List<Row> _rows;
         private Guid? _id;
         private string _name;
-        private IDatabase _database;
         #endregion
 
         #region Public Properties
@@ -25,6 +24,7 @@ namespace FrostDB.Base
         public Guid? Id => _id;
         public string Name => _name;
         public List<Row> Rows => _rows;
+        public Guid? DatabaseId { get; set ; }
 
         #endregion
 
@@ -41,25 +41,19 @@ namespace FrostDB.Base
         {
             _rows = (List<Row>)serializationInfo.GetValue
                ("TableRows", typeof(List<Row>));
-            _database = (IDatabase)serializationInfo.GetValue
-                ("TableDatabase", typeof(IDatabase));
+            DatabaseId = (Guid?)serializationInfo.GetValue
+                ("TableDatabaseId", typeof(Guid?));
             _id = (Guid)serializationInfo.GetValue("TableId", typeof(Guid));
             _name = (string)serializationInfo.GetValue("TableName", typeof(string));
             _columns = (List<Column>)serializationInfo.GetValue
                 ("TableColumns", typeof(List<Column>));
         }
 
-        public Table(string name, List<Column> columns, Database database) : this()
+        public Table(string name, List<Column> columns, Guid? database) : this()
         {
             _name = name;
             _columns = columns;
-            _database = database;
-        }
-        public Table(string name, List<Column> columns, PartialDatabase database) : this()
-        {
-            _name = name;
-            _columns = columns;
-            _database = database;
+            DatabaseId = database;
         }
         #endregion
 
@@ -86,7 +80,10 @@ namespace FrostDB.Base
 
         public Row GetNewRow()
         {
-            return new Row(this.Columns);
+            List<Guid?> ids = new List<Guid?>();
+            this.Columns.ForEach(c => ids.Add(c.Id));
+
+            return new Row(ids, this.Id);
         }
 
         public bool HasRow(Row row)
@@ -98,7 +95,7 @@ namespace FrostDB.Base
                 Parallel.ForEach(r.Values, (c, valueState) =>
                 {
                     hasRow = row.Values.All(p =>
-                     (p.Column.Name == c.Column.Name &&
+                     (p.ColumnName == c.ColumnName &&
                      p.Value == c.Value));
 
                     if (hasRow)
@@ -148,8 +145,13 @@ namespace FrostDB.Base
             info.AddValue("TableColumns", Columns, typeof(List<Column>));
             info.AddValue("TableName", Name, typeof(string));
             info.AddValue("TableRows", _rows, typeof(List<Row>));
-            info.AddValue("TableDatabase", _database,
-                typeof(IDatabase));
+            info.AddValue("TableDatabaseId", DatabaseId,
+                typeof(Guid?));
+        }
+
+        public Column GetColumn(Guid? id)
+        {
+            return Columns.Where(c => c.Id == id).FirstOrDefault();
         }
         #endregion
 
@@ -158,7 +160,7 @@ namespace FrostDB.Base
         {
             return new RowDeletedEventArgs
             {
-                Database = _database,
+                DatabaseId = this.DatabaseId,
                 Table = this,
                 Row = row
             };
@@ -167,7 +169,7 @@ namespace FrostDB.Base
         {
             return new RowAddedEventArgs
             {
-                Database = _database,
+                DatabaseId = this.DatabaseId,
                 Table = this,
                 Row = row
             };
@@ -182,7 +184,7 @@ namespace FrostDB.Base
                 Parallel.ForEach(r.Values, (c) =>
                 {
                     if (row.Values.All(p =>
-                    (p.Column.Name == c.Column.Name &&
+                    (p.ColumnName == c.ColumnName &&
                     p.Value == c.Value)))
                     {
                         returnRow = r;
@@ -202,13 +204,15 @@ namespace FrostDB.Base
         {
             bool isMatch = true;
 
-            row.Columns.ForEach(c =>
+            row.ColumnIds.ForEach(c =>
             {
-                isMatch = this.Columns.Any(tc => tc.Name == c.Name &&
-                tc.DataType == c.DataType);
+                var x = GetColumn(c);
+
+                isMatch = this.Columns.Any(tc => tc.Name == x.Name &&
+                tc.DataType == x.DataType);
             });
 
-            if (!(row.Columns.Count == this.Columns.Count))
+            if (!(row.ColumnIds.Count == this.Columns.Count))
             {
                 isMatch = false;
             }

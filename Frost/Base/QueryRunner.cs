@@ -35,7 +35,7 @@ namespace FrostDB.Base
 
             if (parameter.QueryType == Enum.RowValueQuery.Between)
             {
-                var type = parameter.Column.DataType;
+                var type = parameter.ColumnDataType;
 
                 switch (true)
                 {
@@ -46,7 +46,7 @@ namespace FrostDB.Base
                         var matchingRowsInt = rows.Where(row =>
                         row.Values.All(value => Convert.ToInt32(value.Value) >= iMinValue
                         && Convert.ToInt32(value.Value) <= iMaxValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsInt);
 
@@ -58,7 +58,7 @@ namespace FrostDB.Base
                         var matchingRowsFloat = rows.Where(row =>
                         row.Values.All(value => Convert.ToDouble(value.Value) >= fMinValue
                         && Convert.ToDouble(value.Value) <= fMaxValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsFloat);
 
@@ -70,7 +70,7 @@ namespace FrostDB.Base
                         var matchingRowsDt = rows.Where(row =>
                         row.Values.All(value => Convert.ToDateTime(value.Value) >= dtMinValue
                         && Convert.ToDateTime(value.Value) <= dtMaxValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsDt);
 
@@ -89,7 +89,7 @@ namespace FrostDB.Base
 
             if (parameter.QueryType == Enum.RowValueQuery.GreaterThan)
             {
-                var type = parameter.Column.DataType;
+                var type = parameter.ColumnDataType;
 
                 switch (true)
                 {
@@ -98,7 +98,7 @@ namespace FrostDB.Base
 
                         var matchingRowsInt = rows.Where(row =>
                         row.Values.All(value => Convert.ToInt32(value.Value) > iValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsInt);
 
@@ -108,7 +108,7 @@ namespace FrostDB.Base
 
                         var matchingRowsFloat = rows.Where(row =>
                         row.Values.All(value => Convert.ToDouble(value.Value) > fValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsFloat);
 
@@ -118,7 +118,7 @@ namespace FrostDB.Base
 
                         var matchingRowsDt = rows.Where(row =>
                         row.Values.All(value => Convert.ToDateTime(value.Value) > dtValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsDt);
 
@@ -137,7 +137,7 @@ namespace FrostDB.Base
 
             if (parameter.QueryType == Enum.RowValueQuery.LessThan)
             {
-                var type = parameter.Column.DataType;
+                var type = parameter.ColumnDataType;
 
                 switch (true)
                 {
@@ -146,7 +146,7 @@ namespace FrostDB.Base
 
                         var matchingRowsInt = rows.Where(row =>
                         row.Values.All(value => Convert.ToInt32(value.Value) < iValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsInt);
 
@@ -156,7 +156,7 @@ namespace FrostDB.Base
 
                         var matchingRowsFloat = rows.Where(row =>
                         row.Values.All(value => Convert.ToDouble(value.Value) < fValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsFloat);
 
@@ -166,7 +166,7 @@ namespace FrostDB.Base
 
                         var matchingRowsDt = rows.Where(row =>
                         row.Values.All(value => Convert.ToDateTime(value.Value) < dtValue
-                        && value.Column.Name == parameter.Column.Name)).AsParallel();
+                        && value.ColumnName == parameter.ColumnName)).AsParallel();
 
                         results.AddRange(matchingRowsDt);
 
@@ -186,11 +186,30 @@ namespace FrostDB.Base
             {
                 // is this right? will this return all rows?
 
-                var matchingRows = rows.Where(row =>
-                   row.Values.All(value => value.Value == parameter.Value
-                   && value.Column.Name == parameter.Column.Name)).AsParallel();
+                rows.ForEach(row => 
+                {
+                    row.Values.ForEach(value => 
+                    {
+                        if (value.ColumnName == parameter.ColumnName && 
+                        Convert.ChangeType(value.Value, value.ColumnType).Equals(
+                            Convert.ChangeType(parameter.Value, parameter.ColumnDataType)))
+                        {
+                            results.Add(row);
+                        }
+                    });
+                });
 
-                results.AddRange(matchingRows);
+                //Parallel.ForEach(rows, (row) => 
+                //{
+                //    Parallel.ForEach(row.Values, (value) => 
+                //    {
+                //        if (value.ColumnName == parameter.ColumnName &&
+                //        value.Value == parameter.Value)
+                //        {
+                //            results.Add(row);
+                //        }
+                //    });
+                //});
             }
 
             return results;

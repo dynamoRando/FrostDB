@@ -28,6 +28,8 @@ namespace FrostDB.Base
         public Guid? Id => _id;
         public string Name => _name;
         public List<Row> Rows => GetRows();
+
+        public Guid? DatabaseId { get; set; }
         #endregion
 
         #region Events
@@ -130,6 +132,11 @@ namespace FrostDB.Base
             info.AddValue("Columns", Columns, typeof(List<Column>));
             info.AddValue("Name", Name, typeof(string));
             info.AddValue("Rows", Name, typeof(ConcurrentBag<RowReference>));
+        }
+
+        public Column GetColumn(Guid? id)
+        {
+            throw new NotImplementedException();
         }
 
 

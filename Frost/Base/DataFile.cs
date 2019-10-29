@@ -17,17 +17,17 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id.Value, typeof(Guid));
-            info.AddValue("Name", Name, typeof(string));
-            info.AddValue("Tables", Tables, typeof(List<ITable<Column, Row>>));
+            info.AddValue("DataFileId", Id.Value, typeof(Guid));
+            info.AddValue("DataFileName", Name, typeof(string));
+            info.AddValue("DataFileTables", Tables, typeof(List<ITable<Column, Row>>));
         }
 
         protected DataFile(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            Id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
-            Name = (string)serializationInfo.GetValue("Name", typeof(string));
+            Id = (Guid)serializationInfo.GetValue("DataFileId", typeof(Guid));
+            Name = (string)serializationInfo.GetValue("DataFileName", typeof(string));
             Tables = (List<ITable<Column, Row>>)serializationInfo.GetValue
-                ("Tables", typeof(List<ITable<Column, Row>>));
+                ("DataFileTables", typeof(List<ITable<Column, Row>>));
         }
 
         /*

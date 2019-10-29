@@ -58,37 +58,37 @@ namespace FrostDB.Base
             {
                 if (term.Contains('='))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    var value = items.Where(v => term.Contains(v.ColumnName))
                     .AsParallel().First();
 
                     value.QueryType = Enum.RowValueQuery.Equals;
                     value.Value = Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType);
+                    (GetQueryValues(term).First(), value.ColumnDataType);
                 }
 
                 if (term.Contains('>'))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    var value = items.Where(v => term.Contains(v.ColumnName))
                     .AsParallel().First();
 
                     value.QueryType = Enum.RowValueQuery.GreaterThan;
                     value.Value = Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType);
+                    (GetQueryValues(term).First(), value.ColumnDataType);
                 }
 
                 if (term.Contains('<'))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    var value = items.Where(v => term.Contains(v.ColumnName))
                     .AsParallel().First();
 
                     value.QueryType = Enum.RowValueQuery.LessThan;
                     value.Value = Convert.ChangeType
-                    (GetQueryValues(term).First(), value.Column.DataType);
+                    (GetQueryValues(term).First(), value.ColumnDataType);
                 }
 
                 if (term.Contains("BETWEEN"))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    var value = items.Where(v => term.Contains(v.ColumnName))
                     .AsParallel().First();
 
                     value.QueryType = Enum.RowValueQuery.Between;
@@ -110,7 +110,7 @@ namespace FrostDB.Base
                 {
                     if (term.Contains(column.Name))
                     {
-                        results.Add(new RowValueQueryParam(column));
+                        results.Add(new RowValueQueryParam(column.Name, column.DataType));
                     }
                 });
             });
@@ -123,6 +123,7 @@ namespace FrostDB.Base
             var stringValues = new List<string>();
 
             stringValues.AddRange(query.Split('(', ')').ToList());
+            stringValues.RemoveAll(s => string.IsNullOrEmpty(s));
 
             return stringValues;
         }
@@ -130,11 +131,17 @@ namespace FrostDB.Base
         static private List<string> GetQueryValues(string query)
         {
             var stringValues = new List<string>();
+            var returnStrings = new List<string>();
 
             var reg = new Regex("\".*?\"");
-            reg.Matches(query).ToList().ForEach(m => { stringValues.Add(m.ToString()); });
+            reg.Matches(query).ToList().ForEach(m => { stringValues.Add(m.ToString().Trim()); });
 
-            return stringValues;
+            stringValues.ForEach(v => 
+            {
+                returnStrings.Add(v.Replace("\"", ""));
+            });
+
+            return returnStrings;
         }
         #endregion
     }

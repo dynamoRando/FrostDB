@@ -9,7 +9,8 @@ namespace FrostDB.Base
     public class RowValueQueryParam : IRowValueQueryParam
     {
         #region Public Properties
-        public IColumn Column { get; set; }
+        public string ColumnName { get; set; }
+        public Type ColumnDataType { get; set; }
         public RowValueQuery QueryType { get; set; }
         public object Value { get; set; }
         public object MinValue { get; set; }
@@ -18,9 +19,10 @@ namespace FrostDB.Base
 
         #region Constructors
         public RowValueQueryParam() { }
-        public RowValueQueryParam(IColumn column)
+        public RowValueQueryParam(string columnName, Type columnDataType)
         {
-            Column = column;
+            ColumnName = columnName;
+            ColumnDataType = columnDataType;
         }
         #endregion
     }

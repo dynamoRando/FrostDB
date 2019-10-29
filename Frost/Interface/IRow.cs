@@ -9,7 +9,8 @@ namespace FrostDB.Interface
     public interface IRow : IDBObject, ISerializable
     {
         public Guid? Id { get; }
-        public List<Column> Columns { get; }
+        public Guid? TableId { get; }
+        public List<Guid?> ColumnIds { get; }
         public List<RowValue> Values { get; }
     }
 }

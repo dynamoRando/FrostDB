@@ -44,10 +44,11 @@ namespace FrostDB.Base
         #region Constructors
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            Id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
-            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            Id = (Guid)serializationInfo.GetValue("DatabaseId", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("DatabaseName", typeof(string));
+            //List<ITable<Column, Row>>
             _tables = (List<ITable<Column, Row>>)serializationInfo.GetValue
-                ("Tables", typeof(List<ITable<Column, Row>>));
+                ("DatabaseTables", typeof(List<ITable<Column, Row>>));
         }
         public Database(string name, DataManager<Database> manager)
         {
@@ -72,9 +73,9 @@ namespace FrostDB.Base
         #region Public Methods
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id.Value, typeof(Guid));
-            info.AddValue("Name", Name, typeof(string));
-            info.AddValue("Tables", Tables, typeof(List<ITable<Column, Row>>));
+            info.AddValue("DatabaseId", Id.Value, typeof(Guid));
+            info.AddValue("DatabaseName", Name, typeof(string));
+            info.AddValue("DatabaseTables", Tables, typeof(List<ITable<Column, Row>>));
         }
         public void AddTable(ITable<Column, Row> table)
         {

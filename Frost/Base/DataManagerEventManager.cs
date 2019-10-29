@@ -62,9 +62,11 @@ namespace FrostDB.Base
             {
                 var args = (RowDeletedEventArgs)e;
 
-                if (args.Database is TDatabase)
+                IDatabase db = _dataManager.GetDatabase(args.DatabaseId);
+
+                if (db is TDatabase)
                 {
-                    _dataManager.SaveToDisk((TDatabase)args.Database);
+                    _dataManager.SaveToDisk((TDatabase)db);
                 }
             }
         }
@@ -75,9 +77,11 @@ namespace FrostDB.Base
             {
                 var args = (RowAddedEventArgs)e;
 
-                if (args.Database is TDatabase)
+                IDatabase db = _dataManager.GetDatabase(args.DatabaseId);
+
+                if (db is TDatabase)
                 {
-                    _dataManager.SaveToDisk((TDatabase)args.Database);
+                    _dataManager.SaveToDisk((TDatabase)db);
                 }
             }
         }

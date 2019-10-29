@@ -19,6 +19,8 @@ namespace FrostDB.Interface
         void DeleteRow(YRow row);
         void UpdateRow(YRow oldRow, YRow newRow);
         List<YRow> GetRows(string queryString);
+        Guid? DatabaseId { get; set; }
+        TColumn GetColumn(Guid? id);
     }
 }
 /*

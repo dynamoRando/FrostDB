@@ -25,6 +25,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        public Column() { }
         public Column(string name, Type type)
         {
             _id = Guid.NewGuid();
@@ -34,17 +35,17 @@ namespace FrostDB.Base
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Id", Id.Value, typeof(Guid));
-            info.AddValue("Name", Name, typeof(string));
-            info.AddValue("DataType", DataType, typeof(Type));
+            info.AddValue("ColumnId", Id.Value, typeof(Guid));
+            info.AddValue("ColumnName", Name, typeof(string));
+            info.AddValue("ColumnDataType", DataType, typeof(Type));
         }
 
         protected Column(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
-            _name = (string)serializationInfo.GetValue("Name", typeof(string));
+            _id = (Guid)serializationInfo.GetValue("ColumnId", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("ColumnName", typeof(string));
             _type = (Type)serializationInfo.GetValue
-                ("DataType", typeof(Type));
+                ("ColumnDataType", typeof(Type));
         }
         #endregion
 

@@ -7,7 +7,8 @@ namespace FrostDB.Interface
 {
     public interface IRowValueQueryParam
     {
-        IColumn Column { get; set; }
+        string ColumnName { get; set; }
+        Type ColumnDataType { get; set; }
         RowValueQuery QueryType { get; set; }
         Object Value { get; set; }
     }

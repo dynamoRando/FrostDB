@@ -11,6 +11,7 @@ namespace FrostDB.Base
     public class DataManager<TDatabase> where TDatabase : IDatabase
     {
         #region Private Fields
+        private List<TDatabase> _databases;
         private string _databaseFolder;
         private string _databaseExtension;
         private IDataFileManager<DataFile> _dataFileManager;
@@ -19,7 +20,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public List<TDatabase> Databases { get; }
+        public List<TDatabase> Databases => _databases;
         #endregion
 
         #region Events
@@ -31,6 +32,7 @@ namespace FrostDB.Base
         #region Constructors
         public DataManager()
         {
+            _databases = new List<TDatabase>();
             _dataEventManager = new DataManagerEventManager<TDatabase>(this);
             RegisterEvents();
         }
@@ -38,8 +40,6 @@ namespace FrostDB.Base
             string databaseExtension,
             IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> mapper) : this()
         {
-            Databases = new List<TDatabase>();
-
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = mapper;
 
@@ -53,19 +53,19 @@ namespace FrostDB.Base
         {
             if (!HasDatabase(database.Name))
             {
-                Databases.Add(database);
+                _databases.Add(database);
                 SaveToDisk(database);
             }
         }
 
         public TDatabase GetDatabase(string databaseName)
         {
-            return Databases.Where(d => d.Name == databaseName).First();
+            return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
         }
 
-        public TDatabase GetDatabase(Guid guid)
+        public TDatabase GetDatabase(Guid? guid)
         {
-            return Databases.Where(d => d.Id == guid).First();
+            return Databases.Where(d => d.Id == guid).FirstOrDefault();
         }
 
         public bool HasDatabase(string databaseName)
@@ -95,7 +95,7 @@ namespace FrostDB.Base
             foreach (var file in Directory.GetFiles(databaseFolderLocation))
             {
                 var database = GetDatabaseFromDisk(file);
-                Databases.Add(database);
+                _databases.Add(database);
                 count = Databases.Count;
             }
 

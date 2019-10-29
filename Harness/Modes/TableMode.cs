@@ -107,9 +107,11 @@ namespace Harness.Modes
             {
                 var r = rows[0];
 
-                r.Columns.ForEach(column =>
+                r.ColumnIds.ForEach(column =>
                 {
-                    tableString += $"| {column.Name} | ";
+                    var x = _table.GetColumn(column);
+
+                    tableString += $"| {x.Name} ";
                 });
 
                 App.Write(tableString);
@@ -120,7 +122,7 @@ namespace Harness.Modes
 
                     row.Values.ForEach(value =>
                     {
-                        rowString += $" {value.ToString()} | ";
+                        rowString += $"| {Convert.ChangeType(value.Value, value.ColumnType).ToString()} ";
                     });
 
                     rowStrings.Add(rowString);
@@ -164,15 +166,16 @@ namespace Harness.Modes
 
             var row = _table.GetNewRow();
 
-            row.Columns.ForEach(c =>
+            row.ColumnIds.ForEach(c =>
             {
+                var x = _table.GetColumn(c);
                 var val = this.Prompt($"For column " +
-                    $"{c.Name} for type " +
-                    $"{c.DataType.ToString()} " +
+                    $"{x.Name} for type " +
+                    $"{x.DataType.ToString()} " +
                     $"Please enter a value: ");
 
                 row.AddValue(c,
-                    Convert.ChangeType(val, c.DataType));
+                    Convert.ChangeType(val, x.DataType), x.Name, x.DataType);
 
             });
 
@@ -221,14 +224,15 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase);
+                    var table = new Table(result, 
+                        ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase.Id);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
                 }
 
                 if (PartialDatabase is null)
                 {
-                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }
