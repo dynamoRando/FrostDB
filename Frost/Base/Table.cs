@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 using FrostDB.EventArgs;
 
 namespace FrostDB.Base
@@ -92,18 +93,13 @@ namespace FrostDB.Base
         {
             bool hasRow = false;
 
-            _rows.ForEach(r =>
+            Parallel.ForEach(_rows, (r) => 
             {
-                r.Values.ForEach(c =>
+                Parallel.ForEach(r.Values, (c) => 
                 {
-                    row.Values.ForEach(p =>
-                    {
-                        if (c.Column.Name == p.Column.Name &&
-                        c.Value == p.Value)
-                        {
-                            hasRow = true;
-                        }
-                    });
+                    hasRow = row.Values.All(p =>
+                     (p.Column.Name == c.Column.Name &&
+                     p.Value == c.Value));
                 });
             });
 
