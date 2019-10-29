@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IParser
+    public interface IQueryParser
     {
     }
 }

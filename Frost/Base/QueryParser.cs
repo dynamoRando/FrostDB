@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FrostDB.Base
 {
-    public class Parser : IParser
+    public class QueryParser : IQueryParser
     {
         // will work
         // (FirstName = "Randy"), (Age = "34")
@@ -31,7 +32,7 @@ namespace FrostDB.Base
             return values;
         }
 
-        static public bool Validate(string condition, Table table)
+        static public bool IsValidQuery(string condition, Table table)
         {
             bool isValid = false;
 
@@ -53,11 +54,13 @@ namespace FrostDB.Base
             var items = new List<RowValueQueryParam>();
             items.AddRange(values);
 
-            terms.ForEach(term =>
+            Parallel.ForEach(terms, (term) =>
             {
                 if (term.Contains('='))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    .AsParallel().First();
+
                     value.QueryType = Enum.RowValueQuery.Equals;
                     value.Value = Convert.ChangeType
                     (GetQueryValues(term).First(), value.Column.DataType);
@@ -65,7 +68,9 @@ namespace FrostDB.Base
 
                 if (term.Contains('>'))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    .AsParallel().First();
+
                     value.QueryType = Enum.RowValueQuery.GreaterThan;
                     value.Value = Convert.ChangeType
                     (GetQueryValues(term).First(), value.Column.DataType);
@@ -73,7 +78,9 @@ namespace FrostDB.Base
 
                 if (term.Contains('<'))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    .AsParallel().First();
+
                     value.QueryType = Enum.RowValueQuery.LessThan;
                     value.Value = Convert.ChangeType
                     (GetQueryValues(term).First(), value.Column.DataType);
@@ -81,7 +88,9 @@ namespace FrostDB.Base
 
                 if (term.Contains("BETWEEN"))
                 {
-                    var value = items.Where(v => term.Contains(v.Column.Name)).First();
+                    var value = items.Where(v => term.Contains(v.Column.Name))
+                    .AsParallel().First();
+
                     value.QueryType = Enum.RowValueQuery.Between;
                     var ix = GetQueryValues(term);
                     value.MinValue = ix.Min();
@@ -95,9 +104,9 @@ namespace FrostDB.Base
         {
             var results = new List<RowValueQueryParam>();
 
-            terms.ForEach(term =>
+            Parallel.ForEach(terms, (term) =>
             {
-                table.Columns.ForEach(column =>
+                Parallel.ForEach(table.Columns, (column) =>
                 {
                     if (term.Contains(column.Name))
                     {

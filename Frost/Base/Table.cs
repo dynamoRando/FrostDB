@@ -124,9 +124,9 @@ namespace FrostDB.Base
         {
             var parameters = new List<RowValueQueryParam>();
 
-            if (Parser.Validate(queryString, this))
+            if (QueryParser.IsValidQuery(queryString, this))
             {
-                parameters = Parser.GetParameters(queryString, this);
+                parameters = QueryParser.GetParameters(queryString, this);
             }
 
             var query = new QueryRunner();
