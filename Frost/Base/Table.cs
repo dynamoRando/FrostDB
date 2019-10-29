@@ -119,7 +119,7 @@ namespace FrostDB.Base
 
         public void UpdateRow(Row oldRow, Row newRow)
         {
-            if (HasRow(oldRow))
+            if (HasRow(oldRow) && RowMatchesTableColumns(newRow))
             {
                 var refRow = GetRow(oldRow);
                 _rows.Remove(refRow);
@@ -175,7 +175,7 @@ namespace FrostDB.Base
 
         private Row GetRow(Row row)
         {
-            Row returnRow = new Row();
+            Row returnRow = null;
 
             Parallel.ForEach(_rows, (r) =>
             {
