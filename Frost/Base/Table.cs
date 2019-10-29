@@ -93,13 +93,19 @@ namespace FrostDB.Base
         {
             bool hasRow = false;
 
-            Parallel.ForEach(_rows, (r) =>
+            Parallel.ForEach(_rows, (r, rowState) =>
             {
-                Parallel.ForEach(r.Values, (c) =>
+                Parallel.ForEach(r.Values, (c, valueState) =>
                 {
                     hasRow = row.Values.All(p =>
                      (p.Column.Name == c.Column.Name &&
                      p.Value == c.Value));
+
+                    if (hasRow)
+                    {
+                        valueState.Stop();
+                        rowState.Stop();
+                    }
                 });
             });
 
