@@ -49,6 +49,7 @@ namespace Harness.Modes
                 var result = this.Prompt("(a) - add regular table, " +
                     "(av) - add virtual table, " +
                     "(ar) - add record to table, " +
+                    "(fr) - find record on table " +
                     "(em) to exit");
 
                 switch (result)
@@ -65,9 +66,13 @@ namespace Harness.Modes
                     case "ar":
                         AddRecordToTable();
                         break;
+                    case "fr":
+                        FindRecords();
+                        break;
                 }
             } while (_stayInMode);
         }
+
 
         public void ShowTables()
         {
@@ -86,6 +91,44 @@ namespace Harness.Modes
         #endregion
 
         #region Private Methods
+        private void FindRecords()
+        {
+            PromptAndSetTable("Enter a table to search records for:");
+            var query = this.Prompt("Enter your query string:");
+            var rows = _table.GetRows(query);
+
+            var tableString = "";
+            var rowStrings = new List<string>();
+
+            App.Write($"TableName: { _table.Name}");
+            App.Write($"Query: {query}");
+
+            if (rows.Count > 0)
+            {
+                var r = rows[0];
+
+                r.Columns.ForEach(column =>
+                {
+                    tableString += $"| {column.Name} | ";
+                });
+
+                App.Write(tableString);
+
+                rows.ForEach(row =>
+                {
+                    var rowString = "";
+
+                    row.Values.ForEach(value =>
+                    {
+                        rowString += $" {value.ToString()} | ";
+                    });
+
+                    rowStrings.Add(rowString);
+                });
+
+                rowStrings.ForEach(str => App.Write(str));
+            }
+        }
         private bool IsPartialDatabase()
         {
             if (this.PartialDatabase is null)
@@ -97,11 +140,12 @@ namespace Harness.Modes
                 return true;
             }
         }
-        private void AddRecordToTable()
+
+        private void PromptAndSetTable(string prompt)
         {
             ShowTables();
 
-            var tableName = this.Prompt("Specify table name to add record to:");
+            var tableName = this.Prompt(prompt);
 
             if (!IsPartialDatabase())
             {
@@ -109,25 +153,31 @@ namespace Harness.Modes
                 {
                     var table = Database.GetTable(tableName);
                     _table = table;
-
-                    var row = _table.GetNewRow();
-
-                    row.Columns.ForEach(c =>
-                    {
-                        var val = this.Prompt($"For column " +
-                            $"{c.Name} for type " +
-                            $"{c.DataType.ToString()} " +
-                            $"Please enter a value: ");
-
-                        row.AddValue(c,
-                            Convert.ChangeType(val, c.DataType));
-
-                    });
-
-                    this.Prompt("Adding row");
-                    _table.AddRow(row);
                 }
             }
+        }
+
+        private void AddRecordToTable()
+        {
+            var prompt = "Specify table name to add record to:";
+            PromptAndSetTable(prompt);
+
+            var row = _table.GetNewRow();
+
+            row.Columns.ForEach(c =>
+            {
+                var val = this.Prompt($"For column " +
+                    $"{c.Name} for type " +
+                    $"{c.DataType.ToString()} " +
+                    $"Please enter a value: ");
+
+                row.AddValue(c,
+                    Convert.ChangeType(val, c.DataType));
+
+            });
+
+            this.Prompt("Adding row");
+            _table.AddRow(row);
         }
         private void AddVirtualTable()
         {
