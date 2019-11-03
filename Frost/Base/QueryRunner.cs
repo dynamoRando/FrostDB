@@ -96,31 +96,61 @@ namespace FrostDB.Base
                     case bool _ when type == typeof(int):
                         var iValue = (int)parameter.Value;
 
-                        var matchingRowsInt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToInt32(value.Value) > iValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsInt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToInt32(value.Value) > iValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(float):
                         var fValue = (float)parameter.Value;
 
-                        var matchingRowsFloat = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDouble(value.Value) > fValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsFloat);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDouble(value.Value) > fValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(DateTime):
                         var dtValue = (DateTime)parameter.Value;
 
-                        var matchingRowsDt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDateTime(value.Value) > dtValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsDt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDateTime(value.Value) > dtValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     default:
@@ -144,31 +174,61 @@ namespace FrostDB.Base
                     case bool _ when type == typeof(int):
                         var iValue = (int)parameter.Value;
 
-                        var matchingRowsInt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToInt32(value.Value) < iValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsInt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToInt32(value.Value) < iValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(float):
                         var fValue = (float)parameter.Value;
 
-                        var matchingRowsFloat = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDouble(value.Value) < fValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsFloat);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDouble(value.Value) < fValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(DateTime):
                         var dtValue = (DateTime)parameter.Value;
 
-                        var matchingRowsDt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDateTime(value.Value) < dtValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsDt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDateTime(value.Value) < dtValue)
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     default:
@@ -184,32 +244,18 @@ namespace FrostDB.Base
 
             if (parameter.QueryType == Enum.RowValueQuery.Equals)
             {
-                // is this right? will this return all rows?
-
-                rows.ForEach(row => 
+                Parallel.ForEach(rows, (row) =>
                 {
-                    row.Values.ForEach(value => 
+                    Parallel.ForEach(row.Values, (value) =>
                     {
-                        if (value.ColumnName == parameter.ColumnName && 
-                        Convert.ChangeType(value.Value, value.ColumnType).Equals(
-                            Convert.ChangeType(parameter.Value, parameter.ColumnDataType)))
+                        if (value.ColumnName == parameter.ColumnName &&
+                       Convert.ChangeType(value.Value, value.ColumnType).Equals(
+                           Convert.ChangeType(parameter.Value, parameter.ColumnDataType)))
                         {
                             results.Add(row);
                         }
                     });
                 });
-
-                //Parallel.ForEach(rows, (row) => 
-                //{
-                //    Parallel.ForEach(row.Values, (value) => 
-                //    {
-                //        if (value.ColumnName == parameter.ColumnName &&
-                //        value.Value == parameter.Value)
-                //        {
-                //            results.Add(row);
-                //        }
-                //    });
-                //});
             }
 
             return results;
