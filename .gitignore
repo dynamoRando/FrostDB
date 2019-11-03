@@ -8,3 +8,6 @@
 /Frost/obj
 /Harness/bin/Debug/netcoreapp3.0
 /Harness/obj
+/_Obj
+/.gitattributes
+/Directory.build.props
