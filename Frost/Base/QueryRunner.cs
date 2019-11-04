@@ -40,8 +40,8 @@ namespace FrostDB.Base
                 switch (true)
                 {
                     case bool _ when type == typeof(int):
-                        var iMinValue = (int)parameter.MinValue;
-                        var iMaxValue = (int)parameter.MaxValue;
+                        var iMinValue = Convert.ToInt32(parameter.MinValue);
+                        var iMaxValue = Convert.ToInt32(parameter.MaxValue);
 
                         var matchingRowsInt = rows.Where(row =>
                         row.Values.All(value => Convert.ToInt32(value.Value) >= iMinValue
