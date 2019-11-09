@@ -6,6 +6,7 @@ using System.Text;
 
 namespace FrostDB.Base
 {
+    [Serializable]
     public class RowReference : ISerializable
     {
         #region Private Fields
@@ -24,7 +25,7 @@ namespace FrostDB.Base
         {
             _id = (Guid)serializationInfo.GetValue("Id", typeof(Guid));
             _location = (Location)serializationInfo.
-                GetValue("Values", typeof(Location));
+                GetValue("Location", typeof(Location));
         }
         #endregion
 
