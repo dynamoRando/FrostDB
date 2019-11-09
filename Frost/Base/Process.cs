@@ -20,7 +20,7 @@ namespace FrostDB.Base
         public DataManager<PartialDatabase> PartialDatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
-        public IProcessConfiguration Configuration { get; private set; }
+        public static IProcessConfiguration Configuration { get; private set; }
         #endregion
 
         #region Events
@@ -44,6 +44,10 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public static ILocation GetLocation()
+        {
+            return Configuration.GetLocation();
+        }
         public virtual void AddDatabase(string databaseName)
         {
             DatabaseManager.AddDatabase(

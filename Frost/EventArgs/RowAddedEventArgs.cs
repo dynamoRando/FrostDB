@@ -10,6 +10,7 @@ namespace FrostDB.EventArgs
     {
         public Guid? DatabaseId { get; set; }
         public ITable<Column, Row> Table { get; set; }
+        public BaseTable BaseTable { get; set; }
         public IRow Row { get; set; }
     }
 }

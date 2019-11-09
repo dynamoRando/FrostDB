@@ -11,11 +11,15 @@ namespace FrostDB.Base
         IBaseRowReference, ISerializable, IDBObject
     {
         #region Private Fields
+        private List<Guid?> _columnIds;
+        private Guid? _tableId;
         #endregion
 
         #region Public Properties
         public Guid? RowId { get; set; }
         public Location Location { get; set; }
+        public List<Guid?> ColumnIds => _columnIds;
+        public Guid? TableId => _tableId;
         #endregion
 
         #region Protected Methods
@@ -25,6 +29,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        public BaseRowReference() { }
+        public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location)
+        {
+            _columnIds = columnIds;
+            _tableId = tableId;
+            Location = location;
+        }
         protected BaseRowReference(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             throw new NotImplementedException();

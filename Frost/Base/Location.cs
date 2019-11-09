@@ -34,10 +34,10 @@ namespace FrostDB.Base
         #region Public Methods
         public bool IsLocal()
         {
-            if (IpAddress.Contains("127.0.0.1") || Url.Contains("localhost"))
+            if (IpAddress.Contains("127.0.0.1") || Url.Contains("localhost") || (IpAddress == Process.GetLocation().IpAddress && PortNumber == Process.GetLocation().PortNumber))
             {
                 return true;
-            }   
+            }
             else
             {
                 return false;
