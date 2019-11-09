@@ -32,6 +32,16 @@ namespace FrostDB.Base
             return values;
         }
 
+        static public List<RowValueQueryParam> GetParameters(string condition, BaseTable table)
+        {
+            throw new NotImplementedException();
+        }
+
+        static public bool IsValidQuery(string condition, BaseTable table)
+        {
+            throw new NotImplementedException();
+        }
+
         static public bool IsValidQuery(string condition, Table table)
         {
             bool isValid = false;

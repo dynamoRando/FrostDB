@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -13,6 +14,7 @@ namespace FrostDB.Base
         #region Private Fields
         private List<Guid?> _columnIds;
         private Guid? _tableId;
+        private Guid? _databaseId;
         #endregion
 
         #region Public Properties
@@ -20,6 +22,7 @@ namespace FrostDB.Base
         public Location Location { get; set; }
         public List<Guid?> ColumnIds => _columnIds;
         public Guid? TableId => _tableId;
+        public Guid? DatabaseId => _databaseId;
         #endregion
 
         #region Protected Methods
@@ -46,6 +49,22 @@ namespace FrostDB.Base
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
+        }
+
+        public Row Get()
+        {
+            var row = new Row();
+
+            if (Location.IsLocal())
+            {
+                row = Process.GetDatabase(DatabaseId).GetTable(TableId).GetRow(this);
+            }
+            else
+            {
+                row = Process.GetRemoteRow(Location, RowId);
+            }
+
+            return row;
         }
         #endregion
 

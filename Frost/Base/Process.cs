@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -21,6 +22,7 @@ namespace FrostDB.Base
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
+        public static List<IBaseDatabase> Data { get; set; }
         #endregion
 
         #region Events
@@ -109,6 +111,15 @@ namespace FrostDB.Base
             });
 
             return dbs;
+        }
+
+        public static IBaseDatabase GetDatabase(Guid? databaseId)
+        {
+            return Data.Where(d => d.Id == databaseId).First();
+        }
+        public static Row GetRemoteRow(Location location, Guid? rowId)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

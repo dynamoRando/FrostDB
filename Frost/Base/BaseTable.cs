@@ -44,11 +44,37 @@ namespace FrostDB.Base
         {
             throw new NotImplementedException();
         }
-
-
         #endregion
 
         #region Public Methods
+        public Row GetRow(BaseRowReference reference)
+        {
+            var row = new Row();
+
+            if (reference.Location.IsLocal())
+            {
+                row = _store.Rows.Where(r => r.Id == reference.RowId).First();
+            }
+
+            return row;
+        }
+        public List<Row> GetRows(string queryString)
+        {
+            var rows = new List<Row>();
+            _rows.ForEach(row => { rows.Add(row.Get()); });
+
+            var parameters = new List<RowValueQueryParam>();
+
+            if (QueryParser.IsValidQuery(queryString, this))
+            {
+                parameters = QueryParser.GetParameters(queryString, this);
+            }
+
+            var query = new QueryRunner();
+            var results = query.Execute(parameters, rows);
+
+            return results;
+        }
         public Column GetColumn(Guid? id)
         {
             return Columns.Where(c => c.Id == id).FirstOrDefault();
@@ -123,7 +149,7 @@ namespace FrostDB.Base
                 colIds.Add(c.Id);
             });
 
-            return new BaseRowReference(colIds, this.Id, (Location)Process.GetLocation());
+            return new BaseRowReference(colIds, Id, (Location)Process.GetLocation());
         }
 
         private BaseRowReference GetNewRowReference(Row row, Location location)

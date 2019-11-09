@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace FrostDB.Base
 {
@@ -16,8 +17,8 @@ namespace FrostDB.Base
 
         #region Public Properties
         public List<BaseTable> Tables => _tables;
-        public Guid? Id => throw new NotImplementedException();
         public string Name => throw new NotImplementedException();
+        public Guid? Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         #region Protected Methods
@@ -43,6 +44,12 @@ namespace FrostDB.Base
         {
             throw new NotImplementedException();
         }
+
+        public IBaseTable GetTable(Guid? tableId)
+        {
+            return _tables.Where(t => t.Id == tableId).First();
+        }
+
         #endregion
 
         #region Private Methods

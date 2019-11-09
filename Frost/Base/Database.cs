@@ -84,6 +84,11 @@ namespace FrostDB.Base
                 CreateTableCreatedEventArgs(table));
         }
 
+        public bool HasTable(Guid? id)
+        {
+            return this.Tables.Any(t => t.Id == id);
+        }
+
         public bool HasTable(string tableName)
         {
             return this.Tables.Any(t => t.Name == tableName);

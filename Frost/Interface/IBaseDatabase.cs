@@ -7,5 +7,7 @@ namespace FrostDB.Interface
 {
     public interface IBaseDatabase
     {
+        Guid? Id { get; set; }
+        IBaseTable GetTable(Guid? tableId);
     }
 }
