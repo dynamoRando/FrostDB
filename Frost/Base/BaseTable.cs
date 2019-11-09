@@ -55,6 +55,10 @@ namespace FrostDB.Base
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
             }
+            else
+            {
+                row = reference.Get();
+            }
 
             return row;
         }
