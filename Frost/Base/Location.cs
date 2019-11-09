@@ -15,6 +15,7 @@ namespace FrostDB.Base
         public string Name { get; set; }
         public string IpAddress { get; set; }
         public int PortNumber { get; set; }
+        public string Url { get; set; }
         #endregion
 
         #region Events
@@ -31,6 +32,17 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public bool IsLocal()
+        {
+            if (IpAddress.Contains("127.0.0.1") || Url.Contains("localhost"))
+            {
+                return true;
+            }   
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Private Methods

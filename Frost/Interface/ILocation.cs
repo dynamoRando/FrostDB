@@ -8,5 +8,7 @@ namespace FrostDB.Interface
     {
         string IpAddress { get; set; }
         int PortNumber { get; set; }
+        string Url { get; set; }
+        bool IsLocal();
     }
 }
