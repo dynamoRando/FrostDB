@@ -11,12 +11,13 @@ using System.Runtime.Serialization;
 
 namespace FrostDB.Base
 {
+    /*
     [Serializable]
     public class VirtualTable : ITable<Column, Row>, IVirtualTable,
         ISerializable
     {
         #region Private Fields
-        private Database _database;
+        private BaseDatabase _database;
         private ConcurrentBag<RowReference> _rows;
         private Guid? _id;
         private string _name;
@@ -86,7 +87,7 @@ namespace FrostDB.Base
             /*
              * var results = _rows.ForEach(r => r.Fetch());
              *  return results.Where(x => x.Values == row.Values).All();
-             */
+             
 
             // example
             return GetRows().Where(r => r.Values == row.Values).First();
@@ -143,7 +144,6 @@ namespace FrostDB.Base
         #endregion
 
 
-
-
     }
+*/
 }

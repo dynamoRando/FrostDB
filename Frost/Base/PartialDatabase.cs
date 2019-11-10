@@ -7,8 +7,9 @@ using System.Linq;
 
 namespace FrostDB.Base
 {
+    /*
     [Serializable]
-    public class PartialDatabase : IDatabase
+    public class PartialDatabase : IBaseDatabase
     {
         #region Private Fields
         private DataManager<PartialDatabase> _manager;
@@ -75,4 +76,5 @@ namespace FrostDB.Base
 
 
     }
+    */
 }

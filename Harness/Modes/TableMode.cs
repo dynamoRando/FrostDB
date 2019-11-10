@@ -15,9 +15,9 @@ namespace Harness.Modes
         #endregion
 
         #region Public Properties
-        public Database Database { get; }
-        public PartialDatabase PartialDatabase { get; }
-        public ITable<Column, Row> Table => _table;
+        public BaseDatabase Database { get; }
+        public BasePartialDatabase PartialDatabase { get; }
+        public BaseTable Table => _table;
         public string TableName => (Table is null) ? string.Empty : Table.Name;
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName => (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -27,12 +27,12 @@ namespace Harness.Modes
         #endregion
 
         #region Constructors
-        public TableMode(App app, Database db) : base(app)
+        public TableMode(App app, BaseDatabase db) : base(app)
         {
             Database = db;
         }
 
-        public TableMode(App app, PartialDatabase db) : base(app)
+        public TableMode(App app, BasePartialDatabase db) : base(app)
         {
             PartialDatabase = db;
         }
@@ -154,7 +154,7 @@ namespace Harness.Modes
                 if (Database.HasTable(tableName))
                 {
                     var table = Database.GetTable(tableName);
-                    _table = table;
+                    _table = (BaseTable)table;
                 }
             }
         }

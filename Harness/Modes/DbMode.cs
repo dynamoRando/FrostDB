@@ -17,8 +17,8 @@ namespace Harness.Modes
         #endregion
 
         #region Public Properties
-        public Database Database { get; set; }
-        public PartialDatabase PartialDatabase { get; set; }
+        public BaseDatabase Database { get; set; }
+        public BasePartialDatabase PartialDatabase { get; set; }
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName =>
             (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -35,7 +35,7 @@ namespace Harness.Modes
         public override void Prompt()
         {
             _stayInMode = true;
-            IDatabase db = null;
+            IBaseDatabase db = null;
 
             do
             {
@@ -52,11 +52,11 @@ namespace Harness.Modes
                         db = UseDb();
                         break;
                     case "a":
-                        if (db is Database)
+                        if (db is BaseDatabase)
                         {
                             PerformActionOnDb();
                         }
-                        else if (db is PartialDatabase)
+                        else if (db is BasePartialDatabase)
                         {
                             PerformActionOnPartialDb();
                         }
@@ -88,14 +88,14 @@ namespace Harness.Modes
             }
         }
 
-        public IDatabase UseDb()
+        public IBaseDatabase UseDb()
         {
-            IDatabase database = null;
+            IBaseDatabase database = null;
 
             App.Write("Listing databases. Use (em) to exit mode.");
 
             var db = Process.GetDatabases();
-            var pdb = Process.GetPartialDatabases();
+            var pdb = Process.GetPartialDatabasesString();
 
             App.Write("Databases: ");
             db.ForEach(d => { App.Write(d); });
@@ -107,7 +107,7 @@ namespace Harness.Modes
 
             if (db.Contains(dbName))
             {
-                Database = Process.GetDatabase(dbName);
+                Database = Process.GetFullDatabase(dbName);
                 PartialDatabase = null;
 
                 App.Write($"Using Db {DatabaseName}");

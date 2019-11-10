@@ -8,7 +8,7 @@ namespace FrostDB.EventArgs
 {
     public class TableCreatedEventArgs : System.EventArgs, IEventArgs
     {
-        public IDatabase Database { get; set; }
+        public IBaseDatabase Database { get; set; }
         public ITable<Column, Row> Table { get; set; }
     }
 }

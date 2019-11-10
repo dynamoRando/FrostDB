@@ -8,21 +8,19 @@ using System.Linq;
 
 namespace FrostDB.Base
 {
-    public class Process : IProcess<Database, PartialDatabase>
+    public class Process : IBaseProcess<IBaseDatabase>
     {
         #region Private Fields
         private ICommService _commService;
         #endregion
 
         #region Public Properties
-        public List<Database> Databases => DatabaseManager.Databases;
-        public List<PartialDatabase> PartialDatabases => PartialDatabaseManager.Databases;
-        public DataManager<Database> DatabaseManager { get; }
-        public DataManager<PartialDatabase> PartialDatabaseManager { get; }
+        
+        public BaseDataManager<IBaseDatabase> DatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
-        public static List<IBaseDatabase> Data { get; set; }
+        public List<IBaseDatabase> Databases => DatabaseManager.Databases;
         #endregion
 
         #region Events
@@ -32,16 +30,7 @@ namespace FrostDB.Base
         public Process()
         {
             SetConfiguration();
-
-            DatabaseManager = new DatabaseManager(
-                new DatabaseFileMapper(),
-                Configuration.DatabaseFolder,
-                Configuration.DatabaseExtension);
-
-            PartialDatabaseManager = new PartialDatabaseManager(
-                new PartialDatabaseFileMapper(),
-                Configuration.DatabaseFolder,
-                Configuration.PartialDatabaseExtension);
+            ProcessReference.Process = this;
         }
         #endregion
 
@@ -53,13 +42,13 @@ namespace FrostDB.Base
         public virtual void AddDatabase(string databaseName)
         {
             DatabaseManager.AddDatabase(
-                new Database(databaseName, DatabaseManager));
+                new BaseDatabase(databaseName));
         }
 
         public virtual void AddPartialDatabase(string databaseName)
         {
-            PartialDatabaseManager.AddDatabase(
-                new PartialDatabase(databaseName, PartialDatabaseManager));
+            DatabaseManager.AddDatabase(
+               new BasePartialDatabase(databaseName));
         }
 
         public virtual void RemoveDatabase(Guid guid)
@@ -77,18 +66,73 @@ namespace FrostDB.Base
             return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder);
         }
 
-        public virtual IDatabase GetDatabase(Guid id)
+        public virtual IBaseDatabase GetDatabase(Guid id)
         {
             return DatabaseManager.GetDatabase(id);
         }
-        public virtual Database GetDatabase(string databaseName)
+        public virtual IBaseDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
         }
 
-        public virtual PartialDatabase GetPartialDatabase(string databaseName)
+        public virtual BasePartialDatabase GetPartialDatabase(string databaseName)
         {
-            return PartialDatabaseManager.GetDatabase(databaseName);
+            BasePartialDatabase db = null;
+
+            Databases.ForEach(database =>
+            {
+                if (database is BasePartialDatabase && database.Name == databaseName)
+                {
+                    db = database as BasePartialDatabase;
+                }
+            });
+
+            return db;
+        }
+
+        public virtual BaseDatabase GetFullDatabase(string databaseName)
+        {
+            BaseDatabase db = null;
+
+            Databases.ForEach(database =>
+            {
+                if (database is BaseDatabase && database.Name == databaseName)
+                {
+                    db = database as BaseDatabase;
+                }
+            });
+
+            return db;
+        }
+
+        public virtual List<BasePartialDatabase> GetPartialDatabases()
+        {
+            var dbs = new List<BasePartialDatabase>();
+
+            Databases.ForEach(database =>
+            {
+                if (database is BasePartialDatabase)
+                {
+                    dbs.Add(database as BasePartialDatabase);
+                }
+            });
+
+            return dbs;
+        }
+
+        public virtual List<BaseDatabase> GetFullDatabases()
+        {
+            var dbs = new List<BaseDatabase>();
+
+            Databases.ForEach(database => 
+            { 
+                if (database is BaseDatabase)
+                {
+                    dbs.Add(database as BaseDatabase);
+                }
+            });
+
+            return dbs;
         }
 
         public List<string> GetDatabases()
@@ -102,12 +146,16 @@ namespace FrostDB.Base
             return dbs;
         }
 
-        public List<string> GetPartialDatabases()
+        public List<string> GetPartialDatabasesString()
         {
             var dbs = new List<string>();
 
-            PartialDatabases.ForEach(d => {
-                dbs.Add(d.Name);
+            Databases.ForEach(database => 
+            { 
+                if (database is BasePartialDatabase)
+                {
+                    dbs.Add(database.Name);
+                }
             });
 
             return dbs;
@@ -118,11 +166,11 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public static IBaseDatabase GetDatabase(Guid? databaseId)
+        public IBaseDatabase GetDatabase(Guid? databaseId)
         {
-            return Data.Where(d => d.Id == databaseId).First();
+            return Databases.Where(d => d.Id == databaseId).First();
         }
-        public static Row GetRemoteRow(Location location, Guid? rowId)
+        public Row GetRemoteRow(Location location, Guid? rowId)
         {
             throw new NotImplementedException();
         }

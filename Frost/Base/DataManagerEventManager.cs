@@ -7,10 +7,10 @@ using System.Text;
 namespace FrostDB.Base
 {
     public class DataManagerEventManager<TDatabase> : IDataManagerEventManager
-        where TDatabase : IDatabase
+        where TDatabase : IBaseDatabase
     {
         #region Private Fields
-        private DataManager<TDatabase> _dataManager;
+        private BaseDataManager<TDatabase> _dataManager;
         #endregion
 
         #region Public Properties
@@ -23,7 +23,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public DataManagerEventManager(DataManager<TDatabase> manager)
+        public DataManagerEventManager(BaseDataManager<TDatabase> manager)
         {
             _dataManager = manager;
         }
@@ -62,7 +62,7 @@ namespace FrostDB.Base
             {
                 var args = (RowDeletedEventArgs)e;
 
-                IDatabase db = _dataManager.GetDatabase(args.DatabaseId);
+                IBaseDatabase db = _dataManager.GetDatabase(args.DatabaseId);
 
                 if (db is TDatabase)
                 {
@@ -77,7 +77,7 @@ namespace FrostDB.Base
             {
                 var args = (RowAddedEventArgs)e;
 
-                IDatabase db = _dataManager.GetDatabase(args.DatabaseId);
+                IBaseDatabase db = _dataManager.GetDatabase(args.DatabaseId);
 
                 if (db is TDatabase)
                 {

@@ -57,11 +57,11 @@ namespace FrostDB.Base
 
             if (Location.IsLocal())
             {
-                row = Process.GetDatabase(DatabaseId).GetTable(TableId).GetRow(this);
+                row = ProcessReference.Process.GetDatabase(DatabaseId).GetTable(TableId).GetRow(this);
             }
             else
             {
-                row = Process.GetRemoteRow(Location, RowId);
+                row = ProcessReference.Process.GetRemoteRow(Location, RowId);
             }
 
             return row;

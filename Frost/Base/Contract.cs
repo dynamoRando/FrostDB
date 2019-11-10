@@ -12,7 +12,7 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public IDatabase Database => throw new NotImplementedException();
+        public IBaseDatabase Database => throw new NotImplementedException();
         public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<IDBObject> StoreObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<IDBObject> InstanceObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

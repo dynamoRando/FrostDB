@@ -5,11 +5,11 @@ using FrostDB.Interface;
 
 namespace FrostDB.Base
 {
-    public class DatabaseFileMapper : IDatabaseFileMapper<Database, DataFile, DataManager<Database>>
+    public class DatabaseFileMapper : IDatabaseFileMapper<IBaseDatabase, DataFile, BaseDataManager<IBaseDatabase>>
     {
-        public Database Map(DataFile file, DataManager<Database> manager)
+        public BaseDatabase Map(DataFile file, BaseDataManager<IBaseDatabase> manager)
         {
-            var database = new Database(
+            var database = new BaseDatabase(
                 file.Name, 
                 manager, 
                 file.Id.Value,
@@ -21,7 +21,7 @@ namespace FrostDB.Base
             return database;
         }
 
-        public DataFile Map(Database database)
+        public DataFile Map(IBaseDatabase database)
         {
             // TODO need to map tables, etc
             return new DataFile { Id = database.Id, Name = database.Name, Tables = database.Tables };
@@ -31,6 +31,16 @@ namespace FrostDB.Base
              * case when type == regular, add to regular tables
              * case when type == coop, add to coop tables
              */
+        }
+
+        public DataFile Map(BaseDatabase database)
+        {
+            throw new NotImplementedException();
+        }
+
+        IBaseDatabase IDatabaseFileMapper<IBaseDatabase, DataFile, BaseDataManager<IBaseDatabase>>.Map(DataFile file, BaseDataManager<IBaseDatabase> manager)
+        {
+            throw new NotImplementedException();
         }
     }
 }

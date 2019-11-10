@@ -11,7 +11,7 @@ namespace FrostDB.Base
     {
         public Guid? Id { get; set; }
         public string Name { get; set; }
-        public List<ITable<Column, Row>> Tables { get; set; }
+        public List<BaseTable> Tables { get; set; }
 
         public DataFile() { }
 
@@ -19,15 +19,15 @@ namespace FrostDB.Base
         {
             info.AddValue("DataFileId", Id.Value, typeof(Guid));
             info.AddValue("DataFileName", Name, typeof(string));
-            info.AddValue("DataFileTables", Tables, typeof(List<ITable<Column, Row>>));
+            info.AddValue("DataFileTables", Tables, typeof(List<BaseTable>));
         }
 
         protected DataFile(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             Id = (Guid)serializationInfo.GetValue("DataFileId", typeof(Guid));
             Name = (string)serializationInfo.GetValue("DataFileName", typeof(string));
-            Tables = (List<ITable<Column, Row>>)serializationInfo.GetValue
-                ("DataFileTables", typeof(List<ITable<Column, Row>>));
+            Tables = (List<BaseTable>)serializationInfo.GetValue
+                ("DataFileTables", typeof(List<BaseTable>));
         }
 
         /*

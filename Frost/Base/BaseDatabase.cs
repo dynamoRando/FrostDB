@@ -13,12 +13,14 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private List<BaseTable> _tables;
+        private string _name;
+        private Guid? _id;
         #endregion
 
         #region Public Properties
+        public string Name => _name;
         public List<BaseTable> Tables => _tables;
-        public string Name => throw new NotImplementedException();
-        public Guid? Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid? Id => _id;
         #endregion
 
         #region Protected Methods
@@ -30,7 +32,19 @@ namespace FrostDB.Base
         #region Constructors
         public BaseDatabase()
         {
+            _id = Guid.NewGuid();
             _tables = new List<BaseTable>();
+        }
+        public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
+            List<BaseTable> tables) : this(name)
+        {
+            _id = id;
+            _tables = tables;
+        }
+
+        public BaseDatabase(string name)
+        {
+            _name = name;
         }
 
         protected BaseDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -48,6 +62,16 @@ namespace FrostDB.Base
         public IBaseTable GetTable(Guid? tableId)
         {
             return _tables.Where(t => t.Id == tableId).First();
+        }
+
+        public BaseTable GetTable(string tableName)
+        {
+            return _tables.Where(t => t.Name == tableName).First();
+        }
+
+        public bool HasTable(string tableName)
+        {
+            return _tables.Any(t => t.Name == tableName);
         }
 
         #endregion

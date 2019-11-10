@@ -8,15 +8,14 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    /*
-    public class DataManager<TDatabase> where TDatabase : IBaseDatabase
+    public class BaseDataManager<TDatabase> where TDatabase : IBaseDatabase
     {
         #region Private Fields
         private List<TDatabase> _databases;
         private string _databaseFolder;
         private string _databaseExtension;
         private IDataFileManager<DataFile> _dataFileManager;
-        private IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> _databaseFileMapper;
+        private IDatabaseFileMapper<TDatabase, DataFile, BaseDataManager<TDatabase>> _databaseFileMapper;
         private IDataManagerEventManager _dataEventManager;
         #endregion
 
@@ -31,15 +30,15 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
-        public DataManager()
+        public BaseDataManager()
         {
             _databases = new List<TDatabase>();
             _dataEventManager = new DataManagerEventManager<TDatabase>(this);
             RegisterEvents();
         }
-        public DataManager(string databaseFolder,
+        public BaseDataManager(string databaseFolder,
             string databaseExtension,
-            IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> mapper) : this()
+            IDatabaseFileMapper<TDatabase, DataFile, BaseDataManager<TDatabase>> mapper) : this()
         {
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = mapper;
@@ -50,6 +49,20 @@ namespace FrostDB.Base
         #endregion  
 
         #region Public Methods
+        public BaseDatabase GetFullDatabase(string databaseName)
+        {
+            BaseDatabase db = null;
+
+            Databases.ForEach(database =>
+            {
+                if ((database is BaseDatabase) && (database.Name == databaseName))
+                {
+                    db = database as BaseDatabase;
+                }
+            });
+
+            return db;
+        }
         public void AddDatabase(TDatabase database)
         {
             if (!HasDatabase(database.Name))
@@ -129,5 +142,4 @@ namespace FrostDB.Base
         }
         #endregion
     }
-    */
 }
