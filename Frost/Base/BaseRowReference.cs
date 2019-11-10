@@ -33,6 +33,14 @@ namespace FrostDB.Base
 
         #region Constructors
         public BaseRowReference() { }
+
+        public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location, Guid? databaseId)
+        {
+            _columnIds = columnIds;
+            _tableId = tableId;
+            Location = location;
+            _databaseId = databaseId;
+        }
         public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location)
         {
             _columnIds = columnIds;
@@ -41,14 +49,25 @@ namespace FrostDB.Base
         }
         protected BaseRowReference(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            throw new NotImplementedException();
+            _tableId = (Guid?)serializationInfo.GetValue
+              ("ReferenceTableId", typeof(Guid?));
+            RowId = (Guid?)serializationInfo.GetValue
+                ("ReferenceRowId", typeof(Guid?));
+            _databaseId = (Guid?)serializationInfo.GetValue("ReferenceDatabaseId", typeof(Guid?));
+            Location = (Location)serializationInfo.GetValue("ReferenceLocation", typeof(Location));
+            _columnIds = (List<Guid?>)serializationInfo.GetValue
+                ("ReferenceColumnIds", typeof(List<Guid?>));
         }
         #endregion
 
         #region Public Methods
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("ReferenceTableId", _tableId, typeof(Guid?));
+            info.AddValue("ReferenceRowId", RowId, typeof(Guid?));
+            info.AddValue("ReferenceDatabaseId", _databaseId, typeof(Guid?));
+            info.AddValue("ReferenceLocation", Location, typeof(Location));
+            info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
         public Row Get()

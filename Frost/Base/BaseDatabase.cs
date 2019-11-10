@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Linq;
+using FrostDB.EventArgs;
 
 namespace FrostDB.Base
 {
@@ -42,7 +43,7 @@ namespace FrostDB.Base
             _tables = tables;
         }
 
-        public BaseDatabase(string name)
+        public BaseDatabase(string name) : this()
         {
             _name = name;
         }
@@ -59,9 +60,16 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        public IBaseTable GetTable(Guid? tableId)
+        public BaseTable GetTable(Guid? tableId)
         {
             return _tables.Where(t => t.Id == tableId).First();
+        }
+
+        public void AddTable(BaseTable table)
+        {
+            _tables.Add(table);
+            EventManager.TriggerEvent(EventName.Table.Created,
+              CreateTableCreatedEventArgs(table));
         }
 
         public BaseTable GetTable(string tableName)
@@ -77,6 +85,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Private Methods
+        private TableCreatedEventArgs CreateTableCreatedEventArgs(BaseTable table)
+        {
+            var eventargs = new TableCreatedEventArgs();
+            eventargs.Table = table;
+            eventargs.Database = this;
+            return eventargs;
+        }
         #endregion
 
     }

@@ -7,7 +7,7 @@ namespace FrostDB.Base
 {
     public class DatabaseFileMapper : IDatabaseFileMapper<IBaseDatabase, DataFile, BaseDataManager<IBaseDatabase>>
     {
-        public BaseDatabase Map(DataFile file, BaseDataManager<IBaseDatabase> manager)
+        public BaseDatabase MapDatabase(DataFile file, BaseDataManager<IBaseDatabase> manager)
         {
             var database = new BaseDatabase(
                 file.Name, 
@@ -16,8 +16,6 @@ namespace FrostDB.Base
                 file.Tables
                 );
       
-            // TODO Need to map tables, etc.
-
             return database;
         }
 
@@ -38,9 +36,16 @@ namespace FrostDB.Base
             throw new NotImplementedException();
         }
 
-        IBaseDatabase IDatabaseFileMapper<IBaseDatabase, DataFile, BaseDataManager<IBaseDatabase>>.Map(DataFile file, BaseDataManager<IBaseDatabase> manager)
+        public IBaseDatabase Map(DataFile file, BaseDataManager<IBaseDatabase> manager)
         {
-            throw new NotImplementedException();
+            var database = new BaseDatabase(
+                file.Name,
+                manager,
+                file.Id.Value,
+                file.Tables
+                );
+
+            return database;
         }
     }
 }

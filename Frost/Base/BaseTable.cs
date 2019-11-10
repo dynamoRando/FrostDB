@@ -41,9 +41,25 @@ namespace FrostDB.Base
             _rows = new List<BaseRowReference>();
         }
 
+        public BaseTable(string name, List<Column> columns, Guid? database) : this()
+        {
+            _name = name;
+            _columns = columns;
+            DatabaseId = database;
+        }
+
         protected BaseTable(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            throw new NotImplementedException();
+            _rows = (List<BaseRowReference>)serializationInfo.GetValue
+             ("TableRows", typeof(List<BaseRowReference>));
+            DatabaseId = (Guid?)serializationInfo.GetValue
+                ("TableDatabaseId", typeof(Guid?));
+            _id = (Guid)serializationInfo.GetValue("TableId", typeof(Guid));
+            _name = (string)serializationInfo.GetValue("TableName", typeof(string));
+            _columns = (List<Column>)serializationInfo.GetValue
+                ("TableColumns", typeof(List<Column>));
+            _store = (BaseStore)serializationInfo.GetValue
+                ("TableStore", typeof(BaseStore));
         }
         #endregion
 
@@ -116,7 +132,14 @@ namespace FrostDB.Base
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("TableId", Id.Value, typeof(Guid));
+            info.AddValue("TableColumns", Columns, typeof(List<Column>));
+            info.AddValue("TableName", Name, typeof(string));
+            info.AddValue("TableRows", _rows, typeof(List<BaseRowReference>));
+            info.AddValue("TableDatabaseId", DatabaseId,
+                typeof(Guid?));
+            info.AddValue("TableStore", DatabaseId,
+                typeof(BaseStore));
         }
         #endregion
 

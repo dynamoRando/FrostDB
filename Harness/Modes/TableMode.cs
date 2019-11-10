@@ -11,7 +11,7 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
-        private ITable<Column, Row> _table;
+        private BaseTable _table;
         #endregion
 
         #region Public Properties
@@ -154,7 +154,7 @@ namespace Harness.Modes
                 if (Database.HasTable(tableName))
                 {
                     var table = Database.GetTable(tableName);
-                    _table = (BaseTable)table;
+                    _table = table;
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace Harness.Modes
             {
                 if (PartialDatabase is null)
                 {
-                    var table = new VirtualTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database);
+                    var table = new BaseTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }
@@ -224,7 +224,7 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new Table(result, 
+                    var table = new BaseTable(result, 
                         ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase.Id);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
@@ -232,7 +232,7 @@ namespace Harness.Modes
 
                 if (PartialDatabase is null)
                 {
-                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
+                    var table = new BaseTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }

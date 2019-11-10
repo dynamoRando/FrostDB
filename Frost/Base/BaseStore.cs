@@ -30,11 +30,15 @@ namespace FrostDB.Base
         public BaseStore() 
         {
             _rows = new List<Row>();
+            _tableId = Guid.NewGuid();
         }
 
         protected BaseStore(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            throw new NotImplementedException();
+            _tableId = (Guid?)serializationInfo.GetValue
+              ("TableId", typeof(Guid?));
+            _rows = (List<Row>)serializationInfo.GetValue
+                ("TableRows", typeof(List<Row>));
         }
 
         #endregion
@@ -42,7 +46,8 @@ namespace FrostDB.Base
         #region Public Methods
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("TableId", _tableId, typeof(Guid?));
+            info.AddValue("TableRows", _rows, typeof(List<Row>));
         }
 
         public void AddRow(Row row)
