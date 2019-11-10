@@ -5,6 +5,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
+    /*
     public interface ITable<TColumn, YRow> : IFrostObjectGet, 
         IDBObject where TColumn : IColumn
         where YRow : IRow,
@@ -22,6 +23,7 @@ namespace FrostDB.Interface
         Guid? DatabaseId { get; set; }
         TColumn GetColumn(Guid? id);
     }
+    */
 }
 /*
  * public interface ITable<TColumn, TRow> : IFrostObjectGet, IDBObject where TColumn : IColumn where TRow : IRow 
