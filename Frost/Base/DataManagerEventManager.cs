@@ -35,6 +35,7 @@ namespace FrostDB.Base
             RegisterTableCreatedEvents();
             RegisterRowAddedEvents();
             RegisterRowDeletedEvents();
+            RegisterRowAccessedEvents();
         }
         #endregion
 
@@ -56,11 +57,32 @@ namespace FrostDB.Base
                new Action<IEventArgs>(HandleRowAddedEvent));
         }
 
+        private void RegisterRowAccessedEvents()
+        {
+            EventManager.StartListening(EventName.Row.Read,
+               new Action<IEventArgs>(HandleRowAccessedEvent));
+        }
+
         private void HandleRowDeletedEvent(IEventArgs e)
         {
             if (e is RowDeletedEventArgs)
             {
                 var args = (RowDeletedEventArgs)e;
+
+                IBaseDatabase db = _dataManager.GetDatabase(args.DatabaseId);
+
+                if (db is TDatabase)
+                {
+                    _dataManager.SaveToDisk((TDatabase)db);
+                }
+            }
+        }
+
+        private void HandleRowAccessedEvent(IEventArgs e)
+        {
+            if (e is RowAccessedEventArgs)
+            {
+                var args = (RowAccessedEventArgs)e;
 
                 IBaseDatabase db = _dataManager.GetDatabase(args.DatabaseId);
 

@@ -83,6 +83,9 @@ namespace FrostDB.Base
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
                 row.LastAccessed = DateTime.Now;
+
+                EventManager.TriggerEvent(EventName.Row.Read,
+                     CreateRowAccessedEventArgs(row));
             }
             else
             {
@@ -179,6 +182,16 @@ namespace FrostDB.Base
         private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
         {
             return new RowAddedEventArgs
+            {
+                DatabaseId = this.DatabaseId,
+                Table = this,
+                Row = row
+            };
+        }
+
+        private RowAccessedEventArgs CreateRowAccessedEventArgs(Row row)
+        {
+            return new RowAccessedEventArgs
             {
                 DatabaseId = this.DatabaseId,
                 Table = this,
