@@ -9,6 +9,7 @@ using FrostDB.EventArgs;
 
 namespace FrostDB.Base
 {
+    /*
     [Serializable]
     public class Table : ITable<Column, Row>, ISerializable
     {
@@ -221,4 +222,5 @@ namespace FrostDB.Base
         }
         #endregion
     }
+    */
 }

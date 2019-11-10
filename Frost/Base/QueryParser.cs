@@ -23,14 +23,14 @@ namespace FrostDB.Base
         // (((FirstName = "Randy") AND (Age = "34")) OR (FirstName = "Megan"))
 
         #region Public Methods
-        static public List<RowValueQueryParam> GetParameters(string condition, Table table)
-        {
-            var terms = GetTerms(condition);
-            var results = GetColumnsForTerms(table, terms);
-            var values = EvaluateTerms(terms, results);
+        //static public List<RowValueQueryParam> GetParameters(string condition, Table table)
+        //{
+        //    var terms = GetTerms(condition);
+        //    var results = GetColumnsForTerms(table, terms);
+        //    var values = EvaluateTerms(terms, results);
 
-            return values;
-        }
+        //    return values;
+        //}
 
         static public List<RowValueQueryParam> GetParameters(string condition, BaseTable table)
         {
@@ -55,19 +55,19 @@ namespace FrostDB.Base
             return isValid;
         }
 
-        static public bool IsValidQuery(string condition, Table table)
-        {
-            bool isValid = false;
+        //static public bool IsValidQuery(string condition, Table table)
+        //{
+        //    bool isValid = false;
 
-            var terms = GetTerms(condition);
+        //    var terms = GetTerms(condition);
 
-            isValid = terms.All(term =>
-                 table.Columns.Any(column => term.Contains(column.Name,
-                    StringComparison.InvariantCultureIgnoreCase))
-            );
+        //    isValid = terms.All(term =>
+        //         table.Columns.Any(column => term.Contains(column.Name,
+        //            StringComparison.InvariantCultureIgnoreCase))
+        //    );
 
-            return isValid;
-        }
+        //    return isValid;
+        //}
         #endregion
 
         #region Private Methods
@@ -141,23 +141,24 @@ namespace FrostDB.Base
 
             return results;
         }
-        private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
-        {
-            var results = new List<RowValueQueryParam>();
 
-            Parallel.ForEach(terms, (term) =>
-            {
-                Parallel.ForEach(table.Columns, (column) =>
-                {
-                    if (term.Contains(column.Name))
-                    {
-                        results.Add(new RowValueQueryParam(column.Name, column.DataType));
-                    }
-                });
-            });
+        //private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
+        //{
+        //    var results = new List<RowValueQueryParam>();
 
-            return results;
-        }
+        //    Parallel.ForEach(terms, (term) =>
+        //    {
+        //        Parallel.ForEach(table.Columns, (column) =>
+        //        {
+        //            if (term.Contains(column.Name))
+        //            {
+        //                results.Add(new RowValueQueryParam(column.Name, column.DataType));
+        //            }
+        //        });
+        //    });
+
+        //    return results;
+        //}
 
         static private List<string> GetTerms(string query)
         {
