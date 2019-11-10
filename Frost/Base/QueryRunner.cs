@@ -43,36 +43,66 @@ namespace FrostDB.Base
                         var iMinValue = Convert.ToInt32(parameter.MinValue);
                         var iMaxValue = Convert.ToInt32(parameter.MaxValue);
 
-                        var matchingRowsInt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToInt32(value.Value) >= iMinValue
-                        && Convert.ToInt32(value.Value) <= iMaxValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsInt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToInt32(value.Value) >= iMinValue &&
+                                    (Convert.ToInt32(value.Value) <= iMaxValue))
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(float):
                         var fMinValue = (float)parameter.MinValue;
                         var fMaxValue = (float)parameter.MaxValue;
 
-                        var matchingRowsFloat = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDouble(value.Value) >= fMinValue
-                        && Convert.ToDouble(value.Value) <= fMaxValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsFloat);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDouble(value.Value) >= fMinValue &&
+                                    (Convert.ToDouble(value.Value) <= fMaxValue))
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     case bool _ when type == typeof(DateTime):
                         var dtMinValue = (DateTime)parameter.MinValue;
                         var dtMaxValue = (DateTime)parameter.MaxValue;
 
-                        var matchingRowsDt = rows.Where(row =>
-                        row.Values.All(value => Convert.ToDateTime(value.Value) >= dtMinValue
-                        && Convert.ToDateTime(value.Value) <= dtMaxValue
-                        && value.ColumnName == parameter.ColumnName)).AsParallel();
-
-                        results.AddRange(matchingRowsDt);
+                        Parallel.ForEach(rows, (row) =>
+                        {
+                            Parallel.ForEach(row.Values, (value) =>
+                            {
+                                if (value.ColumnName == parameter.ColumnName &&
+                                value.ColumnType == parameter.ColumnDataType
+                                )
+                                {
+                                    if (Convert.ToDateTime(value.Value) >= dtMinValue &&
+                                    (Convert.ToDateTime(value.Value) <= dtMaxValue))
+                                    {
+                                        results.Add(row);
+                                    }
+                                }
+                            });
+                        });
 
                         break;
                     default:
