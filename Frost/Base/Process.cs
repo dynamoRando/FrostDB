@@ -113,6 +113,11 @@ namespace FrostDB.Base
             return dbs;
         }
 
+        public static void AddRemoteRow(Row row, Location location)
+        {
+            throw new NotImplementedException();
+        }
+
         public static IBaseDatabase GetDatabase(Guid? databaseId)
         {
             return Data.Where(d => d.Id == databaseId).First();

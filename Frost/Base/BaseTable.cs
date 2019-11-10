@@ -40,6 +40,7 @@ namespace FrostDB.Base
             _store = new BaseStore();
             _rows = new List<BaseRowReference>();
         }
+
         protected BaseTable(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             throw new NotImplementedException();
@@ -74,11 +75,9 @@ namespace FrostDB.Base
                 parameters = QueryParser.GetParameters(queryString, this);
             }
 
-            var query = new QueryRunner();
-            var results = query.Execute(parameters, rows);
-
-            return results;
+            return new QueryRunner().Execute(parameters, rows);
         }
+
         public Column GetColumn(Guid? id)
         {
             return Columns.Where(c => c.Id == id).FirstOrDefault();
@@ -86,10 +85,17 @@ namespace FrostDB.Base
 
         public void AddRow(Row row, Location location)
         {
-            throw new NotImplementedException();
+            if (!location.IsLocal())
+            {
+                Process.AddRemoteRow(row, location);
+                _rows.Add(GetNewRowReference(row, location));
+
+                EventManager.TriggerEvent(EventName.Row.Added,
+                       CreateRowAddedEventArgs(row));
+            }
         }
 
-        public void AddRowLocally(Row row)
+        public void AddRow(Row row)
         {
             if (RowMatchesTableColumns(row))
             {
@@ -100,6 +106,7 @@ namespace FrostDB.Base
                     CreateRowAddedEventArgs(row));
             }
         }
+
         public Row GetNewRow()
         {
             List<Guid?> ids = new List<Guid?>();
