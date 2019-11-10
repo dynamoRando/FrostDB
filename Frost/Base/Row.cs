@@ -21,6 +21,9 @@ namespace FrostDB.Base
         public List<RowValue> Values => _values;
         public Guid? TableId => _tableId;
         public List<Guid?> ColumnIds => _columnIds;
+        public DateTime LastModified { get; set; }
+        public DateTime LastAccessed { get; set; }
+        public DateTime CreatedDate { get; set; }
         #endregion
 
         #region Public Methods
@@ -34,6 +37,9 @@ namespace FrostDB.Base
             info.AddValue("RowColumns", _columnIds, typeof(List<Guid?>));
             info.AddValue("RowValues", _values, typeof(List<RowValue>));
             info.AddValue("RowTableId", _tableId, typeof(Guid?));
+            info.AddValue("RowLastModified", LastModified, typeof(DateTime));
+            info.AddValue("RowLastAccessed", LastAccessed, typeof(DateTime));
+            info.AddValue("RowCreatedDate", CreatedDate, typeof(DateTime));
         }
         #endregion
 
@@ -47,6 +53,12 @@ namespace FrostDB.Base
                 ("RowColumns", typeof(List<Guid?>));
             _tableId = (Guid?)serializationInfo.GetValue
                 ("RowTableId", typeof(Guid?));
+            CreatedDate = (DateTime)serializationInfo.GetValue
+                ("RowCreatedDate", typeof(DateTime));
+            LastAccessed = (DateTime)serializationInfo.GetValue
+                ("RowLastAccessed", typeof(DateTime));
+            LastModified = (DateTime)serializationInfo.GetValue
+                ("RowLastModified", typeof(DateTime));
         }
         #endregion
 
@@ -56,6 +68,7 @@ namespace FrostDB.Base
             _columnIds = new List<Guid?>();
             _values = new List<RowValue>();
             _id = Guid.NewGuid();
+            CreatedDate = DateTime.Now;
         }
 
         public Row(List<Guid?> columnIds) : this()

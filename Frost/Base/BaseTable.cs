@@ -82,6 +82,7 @@ namespace FrostDB.Base
             if (reference.Location.IsLocal())
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
+                row.LastAccessed = DateTime.Now;
             }
             else
             {
