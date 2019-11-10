@@ -65,6 +65,16 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public bool IsCooperative()
+        {
+            return _rows.Any(row => !row.Location.IsLocal());
+        }
+
+        public TableSchema GetSchema()
+        {
+            return new TableSchema(this);
+        }
+
         public Row GetRow(BaseRowReference reference)
         {
             var row = new Row();

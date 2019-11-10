@@ -55,6 +55,10 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public DbSchema GetSchema()
+        {
+            return new DbSchema(this);
+        }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
