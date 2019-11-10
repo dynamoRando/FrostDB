@@ -170,7 +170,7 @@ namespace FrostDB.Base
             return new RowAddedEventArgs
             {
                 DatabaseId = this.DatabaseId,
-                BaseTable = this,
+                Table = this,
                 Row = row
             };
         }
