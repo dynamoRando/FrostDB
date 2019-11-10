@@ -34,12 +34,25 @@ namespace FrostDB.Base
 
         static public List<RowValueQueryParam> GetParameters(string condition, BaseTable table)
         {
-            throw new NotImplementedException();
+            var terms = GetTerms(condition);
+            var results = GetColumnsForTerms(table, terms);
+            var values = EvaluateTerms(terms, results);
+
+            return values;
         }
 
         static public bool IsValidQuery(string condition, BaseTable table)
         {
-            throw new NotImplementedException();
+            bool isValid = false;
+
+            var terms = GetTerms(condition);
+
+            isValid = terms.All(term =>
+                 table.Columns.Any(column => term.Contains(column.Name,
+                    StringComparison.InvariantCultureIgnoreCase))
+            );
+
+            return isValid;
         }
 
         static public bool IsValidQuery(string condition, Table table)
@@ -109,6 +122,24 @@ namespace FrostDB.Base
             });
 
             return items;
+        }
+
+        private static List<RowValueQueryParam> GetColumnsForTerms(BaseTable table, List<string> terms)
+        {
+            var results = new List<RowValueQueryParam>();
+
+            Parallel.ForEach(terms, (term) =>
+            {
+                Parallel.ForEach(table.Columns, (column) =>
+                {
+                    if (term.Contains(column.Name))
+                    {
+                        results.Add(new RowValueQueryParam(column.Name, column.DataType));
+                    }
+                });
+            });
+
+            return results;
         }
         private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
         {

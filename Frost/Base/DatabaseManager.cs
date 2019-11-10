@@ -22,10 +22,15 @@ namespace FrostDB.Base
         public DatabaseManager() : base()
         {
         }
+
+        public DatabaseManager(DatabaseFileMapper mapper, string databaseFolder,
+            string databaseExtension) : base(databaseFolder, databaseExtension, mapper)
+        {
+        }
         #endregion
 
         #region Public Methods
-       
+
         #endregion
 
         #region Private Methods

@@ -34,12 +34,13 @@ namespace FrostDB.Base
         #region Constructors
         public BaseRowReference() { }
 
-        public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location, Guid? databaseId)
+        public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location, Guid? databaseId, Guid? rowId)
         {
             _columnIds = columnIds;
             _tableId = tableId;
             Location = location;
             _databaseId = databaseId;
+            RowId = rowId;
         }
         public BaseRowReference(List<Guid?> columnIds, Guid? tableId, Location location)
         {

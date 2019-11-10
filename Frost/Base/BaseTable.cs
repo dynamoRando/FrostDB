@@ -37,6 +37,7 @@ namespace FrostDB.Base
         #region Constructors
         public BaseTable()
         {
+            _id = Guid.NewGuid();
             _store = new BaseStore();
             _rows = new List<BaseRowReference>();
         }
@@ -132,13 +133,13 @@ namespace FrostDB.Base
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("TableId", Id.Value, typeof(Guid));
+            info.AddValue("TableId", Id.Value, typeof(Guid?));
             info.AddValue("TableColumns", Columns, typeof(List<Column>));
             info.AddValue("TableName", Name, typeof(string));
             info.AddValue("TableRows", _rows, typeof(List<BaseRowReference>));
             info.AddValue("TableDatabaseId", DatabaseId,
                 typeof(Guid?));
-            info.AddValue("TableStore", DatabaseId,
+            info.AddValue("TableStore", _store,
                 typeof(BaseStore));
         }
         #endregion
@@ -183,7 +184,7 @@ namespace FrostDB.Base
                 colIds.Add(c.Id);
             });
 
-            return new BaseRowReference(colIds, Id, (Location)Process.GetLocation());
+            return new BaseRowReference(colIds, Id, (Location)Process.GetLocation(), DatabaseId, row.Id);
         }
 
         private BaseRowReference GetNewRowReference(Row row, Location location)
@@ -195,7 +196,7 @@ namespace FrostDB.Base
                 colIds.Add(c.Id);
             });
 
-            return new BaseRowReference(colIds, this.Id, location);
+            return new BaseRowReference(colIds, this.Id, location, DatabaseId, row.Id);
         }
         #endregion
 

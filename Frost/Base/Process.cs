@@ -30,6 +30,12 @@ namespace FrostDB.Base
         public Process()
         {
             SetConfiguration();
+
+            DatabaseManager = new DatabaseManager(
+               new DatabaseFileMapper(),
+               Configuration.DatabaseFolder,
+               Configuration.DatabaseExtension);
+
             ProcessReference.Process = this;
         }
         #endregion
