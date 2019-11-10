@@ -53,10 +53,10 @@ namespace FrostDB.Base
                 ("RowColumns", typeof(List<Guid?>));
             _tableId = (Guid?)serializationInfo.GetValue
                 ("RowTableId", typeof(Guid?));
-            CreatedDate = (DateTime)serializationInfo.GetValue
-                ("RowCreatedDate", typeof(DateTime));
             LastAccessed = (DateTime)serializationInfo.GetValue
                 ("RowLastAccessed", typeof(DateTime));
+            CreatedDate = (DateTime)serializationInfo.GetValue
+                ("RowCreatedDate", typeof(DateTime));
             LastModified = (DateTime)serializationInfo.GetValue
                 ("RowLastModified", typeof(DateTime));
         }
