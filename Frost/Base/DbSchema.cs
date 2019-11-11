@@ -47,7 +47,7 @@ namespace FrostDB.Base
             Tables = new List<TableSchema>();
         }
 
-        public DbSchema(BaseDatabase database)
+        public DbSchema(BaseDatabase database) : this()
         {
             Map(database);
         }

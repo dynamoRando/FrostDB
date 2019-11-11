@@ -41,8 +41,7 @@ namespace FrostDB.Base
         {
             _id = Guid.NewGuid();
             _store = new BaseStore();
-            _rows = new List<BaseRowReference>();
-            _schema = new TableSchema();
+            _rows = new List<BaseRowReference>();   
         }
 
         public BaseTable(string name, List<Column> columns, Guid? database) : this()
@@ -50,6 +49,7 @@ namespace FrostDB.Base
             _name = name;
             _columns = columns;
             DatabaseId = database;
+            _schema = new TableSchema(this);
         }
 
         protected BaseTable(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -64,6 +64,8 @@ namespace FrostDB.Base
                 ("TableColumns", typeof(List<Column>));
             _store = (BaseStore)serializationInfo.GetValue
                 ("TableStore", typeof(BaseStore));
+            _schema = (TableSchema)serializationInfo.GetValue
+                ("TableSchema", typeof(TableSchema));
         }
         #endregion
 
@@ -158,6 +160,8 @@ namespace FrostDB.Base
                 typeof(Guid?));
             info.AddValue("TableStore", _store,
                 typeof(BaseStore));
+            info.AddValue("TableSchema", _schema,
+                typeof(TableSchema));
         }
         #endregion
 

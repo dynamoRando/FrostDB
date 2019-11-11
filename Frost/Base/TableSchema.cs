@@ -44,9 +44,10 @@ namespace FrostDB.Base
         public TableSchema()
         {
             Columns = new List<Column>();
+            Version = Guid.NewGuid();
         }
 
-        public TableSchema(BaseTable table)
+        public TableSchema(BaseTable table) : this()
         {
             Map(table);
         }
@@ -66,6 +67,7 @@ namespace FrostDB.Base
         #region Private Methods
         private void Map(BaseTable table)
         {
+            
             TableName = table.Name;
             TableId = table.Id;
             Columns = table.Columns;

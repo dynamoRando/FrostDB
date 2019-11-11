@@ -116,6 +116,7 @@ namespace FrostDB.Base
 
                 if (args.Database is TDatabase)
                 {
+                    args.Table.UpdateSchema();
                     args.Database.UpdateSchema();
                     _dataManager.SaveToDisk((TDatabase)args.Database);
                 }

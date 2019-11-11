@@ -37,13 +37,13 @@ namespace FrostDB.Base
         {
             _id = Guid.NewGuid();
             _tables = new List<BaseTable>();
-            _schema = new DbSchema();
         }
         public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
             List<BaseTable> tables) : this(name)
         {
             _id = id;
             _tables = tables;
+            _schema = new DbSchema(this);
         }
 
         public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
