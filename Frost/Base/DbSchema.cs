@@ -7,7 +7,7 @@ using System.Text;
 namespace FrostDB.Base
 {
     [Serializable]
-    public class DbSchema : ISchema, ISerializable
+    public class DbSchema : IDbSchema, ISerializable
     {
         #region Private Fields
         private Guid? _schemaVersion;
@@ -54,6 +54,15 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("SchemaDatabaseName", DatabaseName, typeof(string));
+            info.AddValue("SchemaDatabaseId", DatabaseId, typeof(Guid?));
+            info.AddValue("SchemaDatabaseLocation", Location, typeof(Location));
+            info.AddValue("SchemaVersion", Version, typeof(Guid?));
+            info.AddValue("SchemaTables", Tables,
+                typeof(List<TableSchema>));
+        }
         #endregion
 
         #region Private Methods
@@ -63,16 +72,6 @@ namespace FrostDB.Base
             DatabaseId = database.Id;
             database.Tables.ForEach(table => Tables.Add(table.Schema));
             Location = (Location)Process.GetLocation();
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("SchemaDatabaseName", DatabaseName, typeof(string));
-            info.AddValue("SchemaDatabaseId", DatabaseId, typeof(Guid?));
-            info.AddValue("SchemaDatabaseLocation", Location, typeof(Location));
-            info.AddValue("SchemaVersion", Version, typeof(Guid?));
-            info.AddValue("SchemaTables", Tables,
-                typeof(List<TableSchema>));
         }
         #endregion
     }

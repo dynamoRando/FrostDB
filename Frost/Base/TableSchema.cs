@@ -7,7 +7,7 @@ using System.Text;
 namespace FrostDB.Base
 {
     [Serializable]
-    public class TableSchema : ISchema, ISerializable
+    public class TableSchema : ITableSchema, ISerializable
     {
         #region Private Fields
         #endregion
