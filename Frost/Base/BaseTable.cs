@@ -18,6 +18,7 @@ namespace FrostDB.Base
         private Guid? _id;
         private string _name;
         private List<Column> _columns;
+        private TableSchema _schema;
         #endregion
 
         #region Public Properties
@@ -26,6 +27,7 @@ namespace FrostDB.Base
         public string Name => _name;
         public List<Column> Columns => _columns;
         public Guid? DatabaseId { get; set; }
+        public TableSchema Schema => _schema;
         #endregion
 
         #region Protected Methods
@@ -40,6 +42,7 @@ namespace FrostDB.Base
             _id = Guid.NewGuid();
             _store = new BaseStore();
             _rows = new List<BaseRowReference>();
+            _schema = new TableSchema();
         }
 
         public BaseTable(string name, List<Column> columns, Guid? database) : this()
@@ -70,9 +73,9 @@ namespace FrostDB.Base
             return _rows.Any(row => !row.Location.IsLocal());
         }
 
-        public TableSchema GetSchema()
+        public void UpdateSchema()
         {
-            return new TableSchema(this);
+            _schema = new TableSchema(this);
         }
 
         public Row GetRow(BaseRowReference reference)

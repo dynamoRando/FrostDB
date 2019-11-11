@@ -14,5 +14,7 @@ namespace FrostDB.Interface
         BaseTable GetTable(string tableName);
         bool HasTable(string tableName);
         void AddTable(BaseTable table);
+        void UpdateSchema();
+        DbSchema Schema { get; }
     }
 }

@@ -53,13 +53,13 @@ namespace FrostDB.Base
         {
             DataMessage message = new DataMessage();
             Stopwatch watch = new Stopwatch();
-            DBObject data = new DBObject();
+            DbObject data = new DbObject();
 
             message = WaitForMessage(id, message, watch);
 
             if (!(message is null))
             {
-                data = (DBObject)message.Data;
+                data = (DbObject)message.Data;
                 Task.Run(() => _messages.TryTake(out message));
             }
 

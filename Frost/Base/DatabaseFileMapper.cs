@@ -13,7 +13,8 @@ namespace FrostDB.Base
                 file.Name, 
                 manager, 
                 file.Id.Value,
-                file.Tables
+                file.Tables,
+                file.Schema
                 );
       
             return database;
@@ -22,7 +23,7 @@ namespace FrostDB.Base
         public DataFile Map(IBaseDatabase database)
         {
             // TODO need to map tables, etc
-            return new DataFile { Id = database.Id, Name = database.Name, Tables = database.Tables };
+            return new DataFile { Id = database.Id, Name = database.Name, Tables = database.Tables, Schema = database.Schema };
             /*
              * foreach table in Itables
              * switch (table.type)
@@ -42,7 +43,8 @@ namespace FrostDB.Base
                 file.Name,
                 manager,
                 file.Id.Value,
-                file.Tables
+                file.Tables,
+                file.Schema
                 );
 
             return database;

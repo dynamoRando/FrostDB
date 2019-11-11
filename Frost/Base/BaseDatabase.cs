@@ -16,12 +16,14 @@ namespace FrostDB.Base
         private List<BaseTable> _tables;
         private string _name;
         private Guid? _id;
+        private DbSchema _schema;
         #endregion
 
         #region Public Properties
         public string Name => _name;
         public List<BaseTable> Tables => _tables;
         public Guid? Id => _id;
+        public DbSchema Schema => _schema;
         #endregion
 
         #region Protected Methods
@@ -35,12 +37,21 @@ namespace FrostDB.Base
         {
             _id = Guid.NewGuid();
             _tables = new List<BaseTable>();
+            _schema = new DbSchema();
         }
         public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
             List<BaseTable> tables) : this(name)
         {
             _id = id;
             _tables = tables;
+        }
+
+        public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
+            List<BaseTable> tables, DbSchema schema) : this(name)
+        {
+            _id = id;
+            _tables = tables;
+            _schema = schema;
         }
 
         public BaseDatabase(string name) : this()
@@ -55,9 +66,9 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
-        public DbSchema GetSchema()
+        public void UpdateSchema()
         {
-            return new DbSchema(this);
+            _schema = new DbSchema(this);
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

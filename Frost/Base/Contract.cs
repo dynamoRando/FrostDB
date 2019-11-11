@@ -12,12 +12,13 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Properties
-        public IBaseDatabase Database => throw new NotImplementedException();
-        public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<IDBObject> StoreObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<IDBObject> InstanceObjects { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Guid? Id => throw new NotImplementedException();
-        public string Name => throw new NotImplementedException();
+        public string DatabaseName { get; set; }
+        public Guid? DatabaseId { get; set; }
+        public Location DatabaseLocation { get; set; }
+        public DbSchema DatabaseSchema { get; set; }
+        public string ContractDescription { get; set; }
+        public Guid? ContractId { get; set; }
+        public Guid? ContractVersion { get; set; }
         #endregion
 
         #region Events

@@ -1,11 +1,13 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Base
 {
-    public class TableSchema : ISchema
+    [Serializable]
+    public class TableSchema : ISchema, ISerializable
     {
         #region Private Fields
         #endregion
@@ -15,6 +17,7 @@ namespace FrostDB.Base
         public Guid? TableId { get; set; }
         public List<Column> Columns { get; set; }
         public bool IsCooperative { get; set; }
+        public Guid? Version { get; set; }
         #endregion
 
         #region Protected Methods
@@ -24,6 +27,20 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        protected TableSchema(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            TableName = (string)serializationInfo.GetValue
+            ("SchemaTableName", typeof(string));
+            TableId = (Guid?)serializationInfo.GetValue
+                ("SchemaTableId", typeof(Guid?));
+            Version = (Guid?)serializationInfo.GetValue
+                ("SchemaTableVersion", typeof(Guid?));
+            Columns = (List<Column>)serializationInfo.GetValue
+                ("SchemaTableColumns", typeof(List<Column>));
+            IsCooperative = (bool)serializationInfo.GetValue
+                ("SchemaTableIsCooperative", typeof(bool));
+        }
+
         public TableSchema()
         {
             Columns = new List<Column>();
@@ -36,6 +53,14 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("SchemaTableName", TableName, typeof(string));
+            info.AddValue("SchemaTableId", TableId, typeof(Guid?));
+            info.AddValue("SchemaTableVersion", Version, typeof(Guid?));
+            info.AddValue("SchemaTableColumns", Columns, typeof(List<Column>));
+            info.AddValue("SchemaTableIsCooperative", IsCooperative, typeof(bool));
+        }
         #endregion
 
         #region Private Methods

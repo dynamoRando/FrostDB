@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB.Base
 {
-    public class DBObject : IDBObject
+    public class DbObject : IDBObject
     {
     }
 }

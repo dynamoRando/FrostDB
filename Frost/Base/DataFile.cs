@@ -12,6 +12,7 @@ namespace FrostDB.Base
         public Guid? Id { get; set; }
         public string Name { get; set; }
         public List<BaseTable> Tables { get; set; }
+        public DbSchema Schema { get; set; }
         public DataFile() { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -19,6 +20,7 @@ namespace FrostDB.Base
             info.AddValue("DataFileId", Id.Value, typeof(Guid));
             info.AddValue("DataFileName", Name, typeof(string));
             info.AddValue("DataFileTables", Tables, typeof(List<BaseTable>));
+            info.AddValue("DataFileSchema", Schema, typeof(DbSchema));
         }
 
         protected DataFile(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -27,6 +29,8 @@ namespace FrostDB.Base
             Name = (string)serializationInfo.GetValue("DataFileName", typeof(string));
             Tables = (List<BaseTable>)serializationInfo.GetValue
                 ("DataFileTables", typeof(List<BaseTable>));
+            Schema = (DbSchema)serializationInfo.GetValue
+                ("DataFileSchema", typeof(DbSchema));
         }
 
         /*
