@@ -15,6 +15,7 @@ namespace FrostDB.Base
         public DbSchema Schema { get; set; }
         public DataFile() { }
         public List<Participant> Participants { get; set; }
+        public Contract Contract { get; set; }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -23,6 +24,7 @@ namespace FrostDB.Base
             info.AddValue("DataFileTables", Tables, typeof(List<BaseTable>));
             info.AddValue("DataFileSchema", Schema, typeof(DbSchema));
             info.AddValue("DataFileParticipants", Schema, typeof(List<Participant>));
+            info.AddValue("DataFileContract", Contract, typeof(Contract));
         }
 
         protected DataFile(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -35,6 +37,8 @@ namespace FrostDB.Base
                 ("DataFileSchema", typeof(DbSchema));
             Participants = (List<Participant>)serializationInfo.GetValue
                ("DataFileParticipants", typeof(List<Participant>));
+            Contract = (Contract)serializationInfo.GetValue
+               ("DataFileContract", typeof(Contract));
         }
 
         /*

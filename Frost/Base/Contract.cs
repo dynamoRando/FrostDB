@@ -1,13 +1,14 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace FrostDB.Base
 {
-    public class Contract : IContract
+    [Serializable]
+    public class Contract : IContract, ISerializable
     {
-
         #region Private Fields
         #endregion
 
@@ -25,9 +26,17 @@ namespace FrostDB.Base
         #endregion
 
         #region Constructors
+        protected Contract(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Public Methods
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods

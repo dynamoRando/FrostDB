@@ -15,8 +15,9 @@ namespace FrostDB.Base
                 file.Id.Value,
                 file.Tables,
                 file.Schema,
-                file.Participants
-                ); ;
+                file.Participants,
+                file.Contract
+                ); 
       
             return database;
         }
@@ -29,7 +30,8 @@ namespace FrostDB.Base
                 Name = database.Name, 
                 Tables = database.Tables, 
                 Schema = database.Schema,
-                Participants = database.Participants
+                Participants = database.Participants,
+                Contract = database.Contract
             };
             /*
              * foreach table in Itables
@@ -52,7 +54,8 @@ namespace FrostDB.Base
                 file.Id.Value,
                 file.Tables,
                 file.Schema,
-                file.Participants
+                file.Participants,
+                file.Contract
                 );
 
             return database;

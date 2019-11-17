@@ -18,6 +18,7 @@ namespace FrostDB.Base
         private Guid? _id;
         private DbSchema _schema;
         private ParticipantManager _participantManager;
+        private Contract _contract;
         #endregion
 
         #region Public Properties
@@ -26,6 +27,7 @@ namespace FrostDB.Base
         public Guid? Id => _id;
         public DbSchema Schema => _schema;
         public List<Participant> Participants => _participantManager.Participants;
+        public Contract Contract => _contract;
         #endregion
 
         #region Protected Methods
@@ -64,6 +66,18 @@ namespace FrostDB.Base
             _tables = tables;
             _schema = schema;
             _participantManager = new ParticipantManager(this, participants);
+        }
+
+        public BaseDatabase(string name, BaseDataManager<IBaseDatabase> manager, Guid id,
+            List<BaseTable> tables, DbSchema schema,
+            List<Participant> participants,
+            Contract contract) : this(name)
+        {
+            _id = id;
+            _tables = tables;
+            _schema = schema;
+            _participantManager = new ParticipantManager(this, participants);
+            _contract = contract;
         }
 
         public BaseDatabase(string name) : this()
