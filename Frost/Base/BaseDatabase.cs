@@ -78,6 +78,10 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public void SendParticipantRegistration(Location location)
+        {
+            throw new NotImplementedException();
+        }
         public void AddNewParticipant(Participant participant)
         {
             _participantManager.AddParticipant(participant);
