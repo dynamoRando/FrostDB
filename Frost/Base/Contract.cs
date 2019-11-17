@@ -28,14 +28,26 @@ namespace FrostDB.Base
         #region Constructors
         protected Contract(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
-            throw new NotImplementedException();
+            DatabaseId = (Guid?)serializationInfo.GetValue("ContractDatabaseId", typeof(Guid?));
+            DatabaseName = (string)serializationInfo.GetValue("ContractDatabaseName", typeof(string));
+            DatabaseLocation = (Location)serializationInfo.GetValue("ContractDatabaseLocation", typeof(Location));
+            DatabaseSchema = (DbSchema)serializationInfo.GetValue("ContractDatabaseSchema", typeof(DbSchema));
+            ContractDescription = (string)serializationInfo.GetValue("ContractDatabaseDescription", typeof(string));
+            ContractId = (Guid?)serializationInfo.GetValue("ContractId", typeof(Guid?));
+            ContractVersion = (Guid?)serializationInfo.GetValue("ContractVersion", typeof(Guid?));
         }
         #endregion
 
         #region Public Methods
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new NotImplementedException();
+            info.AddValue("ContractDatabaseId", DatabaseId.Value, typeof(Guid?));
+            info.AddValue("ContractDatabaseName", DatabaseName, typeof(string));
+            info.AddValue("ContractDatabaseLocation", DatabaseLocation, typeof(Location));
+            info.AddValue("ContractDatabaseSchema", DatabaseSchema, typeof(DbSchema));
+            info.AddValue("ContractDatabaseDescription", ContractDescription, typeof(string));
+            info.AddValue("ContractId", ContractId.Value, typeof(Guid?));
+            info.AddValue("ContractVersion", ContractVersion.Value, typeof(Guid?));
         }
         #endregion
 
