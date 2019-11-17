@@ -25,12 +25,23 @@ namespace FrostDB.Base
         #region Constructors
         public Participant() 
         {
-            _id = Guid.NewGuid();
+            if (!_id.HasValue)
+            {
+                _id = Guid.NewGuid();
+            }
         }
+
         public Participant(Location location) : this()
         {
             _location = location;
         }
+
+        public Participant(Guid? participantId, Location location) : this()
+        {
+            _id = participantId;
+            _location = location;
+        }
+
         protected Participant(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             _id = (Guid?)serializationInfo.GetValue

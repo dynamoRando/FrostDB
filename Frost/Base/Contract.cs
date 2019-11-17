@@ -20,6 +20,7 @@ namespace FrostDB.Base
         public string ContractDescription { get; set; }
         public Guid? ContractId { get; set; }
         public Guid? ContractVersion { get; set; }
+        public Guid? ProcessId { get; set; }
         #endregion
 
         #region Events
@@ -35,6 +36,7 @@ namespace FrostDB.Base
             ContractDescription = (string)serializationInfo.GetValue("ContractDatabaseDescription", typeof(string));
             ContractId = (Guid?)serializationInfo.GetValue("ContractId", typeof(Guid?));
             ContractVersion = (Guid?)serializationInfo.GetValue("ContractVersion", typeof(Guid?));
+            ProcessId = (Guid?)serializationInfo.GetValue("ProcessId", typeof(Guid?));
         }
         #endregion
 
@@ -48,6 +50,7 @@ namespace FrostDB.Base
             info.AddValue("ContractDatabaseDescription", ContractDescription, typeof(string));
             info.AddValue("ContractId", ContractId.Value, typeof(Guid?));
             info.AddValue("ContractVersion", ContractVersion.Value, typeof(Guid?));
+            info.AddValue("ProcessId", ContractVersion.Value, typeof(Guid?));
         }
         #endregion
 

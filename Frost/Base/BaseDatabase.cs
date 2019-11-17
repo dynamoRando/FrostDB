@@ -92,6 +92,12 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public Participant GetProcessParticipant()
+        {
+            return new Participant(
+                ProcessReference.Process.Id,
+                (Location)Process.GetLocation());
+        }
         public void SendParticipantRegistration(Location location)
         {
             throw new NotImplementedException();
