@@ -8,6 +8,12 @@
             public const string Deleted = "Database_Deleted";
         }
 
+        public class Participant
+        {
+            public const string Added = "Participant_Added";
+            public const string Removed = "Participant_Removed";
+        }
+
         public class Table
         {
             public const string Created = "Table_Created";

@@ -17,7 +17,7 @@ namespace FrostDB.Base
         private string _name;
         private Guid? _id;
         private DbSchema _schema;
-        private List<Participant> _participants;
+        private ParticipantManager _participantManager;
         #endregion
 
         #region Public Properties
@@ -25,7 +25,7 @@ namespace FrostDB.Base
         public List<BaseTable> Tables => _tables;
         public Guid? Id => _id;
         public DbSchema Schema => _schema;
-        public List<Participant> Participants => _participants;
+        public List<Participant> Participants => _participantManager.Participants;
         #endregion
 
         #region Protected Methods
@@ -63,7 +63,7 @@ namespace FrostDB.Base
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participants = participants;
+            _participantManager = new ParticipantManager(this, participants);
         }
 
         public BaseDatabase(string name) : this()
@@ -78,6 +78,10 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
+        public void AddNewParticipant(Participant participant)
+        {
+            _participantManager.AddParticipant(participant);
+        }
         public void UpdateSchema()
         {
             _schema = new DbSchema(this);
