@@ -8,8 +8,7 @@ namespace FrostDB.Base
     public class CommService : ICommService
     {
         #region Private Fields
-        private IDataServer _dataServer;
-        private IDataClient _dataClient;
+        private IFrostClientService _clientService;
         #endregion
 
         #region Public Properties
@@ -21,20 +20,19 @@ namespace FrostDB.Base
         #region Constructors
         public CommService()
         {
-            _dataClient = new DataClient();
-            _dataServer = new DataServer();
+           
         }
         #endregion
 
         #region Public Methods
         public void StartServer()
         {
-            _dataServer.Start();
+           
         }
 
         public void StopServer()
         {
-            _dataServer.Stop();
+           
         }
         #endregion
 

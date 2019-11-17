@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FrostDB.Interface.IResults
 {
-    public interface IRegisterDatabaseResult
+    public interface IRegisterNewPartialDatabase
     { }
 
-    public interface IAddRowToDatabaseResult
+    public interface IAddRowToPartialDatabase
     { }
 }

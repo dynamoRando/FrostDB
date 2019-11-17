@@ -81,6 +81,16 @@ namespace FrostDB.Base
             return DatabaseManager.GetDatabase(databaseName);
         }
 
+        public bool HasDatabase(string databaseName)
+        {
+            return Databases.Any(d => d.Name == databaseName);
+        }
+
+        public bool HasDatabase(Guid? databaseId)
+        {
+            return Databases.Any(d => d.Id == databaseId);
+        }
+
         public virtual BasePartialDatabase GetPartialDatabase(string databaseName)
         {
             BasePartialDatabase db = null;

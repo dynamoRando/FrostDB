@@ -8,7 +8,8 @@ namespace FrostDB.Interface
 {
     public interface IFrostClientService
     {
-        IRegisterDatabaseResult RegisterDatabase(Contract contract);
-        IAddRowToDatabaseResult AddRowToDatabase(Participant sourceParticipant, Guid? DatabaseId, Row row);
+        IRegisterNewPartialDatabase RegisterNewPartialDatabase(Contract contract);
+        IAddRowToPartialDatabase AddRowToPartialDatabase
+            (Participant sourceParticipant, Guid? DatabaseId, Row row);
     }
 }
