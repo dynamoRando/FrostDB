@@ -14,6 +14,7 @@ namespace FrostDB.Base
         public List<BaseTable> Tables { get; set; }
         public DbSchema Schema { get; set; }
         public DataFile() { }
+        public List<Participant> Participants { get; set; }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -21,6 +22,7 @@ namespace FrostDB.Base
             info.AddValue("DataFileName", Name, typeof(string));
             info.AddValue("DataFileTables", Tables, typeof(List<BaseTable>));
             info.AddValue("DataFileSchema", Schema, typeof(DbSchema));
+            info.AddValue("DataFileParticipants", Schema, typeof(List<Participant>));
         }
 
         protected DataFile(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -31,6 +33,8 @@ namespace FrostDB.Base
                 ("DataFileTables", typeof(List<BaseTable>));
             Schema = (DbSchema)serializationInfo.GetValue
                 ("DataFileSchema", typeof(DbSchema));
+            Participants = (List<Participant>)serializationInfo.GetValue
+               ("DataFileParticipants", typeof(List<Participant>));
         }
 
         /*
