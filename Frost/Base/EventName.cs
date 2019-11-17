@@ -26,6 +26,11 @@
             public const string Modified = "Row_Modified";
             public const string Deleted = "Row_Deleted";
             public const string Read = "Row_Read";
+
+            public const string Added_Remotely = "Row_Added_Remotely";
+            public const string Modified_Remotely = "Row_Modified_Remotely";
+            public const string Deleted_Remotely = "Row_Deleted_Remotely";
+            public const string Read_Remotely = "Row_Read_Remotely";
         }
 
         public class Columm

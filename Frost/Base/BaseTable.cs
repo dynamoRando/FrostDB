@@ -119,14 +119,14 @@ namespace FrostDB.Base
             return Columns.Where(c => c.Id == id).FirstOrDefault();
         }
 
-        public void AddRow(Row row, Location location)
+        public void AddRow(Row row, Participant participant)
         {
-            if (!location.IsLocal())
+            if (!participant.Location.IsLocal())
             {
-                Process.AddRemoteRow(row, location);
-                _rows.Add(GetNewRowReference(row, location));
+                Process.AddRemoteRow(row, participant.Location);
+                _rows.Add(GetNewRowReference(row, participant.Location));
 
-                EventManager.TriggerEvent(EventName.Row.Added,
+                EventManager.TriggerEvent(EventName.Row.Added_Remotely,
                        CreateRowAddedEventArgs(row));
             }
         }
