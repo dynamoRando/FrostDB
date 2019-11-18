@@ -20,6 +20,7 @@ namespace FrostDB
         public Guid? Id => _id;
         public string Name => _name;
         public Location Location => _location;
+        public Contract Contract { get; set; }
         #endregion
 
         #region Constructors

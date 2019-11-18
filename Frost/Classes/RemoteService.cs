@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FrostDB
@@ -19,6 +20,23 @@ namespace FrostDB
 
     public class RemoteService : IRemoteService
     {
+        #region Private Fields
+        private IServiceCollection _services;
+        private IIpcServiceHost _service;
+        private CancellationTokenSource _tokenSource;
+        #endregion
+
+        #region Constructors
+        public RemoteService() 
+        {
+            _services = ConfigureServices(new ServiceCollection());
+            var host = new IpcServiceHostBuilder(_services.BuildServiceProvider());
+            host.AddNamedPipeEndpoint<IRemoteService>(name: "endpoint1", pipeName: "pipeName")
+                .AddTcpEndpoint<IRemoteService>(name: "endpoint2", ipEndpoint: IPAddress.Loopback, port: Process.Configuration.ServerPort);
+            _service = host.Build();
+        }
+        #endregion
+
         #region Public Methods
         public Row GetRow(Guid? databaseId, Guid? tableId, Guid? rowId)
         {
@@ -42,30 +60,48 @@ namespace FrostDB
 
             return result;
         }
-        public IRegisterNewPartialDatabaseResult RegisterNewPartialDatabase(Contract contract)
+
+        public void SaveRow(Guid? databaseId, Guid? tableId, Row row)
         {
-            throw new NotImplementedException();
+            var process = ProcessReference.Process;
+
+            if (process.HasDatabase(databaseId))
+            {
+                var db = process.GetDatabase(databaseId);
+                if (db.HasTable(tableId))
+                {
+                    var table = db.GetTable(tableId);
+                    table.AddRow(row);
+                }
+            }
+        }
+        
+        public void AddPendingContract(Contract contract)
+        {
+            ProcessReference.Process.AddPendingContract(contract);
         }
 
-        public IAddRowToPartialDatabaseResult AddRowToPartialDatabase(Participant sourceParticipant, Guid? DatabaseId, Row row)
+        public void AcceptPendingContract(Participant participant)
         {
-            throw new NotImplementedException();
-        }
-        public IPendingContractResult AcceptContract(Contract contract)
-        {
-            throw new NotImplementedException();
+            var process = ProcessReference.Process;
+            if (process.HasDatabase(participant.Contract.DatabaseId))
+            {
+                var db = process.GetDatabase(participant.Contract.DatabaseId);
+                db.AddParticipant(participant);
+            }
         }
 
         public void StartService()
         {
-            IServiceCollection services = ConfigureServices(new ServiceCollection());
+            _tokenSource = new CancellationTokenSource();
+            var token = _tokenSource.Token;
+            var t = _service.RunAsync(token);
+            t.Start();
+        }
 
-            // build and run service host
-            new IpcServiceHostBuilder(services.BuildServiceProvider())
-                .AddNamedPipeEndpoint<IRemoteService>(name: "endpoint1", pipeName: "pipeName")
-                .AddTcpEndpoint<IRemoteService>(name: "endpoint2", ipEndpoint: IPAddress.Loopback, port: Process.Configuration.ServerPort)
-                .Build()
-                .Run();
+        public void StopService()
+        {
+            _tokenSource.Cancel();
         }
         #endregion
 

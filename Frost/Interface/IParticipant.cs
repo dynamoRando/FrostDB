@@ -6,5 +6,6 @@ namespace FrostDB.Interface
 {
     public interface IParticipant
     {
+        Contract Contract { get; set; }
     }
 }

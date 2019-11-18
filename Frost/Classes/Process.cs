@@ -192,16 +192,20 @@ namespace FrostDB
             return dbs;
         }
 
-        public static void AddRemoteRow(Row row, Location location)
-        {
-            throw new NotImplementedException();
-        }
-
         public IDatabase GetDatabase(Guid? databaseId)
         {
             return Databases.Where(d => d.Id == databaseId).First();
         }
         
+        public void StartRemoteService()
+        {
+            _remoteService.StartService();
+        }
+
+        public void StopRemoveService()
+        {
+            _remoteService.StopService();
+        }
         #endregion
 
         #region Private Methods

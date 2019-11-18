@@ -41,7 +41,7 @@ namespace FrostDB
         {
             _id = Guid.NewGuid();
             _store = new Store();
-            _rows = new List<RowReference>();   
+            _rows = new List<RowReference>();
         }
 
         public Table(string name, List<Column> columns, Guid? database) : this()
@@ -133,7 +133,7 @@ namespace FrostDB
         {
             if (!participant.Location.IsLocal())
             {
-                Process.AddRemoteRow(row, participant.Location);
+                Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
                 _rows.Add(GetNewRowReference(row, participant.Location));
 
                 EventManager.TriggerEvent(EventName.Row.Added_Remotely,

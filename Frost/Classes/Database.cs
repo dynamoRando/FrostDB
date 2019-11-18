@@ -102,6 +102,12 @@ namespace FrostDB
                 ProcessReference.Process.Id,
                 (Location)Process.GetLocation());
         }
+
+        public void AddParticipant(Participant participant)
+        {
+            _participantManager.AddParticipant(participant);
+        }
+
         public void SendParticipantRegistration(Location location)
         {
             throw new NotImplementedException();

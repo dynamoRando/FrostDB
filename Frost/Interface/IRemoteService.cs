@@ -8,12 +8,11 @@ namespace FrostDB.Interface
 {
     public interface IRemoteService
     {
-        IRegisterNewPartialDatabaseResult RegisterNewPartialDatabase(Contract contract);
-        IAddRowToPartialDatabaseResult AddRowToPartialDatabase
-            (Participant sourceParticipant, Guid? DatabaseId, Row row);
-        IPendingContractResult AcceptContract(Contract contract);
+        void AddPendingContract(Contract contract);
+        void AcceptPendingContract(Participant participant);
         Row GetRow(Guid? databaseId, Guid? tableId, Guid? rowId);
-
+        void SaveRow(Guid? databaseId, Guid? tableId, Row row);
         void StartService();
+        void StopService();
     }
 }
