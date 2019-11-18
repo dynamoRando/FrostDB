@@ -4,9 +4,12 @@ using System.Text;
 
 namespace FrostDB.Interface.IResults
 {
-    public interface IRegisterNewPartialDatabase
+    public interface IRegisterNewPartialDatabaseResult
     { }
 
-    public interface IAddRowToPartialDatabase
+    public interface IAddRowToPartialDatabaseResult
+    { }
+
+    public interface IPendingContractResult
     { }
 }
