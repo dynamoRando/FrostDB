@@ -1,6 +1,6 @@
-﻿using FrostDB.Base;
+﻿using FrostDB;
 using FrostDB.Interface;
-using Harness.Base;
+using Harness;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,13 +11,13 @@ namespace Harness.Modes
     {
         #region Private Fields
         private bool _stayInMode = false;
-        private BaseTable _table;
+        private Table _table;
         #endregion
 
         #region Public Properties
-        public BaseDatabase Database { get; }
-        public BasePartialDatabase PartialDatabase { get; }
-        public BaseTable Table => _table;
+        public Database Database { get; }
+        public PartialDatabase PartialDatabase { get; }
+        public Table Table => _table;
         public string TableName => (Table is null) ? string.Empty : Table.Name;
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName => (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -27,12 +27,12 @@ namespace Harness.Modes
         #endregion
 
         #region Constructors
-        public TableMode(App app, BaseDatabase db) : base(app)
+        public TableMode(App app, Database db) : base(app)
         {
             Database = db;
         }
 
-        public TableMode(App app, BasePartialDatabase db) : base(app)
+        public TableMode(App app, PartialDatabase db) : base(app)
         {
             PartialDatabase = db;
         }
@@ -198,7 +198,7 @@ namespace Harness.Modes
             {
                 if (PartialDatabase is null)
                 {
-                    var table = new BaseTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }
@@ -224,7 +224,7 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new BaseTable(result, 
+                    var table = new Table(result, 
                         ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase.Id);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
@@ -232,7 +232,7 @@ namespace Harness.Modes
 
                 if (PartialDatabase is null)
                 {
-                    var table = new BaseTable(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
+                    var table = new Table(result, ColumnMode.CreateColumnsForTable(App, result, DatabaseName), Database.Id);
                     Database.AddTable(table);
                     App.Write($"{Database.Name} added table {table.Name}");
                 }

@@ -1,0 +1,45 @@
+﻿using FrostDB.Interface;
+using FrostDB.Interface.IServiceResults;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace FrostDB
+{
+    public class FrostClientService : IFrostClientService
+    {
+        #region Private Fields
+        #endregion
+
+        #region Public Methods
+        public IAddRowToPartialDatabaseResult AddRowToPartialDatabase(Participant sourceParticipant, Guid? DatabaseId, Row row)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRegisterNewPartialDatabaseResult RegisterNewPartialDatabase(Contract contract)
+        {
+            var process = GetProcess();
+
+            if (!process.HasDatabase(contract.DatabaseId))
+            {
+                if (!process.HasContract(contract))
+                {
+                    process.AddPendingContract(contract);
+                }
+                // add the new partial database to the process
+                // if the user accepts the contract
+            }
+
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Private Methods
+        private Process GetProcess()
+        {
+            return ProcessReference.Process;
+        }
+        #endregion
+    }
+}

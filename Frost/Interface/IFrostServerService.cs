@@ -1,5 +1,5 @@
-﻿using FrostDB.Base;
-using FrostDB.Interface.IResults;
+﻿using FrostDB;
+using FrostDB.Interface.IServiceResults;
 using System;
 using System.Collections.Generic;
 using System.Text;

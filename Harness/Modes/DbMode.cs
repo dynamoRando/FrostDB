@@ -1,10 +1,10 @@
 ﻿using FrostDB.Interface;
-using Harness.Base;
+using Harness;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using FrostDB.Base;
+using FrostDB;
 using Harness.Interface;
 
 namespace Harness.Modes
@@ -17,8 +17,8 @@ namespace Harness.Modes
         #endregion
 
         #region Public Properties
-        public BaseDatabase Database { get; set; }
-        public BasePartialDatabase PartialDatabase { get; set; }
+        public Database Database { get; set; }
+        public PartialDatabase PartialDatabase { get; set; }
         public string DatabaseName => (Database is null) ? string.Empty : Database.Name;
         public string PartialDatabaseName =>
             (PartialDatabase is null) ? string.Empty : PartialDatabase.Name;
@@ -52,11 +52,11 @@ namespace Harness.Modes
                         db = UseDb();
                         break;
                     case "a":
-                        if (db is BaseDatabase)
+                        if (db is Database)
                         {
                             PerformActionOnDb();
                         }
-                        else if (db is BasePartialDatabase)
+                        else if (db is PartialDatabase)
                         {
                             PerformActionOnPartialDb();
                         }

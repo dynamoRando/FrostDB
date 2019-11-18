@@ -1,4 +1,4 @@
-﻿using FrostDB.Base;
+﻿using FrostDB;
 using FrostDB.Interface;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using FrostDB.Base;
+﻿using FrostDB;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,12 +8,12 @@ namespace FrostDB.Interface
     public interface IBaseDatabase
     {
         Guid? Id { get; }
-        BaseTable GetTable(Guid? tableId);
+        Table GetTable(Guid? tableId);
         string Name { get; }
-        List<BaseTable> Tables { get; }
-        BaseTable GetTable(string tableName);
+        List<Table> Tables { get; }
+        Table GetTable(string tableName);
         bool HasTable(string tableName);
-        void AddTable(BaseTable table);
+        void AddTable(Table table);
         void UpdateSchema();
         DbSchema Schema { get; }
         List<Participant> Participants { get; }

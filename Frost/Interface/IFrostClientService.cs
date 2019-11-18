@@ -1,8 +1,8 @@
-﻿using FrostDB.Base;
+﻿using FrostDB;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using FrostDB.Interface.IResults;
+using FrostDB.Interface.IServiceResults;
 
 namespace FrostDB.Interface
 {

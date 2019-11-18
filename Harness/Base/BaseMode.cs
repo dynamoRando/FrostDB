@@ -1,10 +1,10 @@
-﻿using FrostDB.Base;
+﻿using FrostDB;
 using Harness.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Harness.Base
+namespace Harness
 {
     public abstract class BaseMode : IMode
     {
