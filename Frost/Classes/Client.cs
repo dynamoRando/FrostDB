@@ -39,5 +39,14 @@ namespace FrostDB
 
             await client.InvokeAsync(x => x.AddPendingContract(participant.Contract));
         }
+
+        public static async void AcceptPendingContract(Participant participant)
+        {
+            IpcServiceClient<IRemoteService> client = new IpcServiceClientBuilder<IRemoteService>()
+            .UseTcp(IPAddress.Parse(participant.Location.IpAddress), participant.Location.PortNumber)
+            .Build();
+
+            await client.InvokeAsync(x => x.AcceptPendingContract(participant));
+        }
     }
 }
