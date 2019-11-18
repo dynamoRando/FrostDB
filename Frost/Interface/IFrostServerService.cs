@@ -9,5 +9,7 @@ namespace FrostDB.Interface
     public interface IFrostServerService
     {
         IPendingContractResult AcceptContract(Contract contract);
+
+        void StartService();
     }
 }

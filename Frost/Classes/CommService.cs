@@ -9,6 +9,7 @@ namespace FrostDB
     {
         #region Private Fields
         private IFrostClientService _clientService;
+        private IFrostServerService _serverService;
         #endregion
 
         #region Public Properties
@@ -20,7 +21,7 @@ namespace FrostDB
         #region Constructors
         public CommService()
         {
-           
+            _serverService = new FrostServerService();  
         }
         #endregion
 
