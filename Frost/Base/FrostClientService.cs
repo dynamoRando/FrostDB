@@ -12,12 +12,12 @@ namespace FrostDB.Base
         #endregion
 
         #region Public Methods
-        public IAddRowToPartialDatabase AddRowToPartialDatabase(Participant sourceParticipant, Guid? DatabaseId, Row row)
+        public IAddRowToPartialDatabaseResult AddRowToPartialDatabase(Participant sourceParticipant, Guid? DatabaseId, Row row)
         {
             throw new NotImplementedException();
         }
 
-        public IRegisterNewPartialDatabase RegisterNewPartialDatabase(Contract contract)
+        public IRegisterNewPartialDatabaseResult RegisterNewPartialDatabase(Contract contract)
         {
             var process = GetProcess();
 
