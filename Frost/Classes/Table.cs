@@ -10,7 +10,7 @@ namespace FrostDB
 {
     [Serializable]
     public class Table :
-        IBaseTable, ISerializable, IFrostObjectGet, IDBObject
+        ITable, ISerializable, IFrostObjectGet, IDBObject
     {
         #region Private Fields
         private Store _store;
@@ -70,6 +70,16 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool HasRow(Guid? rowId)
+        {
+            return _rows.Any(r => r.RowId == rowId);
+        }
+
+        public Row GetRow(Guid? rowId)
+        {
+            var row = _rows.Where(r => r.RowId == rowId).First();
+            return row.Get();
+        }
         public bool IsCooperative()
         {
             return _rows.Any(row => !row.Location.IsLocal());

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IBaseProcess<T> where T : IBaseDatabase 
+    public interface IBaseProcess<T> where T : IDatabase 
     {
         List<T> Databases { get; }
         void AddDatabase(string databaseName);

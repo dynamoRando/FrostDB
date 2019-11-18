@@ -81,7 +81,7 @@ namespace FrostDB
             }
             else
             {
-                row = ProcessReference.Process.GetRemoteRow(Location, RowId);
+                row = Client.GetRow(Location, DatabaseId, TableId, RowId).Result;
             }
 
             return row;

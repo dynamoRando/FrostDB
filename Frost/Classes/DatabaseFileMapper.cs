@@ -5,9 +5,9 @@ using FrostDB.Interface;
 
 namespace FrostDB
 {
-    public class DatabaseFileMapper : IDatabaseFileMapper<IBaseDatabase, DataFile, DataManager<IBaseDatabase>>
+    public class DatabaseFileMapper : IDatabaseFileMapper<IDatabase, DataFile, DataManager<IDatabase>>
     {
-        public Database MapDatabase(DataFile file, DataManager<IBaseDatabase> manager)
+        public Database MapDatabase(DataFile file, DataManager<IDatabase> manager)
         {
             var database = new Database(
                 file.Name,
@@ -22,7 +22,7 @@ namespace FrostDB
             return database;
         }
 
-        public DataFile Map(IBaseDatabase database)
+        public DataFile Map(IDatabase database)
         {
             // TODO need to map tables, etc
             return new DataFile { 
@@ -46,7 +46,7 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public IBaseDatabase Map(DataFile file, DataManager<IBaseDatabase> manager)
+        public IDatabase Map(DataFile file, DataManager<IDatabase> manager)
         {
             var database = new Database(
                 file.Name,

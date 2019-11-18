@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
-    public class DataManager<TDatabase> where TDatabase : IBaseDatabase
+    public class DataManager<TDatabase> where TDatabase : IDatabase
     {
         #region Private Fields
         private List<TDatabase> _databases;

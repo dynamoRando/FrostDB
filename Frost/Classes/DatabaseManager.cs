@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FrostDB
 {
-    public class DatabaseManager : DataManager<IBaseDatabase>
+    public class DatabaseManager : DataManager<IDatabase>
     {
         #region Private Fields
         #endregion

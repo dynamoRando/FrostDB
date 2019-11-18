@@ -35,7 +35,7 @@ namespace Harness.Modes
         public override void Prompt()
         {
             _stayInMode = true;
-            IBaseDatabase db = null;
+            IDatabase db = null;
 
             do
             {
@@ -88,9 +88,9 @@ namespace Harness.Modes
             }
         }
 
-        public IBaseDatabase UseDb()
+        public IDatabase UseDb()
         {
-            IBaseDatabase database = null;
+            IDatabase database = null;
 
             App.Write("Listing databases. Use (em) to exit mode.");
 

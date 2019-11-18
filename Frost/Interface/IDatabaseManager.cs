@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IDatabaseManager<T> where T : IBaseDatabase
+    public interface IDatabaseManager<T> where T : IDatabase
     {
         List<T> Databases { get; }
         bool HasDatabase(string databaseName);

@@ -8,20 +8,20 @@ using System.Linq;
 
 namespace FrostDB
 {
-    public class Process : IBaseProcess<IBaseDatabase>
+    public class Process : IBaseProcess<IDatabase>
     {
         #region Private Fields
-        private ICommService _commService;
+        private IRemoteService _remoteService;
         private IContractManager _contractManager;
         #endregion
 
         #region Public Properties
         
-        public DataManager<IBaseDatabase> DatabaseManager { get; }
+        public DataManager<IDatabase> DatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
-        public List<IBaseDatabase> Databases => DatabaseManager.Databases;
+        public List<IDatabase> Databases => DatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
         #endregion
 
@@ -39,6 +39,7 @@ namespace FrostDB
                Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
+            _remoteService = new RemoteService();
 
             ProcessReference.Process = this;
         }
@@ -76,11 +77,11 @@ namespace FrostDB
             return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder);
         }
 
-        public virtual IBaseDatabase GetDatabase(Guid id)
+        public virtual IDatabase GetDatabase(Guid id)
         {
             return DatabaseManager.GetDatabase(id);
         }
-        public virtual IBaseDatabase GetDatabase(string databaseName)
+        public virtual IDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
         }
@@ -196,14 +197,11 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public IBaseDatabase GetDatabase(Guid? databaseId)
+        public IDatabase GetDatabase(Guid? databaseId)
         {
             return Databases.Where(d => d.Id == databaseId).First();
         }
-        public Row GetRemoteRow(Location location, Guid? rowId)
-        {
-            throw new NotImplementedException();
-        }
+        
         #endregion
 
         #region Private Methods

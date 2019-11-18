@@ -6,7 +6,7 @@ using System.Text;
 namespace FrostDB.Interface
 {
     public interface IDatabaseFileMapper<TDatabase, YFile, ZManager> 
-        where TDatabase : IBaseDatabase 
+        where TDatabase : IDatabase 
         where YFile : IDataFile 
         where ZManager : DataManager<TDatabase>
     {

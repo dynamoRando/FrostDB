@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IBaseDatabase
+    public interface IDatabase
     {
         Guid? Id { get; }
         Table GetTable(Guid? tableId);
@@ -13,6 +13,7 @@ namespace FrostDB.Interface
         List<Table> Tables { get; }
         Table GetTable(string tableName);
         bool HasTable(string tableName);
+        bool HasTable(Guid? tableName);
         void AddTable(Table table);
         void UpdateSchema();
         DbSchema Schema { get; }

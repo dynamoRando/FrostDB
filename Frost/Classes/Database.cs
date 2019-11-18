@@ -10,7 +10,7 @@ namespace FrostDB
 {
     [Serializable]
     public class Database : 
-        IBaseDatabase, ISerializable, IFrostObjectGet, IDBObject
+        IDatabase, ISerializable, IFrostObjectGet, IDBObject
     {
         #region Private Fields
         private List<Table> _tables;
@@ -42,7 +42,7 @@ namespace FrostDB
             _id = Guid.NewGuid();
             _tables = new List<Table>();
         }
-        public Database(string name, DataManager<IBaseDatabase> manager, Guid id,
+        public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables) : this(name)
         {
             _id = id;
@@ -50,7 +50,7 @@ namespace FrostDB
             _schema = new DbSchema(this);
         }
 
-        public Database(string name, DataManager<IBaseDatabase> manager, Guid id,
+        public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables, DbSchema schema) : this(name)
         {
             _id = id;
@@ -58,7 +58,7 @@ namespace FrostDB
             _schema = schema;
         }
 
-        public Database(string name, DataManager<IBaseDatabase> manager, Guid id,
+        public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> participants) : this(name)
         {
@@ -68,7 +68,7 @@ namespace FrostDB
             _participantManager = new ParticipantManager(this, participants);
         }
 
-        public Database(string name, DataManager<IBaseDatabase> manager, Guid id,
+        public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> participants,
             Contract contract) : this(name)
@@ -92,6 +92,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool HasTable(Guid? tableId)
+        {
+            return Tables.Any(t => t.Id == tableId);
+        }
         public Participant GetProcessParticipant()
         {
             return new Participant(

@@ -4,9 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface ICommService
+    public interface IClient
     {
-        void StartServer();
-        void StopServer();
     }
 }
