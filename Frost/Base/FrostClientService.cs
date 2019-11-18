@@ -23,6 +23,10 @@ namespace FrostDB.Base
 
             if (!process.HasDatabase(contract.DatabaseId))
             {
+                if (!process.HasContract(contract))
+                {
+                    process.AddPendingContract(contract);
+                }
                 // add the new partial database to the process
                 // if the user accepts the contract
             }

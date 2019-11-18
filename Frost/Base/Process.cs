@@ -12,6 +12,7 @@ namespace FrostDB.Base
     {
         #region Private Fields
         private ICommService _commService;
+        private IContractManager _contractManager;
         #endregion
 
         #region Public Properties
@@ -21,6 +22,7 @@ namespace FrostDB.Base
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
         public List<IBaseDatabase> Databases => DatabaseManager.Databases;
+        public List<Contract> Contracts => _contractManager.Contracts;
         #endregion
 
         #region Events
@@ -35,6 +37,8 @@ namespace FrostDB.Base
                new DatabaseFileMapper(),
                Configuration.DatabaseFolder,
                Configuration.DatabaseExtension);
+
+            _contractManager = new ContractManager(this);
 
             ProcessReference.Process = this;
         }
@@ -104,6 +108,16 @@ namespace FrostDB.Base
             });
 
             return db;
+        }
+
+        public void AddPendingContract(Contract contract)
+        {
+            _contractManager.AddPendingContract(contract);
+        }
+
+        public bool HasContract(Contract contract)
+        {
+            return _contractManager.HasContract(contract.ContractId);
         }
 
         public virtual BaseDatabase GetFullDatabase(string databaseName)

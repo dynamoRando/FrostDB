@@ -21,6 +21,9 @@ namespace FrostDB.Base
         public Guid? ContractId { get; set; }
         public Guid? ContractVersion { get; set; }
         public Guid? ProcessId { get; set; }
+        public bool IsAccepted { get; set; }
+        public DateTime AcceptedDateTime { get; set; }
+        public DateTime SentDateTime { get; set; }
         #endregion
 
         #region Events
@@ -37,6 +40,9 @@ namespace FrostDB.Base
             ContractId = (Guid?)serializationInfo.GetValue("ContractId", typeof(Guid?));
             ContractVersion = (Guid?)serializationInfo.GetValue("ContractVersion", typeof(Guid?));
             ProcessId = (Guid?)serializationInfo.GetValue("ProcessId", typeof(Guid?));
+            IsAccepted = (bool)serializationInfo.GetValue("ContractIsAccepted", typeof(bool));
+            AcceptedDateTime = (DateTime)serializationInfo.GetValue("ContractAcceptedDateTime", typeof(DateTime));
+            SentDateTime = (DateTime)serializationInfo.GetValue("ContractSentDateTime", typeof(DateTime));
         }
         #endregion
 
@@ -50,7 +56,10 @@ namespace FrostDB.Base
             info.AddValue("ContractDatabaseDescription", ContractDescription, typeof(string));
             info.AddValue("ContractId", ContractId.Value, typeof(Guid?));
             info.AddValue("ContractVersion", ContractVersion.Value, typeof(Guid?));
-            info.AddValue("ProcessId", ContractVersion.Value, typeof(Guid?));
+            info.AddValue("ProcessId", ProcessId.Value, typeof(Guid?));
+            info.AddValue("ContractIsAccepted", IsAccepted, typeof(bool));
+            info.AddValue("ContractAcceptedDateTime", AcceptedDateTime, typeof(DateTime));
+            info.AddValue("ContractSentDateTime", SentDateTime, typeof(DateTime));
         }
         #endregion
 

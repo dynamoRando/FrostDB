@@ -2,6 +2,11 @@
 {
     public class EventName
     {
+        public class Contract
+        {
+            public const string Pending_Added = "Pending_Contract_Added";
+            public const string Accepted = "Contract_Accepted";
+        }
         public class Database
         {
             public const string Created = "Database_Created";
