@@ -16,7 +16,7 @@ namespace FrostDB
        .UseTcp(IPAddress.Parse(location.IpAddress), location.PortNumber)
        .Build();
 
-            var result = await client.InvokeAsync(x => x.GetRow(location, databaseId, tableId, rowId));
+            var result = await client.InvokeAsync(x => x.GetRow(databaseId, tableId, rowId));
 
             return result;
         }

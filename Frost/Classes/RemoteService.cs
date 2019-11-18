@@ -10,10 +10,17 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
+    /*
+     * 
+     * This service should have all the functions for communication, i.e. get row, save row, 
+     * save pending contract, accept contract, etc
+     * 
+     */
+
     public class RemoteService : IRemoteService
     {
         #region Public Methods
-        public Row GetRow(Location location, Guid? databaseId, Guid? tableId, Guid? rowId)
+        public Row GetRow(Guid? databaseId, Guid? tableId, Guid? rowId)
         {
             Row result = null;
 

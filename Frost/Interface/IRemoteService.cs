@@ -12,7 +12,7 @@ namespace FrostDB.Interface
         IAddRowToPartialDatabaseResult AddRowToPartialDatabase
             (Participant sourceParticipant, Guid? DatabaseId, Row row);
         IPendingContractResult AcceptContract(Contract contract);
-        Row GetRow(Location location, Guid? databaseId, Guid? tableId, Guid? rowId);
+        Row GetRow(Guid? databaseId, Guid? tableId, Guid? rowId);
 
         void StartService();
     }
