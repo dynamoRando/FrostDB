@@ -3,6 +3,7 @@ using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB
 {
@@ -23,6 +24,12 @@ namespace FrostDB
         {
             _database = baseDatabase;
             _participants = participants;
+
+            if (!CheckIfDatabaseIsParticipant())
+            {
+                AddDatabaseAsParticipant();
+            }
+
         }
         #endregion
 
@@ -39,6 +46,16 @@ namespace FrostDB
         private ParticipantAddedEventArgs GetParticipantEventArgs(Participant participant)
         {
             return new ParticipantAddedEventArgs { DatabaseId = this.Database.Id, Participant = participant };
+        }
+
+        private bool CheckIfDatabaseIsParticipant()
+        {
+            return _participants.Any(participant => participant.Id == Database.Id);
+        }
+
+        private void AddDatabaseAsParticipant()
+        {
+            _participants.Add(new Participant(Database.Id, (Location)Process.GetLocation()));
         }
         #endregion
 

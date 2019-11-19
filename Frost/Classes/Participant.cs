@@ -32,6 +32,11 @@ namespace FrostDB
             }
         }
 
+        public Participant(Guid? participantId)
+        {
+            _id = participantId;
+        }
+
         public Participant(Location location) : this()
         {
             _location = location;
@@ -55,6 +60,17 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool IsDatabase(Guid? databaseId)
+        {
+            if (databaseId == Id)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("ParticipantId", Id.Value, typeof(Guid?));

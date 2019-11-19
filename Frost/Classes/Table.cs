@@ -44,11 +44,11 @@ namespace FrostDB
             _rows = new List<RowReference>();
         }
 
-        public Table(string name, List<Column> columns, Guid? database) : this()
+        public Table(string name, List<Column> columns, Guid? databaseId) : this()
         {
             _name = name;
             _columns = columns;
-            DatabaseId = database;
+            DatabaseId = databaseId;
             _schema = new TableSchema(this);
         }
 
@@ -82,7 +82,8 @@ namespace FrostDB
         }
         public bool IsCooperative()
         {
-            return _rows.Any(row => !row.Location.IsLocal());
+            return _rows.Any(row => !(row.Participant.Location.IsLocal() ||
+            row.Participant.IsDatabase(DatabaseId)));
         }
 
         public void UpdateSchema()
@@ -94,7 +95,8 @@ namespace FrostDB
         {
             var row = new Row();
 
-            if (reference.Location.IsLocal())
+            if (reference.Participant.Location.IsLocal() 
+                || reference.Participant.IsDatabase(DatabaseId))
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
                 row.LastAccessed = DateTime.Now;
@@ -225,7 +227,8 @@ namespace FrostDB
                 colIds.Add(c.Id);
             });
 
-            return new RowReference(colIds, Id, (Location)Process.GetLocation(), DatabaseId, row.Id);
+            return new RowReference(colIds, Id, new Participant(DatabaseId, (Location)
+                Process.GetLocation()), DatabaseId, row.Id);
         }
 
         private RowReference GetNewRowReference(Row row, Location location)
@@ -237,7 +240,7 @@ namespace FrostDB
                 colIds.Add(c.Id);
             });
 
-            return new RowReference(colIds, this.Id, location, DatabaseId, row.Id);
+            return new RowReference(colIds, this.Id, new Participant(location), DatabaseId, row.Id);
         }
         #endregion
 

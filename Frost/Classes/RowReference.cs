@@ -19,7 +19,7 @@ namespace FrostDB
 
         #region Public Properties
         public Guid? RowId { get; set; }
-        public Location Location { get; set; }
+        public Participant Participant { get; set; }
         public List<Guid?> ColumnIds => _columnIds;
         public Guid? TableId => _tableId;
         public Guid? DatabaseId => _databaseId;
@@ -34,19 +34,19 @@ namespace FrostDB
         #region Constructors
         public RowReference() { }
 
-        public RowReference(List<Guid?> columnIds, Guid? tableId, Location location, Guid? databaseId, Guid? rowId)
+        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant, Guid? databaseId, Guid? rowId)
         {
             _columnIds = columnIds;
             _tableId = tableId;
-            Location = location;
+            Participant = participant;
             _databaseId = databaseId;
             RowId = rowId;
         }
-        public RowReference(List<Guid?> columnIds, Guid? tableId, Location location)
+        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant)
         {
             _columnIds = columnIds;
             _tableId = tableId;
-            Location = location;
+            Participant = participant;
         }
         protected RowReference(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
@@ -55,7 +55,8 @@ namespace FrostDB
             RowId = (Guid?)serializationInfo.GetValue
                 ("ReferenceRowId", typeof(Guid?));
             _databaseId = (Guid?)serializationInfo.GetValue("ReferenceDatabaseId", typeof(Guid?));
-            Location = (Location)serializationInfo.GetValue("ReferenceLocation", typeof(Location));
+            Participant = (Participant)serializationInfo.GetValue("ReferenceParticipant"
+                , typeof(Participant));
             _columnIds = (List<Guid?>)serializationInfo.GetValue
                 ("ReferenceColumnIds", typeof(List<Guid?>));
         }
@@ -67,7 +68,7 @@ namespace FrostDB
             info.AddValue("ReferenceTableId", _tableId, typeof(Guid?));
             info.AddValue("ReferenceRowId", RowId, typeof(Guid?));
             info.AddValue("ReferenceDatabaseId", _databaseId, typeof(Guid?));
-            info.AddValue("ReferenceLocation", Location, typeof(Location));
+            info.AddValue("ReferenceParticipant", Participant, typeof(Participant));
             info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
@@ -75,13 +76,13 @@ namespace FrostDB
         {
             var row = new Row();
 
-            if (Location.IsLocal())
+            if (Participant.Location.IsLocal() || Participant.IsDatabase(_databaseId))
             {
                 row = ProcessReference.Process.GetDatabase(DatabaseId).GetTable(TableId).GetRow(this);
             }
             else
             {
-                row = Client.GetRow(Location, DatabaseId, TableId, RowId).Result;
+                row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
             }
 
             return row;
