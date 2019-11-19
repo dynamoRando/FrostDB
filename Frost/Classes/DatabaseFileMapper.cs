@@ -15,7 +15,8 @@ namespace FrostDB
                 file.Id.Value,
                 file.Tables,
                 file.Schema,
-                file.Participants,
+                file.AcceptedParticipants,
+                file.PendingParticipants,
                 file.Contract
                 ); 
       
@@ -30,7 +31,8 @@ namespace FrostDB
                 Name = database.Name, 
                 Tables = database.Tables, 
                 Schema = database.Schema,
-                Participants = database.Participants,
+                AcceptedParticipants = database.AcceptedParticipants,
+                PendingParticipants = database.PendingParticipants,
                 Contract = database.Contract
             };
             /*
@@ -54,7 +56,8 @@ namespace FrostDB
                 file.Id.Value,
                 file.Tables,
                 file.Schema,
-                file.Participants,
+                file.AcceptedParticipants,
+                file.PendingParticipants,
                 file.Contract
                 );
 

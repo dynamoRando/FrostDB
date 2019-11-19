@@ -26,7 +26,8 @@ namespace FrostDB
         public List<Table> Tables => _tables;
         public Guid? Id => _id;
         public DbSchema Schema => _schema;
-        public List<Participant> Participants => _participantManager.Participants;
+        public List<Participant> AcceptedParticipants => _participantManager.AcceptedParticipants;
+        public List<Participant> PendingParticipants => _participantManager.PendingParticipants;
         public Contract Contract => _contract;
         #endregion
 
@@ -60,23 +61,24 @@ namespace FrostDB
 
         public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables, DbSchema schema,
-            List<Participant> participants) : this(name)
+            List<Participant> acceptedParticipants) : this(name)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, participants);
+            _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>());
         }
 
         public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables, DbSchema schema,
-            List<Participant> participants,
+            List<Participant> acceptedParticipants,
+            List<Participant> pendingParticipants,
             Contract contract) : this(name)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, participants);
+            _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants);
             _contract = contract;
         }
 

@@ -17,7 +17,8 @@ namespace FrostDB.Interface
         void AddTable(Table table);
         void UpdateSchema();
         DbSchema Schema { get; }
-        List<Participant> Participants { get; }
+        List<Participant> AcceptedParticipants { get; }
+        List<Participant> PendingParticipants { get; }
         Contract Contract { get; }
         void AddParticipant(Participant participant);
     }

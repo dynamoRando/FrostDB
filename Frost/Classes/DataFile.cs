@@ -14,7 +14,8 @@ namespace FrostDB
         public List<Table> Tables { get; set; }
         public DbSchema Schema { get; set; }
         public DataFile() { }
-        public List<Participant> Participants { get; set; }
+        public List<Participant> AcceptedParticipants { get; set; }
+        public List<Participant> PendingParticipants { get; set; }
         public Contract Contract { get; set; }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -23,7 +24,8 @@ namespace FrostDB
             info.AddValue("DataFileName", Name, typeof(string));
             info.AddValue("DataFileTables", Tables, typeof(List<Table>));
             info.AddValue("DataFileSchema", Schema, typeof(DbSchema));
-            info.AddValue("DataFileParticipants", Schema, typeof(List<Participant>));
+            info.AddValue("DataFileParticipants", AcceptedParticipants, typeof(List<Participant>));
+            info.AddValue("DataFilePendingParticipants", PendingParticipants, typeof(List<Participant>));
             info.AddValue("DataFileContract", Contract, typeof(Contract));
         }
 
@@ -35,8 +37,10 @@ namespace FrostDB
                 ("DataFileTables", typeof(List<Table>));
             Schema = (DbSchema)serializationInfo.GetValue
                 ("DataFileSchema", typeof(DbSchema));
-            Participants = (List<Participant>)serializationInfo.GetValue
+            AcceptedParticipants = (List<Participant>)serializationInfo.GetValue
                ("DataFileParticipants", typeof(List<Participant>));
+            PendingParticipants = (List<Participant>)serializationInfo.GetValue
+              ("DataFilePendingParticipants", typeof(List<Participant>));
             Contract = (Contract)serializationInfo.GetValue
                ("DataFileContract", typeof(Contract));
         }

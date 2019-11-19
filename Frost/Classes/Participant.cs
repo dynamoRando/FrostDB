@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Linq;
 
 namespace FrostDB
 {
     [Serializable]
-    public class Participant : 
+    public class Participant :
         IParticipant, IFrostObjectGet, ISerializable
     {
         #region Private Fields
@@ -24,7 +25,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Participant() 
+        public Participant()
         {
             if (!_id.HasValue)
             {
@@ -60,6 +61,26 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+
+        public bool HasAcceptedContract(Guid? databaseId)
+        {
+            if (this.IsDatabase(databaseId))
+            {
+                return true;
+            }
+
+            if (Contract.ContractVersion == ProcessReference.GetDatabase(databaseId).Contract.ContractVersion &&
+            ProcessReference.GetDatabase(databaseId).AcceptedParticipants.Any(participant => participant.Id == this.Id)
+            && !this.IsDatabase(databaseId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool IsDatabase(Guid? databaseId)
         {
             if (databaseId == Id)

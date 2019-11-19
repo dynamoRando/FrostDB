@@ -11,19 +11,22 @@ namespace FrostDB
     {
         #region Private Fields
         private Database _database;
-        private List<Participant> _participants;
+        private List<Participant> _acceptedParticipants;
+        private List<Participant> _pendingParticipants;
         #endregion
 
         #region Public Properties
         public Database Database => _database;
-        public List<Participant> Participants => _participants;
+        public List<Participant> AcceptedParticipants => _acceptedParticipants;
+        public List<Participant> PendingParticipants => _pendingParticipants;
         #endregion
 
         #region Constructors
-        public ParticipantManager(Database baseDatabase, List<Participant> participants)
+        public ParticipantManager(Database baseDatabase, List<Participant> acceptedParticipants, List<Participant> pendingParticipants)
         {
             _database = baseDatabase;
-            _participants = participants;
+            _acceptedParticipants = acceptedParticipants;
+            _pendingParticipants = pendingParticipants;
 
             if (!CheckIfDatabaseIsParticipant())
             {
@@ -36,7 +39,7 @@ namespace FrostDB
         #region Public Methods
         public void AddParticipant(Participant participant)
         {
-            _participants.Add(participant);
+            _acceptedParticipants.Add(participant);
             EventManager.TriggerEvent
                 (EventName.Participant.Added, GetParticipantEventArgs(participant));
         }
@@ -50,12 +53,12 @@ namespace FrostDB
 
         private bool CheckIfDatabaseIsParticipant()
         {
-            return _participants.Any(participant => participant.Id == Database.Id);
+            return _acceptedParticipants.Any(participant => participant.Id == Database.Id);
         }
 
         private void AddDatabaseAsParticipant()
         {
-            _participants.Add(new Participant(Database.Id, (Location)Process.GetLocation()));
+            _acceptedParticipants.Add(new Participant(Database.Id, (Location)Process.GetLocation()));
         }
         #endregion
 
