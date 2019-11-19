@@ -149,6 +149,11 @@ namespace FrostDB
             return _tables.Any(t => t.Name == tableName);
         }
 
+        public bool IsCooperative()
+        {
+            return AcceptedParticipants.Any(participant => !participant.Location.IsLocal());
+        }
+
         #endregion
 
         #region Private Methods

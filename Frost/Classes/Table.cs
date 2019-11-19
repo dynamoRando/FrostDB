@@ -80,6 +80,7 @@ namespace FrostDB
             var row = _rows.Where(r => r.RowId == rowId).First();
             return row.Get();
         }
+
         public bool IsCooperative()
         {
             return _rows.Any(row => !(row.Participant.Location.IsLocal() ||
