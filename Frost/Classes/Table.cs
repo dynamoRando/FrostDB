@@ -133,7 +133,7 @@ namespace FrostDB
 
         public void AddRow(Row row, Participant participant)
         {
-            if (!participant.Location.IsLocal())
+            if (!participant.Location.IsLocal() || !participant.IsDatabase(DatabaseId))
             {
                 Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
                 _rows.Add(GetNewRowReference(row, participant.Location));
