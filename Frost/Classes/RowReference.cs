@@ -78,7 +78,7 @@ namespace FrostDB
 
             if (Participant.Location.IsLocal() || Participant.IsDatabase(_databaseId))
             {
-                row = ProcessReference.Process.GetDatabase(DatabaseId).GetTable(TableId).GetRow(this);
+                row = ProcessReference.GetRow(DatabaseId, TableId, RowId);
             }
             else
             {
