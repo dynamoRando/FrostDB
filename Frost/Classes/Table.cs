@@ -136,11 +136,14 @@ namespace FrostDB
         {
             if (!participant.Location.IsLocal() || !participant.IsDatabase(DatabaseId))
             {
-                Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
-                _rows.Add(GetNewRowReference(row, participant.Location));
+                if (participant.HasAcceptedContract(DatabaseId))
+                {
+                    Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
+                    _rows.Add(GetNewRowReference(row, participant.Location));
 
-                EventManager.TriggerEvent(EventName.Row.Added_Remotely,
-                       CreateRowAddedEventArgs(row));
+                    EventManager.TriggerEvent(EventName.Row.Added_Remotely,
+                           CreateRowAddedEventArgs(row));
+                }
             }
         }
 
