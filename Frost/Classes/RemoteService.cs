@@ -32,8 +32,12 @@ namespace FrostDB
         {
             _services = ConfigureServices(new ServiceCollection());
             var host = new IpcServiceHostBuilder(_services.BuildServiceProvider());
-            host.AddNamedPipeEndpoint<IRemoteService>(name: "endpoint1", pipeName: "pipeName")
-                .AddTcpEndpoint<IRemoteService>(name: "endpoint2", ipEndpoint: IPAddress.Loopback, port: Process.Configuration.ServerPort);
+
+            //host.AddNamedPipeEndpoint<IRemoteService>(name: "endpoint1", pipeName: "pipeName")
+            //    .AddTcpEndpoint<IRemoteService>(name: "endpoint2", ipEndpoint: IPAddress.Loopback, port: Process.Configuration.ServerPort);
+
+            host.AddTcpEndpoint<IRemoteService>(name: "tcpEndpoint", ipEndpoint: IPAddress.Loopback, port: Process.Configuration.ServerPort);
+
             _service = host.Build();
         }
         #endregion

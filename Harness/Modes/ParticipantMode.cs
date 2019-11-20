@@ -77,7 +77,7 @@ namespace Harness.Modes
                 var participant = new Participant(location);
                 participant.Contract = Database.Contract;
                 var db = ProcessReference.GetDatabase(Database.Id);
-                db.AddParticipant(participant);
+                db.AddPendingParticipant(participant);
             }
         }
 
