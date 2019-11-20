@@ -37,10 +37,16 @@ namespace FrostDB
             RegisterRowDeletedEvents();
             RegisterRowAccessedEvents();
             RegisterPendingPartcipantAddedEvents();
+            RegisterPendingContractAddedEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterPendingContractAddedEvents()
+        {
+            EventManager.StartListening(EventName.Contract.Pending_Added,
+            new Action<IEventArgs>(HandlePendingContractEvents));
+        }
         private void RegisterPendingPartcipantAddedEvents()
         {
             EventManager.StartListening(EventName.Participant.Pending,
@@ -81,6 +87,15 @@ namespace FrostDB
                 {
                     _dataManager.SaveToDisk((TDatabase)db);
                 }
+            }
+        }
+
+        private void HandlePendingContractEvents(IEventArgs e)
+        {
+            if (e is PendingContractAddedEventArgs)
+            {
+                var args = (PendingContractAddedEventArgs)e;
+                Console.WriteLine($"Pending Contract {args.Contract.DatabaseId} recieved");
             }
         }
 
