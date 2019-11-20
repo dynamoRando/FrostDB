@@ -86,7 +86,7 @@ namespace Harness.Modes
             Console.WriteLine(message);
             Console.Write("[MainMode] (em) to exit ==>");
             var _consoleLine = Console.ReadLine();
-
+             
             if (_consoleLine == "exit")
             {
                 App.Write("Quitting...");

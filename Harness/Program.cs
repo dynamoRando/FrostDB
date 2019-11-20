@@ -23,6 +23,8 @@ namespace Harness
                     mode.Prompt();
                 }
             }
+
+            app.Shutdown();
         }
     }
 }

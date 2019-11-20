@@ -202,7 +202,7 @@ namespace FrostDB
             _remoteService.StartService();
         }
 
-        public void StopRemoveService()
+        public void StopRemoteService()
         {
             _remoteService.StopService();
         }

@@ -24,6 +24,7 @@ namespace FrostDB
         private IServiceCollection _services;
         private IIpcServiceHost _service;
         private CancellationTokenSource _tokenSource;
+        private Task _serviceTask;
         #endregion
 
         #region Constructors
@@ -91,12 +92,11 @@ namespace FrostDB
             }
         }
 
-        public void StartService()
+        public async void StartService()
         {
             _tokenSource = new CancellationTokenSource();
             var token = _tokenSource.Token;
-            var t = _service.RunAsync(token);
-            t.Start();
+            await _service.RunAsync(token); 
         }
 
         public void StopService()
