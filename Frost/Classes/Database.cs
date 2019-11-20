@@ -42,6 +42,7 @@ namespace FrostDB
         {
             _id = Guid.NewGuid();
             _tables = new List<Table>();
+            _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>());
         }
         public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables) : this(name)
@@ -105,19 +106,17 @@ namespace FrostDB
                 (Location)Process.GetLocation());
         }
 
+        public void AddPendingParticipant(Participant participant)
+        {
+            Client.AddPendingContract(participant);
+            _participantManager.AddPendingParticipant(participant);
+        }
+
         public void AddParticipant(Participant participant)
         {
             _participantManager.AddParticipant(participant);
         }
 
-        public void SendParticipantRegistration(Location location)
-        {
-            throw new NotImplementedException();
-        }
-        public void AddNewParticipant(Participant participant)
-        {
-            _participantManager.AddParticipant(participant);
-        }
         public void UpdateSchema()
         {
             _schema = new DbSchema(this);

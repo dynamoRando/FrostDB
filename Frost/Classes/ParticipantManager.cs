@@ -37,6 +37,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void AddPendingParticipant(Participant participant)
+        {
+            _pendingParticipants.Add(participant);
+            EventManager.TriggerEvent
+                (EventName.Participant.Added, GetParticipantPendingEventArgs(participant));
+        }
         public void AddParticipant(Participant participant)
         {
             _acceptedParticipants.Add(participant);
@@ -49,6 +55,11 @@ namespace FrostDB
         private ParticipantAddedEventArgs GetParticipantEventArgs(Participant participant)
         {
             return new ParticipantAddedEventArgs { DatabaseId = this.Database.Id, Participant = participant };
+        }
+
+        private ParticipantPendingEventArgs GetParticipantPendingEventArgs(Participant participant)
+        {
+            return new ParticipantPendingEventArgs { DatabaseId = this.Database.Id, Participant = participant };
         }
 
         private bool CheckIfDatabaseIsParticipant()

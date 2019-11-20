@@ -36,15 +36,15 @@ namespace Harness.Modes
 
             do
             {
-                var result = Prompt("Would you like to (a) - add partipant, (ad) - add default participant, or (em) - exit?");
+                var result = Prompt("Would you like to (a) - add pending partipant, (ad) - add pending default participant, or (em) - exit?");
 
                 switch (result)
                 {
                     case "ad":
-                        AddDefaultParticipant();
+                        AddPendingDefaultParticipant();
                         break;
                     case "a":
-                        AddParticipant();
+                        AddPendingParticipant();
                         break;
                 }
             } while (_stayInMode);
@@ -53,7 +53,7 @@ namespace Harness.Modes
         #endregion
 
         #region Private Methods
-        private void AddDefaultParticipant()
+        private void AddPendingDefaultParticipant()
         {
             var result = Prompt($"Will add default participant 192.168.1.14? (y) or will exit");
             if (result == "y")
@@ -62,11 +62,11 @@ namespace Harness.Modes
                 var participant = new Participant(location);
                 participant.Contract = Database.Contract;
                 var db = ProcessReference.GetDatabase(Database.Id);
-                db.AddParticipant(participant);
+                
             }
         }
 
-        private void AddParticipant()
+        private void AddPendingParticipant()
         {
             var ipAddress = Prompt($"Enter IP Address");
             var portNumber = Prompt("Enter PortNumber");

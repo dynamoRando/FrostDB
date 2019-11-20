@@ -17,6 +17,7 @@
         {
             public const string Added = "Participant_Added";
             public const string Removed = "Participant_Removed";
+            public const string Pending = "Partcipant_Pending";
         }
 
         public class Table

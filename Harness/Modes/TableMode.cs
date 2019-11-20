@@ -164,23 +164,26 @@ namespace Harness.Modes
             var prompt = "Specify table name to add record to:";
             PromptAndSetTable(prompt);
 
-            var row = _table.GetNewRow();
-
-            row.ColumnIds.ForEach(c =>
+            if (!(_table is null))
             {
-                var x = _table.GetColumn(c);
-                var val = this.Prompt($"For column " +
-                    $"{x.Name} for type " +
-                    $"{x.DataType.ToString()} " +
-                    $"Please enter a value: ");
+                var row = _table.GetNewRow();
 
-                row.AddValue(c,
-                    Convert.ChangeType(val, x.DataType), x.Name, x.DataType);
+                row.ColumnIds.ForEach(c =>
+                {
+                    var x = _table.GetColumn(c);
+                    var val = this.Prompt($"For column " +
+                        $"{x.Name} for type " +
+                        $"{x.DataType.ToString()} " +
+                        $"Please enter a value: ");
 
-            });
+                    row.AddValue(c,
+                        Convert.ChangeType(val, x.DataType), x.Name, x.DataType);
 
-            this.Prompt("Adding row");
-            _table.AddRow(row);
+                });
+
+                this.Prompt("Adding row");
+                _table.AddRow(row);
+            }
         }
         private void AddVirtualTable()
         {
@@ -224,7 +227,7 @@ namespace Harness.Modes
             {
                 if (Database is null)
                 {
-                    var table = new Table(result, 
+                    var table = new Table(result,
                         ColumnMode.CreateColumnsForTable(App, result, PartialDatabaseName), PartialDatabase.Id);
                     PartialDatabase.AddTable(table);
                     App.Write($"{PartialDatabase.Name} added table {table.Name}");
