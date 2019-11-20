@@ -41,7 +41,7 @@ namespace FrostDB
         {
             _pendingParticipants.Add(participant);
             EventManager.TriggerEvent
-                (EventName.Participant.Added, GetParticipantPendingEventArgs(participant));
+                (EventName.Participant.Pending, GetParticipantPendingEventArgs(participant));
         }
         public void AddParticipant(Participant participant)
         {

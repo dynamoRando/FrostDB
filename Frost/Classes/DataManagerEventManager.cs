@@ -36,10 +36,16 @@ namespace FrostDB
             RegisterRowAddedEvents();
             RegisterRowDeletedEvents();
             RegisterRowAccessedEvents();
+            RegisterPendingPartcipantAddedEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterPendingPartcipantAddedEvents()
+        {
+            EventManager.StartListening(EventName.Participant.Pending,
+             new Action<IEventArgs>(HandleRegisterPendingPartcipantAddedEvents));
+        }
         private void RegisterRowDeletedEvents()
         {
             EventManager.StartListening(EventName.Row.Deleted,
@@ -75,6 +81,16 @@ namespace FrostDB
                 {
                     _dataManager.SaveToDisk((TDatabase)db);
                 }
+            }
+        }
+
+        private void HandleRegisterPendingPartcipantAddedEvents(IEventArgs e)
+        {
+            if (e is ParticipantPendingEventArgs)
+            {
+                var args = (ParticipantPendingEventArgs)e;
+
+                Console.WriteLine($"{args.DatabaseId} has pending participant at {args.Participant.Location.IpAddress}");
             }
         }
 
