@@ -21,6 +21,7 @@ namespace FrostDB.Interface
         List<Participant> PendingParticipants { get; }
         Contract Contract { get; }
         void AddParticipant(Participant participant);
+        void AddPendingParticipant(Participant participant);
         bool IsCooperative();
     }
 }
