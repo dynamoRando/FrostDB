@@ -12,6 +12,7 @@ namespace FrostDB
         #region Private Fields
         private Process _process;
         private List<Contract> _contracts;
+        private ContractFileManager _fileManager;
         #endregion
 
         #region Public Properties
@@ -19,8 +20,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ContractManager() { }
-        public ContractManager(Process process)
+        public ContractManager() 
+        {
+            _fileManager = new ContractFileManager();
+        }
+        public ContractManager(Process process) : this()
         {
             _process = process;
         }
@@ -30,6 +34,10 @@ namespace FrostDB
         public void AddPendingContract(Contract contract)
         {
             _contracts.Add(contract);
+            _fileManager
+                .SaveContract(contract,
+                Process.Configuration.ContractFolder,
+                Process.Configuration.ContractExtension);
 
             EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
