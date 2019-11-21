@@ -33,7 +33,7 @@ namespace Harness
         #region Public Methods
         public void Shutdown()
         {
-            _process.StopRemoteService();
+            //_process.StopRemoteService();
         }
 
         public void Quit()
@@ -79,7 +79,7 @@ namespace Harness
                     Write("Starting app...");
                     _process = new Process();
                     totalDBs = _process.LoadDatabases();
-                    _process.StartRemoteService();
+                    //_process.StartRemoteService();
                     break;
                 default:
                     Write("Unknown startup");

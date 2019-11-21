@@ -138,7 +138,7 @@ namespace FrostDB
             {
                 if (participant.HasAcceptedContract(DatabaseId))
                 {
-                    Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
+                    //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
                     _rows.Add(GetNewRowReference(row, participant.Location));
 
                     EventManager.TriggerEvent(EventName.Row.Added_Remotely,

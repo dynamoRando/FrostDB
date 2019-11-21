@@ -82,7 +82,7 @@ namespace FrostDB
             }
             else
             {
-                row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
+                //row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
             }
 
             return row;

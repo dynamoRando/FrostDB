@@ -11,7 +11,6 @@ namespace FrostDB
     public class Process : IBaseProcess<IDatabase>
     {
         #region Private Fields
-        private IRemoteService _remoteService;
         private IContractManager _contractManager;
         #endregion
 
@@ -39,7 +38,6 @@ namespace FrostDB
                Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
-            _remoteService = new RemoteService();
 
             ProcessReference.Process = this;
         }
@@ -197,15 +195,6 @@ namespace FrostDB
             return Databases.Where(d => d.Id == databaseId).First();
         }
         
-        public void StartRemoteService()
-        {
-            _remoteService.StartService();
-        }
-
-        public void StopRemoteService()
-        {
-            _remoteService.StopService();
-        }
         #endregion
 
         #region Private Methods

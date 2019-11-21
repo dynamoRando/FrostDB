@@ -108,7 +108,7 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
-            Client.AddPendingContract(participant);
+            //Client.AddPendingContract(participant);
             _participantManager.AddPendingParticipant(participant);
         }
 

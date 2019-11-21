@@ -57,7 +57,7 @@ namespace FrostDB
 
             message = WaitForMessage(id, message, watch);
 
-            if (!(message is null))
+            if (message != null)
             {
                 data = (DbObject)message.Data;
                 Task.Run(() => _messages.TryTake(out message));

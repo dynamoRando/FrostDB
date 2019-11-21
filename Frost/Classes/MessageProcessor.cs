@@ -27,9 +27,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+
         public void Process(IMessage message)
         {
             // switch on message type, route to appropriate X processor (data, contract, etc.)
+            throw new NotImplementedException();
+        }
+
+        public static void Parse(IMessage message)
+        { 
             throw new NotImplementedException();
         }
         #endregion
