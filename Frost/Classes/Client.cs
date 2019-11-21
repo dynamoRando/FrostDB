@@ -109,7 +109,6 @@ namespace FrostDB
             }
         }
         
-
         private static void ConnectCallback(IAsyncResult ar)
         {
             try
