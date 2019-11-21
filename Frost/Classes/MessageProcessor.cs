@@ -41,12 +41,12 @@ namespace FrostDB
             // DoThing(message);
 
 
-            if (message.MessageAction.Contains("Row"))
+            if (message.Action.Contains("Row"))
             {
                 // call RowProcessor, or whatever
             }
 
-            if (message.MessageAction.Contains("Contract"))
+            if (message.Action.Contains("Contract"))
             {
                 // call ContractProcessor, or whatever
             }

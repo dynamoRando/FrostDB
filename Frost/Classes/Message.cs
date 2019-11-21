@@ -19,7 +19,7 @@ namespace FrostDB
         public DateTime CreatedDateTimeUTC => CreatedDateTime.ToUniversalTime();
         public Guid? ReferenceMessageId { get; set; }
         public IMessageContent Content { get; } // can be a row, can be a contract, etc
-        public string MessageAction { get; set; } // describes what action to take on the content, see class named MessageAction
+        public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         #endregion
 
         #region Events
@@ -37,7 +37,7 @@ namespace FrostDB
             Origin = orgin;
             _id = Guid.NewGuid();
             Content = content;
-            MessageAction = messageAction;
+            Action = messageAction;
         }
         #endregion
 
