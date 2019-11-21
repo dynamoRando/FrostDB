@@ -35,7 +35,10 @@ namespace FrostDB
         }
 
         public static void Parse(IMessage message)
-        { 
+        {
+            // do the appropriate thing to the message
+            // DoThing(message);
+            message.SendResponse();
             throw new NotImplementedException();
         }
         #endregion
