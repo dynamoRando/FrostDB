@@ -33,16 +33,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static void Send(Participant participant, IMessage message)
+        public static void Send(Location location, IMessage message)
         {
-            // Connect to a remote device.  
             try
             {
                 // Establish the remote endpoint for the socket.  
                 // The name of the   
                 // remote device is "host.contoso.com".  
-                IPAddress ipAddress = IPAddress.Parse(participant.Location.IpAddress);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, participant.Location.PortNumber);
+                IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
 
                 // Create a TCP/IP socket.  
                 Socket client = new Socket(ipAddress.AddressFamily,
@@ -73,6 +72,10 @@ namespace FrostDB
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+        public static void Send(Participant participant, IMessage message)
+        {
+            Send(participant.Location, message);
         }
         #endregion
 

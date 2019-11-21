@@ -36,11 +36,26 @@ namespace FrostDB
 
         public static void Parse(IMessage message)
         {
+            // switch on message type, route to appropriate X processor (data, contract, etc.)
             // do the appropriate thing to the message
             // DoThing(message);
+
+
+            if (message.MessageAction.Contains("Row"))
+            {
+                // call RowProcessor, or whatever
+            }
+
+            if (message.MessageAction.Contains("Contract"))
+            {
+                // call ContractProcessor, or whatever
+            }
+
+
             message.SendResponse();
             throw new NotImplementedException();
         }
+
         #endregion
 
         #region Private Methods
