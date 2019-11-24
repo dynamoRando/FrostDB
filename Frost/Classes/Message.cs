@@ -56,12 +56,11 @@ namespace FrostDB
             JsonData = (string)serializationInfo.GetValue("MessageJsonData", typeof(string));
 
         }
-        public Message(Location destination, Location origin, MessageContent content, string messageAction)
+        public Message(Location destination, Location origin, MessageContent content, string messageAction) : this()
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
             Origin = origin;
-            _id = Guid.NewGuid();
             Content = content;
             Action = messageAction;
         }
