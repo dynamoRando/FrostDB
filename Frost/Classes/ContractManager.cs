@@ -23,6 +23,7 @@ namespace FrostDB
         public ContractManager() 
         {
             _fileManager = new ContractFileManager();
+            _contracts = new List<Contract>();
         }
         public ContractManager(Process process) : this()
         {

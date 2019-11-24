@@ -47,7 +47,7 @@ namespace FrostDB
 
             if (_contract is null)
             {
-                _contract = new Contract(this);
+                _contract = new Contract();
             }
         }
         public Database(string name, DataManager<IDatabase> manager, Guid id,
@@ -92,6 +92,7 @@ namespace FrostDB
         public Database(string name) : this()
         {
             _name = name;
+            _contract = new Contract(this);
         }
 
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
