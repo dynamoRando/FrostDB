@@ -38,10 +38,18 @@ namespace FrostDB
             RegisterRowAccessedEvents();
             RegisterPendingPartcipantAddedEvents();
             RegisterPendingContractAddedEvents();
+            RegisterMessageRecievedEvents();
         }
         #endregion
 
         #region Private Methods
+
+        private void RegisterMessageRecievedEvents()
+        {
+            EventManager.StartListening(EventName.Message.Message_Recieved, 
+                new Action<IEventArgs>(HandleMessageRecievedEvent));
+        }
+
         private void RegisterPendingContractAddedEvents()
         {
             EventManager.StartListening(EventName.Contract.Pending_Added,
@@ -73,6 +81,16 @@ namespace FrostDB
         {
             EventManager.StartListening(EventName.Row.Read,
                new Action<IEventArgs>(HandleRowAccessedEvent));
+        }
+
+        private void HandleMessageRecievedEvent(IEventArgs e)
+        {
+            if (e is MessageRecievedEventArgs)
+            {
+                var args = (MessageRecievedEventArgs)e;
+                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                    args.MessageLength, args.StringMessage);
+            }
         }
 
         private void HandleRowDeletedEvent(IEventArgs e)

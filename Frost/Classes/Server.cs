@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using FrostDB.EventArgs;
 
 namespace FrostDB
 {
@@ -124,11 +125,7 @@ namespace FrostDB
 
                 if (Json.TryParse(content, out message))
                 {
-                    // All the data has been read from the   
-                    // client. Display it on the console.  
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        content.Length, content);
-
+                    EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(message, content));
                     MessageProcessor.Parse(message);
                 }
                 else
@@ -142,6 +139,10 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private static MessageRecievedEventArgs CreateMessageRecievedEventArgs(Message message, string content)
+        {
+            return new MessageRecievedEventArgs { Message = message, MessageLength = content.Length,  StringMessage = content };
+        }
         #endregion
     }
 }

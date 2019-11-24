@@ -2,6 +2,11 @@
 {
     public class EventName
     {
+        public class Message
+        {
+            public const string Message_Recieved = "Message_Recieved";
+        }
+
         public class Contract
         {
             public const string Pending_Added = "Pending_Contract_Added";
