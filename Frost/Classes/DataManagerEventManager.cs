@@ -110,7 +110,7 @@ namespace FrostDB
                 {
                     if (args.Message.ReferenceMessageId.Value != Guid.Empty)
                     {
-                        Console.WriteLine($"ACK: {args.Message.Origin} acknolweges message {args.Message.ReferenceMessageId}");
+                        Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
                     }
                 }
             }
