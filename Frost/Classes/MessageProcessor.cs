@@ -50,7 +50,11 @@ namespace FrostDB
                 ContractMessageProcessor.Process(message);
             }
 
-            message.SendResponse();
+            // if this is an origin message and we're not responding to a response
+            if (!message.ReferenceMessageId.HasValue)
+            {
+                message.SendResponse();
+            }
         }
 
         #endregion
