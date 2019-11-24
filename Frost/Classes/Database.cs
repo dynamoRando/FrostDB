@@ -117,7 +117,7 @@ namespace FrostDB
             var contractMessage = new Message(
                 destination: participant.Location, 
                 origin: Process.GetLocation(), 
-                content: this.Contract, 
+                messageContent: Json.SeralizeContract(this.Contract), 
                 messageAction: MessageAction.Contract.Save_Pending_Contract);
 
             //TO DO: Should this wait if the send is successful or not before adding participant?

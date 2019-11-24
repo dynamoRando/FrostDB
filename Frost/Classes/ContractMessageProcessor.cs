@@ -39,9 +39,10 @@ namespace FrostDB
         #region Private Methods
         private static void SavePendingContract(Message message)
         {
-            if (message.Content is Contract)
+            Contract contract = null;
+            if (Json.TryParse(message.Content, out contract))
             {
-                ProcessReference.Process.AddPendingContract(message.Content as Contract);
+                ProcessReference.Process.AddPendingContract(contract);
             }
         }
         #endregion

@@ -12,7 +12,7 @@ namespace FrostDB.Interface
         DateTime CreatedDateTime { get; }
         DateTime CreatedDateTimeUTC { get; }
         Guid? ReferenceMessageId { get; set; }
-        MessageContent Content { get; }
+        string Content { get; }
         string Action { get; set; }
         void SendResponse();
     }

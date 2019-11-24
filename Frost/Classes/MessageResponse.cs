@@ -46,7 +46,7 @@ namespace FrostDB
             Message response = new Message(
                destination: message.Origin,
                origin: Process.GetLocation(),
-               content: null,
+               messageContent: string.Empty,
                messageAction: MessageAction.Contract.Save_Pending_Contract_Recieved,
                referenceMessageId: message.Id
                );
