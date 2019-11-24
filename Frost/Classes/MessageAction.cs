@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Classes
+namespace FrostDB
 {
     public class MessageAction
     {

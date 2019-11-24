@@ -108,7 +108,10 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
-            //Client.AddPendingContract(participant);
+
+            Message contractMessage = new Message(participant.Location, Process.GetLocation(), this.Contract, MessageAction.Contract.Save_Pending_Contract);
+            Client.Send((Location)contractMessage.Destination, contractMessage);
+
             _participantManager.AddPendingParticipant(participant);
         }
 
