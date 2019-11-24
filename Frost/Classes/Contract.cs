@@ -32,8 +32,29 @@ namespace FrostDB
         #region Constructors
         public Contract()
         {
+        }
+
+        public Contract(Database database)
+        {
+            DatabaseName = database.Name;
+            DatabaseId = database.Id;
+            DatabaseLocation = (Location)Process.GetLocation();
+            DatabaseSchema = database.Schema;
+
+            if (ContractId is null)
+            {
+                ContractId = Guid.NewGuid();
+            }
+
+            if (ContractVersion is null)
+            {
+                ContractVersion = Guid.NewGuid();
+            }
+
+            ProcessId = ProcessReference.Process.Id;
 
         }
+
         protected Contract(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             DatabaseId = (Guid?)serializationInfo.GetValue("ContractDatabaseId", typeof(Guid?));
