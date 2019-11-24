@@ -52,7 +52,7 @@ namespace FrostDB
             }
 
 
-            message.SendResponse();
+            //message.SendResponse();
             //throw new NotImplementedException();
         }
 

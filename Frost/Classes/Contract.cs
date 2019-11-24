@@ -30,6 +30,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public Contract()
+        {
+
+        }
         protected Contract(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             DatabaseId = (Guid?)serializationInfo.GetValue("ContractDatabaseId", typeof(Guid?));

@@ -43,6 +43,11 @@ namespace FrostDB
             _id = Guid.NewGuid();
             _tables = new List<Table>();
             _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>());
+
+            if (_contract is null)
+            {
+                _contract = new Contract();
+            }
         }
         public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables) : this(name)
