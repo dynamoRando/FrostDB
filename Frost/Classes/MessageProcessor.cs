@@ -40,7 +40,6 @@ namespace FrostDB
             // do the appropriate thing to the message
             // DoThing(message);
 
-
             if (message.Action.Contains("Row"))
             {
                 // call RowProcessor, or whatever
@@ -48,12 +47,10 @@ namespace FrostDB
 
             if (message.Action.Contains("Contract"))
             {
-                // call ContractProcessor, or whatever
+                ContractMessageProcessor.Process(message);
             }
 
-
-            //message.SendResponse();
-            //throw new NotImplementedException();
+            message.SendResponse();
         }
 
         #endregion

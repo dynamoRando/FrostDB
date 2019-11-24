@@ -5,11 +5,47 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class ContractMessageProcessor : IMessageProcessor
+    public class ContractMessageProcessor 
     {
-        public void Process(IMessage message)
+        #region Private Fields
+        #endregion
+
+        #region Public Properties
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Constructors
+        #endregion
+
+        #region Public Methods
+        public static void Process(Message message)
         {
-            throw new NotImplementedException();
+            switch (message.Action)
+            {
+                case MessageAction.Contract.Save_Pending_Contract:
+                    SavePendingContract(message);
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown Contract Message");
+            }
         }
+        #endregion
+
+        #region Private Methods
+        private static void SavePendingContract(Message message)
+        {
+            if (message.Content is Contract)
+            {
+                ProcessReference.Process.AddPendingContract(message.Content as Contract);
+            }
+        }
+        #endregion
+
+
     }
 }

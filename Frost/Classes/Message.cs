@@ -30,14 +30,24 @@ namespace FrostDB
         {
 
         }
-        public Message(ILocation destination, ILocation orgin, MessageContent content, string messageAction)
+        public Message(ILocation destination, ILocation origin, MessageContent content, string messageAction)
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
-            Origin = orgin;
+            Origin = origin;
             _id = Guid.NewGuid();
             Content = content;
             Action = messageAction;
+        }
+        public Message(ILocation destination, ILocation origin, MessageContent content, string messageAction, Guid? referenceMessageId)
+        {
+            CreatedDateTime = DateTime.Now;
+            Destination = destination;
+            Origin = origin;
+            _id = Guid.NewGuid();
+            Content = content;
+            Action = messageAction;
+            ReferenceMessageId = referenceMessageId;
         }
         #endregion
 

@@ -5,6 +5,7 @@
         public class Message
         {
             public const string Message_Recieved = "Message_Recieved";
+            public const string Message_Sent = "Message_Sent";
         }
 
         public class Contract

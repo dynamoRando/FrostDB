@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using Newtonsoft.Json;
+using FrostDB.EventArgs;
 
 namespace FrostDB
 {
@@ -63,6 +64,8 @@ namespace FrostDB
                 // Release the socket.  
                 client.Shutdown(SocketShutdown.Both);
                 client.Close();
+
+                EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             }
             catch (Exception e)
             {
@@ -184,6 +187,17 @@ namespace FrostDB
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        private static MessageSentEventArgs CreateMessageSentEventArgs(Message message)
+        {
+            string data = JsonConvert.SerializeObject(message);
+            return new MessageSentEventArgs
+            {
+                Message = message,
+                MessageLength = data.Length,
+                StringMessage = data
+            };
         }
         #endregion
 

@@ -39,10 +39,16 @@ namespace FrostDB
             RegisterPendingPartcipantAddedEvents();
             RegisterPendingContractAddedEvents();
             RegisterMessageRecievedEvents();
+            RegisterMessageSentEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterMessageSentEvents()
+        {
+            EventManager.StartListening(EventName.Message.Message_Sent,
+                new Action<IEventArgs>(HandleMessageSentEvent));
+        }
 
         private void RegisterMessageRecievedEvents()
         {
@@ -83,6 +89,15 @@ namespace FrostDB
                new Action<IEventArgs>(HandleRowAccessedEvent));
         }
 
+        private void HandleMessageSentEvent(IEventArgs e)
+        {
+            if (e is MessageSentEventArgs)
+            {
+                var args = (MessageSentEventArgs)e;
+                Console.WriteLine($"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}");
+            }
+        }
+
         private void HandleMessageRecievedEvent(IEventArgs e)
         {
             if (e is MessageRecievedEventArgs)
@@ -90,6 +105,11 @@ namespace FrostDB
                 var args = (MessageRecievedEventArgs)e;
                 Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                     args.MessageLength, args.StringMessage);
+
+                if (args.Message.ReferenceMessageId.HasValue)
+                {
+                    Console.WriteLine($"ACK: {args.Message.Origin} acknolweges message {args.Message.ReferenceMessageId}");
+                }
             }
         }
 
