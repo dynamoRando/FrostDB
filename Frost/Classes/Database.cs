@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Linq;
 using FrostDB.EventArgs;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -113,10 +114,10 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
-
             Message contractMessage = new Message(participant.Location, Process.GetLocation(), this.Contract, MessageAction.Contract.Save_Pending_Contract);
-            Client.Send((Location)contractMessage.Destination, contractMessage);
 
+            //TO DO: Should this wait if the send is successful or not before adding participant?
+            Task.Run(() => Client.Send(contractMessage));
             _participantManager.AddPendingParticipant(participant);
         }
 

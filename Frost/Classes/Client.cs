@@ -33,6 +33,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static void Send(Message message)
+        {
+            Send((Location)message.Destination, message);
+        }
         public static void Send(Location location, Message message)
         {
             try
@@ -56,17 +60,9 @@ namespace FrostDB
                 Send(client, message);
                 sendDone.WaitOne();
 
-                // Receive the response from the remote device.  
-                //Receive(client); // do i really need this?
-                //receiveDone.WaitOne();
-
-                // Write the response to the console.  
-                //Console.WriteLine("Response received : {0}", response);
-
                 // Release the socket.  
                 client.Shutdown(SocketShutdown.Both);
                 client.Close();
-
             }
             catch (Exception e)
             {
