@@ -36,27 +36,23 @@ namespace FrostDB
 
         public static void Parse(Message message)
         {
-            // switch on message type, route to appropriate X processor (data, contract, etc.)
-            // do the appropriate thing to the message
-            // DoThing(message);
-
-            if (message.Action.Contains("Row"))
+            if (!message.ReferenceMessageId.HasValue)
             {
-                // call RowProcessor, or whatever
-            }
-
-            if (message.Action.Contains("Contract"))
-            {
-                ContractMessageProcessor.Process(message);
-            }
-
-            // if this is an origin message and we're not responding to a response
-            if (message.ReferenceMessageId.HasValue)
-            {
-                if (!(message.ReferenceMessageId.Value == Guid.Empty))
+                if (message.Action.Contains("Row"))
                 {
-                    message.SendResponse();
+                    // call RowProcessor, or whatever
                 }
+
+                if (message.Action.Contains("Contract"))
+                {
+                    ContractMessageProcessor.Process(message);
+                }
+
+                message.SendResponse();
+            }
+            else
+            {
+                // do nothing
             }
         }
 
