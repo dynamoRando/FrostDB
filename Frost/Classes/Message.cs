@@ -20,6 +20,7 @@ namespace FrostDB
         public Guid? ReferenceMessageId { get; set; }
         public MessageContent Content { get; } // can be a row, can be a contract, etc
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
+        public string JsonData { get; set; }
         #endregion
 
         #region Events

@@ -81,7 +81,7 @@ namespace FrostDB
         #region Private Methods
         private static void Send(Socket client, Message message)
         {
-            var data = JsonConvert.SerializeObject(message);
+            var data = Json.SeralizeMessage(message);
 
             // Convert the string data to byte data using ASCII encoding.  
             byte[] byteData = Encoding.ASCII.GetBytes(data);

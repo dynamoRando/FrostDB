@@ -125,6 +125,7 @@ namespace FrostDB
 
                 if (Json.TryParse(content, out message))
                 {
+                    message.JsonData = content;
                     EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(message, content));
                     MessageProcessor.Parse(message);
                 }
