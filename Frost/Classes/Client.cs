@@ -57,11 +57,11 @@ namespace FrostDB
                 sendDone.WaitOne();
 
                 // Receive the response from the remote device.  
-                Receive(client); // do i really need this?
-                receiveDone.WaitOne();
+                //Receive(client); // do i really need this?
+                //receiveDone.WaitOne();
 
                 // Write the response to the console.  
-                Console.WriteLine("Response received : {0}", response);
+                //Console.WriteLine("Response received : {0}", response);
 
                 // Release the socket.  
                 client.Shutdown(SocketShutdown.Both);
