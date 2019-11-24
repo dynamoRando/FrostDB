@@ -12,6 +12,6 @@ namespace FrostDB.Interface
         string PartialDatabaseExtension { get; set; }
         string ContractExtension { get; set; }
         string ContractFolder { get; set; }
-        ILocation GetLocation();
+        Location GetLocation();
     }
 }

@@ -36,7 +36,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public ILocation GetLocation()
+        public Location GetLocation()
         {
             return new Location(Id, Address, ServerPort, Name);
         }

@@ -44,7 +44,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static ILocation GetLocation()
+        public static Location GetLocation()
         {
             return Configuration.GetLocation();
         }
