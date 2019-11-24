@@ -120,7 +120,7 @@ namespace FrostDB
                 // more data.  
                 content = state.sb.ToString();
 
-                IMessage message;
+                Message message;
 
                 if (Json.TryParse(content, out message))
                 {

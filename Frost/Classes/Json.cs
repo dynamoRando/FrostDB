@@ -8,11 +8,11 @@ namespace FrostDB
 {
     public static class Json
     {
-        public static bool TryParse(string json, out IMessage message)
+        public static bool TryParse(string json, out Message message)
         {
             try
             {
-                message = JsonConvert.DeserializeObject<IMessage>(json);
+                message = JsonConvert.DeserializeObject<Message>(json);
                 return true;
             }
             catch (Exception e)
