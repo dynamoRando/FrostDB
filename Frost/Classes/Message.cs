@@ -32,6 +32,11 @@ namespace FrostDB
         public Message()
         {
             _id = Guid.NewGuid();
+
+            if (!ReferenceMessageId.HasValue)
+            {
+                ReferenceMessageId = Guid.Empty;
+            }
         }
         protected Message(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
