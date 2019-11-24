@@ -16,7 +16,10 @@ namespace FrostDB
                 message = JsonConvert.DeserializeObject<Message>(json, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
                 });
 
                 return true;

@@ -13,8 +13,8 @@ namespace FrostDB
 
         #region Public Properties
         public Guid Id => _id;
-        public ILocation Destination { get; }
-        public ILocation Origin { get; }
+        public Location Destination { get; }
+        public Location Origin { get; }
         public DateTime CreatedDateTime { get; }
         public DateTime CreatedDateTimeUTC => CreatedDateTime.ToUniversalTime();
         public Guid? ReferenceMessageId { get; set; }
@@ -31,7 +31,7 @@ namespace FrostDB
         {
 
         }
-        public Message(ILocation destination, ILocation origin, MessageContent content, string messageAction)
+        public Message(Location destination, Location origin, MessageContent content, string messageAction)
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
@@ -40,7 +40,7 @@ namespace FrostDB
             Content = content;
             Action = messageAction;
         }
-        public Message(ILocation destination, ILocation origin, MessageContent content, string messageAction, Guid? referenceMessageId)
+        public Message(Location destination, Location origin, MessageContent content, string messageAction, Guid? referenceMessageId)
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
