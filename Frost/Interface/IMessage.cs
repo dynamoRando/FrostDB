@@ -6,7 +6,7 @@ namespace FrostDB.Interface
 {
     public interface IMessage
     {
-        Guid Id { get; }
+        Guid? Id { get; }
         Location Destination { get; }
         Location Origin { get; }
         DateTime CreatedDateTime { get; }
