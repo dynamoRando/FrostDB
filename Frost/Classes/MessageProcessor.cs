@@ -51,9 +51,12 @@ namespace FrostDB
             }
 
             // if this is an origin message and we're not responding to a response
-            if (!message.ReferenceMessageId.HasValue && !(message.ReferenceMessageId.Value == Guid.Empty))
+            if (message.ReferenceMessageId.HasValue)
             {
-                message.SendResponse();
+                if (!(message.ReferenceMessageId.Value == Guid.Empty))
+                {
+                    message.SendResponse();
+                }
             }
         }
 
