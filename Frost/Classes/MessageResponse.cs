@@ -9,7 +9,7 @@ namespace FrostDB
     {
         public static Message Create(Message message)
         {
-            MessageContent content = null;
+            MessageContent content = new MessageContent();
 
             // figure out here based on what kind of message what to send back.
             // using the message origin, send back to the origin
