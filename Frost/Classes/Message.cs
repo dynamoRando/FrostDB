@@ -48,7 +48,7 @@ namespace FrostDB
             var message = MessageResponse.Create(this);
             Client.Send((Location)message.Destination, message);
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         #endregion
 

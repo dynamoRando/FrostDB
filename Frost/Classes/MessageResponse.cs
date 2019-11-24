@@ -16,8 +16,9 @@ namespace FrostDB
             // return response message.
 
             Message response = new Message(message.Origin, Process.GetLocation(), content, string.Empty);
+            return response;
             
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

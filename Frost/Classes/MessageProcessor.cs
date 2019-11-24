@@ -34,7 +34,7 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public static void Parse(IMessage message)
+        public static void Parse(Message message)
         {
             // switch on message type, route to appropriate X processor (data, contract, etc.)
             // do the appropriate thing to the message
@@ -53,7 +53,7 @@ namespace FrostDB
 
 
             message.SendResponse();
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         #endregion
