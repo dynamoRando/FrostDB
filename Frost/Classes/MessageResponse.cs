@@ -7,9 +7,9 @@ namespace FrostDB
 {
     public class MessageResponse
     {
-        public static IMessage Create(IMessage message)
+        public static Message Create(Message message)
         {
-            IMessageContent content = null;
+            MessageContent content = null;
 
             // figure out here based on what kind of message what to send back.
             // using the message origin, send back to the origin

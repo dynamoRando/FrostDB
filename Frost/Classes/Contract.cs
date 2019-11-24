@@ -7,7 +7,7 @@ using System.Text;
 namespace FrostDB
 {
     [Serializable]
-    public class Contract : IContract, ISerializable, IMessageContent
+    public class Contract : MessageContent, IContract, ISerializable
     {
         #region Private Fields
         #endregion

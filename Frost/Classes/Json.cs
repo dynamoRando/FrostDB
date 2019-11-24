@@ -15,7 +15,7 @@ namespace FrostDB
                 message = JsonConvert.DeserializeObject<IMessage>(json);
                 return true;
             }
-            catch
+            catch (Exception e)
             {
                 message = null;
                 return false;

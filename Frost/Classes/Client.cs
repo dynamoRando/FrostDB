@@ -33,7 +33,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static void Send(Location location, IMessage message)
+        public static void Send(Location location, Message message)
         {
             try
             {
@@ -73,14 +73,14 @@ namespace FrostDB
                 Console.WriteLine(e.ToString());
             }
         }
-        public static void Send(Participant participant, IMessage message)
+        public static void Send(Participant participant, Message message)
         {
             Send(participant.Location, message);
         }
         #endregion
 
         #region Private Methods
-        private static void Send(Socket client, IMessage message)
+        private static void Send(Socket client, Message message)
         {
             var data = JsonConvert.SerializeObject(message);
 

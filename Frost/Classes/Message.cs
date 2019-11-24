@@ -18,7 +18,7 @@ namespace FrostDB
         public DateTime CreatedDateTime { get; }
         public DateTime CreatedDateTimeUTC => CreatedDateTime.ToUniversalTime();
         public Guid? ReferenceMessageId { get; set; }
-        public IMessageContent Content { get; } // can be a row, can be a contract, etc
+        public MessageContent Content { get; } // can be a row, can be a contract, etc
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         #endregion
 
@@ -30,7 +30,7 @@ namespace FrostDB
         {
 
         }
-        public Message(ILocation destination, ILocation orgin, IMessageContent content, string messageAction)
+        public Message(ILocation destination, ILocation orgin, MessageContent content, string messageAction)
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
