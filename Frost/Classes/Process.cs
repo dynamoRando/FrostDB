@@ -194,7 +194,16 @@ namespace FrostDB
         {
             return Databases.Where(d => d.Id == databaseId).First();
         }
+
+        public void StartRemoteServer()
+        {
+            Server.Start();
+        }
         
+        public void StopRemoteServer()
+        {
+            Server.Stop();
+        }
         #endregion
 
         #region Private Methods

@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -33,7 +34,13 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static void StopListening()
+
+        public static void Start()
+        {
+            Task.Run(() => StartListening());
+        }
+
+        public static void Stop()
         {
             IsRunning = false;
         }
@@ -60,7 +67,7 @@ namespace FrostDB
                     _allDone.Reset();
 
                     // Start an asynchronous socket to listen for connections.  
-                    Console.WriteLine("Waiting for a connection...");
+                    //Console.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(
                         new AsyncCallback(AcceptCallback),
                         listener);
