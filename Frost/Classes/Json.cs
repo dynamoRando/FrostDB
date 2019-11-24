@@ -13,14 +13,21 @@ namespace FrostDB
         {
             try
             {
-                message = JsonConvert.DeserializeObject<Message>(json, new JsonSerializerSettings
+                var conv = new Newtonsoft.Json.Converters.IsoDateTimeConverter();
+
+                var set = new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
                     NullValueHandling = NullValueHandling.Ignore,
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
-                });
+                    DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+                    Formatting = Formatting.Indented
+                };
+
+                set.Converters.Add(conv);
+
+                message = JsonConvert.DeserializeObject<Message>(json, set);
 
                 return true;
             }
