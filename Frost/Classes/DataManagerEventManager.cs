@@ -52,7 +52,7 @@ namespace FrostDB
 
         private void RegisterMessageRecievedEvents()
         {
-            EventManager.StartListening(EventName.Message.Message_Recieved, 
+            EventManager.StartListening(EventName.Message.Message_Recieved,
                 new Action<IEventArgs>(HandleMessageRecievedEvent));
         }
 
@@ -73,7 +73,7 @@ namespace FrostDB
         }
         private void RegisterTableCreatedEvents()
         {
-            EventManager.StartListening(EventName.Table.Created, 
+            EventManager.StartListening(EventName.Table.Created,
                 new Action<IEventArgs>(HandleCreatedTableEvent));
         }
 
@@ -108,7 +108,10 @@ namespace FrostDB
 
                 if (args.Message.ReferenceMessageId.HasValue)
                 {
-                    Console.WriteLine($"ACK: {args.Message.Origin} acknolweges message {args.Message.ReferenceMessageId}");
+                    if (args.Message.ReferenceMessageId.Value != Guid.Empty)
+                    {
+                        Console.WriteLine($"ACK: {args.Message.Origin} acknolweges message {args.Message.ReferenceMessageId}");
+                    }
                 }
             }
         }

@@ -36,7 +36,7 @@ namespace FrostDB
 
         public static void Parse(Message message)
         {
-            if (!(message.ReferenceMessageId.Value == Guid.Empty))
+            if (message.ReferenceMessageId.Value == Guid.Empty)
             {
                 if (message.Action.Contains("Row"))
                 {
