@@ -23,5 +23,7 @@ namespace FrostDB.Interface
         void AddParticipant(Participant participant);
         void AddPendingParticipant(Participant participant);
         bool IsCooperative();
+        bool HasParticipant(Guid? participantId);
+        Participant GetParticipant(Guid? participantId);
     }
 }

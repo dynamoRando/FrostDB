@@ -113,6 +113,16 @@ namespace FrostDB
                 (Location)Process.GetLocation());
         }
 
+        public Participant GetParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Where(p => p.Id == participantId).First();
+        }
+
+        public bool HasParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Any(p => p.Id == participantId);
+        }
+
         public void AddPendingParticipant(Participant participant)
         {
             var contractMessage = new Message(

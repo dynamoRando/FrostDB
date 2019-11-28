@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using FrostDB.Enum;
 
 namespace FrostDB
 {
@@ -19,6 +20,7 @@ namespace FrostDB
         private string _name;
         private List<Column> _columns;
         private TableSchema _schema;
+        private ContractValidator _contractValidator;
         #endregion
 
         #region Public Properties
@@ -42,6 +44,7 @@ namespace FrostDB
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
+            _contractValidator = new ContractValidator(ProcessReference.GetDatabase(DatabaseId).Contract, DatabaseId);
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId) : this()
@@ -96,7 +99,7 @@ namespace FrostDB
         {
             var row = new Row();
 
-            if (reference.Participant.Location.IsLocal() 
+            if (reference.Participant.Location.IsLocal()
                 || reference.Participant.IsDatabase(DatabaseId))
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
@@ -132,40 +135,43 @@ namespace FrostDB
             return Columns.Where(c => c.Id == id).FirstOrDefault();
         }
 
-        public void AddRow(Row row, Participant participant)
+        public void AddRow(RowForm form)
         {
-            if (!participant.Location.IsLocal() || !participant.IsDatabase(DatabaseId))
+            // we do a schema check
+            if (RowMatchesTableColumns(form.Row))
             {
-                if (participant.HasAcceptedContract(DatabaseId))
+                // we make sure this action is okay with the defined contract
+                if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
                 {
-                    //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
-                    _rows.Add(GetNewRowReference(row, participant.Location));
-
-                    EventManager.TriggerEvent(EventName.Row.Added_Remotely,
-                           CreateRowAddedEventArgs(row));
+                    if (form.Participant.AcceptsAction(TableAction.AddRow))
+                    {
+                        if (form.Participant.Location.IsLocal() || form.Participant.IsDatabase(DatabaseId))
+                        {
+                            AddRowLocally(form.Row);
+                        }
+                        else
+                        {
+                            AddRowRemotely(form);
+                        }
+                    }
                 }
             }
         }
 
-        public void AddRow(Row row)
+        public RowForm GetNewRow(Guid? participantId)
         {
-            if (RowMatchesTableColumns(row))
+            RowForm form = null;
+
+            var db = ProcessReference.GetDatabase(DatabaseId);
+            if (db.HasParticipant(participantId))
             {
-                _store.AddRow(row);
-                _rows.Add(GetNewRowReference(row));
-
-                EventManager.TriggerEvent(EventName.Row.Added,
-                    CreateRowAddedEventArgs(row));
+                form = new RowForm(GetNewRow(), db.GetParticipant(participantId));
             }
+
+            return form;
         }
 
-        public Row GetNewRow()
-        {
-            List<Guid?> ids = new List<Guid?>();
-            this.Columns.ForEach(c => ids.Add(c.Id));
 
-            return new Row(ids, this.Id);
-        }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("TableId", Id.Value, typeof(Guid?));
@@ -182,6 +188,14 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private Row GetNewRow()
+        {
+            List<Guid?> ids = new List<Guid?>();
+            this.Columns.ForEach(c => ids.Add(c.Id));
+
+            return new Row(ids, this.Id);
+        }
+
         private bool RowMatchesTableColumns(Row row)
         {
             bool isMatch = true;
@@ -200,6 +214,24 @@ namespace FrostDB
             }
 
             return isMatch;
+        }
+
+        private void AddRowRemotely(RowForm form)
+        {
+            //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
+            _rows.Add(GetNewRowReference(form.Row, form.Participant.Location));
+
+            EventManager.TriggerEvent(EventName.Row.Added_Remotely,
+                   CreateRowAddedEventArgs(form.Row));
+        }
+
+        private void AddRowLocally(Row row)
+        {
+            _store.AddRow(row);
+            _rows.Add(GetNewRowReference(row));
+
+            EventManager.TriggerEvent(EventName.Row.Added,
+                CreateRowAddedEventArgs(row));
         }
 
         private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
