@@ -143,6 +143,7 @@ namespace FrostDB
                 // we make sure this action is okay with the defined contract
                 if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
                 {
+                    // we make sure the participant accepts this action if they're remote
                     if (form.Participant.AcceptsAction(TableAction.AddRow))
                     {
                         if (form.Participant.Location.IsLocal() || form.Participant.IsDatabase(DatabaseId))
