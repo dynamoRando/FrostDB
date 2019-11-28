@@ -81,7 +81,7 @@ namespace FrostDB
             return row.Get();
         }
 
-        public bool IsCooperative()
+        public bool HasCooperativeData()
         {
             return _rows.Any(row => !(row.Participant.Location.IsLocal() ||
             row.Participant.IsDatabase(DatabaseId)));

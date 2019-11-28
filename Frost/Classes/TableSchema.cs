@@ -71,7 +71,7 @@ namespace FrostDB
             TableName = table.Name;
             TableId = table.Id;
             Columns = table.Columns;
-            IsCooperative = table.IsCooperative();
+            IsCooperative = table.HasCooperativeData();
         }
         #endregion
     }
