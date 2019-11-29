@@ -71,8 +71,6 @@ namespace Harness
         {
             Write("Specify action: (s)tart, (exit) to quit");
 
-            var totalDBs = 0;
-
             switch (Prompt())
             {
                 case "s":
