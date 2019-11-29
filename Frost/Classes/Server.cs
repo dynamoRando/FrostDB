@@ -11,8 +11,7 @@ using FrostDB.EventArgs;
 
 namespace FrostDB
 {
-    // this class is deprecated
-    public class DataServer : IDataServer
+    public class Server : IDataServer
     {
         #region Private Fields
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
@@ -32,22 +31,22 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DataServer() { }
+        public Server() { }
         #endregion
 
         #region Public Methods
 
-        public static void Start()
+        public void Start(int portNumber)
         {
-            Task.Run(() => StartListening());
+            Task.Run(() => StartListening(portNumber));
         }
 
-        public static void Stop()
+        public void Stop()
         {
             IsRunning = false;
         }
 
-        public static void StartListening()
+        public void StartListening(int portNumber)
         {
             if (IsRunning == false)
             {
@@ -55,7 +54,7 @@ namespace FrostDB
             }
 
             IPAddress ipAddress = IPAddress.Parse(Process.Configuration.Address);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Process.Configuration.DataServerPort);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, portNumber);
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try
@@ -84,7 +83,7 @@ namespace FrostDB
             }
         }
 
-        public static void AcceptCallback(IAsyncResult ar)
+        public void AcceptCallback(IAsyncResult ar)
         {
             // Signal the main thread to continue.  
             _allDone.Set();
@@ -100,7 +99,7 @@ namespace FrostDB
                 new AsyncCallback(ReadCallback), state);
         }
 
-        public static void ReadCallback(IAsyncResult ar)
+        public void ReadCallback(IAsyncResult ar)
         {
             String content = String.Empty;
 
@@ -128,7 +127,16 @@ namespace FrostDB
                 {
                     message.JsonData = content;
                     EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(message, content));
-                    MessageDataProcessor.Parse(message);
+
+                    switch(message.MessageType)
+                    {
+                        case Enum.MessageType.Data:
+                            MessageDataProcessor.Parse(message);
+                            break;
+                        case Enum.MessageType.Console:
+                            MessageConsoleProcessor.Parse(message);
+                            break;
+                    }
                 }
                 else
                 {

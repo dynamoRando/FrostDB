@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class MessageProcessor : IMessageProcessor, IProcessor
+    public class MessageDataProcessor : IMessageProcessor, IProcessor
     {
         #region Private Fields
         private DataMessageProcessor _dataProcessor;
@@ -19,7 +19,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageProcessor()
+        public MessageDataProcessor()
         {
             _dataProcessor = new DataMessageProcessor();
             _contractProcessor = new ContractMessageProcessor();

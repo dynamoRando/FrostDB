@@ -9,8 +9,7 @@ using FrostDB.EventArgs;
 
 namespace FrostDB
 {
-    // this class is deprecated
-    public class DataClient : IDataClient
+    public class Client : IDataClient
     {
         #region Private Fields
         private static ManualResetEvent connectDone =

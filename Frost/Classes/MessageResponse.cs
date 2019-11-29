@@ -48,7 +48,8 @@ namespace FrostDB
                origin: Process.GetLocation(),
                messageContent: string.Empty,
                messageAction: MessageAction.Contract.Save_Pending_Contract_Recieved,
-               referenceMessageId: message.Id
+               referenceMessageId: message.Id,
+               messageType: message.MessageType
                );
 
             return response;

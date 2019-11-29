@@ -80,6 +80,7 @@ namespace Harness
                     _process = new Process();
                     totalDBs = _process.LoadDatabases();
                     _process.StartRemoteServer();
+                    _process.StartConsoleServer();
                     break;
                 default:
                     Write("Unknown startup");

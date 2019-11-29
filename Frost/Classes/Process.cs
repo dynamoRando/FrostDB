@@ -12,6 +12,8 @@ namespace FrostDB
     {
         #region Private Fields
         private IContractManager _contractManager;
+        private Server _dataServer;
+        private Server _consoleServer;
         #endregion
 
         #region Public Properties
@@ -38,6 +40,8 @@ namespace FrostDB
                Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
+            _dataServer = new Server();
+            _consoleServer = new Server();
 
             ProcessReference.Process = this;
         }
@@ -197,12 +201,22 @@ namespace FrostDB
 
         public void StartRemoteServer()
         {
-            DataServer.Start();
+            _dataServer.Start(Process.Configuration.DataServerPort);
         }
         
         public void StopRemoteServer()
         {
-            DataServer.Stop();
+            _dataServer.Stop();
+        }
+
+        public void StartConsoleServer()
+        {
+            _consoleServer.Start(Process.Configuration.ConsoleServerPort);
+        }
+
+        public void StopConsoleServer()
+        {
+            _consoleServer.Stop();
         }
         #endregion
 

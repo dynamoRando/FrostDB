@@ -129,10 +129,12 @@ namespace FrostDB
                 destination: participant.Location, 
                 origin: Process.GetLocation(), 
                 messageContent: Json.SeralizeContract(this.Contract), 
-                messageAction: MessageAction.Contract.Save_Pending_Contract);
+                messageAction: MessageAction.Contract.Save_Pending_Contract,
+                messageType: Enum.MessageType.Data
+                );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => DataClient.Send(contractMessage));
+            Task.Run(() => Client.Send(contractMessage));
             _participantManager.AddPendingParticipant(participant);
         }
 

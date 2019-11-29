@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using FrostDB.Enum;
 
 namespace FrostDB
 {
@@ -20,6 +21,7 @@ namespace FrostDB
         public DateTime CreatedDateTime { get; }
         public DateTime CreatedDateTimeUTC => CreatedDateTime.ToUniversalTime();
         public Guid? ReferenceMessageId { get; set; }
+        public MessageType MessageType { get; set; }
         public string Content { get; } // can be a row, can be a contract, etc
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         public string JsonData { get; set; }
@@ -54,17 +56,19 @@ namespace FrostDB
                ("MessageContent", typeof(string));
             Action = (string)serializationInfo.GetValue("MessageAction", typeof(string));
             JsonData = (string)serializationInfo.GetValue("MessageJsonData", typeof(string));
+            MessageType = (MessageType)serializationInfo.GetValue("MessageType", typeof(MessageType));
 
         }
-        public Message(Location destination, Location origin, string messageContent, string messageAction) : this()
+        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType) : this()
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
             Origin = origin;
             Content = messageContent;
             Action = messageAction;
+            MessageType = messageType;
         }
-        public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId)
+        public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId, MessageType messageType)
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
@@ -73,6 +77,7 @@ namespace FrostDB
             Content = messageContent;
             Action = messageAction;
             ReferenceMessageId = referenceMessageId;
+            MessageType = messageType;
         }
         #endregion
 
@@ -81,9 +86,7 @@ namespace FrostDB
         {
             // once a message has been processed, generate the appropriate response message and send it
             var message = MessageResponse.Create(this);
-            DataClient.Send((Location)message.Destination, message);
-
-            //throw new NotImplementedException();
+            Client.Send(message.Destination, message);
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -97,6 +100,7 @@ namespace FrostDB
             info.AddValue("MessageContent", Content, typeof(string));
             info.AddValue("MessageAction", Action, typeof(string));
             info.AddValue("MessageJsonData", JsonData, typeof(string));
+            info.AddValue("MessageType", MessageType, typeof(MessageType));
         }
         #endregion
 
