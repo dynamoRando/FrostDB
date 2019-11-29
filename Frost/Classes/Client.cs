@@ -43,8 +43,6 @@ namespace FrostDB
             try
             {
                 // Establish the remote endpoint for the socket.  
-                // The name of the   
-                // remote device is "host.contoso.com".  
                 IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
 
@@ -64,6 +62,7 @@ namespace FrostDB
                 // Release the socket.  
                 client.Shutdown(SocketShutdown.Both);
                 client.Close();
+                client.Dispose();
 
                 EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             }

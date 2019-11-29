@@ -78,7 +78,7 @@ namespace Harness
                 case "s":
                     Write("Starting app...");
                     _process = new Process();
-                    totalDBs = _process.LoadDatabases();
+                    _process.LoadDatabases();
                     _process.StartRemoteServer();
                     _process.StartConsoleServer();
                     break;
@@ -87,37 +87,22 @@ namespace Harness
                     break;
             }
 
-            Write("Total DBs loaded: " + totalDBs.ToString());
-
             OutputProcessInfo();
         }
 
         public void OutputProcessInfo()
         {
             Console.WriteLine($"Process Named: {_process.Name} with Id: {_process.Id}");
-            Console.WriteLine($"Process IP Address: {Process.Configuration.Address} with Port: {Process.Configuration.DataServerPort}");
+            Console.WriteLine($"Process IP Address: {Process.Configuration.Address}");
+            Console.WriteLine($"Process Data Port: { Process.Configuration.DataServerPort }");
+            Console.WriteLine($"Process Console Port: { Process.Configuration.ConsoleServerPort}");
             Console.WriteLine($"Total DBs: { _process.Databases.Count.ToString()}");
             Console.WriteLine($"Total partial DBs: { _process.GetPartialDatabases().Count.ToString()}");
         }
 
-        public string Prompt(string message)
-        {
-            Console.WriteLine(message);
-            Console.Write("==>");
-            _consoleLine = Console.ReadLine();
-
-            if (_consoleLine == "exit")
-            {
-                Write("Quitting...");
-                _running = false;
-            }
-
-            return _consoleLine;
-        }
-
         public string Prompt()
         {
-            Console.Write("==>");
+            Console.Write("=>");
             _consoleLine = Console.ReadLine();
 
             if (_consoleLine == "exit")
