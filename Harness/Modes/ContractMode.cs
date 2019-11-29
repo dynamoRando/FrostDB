@@ -85,11 +85,36 @@ namespace Harness.Modes
 
         private void ViewContractForDb()
         {
+            App.Write("Contract Information");
+            App.Write("Database Name: " + Database.Name);
+            App.Write("Contract Description: " + Database.Contract.ContractDescription);
+            ViewDatabaseSchema();
+            ViewContractPermissions();
+        }
+
+        private void ViewDatabaseSchema()
+        {
+            foreach(var t in Database.Contract.DatabaseSchema.Tables)
+            {
+                App.Write("==> Table: " + t.TableName);
+                foreach(var c in t.Columns)
+                {
+                    App.Write("===> Column: " + c.Name + " Type: " + c.DataType.ToString());
+                }
+            }
+        }
+
+        private void ViewContractPermissions()
+        {
             throw new NotImplementedException();
         }
 
         private void AddContractToDb()
         {
+            /*
+             * get the db schema, for each table, need to define permissions
+             * and then add a contract description
+             */
             throw new NotImplementedException();
         }
 
