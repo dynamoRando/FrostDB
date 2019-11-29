@@ -62,8 +62,7 @@ namespace FrostDB
                 client.Shutdown(SocketShutdown.Both);
                 client.Close();
                 client.Dispose();
-                connectDone.Dispose();
-                sendDone.Dispose();
+               
 
                 EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             }
