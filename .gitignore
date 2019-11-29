@@ -11,3 +11,5 @@
 /_Obj
 /.gitattributes
 /Directory.build.props
+/FrostConsole/bin/Debug/netcoreapp3.0
+/FrostForm/bin/Debug/netcoreapp3.0
