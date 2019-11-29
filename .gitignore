@@ -17,3 +17,6 @@
 /FrostElect/node_modules
 /FrostConsoleClient/bin/Debug
 /FrostDbClient/bin/Debug/netstandard2.1
+/FrostConsole/obj
+/FrostDbClient/obj
+/FrostUWP/obj
