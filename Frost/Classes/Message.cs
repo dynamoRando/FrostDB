@@ -81,7 +81,7 @@ namespace FrostDB
         {
             // once a message has been processed, generate the appropriate response message and send it
             var message = MessageResponse.Create(this);
-            Client.Send((Location)message.Destination, message);
+            DataClient.Send((Location)message.Destination, message);
 
             //throw new NotImplementedException();
         }

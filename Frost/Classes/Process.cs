@@ -197,12 +197,12 @@ namespace FrostDB
 
         public void StartRemoteServer()
         {
-            Server.Start();
+            DataServer.Start();
         }
         
         public void StopRemoteServer()
         {
-            Server.Stop();
+            DataServer.Stop();
         }
         #endregion
 

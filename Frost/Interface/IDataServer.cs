@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IServer
+    public interface IDataServer
     {
     }
 }

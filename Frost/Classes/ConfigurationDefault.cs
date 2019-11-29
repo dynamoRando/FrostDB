@@ -17,7 +17,8 @@ namespace FrostDB
         private string _dbext;
         private string _name;
         private string _ipAddress;
-        private int _portNumber;
+        private int _dataPortNumber;
+        private int _consolePortNumber;
         private string _appPath;
         private string _contractFolder;
         private string _contractext;
@@ -30,7 +31,8 @@ namespace FrostDB
         public string DatabaseExtension => _dbext;
         public string Name => _name;
         public string IPAddress => _ipAddress;
-        public int PortNumber => _portNumber;
+        public int DataPortNumber => _dataPortNumber;
+        public int ConsolePortNumber => _consolePortNumber;
         public string AppPath => _appPath;
         public string ContractFolder => _contractFolder;
         public string ContractExtension => _contractext;
@@ -68,7 +70,8 @@ namespace FrostDB
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
-                _portNumber = 516;
+                _dataPortNumber = 516;
+                _consolePortNumber = 519;
                 _ipAddress = "127.0.0.1";
                 _partialDBextension = ".frostPart";
             }
@@ -80,7 +83,8 @@ namespace FrostDB
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
-                _portNumber = 516;
+                _dataPortNumber = 516;
+                _consolePortNumber = 519;
                 _ipAddress = "127.0.0.1";
                 _partialDBextension = ".frostPart";
             }

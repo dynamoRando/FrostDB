@@ -132,7 +132,7 @@ namespace FrostDB
                 messageAction: MessageAction.Contract.Save_Pending_Contract);
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => Client.Send(contractMessage));
+            Task.Run(() => DataClient.Send(contractMessage));
             _participantManager.AddPendingParticipant(participant);
         }
 

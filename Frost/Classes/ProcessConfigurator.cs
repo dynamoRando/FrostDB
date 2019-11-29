@@ -62,13 +62,14 @@ namespace FrostDB
             config.DatabaseFolder = _default.DatabaseFolder;
             config.FileLocation = _default.ConfigurationFileLocation;
             config.Address = _default.IPAddress;
-            config.ServerPort = _default.PortNumber;
+            config.DataServerPort = _default.DataPortNumber;
             config.DatabaseExtension = _default.DatabaseExtension;
             config.Id = Guid.NewGuid();
             config.Name = _default.Name;
             config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
             config.ContractExtension = _default.ContractExtension;
             config.ContractFolder = _default.ContractFolder;
+            config.ConsoleServerPort = _default.ConsolePortNumber;
         }
         #endregion
     }

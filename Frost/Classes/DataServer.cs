@@ -11,7 +11,7 @@ using FrostDB.EventArgs;
 
 namespace FrostDB
 {
-    public class Server : IServer
+    public class DataServer : IDataServer
     {
         #region Private Fields
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
@@ -31,7 +31,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Server() { }
+        public DataServer() { }
         #endregion
 
         #region Public Methods
@@ -54,7 +54,7 @@ namespace FrostDB
             }
 
             IPAddress ipAddress = IPAddress.Parse(Process.Configuration.Address);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Process.Configuration.ServerPort);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Process.Configuration.DataServerPort);
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try

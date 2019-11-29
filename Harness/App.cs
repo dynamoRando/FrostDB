@@ -94,7 +94,7 @@ namespace Harness
         public void OutputProcessInfo()
         {
             Console.WriteLine($"Process Named: {_process.Name} with Id: {_process.Id}");
-            Console.WriteLine($"Process IP Address: {Process.Configuration.Address} with Port: {Process.Configuration.ServerPort}");
+            Console.WriteLine($"Process IP Address: {Process.Configuration.Address} with Port: {Process.Configuration.DataServerPort}");
             Console.WriteLine($"Total DBs: { _process.Databases.Count.ToString()}");
             Console.WriteLine($"Total partial DBs: { _process.GetPartialDatabases().Count.ToString()}");
         }
