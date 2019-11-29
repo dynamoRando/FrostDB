@@ -41,6 +41,9 @@ namespace FrostDB
         {
             try
             {
+                connectDone.Reset();
+                sendDone.Reset();
+
                 // Establish the remote endpoint for the socket.  
                 IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
@@ -55,16 +58,17 @@ namespace FrostDB
                 connectDone.WaitOne();
 
                 // Send test data to the remote device.  
-                Send(client, message);
-                sendDone.WaitOne();
+                if (client.Connected)
+                {
+                    Send(client, message);
+                    sendDone.WaitOne();
+                    // Release the socket.  
+                    client.Shutdown(SocketShutdown.Both);
+                    client.Close();
+                    client.Dispose();
 
-                // Release the socket.  
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-                client.Dispose();
-               
-
-                EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
+                    EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
+                }                
             }
             catch (Exception e)
             {
