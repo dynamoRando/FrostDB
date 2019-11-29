@@ -44,7 +44,7 @@ namespace FrostDB
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
-            _contractValidator = new ContractValidator(ProcessReference.GetDatabase(DatabaseId).Contract, DatabaseId);
+            _contractValidator = new ContractValidator(ProcessReference.GetContract(DatabaseId), DatabaseId);
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId) : this()
