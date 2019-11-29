@@ -49,7 +49,7 @@ namespace Harness
                 "(c) - create a db, " +
                 "(u) - use db, " +
                 "(i) - output process info " +
-                "or (exit)") ;
+                "or (exit)");
 
             switch (Prompt())
             {
@@ -93,9 +93,9 @@ namespace Harness
         public void OutputProcessInfo()
         {
             Console.WriteLine($"Process Named: {_process.Name} with Id: {_process.Id}");
-            Console.WriteLine($"Process IP Address: {Process.Configuration.Address}");
+            Console.WriteLine($"Process IP Address: { Process.Configuration.Address }");
             Console.WriteLine($"Process Data Port: { Process.Configuration.DataServerPort }");
-            Console.WriteLine($"Process Console Port: { Process.Configuration.ConsoleServerPort}");
+            Console.WriteLine($"Process Console Port: { Process.Configuration.ConsoleServerPort }");
             Console.WriteLine($"Total DBs: { _process.Databases.Count.ToString()}");
             Console.WriteLine($"Total partial DBs: { _process.GetPartialDatabases().Count.ToString()}");
         }
