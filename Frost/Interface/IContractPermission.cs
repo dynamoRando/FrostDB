@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Enum
+namespace FrostDB.Interface
 {
-    public enum ProcessType
+    public interface IContractPermission
     {
-        Host,
-        Store
     }
 }

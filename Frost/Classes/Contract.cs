@@ -24,6 +24,9 @@ namespace FrostDB
         public bool IsAccepted { get; set; }
         public DateTime AcceptedDateTime { get; set; }
         public DateTime SentDateTime { get; set; }
+        public List<Guid?> ParticipantTables { get; set; }
+        public List<Guid?> ProcessTables { get; set; }
+        public List<TableContractPermission> ContractPermissions { get; set; }
         #endregion
 
         #region Events
@@ -32,13 +35,15 @@ namespace FrostDB
         #region Constructors
         public Contract()
         {
+            ParticipantTables = new List<Guid?>();
+            ProcessTables = new List<Guid?>();
         }
 
         public Contract(Database database)
         {
             DatabaseName = database.Name;
             DatabaseId = database.Id;
-            DatabaseLocation = (Location)Process.GetLocation();
+            DatabaseLocation = Process.GetLocation();
             DatabaseSchema = database.Schema;
 
             if (ContractId is null)
@@ -68,6 +73,9 @@ namespace FrostDB
             IsAccepted = (bool)serializationInfo.GetValue("ContractIsAccepted", typeof(bool));
             AcceptedDateTime = (DateTime)serializationInfo.GetValue("ContractAcceptedDateTime", typeof(DateTime));
             SentDateTime = (DateTime)serializationInfo.GetValue("ContractSentDateTime", typeof(DateTime));
+            ParticipantTables = (List<Guid?>)serializationInfo.GetValue("ContractParticipantTables", typeof(List<Guid?>));
+            ProcessTables = (List<Guid?>)serializationInfo.GetValue("ContractProcessTables", typeof(List<Guid?>));
+            ContractPermissions = (List<TableContractPermission>)serializationInfo.GetValue("ContractPermissions", typeof(List<TableContractPermission>));
         }
         #endregion
 
@@ -85,6 +93,9 @@ namespace FrostDB
             info.AddValue("ContractIsAccepted", IsAccepted, typeof(bool));
             info.AddValue("ContractAcceptedDateTime", AcceptedDateTime, typeof(DateTime));
             info.AddValue("ContractSentDateTime", SentDateTime, typeof(DateTime));
+            info.AddValue("ContractParticipantTables", ParticipantTables, typeof(List<Guid?>));
+            info.AddValue("ContractProcessTables", ProcessTables, typeof(List<Guid?>));
+            info.AddValue("ContractPermissions", ContractPermissions, typeof(List<TableContractPermission>));
         }
         #endregion
 
