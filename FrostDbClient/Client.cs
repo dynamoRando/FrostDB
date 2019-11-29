@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FrostConsoleClient
+namespace FrostDbClient
 {
     public class Client
     {
