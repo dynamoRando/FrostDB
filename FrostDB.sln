@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostConsole", "FrostConsol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrostUWP", "FrostUWP\FrostUWP.csproj", "{CE2D69EC-7CB6-4623-875D-79EBBB2E32D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrostDbClient", "FrostDbClient\FrostDbClient.csproj", "{FE0FBE6E-BDBF-4E7C-868C-BAC5A63C275C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostDbClient", "FrostDbClient\FrostDbClient.csproj", "{FE0FBE6E-BDBF-4E7C-868C-BAC5A63C275C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
