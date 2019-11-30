@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDbClient
 {
-    public enum MessageType
+    internal enum MessageType
     {
         Data,
         Console

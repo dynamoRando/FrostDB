@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FrostDbClient
 {
     [Serializable]
-    public class Message : ISerializable
+    internal class Message : ISerializable
     {
         #region Private Fields
         private Guid? _id;

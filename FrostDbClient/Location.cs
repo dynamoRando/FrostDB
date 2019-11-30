@@ -6,7 +6,7 @@ using System.Text;
 namespace FrostDbClient
 {
     [Serializable]
-    public class Location : ISerializable
+    internal class Location : ISerializable
     {
         #region Private Fields
         #endregion
