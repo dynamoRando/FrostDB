@@ -14,5 +14,6 @@ namespace FrostCommon
         Guid? ReferenceMessageId { get; set; }
         string Content { get; }
         string Action { get; set; }
+        string ContentType { get; set; }
     }
 }

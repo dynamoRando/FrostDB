@@ -23,6 +23,7 @@ namespace FrostCommon
         public string Content { get; } // can be a row, can be a contract, etc
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         public string JsonData { get; set; }
+        public string ContentType { get; set; }
         #endregion
 
         #region Events
@@ -55,6 +56,7 @@ namespace FrostCommon
             Action = (string)serializationInfo.GetValue("MessageAction", typeof(string));
             JsonData = (string)serializationInfo.GetValue("MessageJsonData", typeof(string));
             MessageType = (MessageType)serializationInfo.GetValue("MessageType", typeof(MessageType));
+            ContentType = (string)serializationInfo.GetValue("MessageContentType", typeof(string));
 
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType) : this()
@@ -65,6 +67,16 @@ namespace FrostCommon
             Content = messageContent;
             Action = messageAction;
             MessageType = messageType;
+        }
+        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, Type contentType) : this()
+        {
+            CreatedDateTime = DateTime.Now;
+            Destination = destination;
+            Origin = origin;
+            Content = messageContent;
+            Action = messageAction;
+            MessageType = messageType;
+            ContentType = contentType.ToString();
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId, MessageType messageType)
         {
@@ -92,6 +104,7 @@ namespace FrostCommon
             info.AddValue("MessageAction", Action, typeof(string));
             info.AddValue("MessageJsonData", JsonData, typeof(string));
             info.AddValue("MessageType", MessageType, typeof(MessageType));
+            info.AddValue("MessageContentType", ContentType, typeof(string));
         }
         #endregion
 

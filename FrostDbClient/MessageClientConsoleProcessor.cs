@@ -68,7 +68,7 @@ namespace FrostDbClient
                 case MessageConsoleAction.Process.Get_Databases_Response:
                     HandleDatabaseList(message);
                     break;
-                case MessageConsoleAction.Process.Get_Id:
+                case MessageConsoleAction.Process.Get_Id_Response:
                     HandleProcessId(message);
                     break;
             }
@@ -76,21 +76,13 @@ namespace FrostDbClient
 
         private void HandleProcessId(Message message)
         {
-            Guid? id;
-            var content = message.Content;
-            id = JsonConvert.DeserializeObject<Guid?>(content);
-            _info.ProcessId = id;
-
+            _info.ProcessId = JsonConvert.DeserializeObject<Guid?>(message.Content);
             _eventManager.TriggerEvent(ClientEvents.GotProcessId, null);
         }
 
         private void HandleDatabaseList(Message message)
         {
-            List<string> databases = new List<string>();
-            var content = message.Content;
-            databases = JsonConvert.DeserializeObject<List<string>>(content);
-            _info.DatabaseNames = databases;
-
+            _info.DatabaseNames = JsonConvert.DeserializeObject<List<string>>(message.Content);
             _eventManager.TriggerEvent(ClientEvents.GotDatabaseNames, null);
         }
         #endregion
