@@ -41,7 +41,7 @@ namespace FrostDB
         private static void SavePendingContract(Message message)
         {
             Contract contract = null;
-            if (Json.TryParse(message.Content, out contract))
+            if (JsonExt.TryParse(message.Content, out contract))
             {
                 ProcessReference.Process.AddPendingContract(contract);
             }

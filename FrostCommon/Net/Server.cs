@@ -1,19 +1,18 @@
-﻿using FrostDB.Interface;
-using System;
+﻿using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using FrostDB.EventArgs;
 using FrostCommon;
 
-namespace FrostDB
+namespace FrostCommon.Net
 {
-    public class Server : IDataServer
+    public class Server 
     {
         #region Private Fields
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
+        private static IMessageProcessor _messageProcessor;
         #endregion
 
         #region Public Fields
@@ -35,53 +34,17 @@ namespace FrostDB
 
         #region Public Methods
 
-        public void Start(int portNumber)
+        public void Start(int portNumber, string ipAddress, IMessageProcessor messageProcessor)
         {
-            Task.Run(() => StartListening(portNumber));
+            _messageProcessor = messageProcessor;
+            Task.Run(() => StartListening(portNumber, ipAddress));
         }
 
         public void Stop()
         {
             IsRunning = false;
         }
-
-        public void StartListening(int portNumber)
-        {
-            if (IsRunning == false)
-            {
-                IsRunning = true;
-            }
-
-            IPAddress ipAddress = IPAddress.Parse(Process.Configuration.Address);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, portNumber);
-            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-            try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(100);
-
-                while (IsRunning)
-                {
-                    // Set the event to nonsignaled state.  
-                    _allDone.Reset();
-
-                    // Start an asynchronous socket to listen for connections.  
-                    //Console.WriteLine("Waiting for a connection...");
-                    listener.BeginAccept(
-                        new AsyncCallback(AcceptCallback),
-                        listener);
-
-                    // Wait until a connection is made before continuing.  
-                    _allDone.WaitOne();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
+        
         public void AcceptCallback(IAsyncResult ar)
         {
             // Signal the main thread to continue.  
@@ -125,17 +88,7 @@ namespace FrostDB
                 if (Json.TryParse(content, out message))
                 {
                     message.JsonData = content;
-                    EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(message, content));
-
-                    switch(message.MessageType)
-                    {
-                        case MessageType.Data:
-                            MessageDataProcessor.Parse(message);
-                            break;
-                        case MessageType.Console:
-                            MessageConsoleProcessor.Parse(message);
-                            break;
-                    }
+                    _messageProcessor.Process(message);
                 }
                 else
                 {
@@ -148,10 +101,43 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private static MessageRecievedEventArgs CreateMessageRecievedEventArgs(Message message, string content)
+        private void StartListening(int portNumber, string ipAddress)
         {
-            return new MessageRecievedEventArgs { Message = message, MessageLength = content.Length,  StringMessage = content };
+            if (IsRunning == false)
+            {
+                IsRunning = true;
+            }
+
+            IPAddress ip = IPAddress.Parse(ipAddress);
+            IPEndPoint localEndPoint = new IPEndPoint(ip, portNumber);
+            Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                listener.Bind(localEndPoint);
+                listener.Listen(100);
+
+                while (IsRunning)
+                {
+                    // Set the event to nonsignaled state.  
+                    _allDone.Reset();
+
+                    // Start an asynchronous socket to listen for connections.  
+                    //Console.WriteLine("Waiting for a connection...");
+                    listener.BeginAccept(
+                        new AsyncCallback(AcceptCallback),
+                        listener);
+
+                    // Wait until a connection is made before continuing.  
+                    _allDone.WaitOne();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
+       
         #endregion
     }
 }

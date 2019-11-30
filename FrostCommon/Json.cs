@@ -1,39 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
-using FrostCommon;
 
-namespace FrostDB
+namespace FrostCommon.Net
 {
     public static class Json
     {
-        public static bool TryParse(string json, out Contract contract)
-        {
-            try
-            {
-                var conv = new Newtonsoft.Json.Converters.IsoDateTimeConverter();
-
-                var set = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
-                    Formatting = Formatting.Indented
-                };
-
-                set.Converters.Add(conv);
-
-                contract = JsonConvert.DeserializeObject<Contract>(json, set);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                contract = null;
-                return false;
-            }
-        }
+        
 
         public static bool TryParse(string json, out Message message)
         {
@@ -71,11 +43,6 @@ namespace FrostDB
             return data;
         }
 
-        public static string SeralizeContract(Contract contract)
-        {
-            var data = string.Empty;
-            data = JsonConvert.SerializeObject(contract);
-            return data;
-        }
+        
     }
 }

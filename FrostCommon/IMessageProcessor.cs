@@ -1,6 +1,6 @@
 ﻿using FrostCommon;
 
-namespace FrostDB.Interface
+namespace FrostCommon
 {
     public interface IMessageProcessor
     {

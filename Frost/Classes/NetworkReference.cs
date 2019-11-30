@@ -1,17 +1,14 @@
-﻿using System;
-using FrostDB.Interface;
-using FrostCommon;
-using FrostDB.Extensions;
+﻿using FrostCommon;
 
 namespace FrostDB
 {
-    public class MessageConsoleProcessor : BaseMessageProcessor
+    public static class NetworkReference
     {
-
         #region Private Fields
         #endregion
 
         #region Public Properties
+        public static Network Network { get; set; }
         #endregion
 
         #region Protected Methods
@@ -21,23 +18,16 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageConsoleProcessor() : base()
-        {
-
-        }
         #endregion
 
         #region Public Methods
-        public override void Process(IMessage message)
+        public static void SendMessage(Message message)
         {
-            base.HandleProcessMessage(message);
-            // process messages from the console
+            Network.SendMessage(message);
         }
         #endregion
 
         #region Private Methods
         #endregion
-
-
     }
 }

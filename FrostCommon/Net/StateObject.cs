@@ -1,10 +1,7 @@
-﻿using FrostDB.Interface;
-using System;
-using System.Collections.Generic;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 
-namespace FrostDB
+namespace FrostCommon.Net
 {
     public class StateObject
     {

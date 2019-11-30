@@ -23,7 +23,7 @@ namespace FrostDB.Extensions
         {
             // once a message has been processed, generate the appropriate response message and send it
             Message m = MessageResponse.Create(message);
-            Client.Send(message.Destination, m);
+            NetworkReference.SendMessage(m);
         }
 
         public static bool IsLocal(this Location location)

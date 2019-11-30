@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FrostCommon;
+using FrostCommon.Net;
 
 namespace FrostDB
 {
@@ -10,8 +11,7 @@ namespace FrostDB
     {
         #region Private Fields
         private IContractManager _contractManager;
-        private Server _dataServer;
-        private Server _consoleServer;
+        private Network _networkManager;
         #endregion
 
         #region Public Properties
@@ -38,10 +38,10 @@ namespace FrostDB
                Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
-            _dataServer = new Server();
-            _consoleServer = new Server();
+            _networkManager = new Network();
 
             ProcessReference.Process = this;
+            NetworkReference.Network = _networkManager;
         }
         #endregion
 
@@ -199,22 +199,22 @@ namespace FrostDB
 
         public void StartRemoteServer()
         {
-            _dataServer.Start(Process.Configuration.DataServerPort);
+            _networkManager.StartDataServer();
         }
         
         public void StopRemoteServer()
         {
-            _dataServer.Stop();
+            _networkManager.StopDataServer();
         }
 
         public void StartConsoleServer()
         {
-            _consoleServer.Start(Process.Configuration.ConsoleServerPort);
+            _networkManager.StartConsoleServer();
         }
 
         public void StopConsoleServer()
         {
-            _consoleServer.Stop();
+            _networkManager.StopConsoleServer();
         }
         #endregion
 

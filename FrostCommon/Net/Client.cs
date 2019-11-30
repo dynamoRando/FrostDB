@@ -1,26 +1,21 @@
-﻿using FrostDB.Interface;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
-using Newtonsoft.Json;
-using FrostDB.EventArgs;
 using FrostCommon;
 
-namespace FrostDB
+namespace FrostCommon.Net
 {
-    // this class is deprecated
-    public class DataClient : IDataClient
+    public class Client 
     {
         #region Private Fields
         private static ManualResetEvent connectDone =
         new ManualResetEvent(false);
         private static ManualResetEvent sendDone =
             new ManualResetEvent(false);
-        private static ManualResetEvent receiveDone =
-            new ManualResetEvent(false);
-        private static String response = String.Empty;
+        //private static ManualResetEvent receiveDone = new ManualResetEvent(false);
+        //private static String response = String.Empty;
         #endregion
 
         #region Public Properties
@@ -44,9 +39,10 @@ namespace FrostDB
         {
             try
             {
+                connectDone.Reset();
+                sendDone.Reset();
+
                 // Establish the remote endpoint for the socket.  
-                // The name of the   
-                // remote device is "host.contoso.com".  
                 IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
 
@@ -60,24 +56,25 @@ namespace FrostDB
                 connectDone.WaitOne();
 
                 // Send test data to the remote device.  
-                Send(client, message);
-                sendDone.WaitOne();
-
-                // Release the socket.  
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-
-                EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
+                if (client.Connected)
+                {
+                    Send(client, message);
+                    sendDone.WaitOne();
+                    // Release the socket.  
+                    client.Shutdown(SocketShutdown.Both);
+                    client.Close();
+                    client.Dispose();
+                }                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
         }
-        public static void Send(Participant participant, Message message)
-        {
-            Send(participant.Location, message);
-        }
+        //public static void Send(Participant participant, Message message)
+        //{
+        //    Send(participant.Location, message);
+        //}
         #endregion
 
         #region Private Methods
@@ -133,73 +130,6 @@ namespace FrostDB
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        private static void Receive(Socket client)
-        {
-            try
-            {
-                // Create the state object.  
-                StateObject state = new StateObject();
-                state.workSocket = client;
-
-                // Begin receiving the data from the remote device.  
-                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReceiveCallback), state);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        private static void ReceiveCallback(IAsyncResult ar)
-        {
-            try
-            {
-                // Retrieve the state object and the client socket   
-                // from the asynchronous state object.  
-                StateObject state = (StateObject)ar.AsyncState;
-                Socket client = state.workSocket;
-
-                // Read data from the remote device.  
-                int bytesRead = client.EndReceive(ar);
-
-                if (bytesRead > 0)
-                {
-                    // There might be more data, so store the data received so far.  
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-
-                    // Get the rest of the data.  
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                        new AsyncCallback(ReceiveCallback), state);
-                }
-                else
-                {
-                    // All the data has arrived; put it in response.  
-                    if (state.sb.Length > 1)
-                    {
-                        response = state.sb.ToString();
-                    }
-                    // Signal that all bytes have been received.  
-                    receiveDone.Set();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        private static MessageSentEventArgs CreateMessageSentEventArgs(Message message)
-        {
-            string data = JsonConvert.SerializeObject(message);
-            return new MessageSentEventArgs
-            {
-                Message = message,
-                MessageLength = data.Length,
-                StringMessage = data
-            };
         }
         #endregion
 

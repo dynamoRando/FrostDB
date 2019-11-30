@@ -7,7 +7,7 @@ using FrostDB.Extensions;
 
 namespace FrostDB
 {
-    public class MessageDataProcessor : IMessageProcessor, IProcessor
+    public class MessageDataProcessor : BaseMessageProcessor
     {
         #region Private Fields
         private DataMessageProcessor _dataProcessor;
@@ -21,7 +21,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageDataProcessor()
+        public MessageDataProcessor() : base()
         {
             _dataProcessor = new DataMessageProcessor();
             _contractProcessor = new ContractMessageProcessor();
@@ -30,14 +30,13 @@ namespace FrostDB
 
         #region Public Methods
 
-        public void Process(IMessage message)
+        public override void Process(IMessage message)
         {
-            // switch on message type, route to appropriate X processor (data, contract, etc.)
-            throw new NotImplementedException();
-        }
+            base.HandleProcessMessage(message);
 
-        public static void Parse(Message message)
-        {
+            // process data messages
+
+            var m = (message as Message);
             if (message.ReferenceMessageId.Value == Guid.Empty)
             {
                 if (message.Action.Contains("Row"))
@@ -47,20 +46,20 @@ namespace FrostDB
 
                 if (message.Action.Contains("Contract"))
                 {
-                    ContractMessageProcessor.Process(message);
+                    ContractMessageProcessor.Process(m);
                 }
 
-                message.SendResponse();
+                m.SendResponse();
             }
             else
             {
                 // do nothing
             }
         }
-
         #endregion
 
         #region Private Methods
+        
         #endregion
 
     }
