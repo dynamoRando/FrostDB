@@ -69,7 +69,7 @@ namespace FrostDB
 
         private void AddDatabaseAsParticipant()
         {
-            _acceptedParticipants.Add(new Participant(Database.Id, (Location)Process.GetLocation()));
+            _acceptedParticipants.Add(new Participant(Database.Id, Process.GetLocation()));
         }
         #endregion
 

@@ -1,8 +1,5 @@
-﻿using FrostDB.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using System;
+using FrostCommon;
 namespace FrostDB
 {
     public class MessageResponse

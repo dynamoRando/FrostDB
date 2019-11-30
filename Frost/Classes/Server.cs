@@ -1,13 +1,12 @@
 ﻿using FrostDB.Interface;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 using FrostDB.EventArgs;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -130,10 +129,10 @@ namespace FrostDB
 
                     switch(message.MessageType)
                     {
-                        case Enum.MessageType.Data:
+                        case MessageType.Data:
                             MessageDataProcessor.Parse(message);
                             break;
-                        case Enum.MessageType.Console:
+                        case MessageType.Console:
                             MessageConsoleProcessor.Parse(message);
                             break;
                     }

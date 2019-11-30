@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Interface
+namespace FrostCommon
 {
     public interface IMessage
     {
@@ -14,6 +14,5 @@ namespace FrostDB.Interface
         Guid? ReferenceMessageId { get; set; }
         string Content { get; }
         string Action { get; set; }
-        void SendResponse();
     }
 }

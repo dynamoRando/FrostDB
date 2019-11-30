@@ -1,11 +1,9 @@
-﻿using FrostDB.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using FrostDB.Enum;
 
-namespace FrostDB
+namespace FrostCommon
 {
     [Serializable]
     public class Message : IMessage, ISerializable
@@ -82,13 +80,6 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void SendResponse()
-        {
-            // once a message has been processed, generate the appropriate response message and send it
-            var message = MessageResponse.Create(this);
-            Client.Send(message.Destination, message);
-        }
-
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("MessageId", Id.Value, typeof(Guid?));

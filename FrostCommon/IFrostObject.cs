@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Interface
+namespace FrostCommon
 {
     public interface IFrostObject
     {

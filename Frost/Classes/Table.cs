@@ -1,11 +1,12 @@
-﻿using FrostDB.EventArgs;
+﻿using FrostCommon;
+using FrostDB.EventArgs;
 using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using FrostDB.Enum;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {

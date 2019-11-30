@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrostDB.Enum
+namespace FrostCommon
 {
     public enum MessageType
     {

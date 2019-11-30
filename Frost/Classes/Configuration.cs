@@ -1,4 +1,4 @@
-﻿using FrostDB.Enum;
+﻿using FrostCommon;
 using FrostDB.Interface;
 using System;
 using System.Collections.Generic;

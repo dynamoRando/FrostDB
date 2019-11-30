@@ -1,11 +1,12 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Linq;
 using FrostDB.EventArgs;
 using System.Threading.Tasks;
+using FrostCommon;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
@@ -136,7 +137,7 @@ namespace FrostDB
                 origin: Process.GetLocation(), 
                 messageContent: Json.SeralizeContract(this.Contract), 
                 messageAction: MessageAction.Contract.Save_Pending_Contract,
-                messageType: Enum.MessageType.Data
+                messageType: MessageType.Data
                 );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?

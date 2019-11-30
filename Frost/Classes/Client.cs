@@ -6,6 +6,7 @@ using System.Threading;
 using System.Text;
 using Newtonsoft.Json;
 using FrostDB.EventArgs;
+using FrostCommon;
 
 namespace FrostDB
 {
