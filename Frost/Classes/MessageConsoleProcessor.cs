@@ -1,7 +1,7 @@
 ﻿using System;
-using FrostDB.Interface;
 using FrostCommon;
-using FrostDB.Extensions;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FrostDB
 {
@@ -31,13 +31,81 @@ namespace FrostDB
         public override void Process(IMessage message)
         {
             HandleProcessMessage(message);
-            Message m = (message as Message);
+            var m = (message as Message);
 
             // process messages from the console
+            // likely to send data back to the console so it can render on it's UI
+            if (m.ReferenceMessageId.Value == Guid.Empty)
+            {
+                if (m.Action.Contains("Process"))
+                {
+                    // call process processor, or whatever
+                    HandleProcessMessage(m);
+                }
+
+                if (m.Action.Contains("Database"))
+                {
+                    // call database processor, or whatever
+                }
+
+                //m.SendResponse();
+            }
+            else
+            {
+                // do nothing
+            }
+
         }
         #endregion
 
         #region Private Methods
+        private void HandleProcessMessage(Message message)
+        {
+            switch (message.Action)
+            {
+                case MessageConsoleAction.Process.Get_Databases:
+                    HandleProcessGetDatabases(message);
+                    break;
+                case MessageConsoleAction.Process.Get_Id:
+                    HandleGetProcessId(message);
+                    break;
+            }
+        }
+
+        private void HandleGetProcessId(Message message)
+        {
+            string messageContent = string.Empty;
+            messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
+
+            Message response = new Message(
+               destination: message.Origin,
+               origin: FrostDB.Process.GetLocation(),
+               messageContent: messageContent,
+               messageAction: MessageConsoleAction.Process.Get_Id_Response,
+               messageType: MessageType.Console);
+
+            NetworkReference.SendMessage(message);
+        }
+
+        private void HandleProcessGetDatabases(Message message)
+        {
+            string messageContent = string.Empty;
+
+            List<string> databases = new List<string>();
+            ProcessReference.Process.Databases.ForEach(d => databases.Add(d.Name));
+
+            messageContent = JsonConvert.SerializeObject(databases);
+
+            Message response = new Message(
+                destination: message.Origin,
+                origin: FrostDB.Process.GetLocation(),
+                messageContent: messageContent,
+                messageAction: MessageConsoleAction.Process.Get_Databases_Response,
+                messageType: MessageType.Console);
+
+            NetworkReference.SendMessage(message);
+
+        }
         #endregion
 
 

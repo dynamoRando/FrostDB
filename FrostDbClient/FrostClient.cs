@@ -13,9 +13,15 @@ namespace FrostDbClient
         int _remotePortNumber;
         int _localPortNumber;
         Server _localServer;
+        MessageClientConsoleProcessor _processor;
+        Location _local;
+        Location _remote;
+        FrostClientInfo _info;
         #endregion
 
         #region Public Properties
+        public FrostClientInfo Info => _info;
+        public EventManager EventManager => EventManager.Instance;
         #endregion
 
         #region Protected Methods
@@ -32,14 +38,42 @@ namespace FrostDbClient
             _localPortNumber = localPortNumber;
             _localIpAddress = localIpAddress;
 
+            _local = new Location(null, _localIpAddress, _localPortNumber, "FrostDbClient");
+            _remote = new Location(null, _remoteIpAddress, _remotePortNumber, string.Empty);
+            _info = new FrostClientInfo();
+            _processor = new MessageClientConsoleProcessor(ref _info);
+            
             SetupServer();
         }
         #endregion
 
         #region Public Methods
+        public void GetProcessId()
+        {
+            string messageContent = string.Empty;
+
+            Message response = new Message(
+                destination: _remote,
+                origin: _local,
+                messageContent: messageContent,
+                messageAction: MessageConsoleAction.Process.Get_Id,
+                messageType: MessageType.Console);
+
+            Client.Send(response);
+        }
         public void GetDatabases()
         {
-            throw new NotImplementedException();
+            string messageContent = string.Empty;
+            
+            Message response = new Message(
+                destination: _remote,
+                origin: _local,
+                messageContent: messageContent,
+                messageAction: MessageConsoleAction.Process.Get_Databases,
+                messageType: MessageType.Console);
+
+            Client.Send(response);
+
         }
         public void Connect()
         {
@@ -51,7 +85,7 @@ namespace FrostDbClient
         private void SetupServer()
         {
             _localServer = new Server();
-            _localServer.Start(_localPortNumber, _localIpAddress, null);
+            _localServer.Start(_localPortNumber, _localIpAddress, _processor);
         }
         #endregion
 
