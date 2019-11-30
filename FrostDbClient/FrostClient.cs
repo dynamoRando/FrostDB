@@ -17,11 +17,12 @@ namespace FrostDbClient
         Location _local;
         Location _remote;
         FrostClientInfo _info;
+        EventManager _eventManager;
         #endregion
 
         #region Public Properties
         public FrostClientInfo Info => _info;
-        public EventManager EventManager => EventManager.Instance;
+        public EventManager EventManager => _eventManager;
         #endregion
 
         #region Protected Methods
@@ -38,10 +39,12 @@ namespace FrostDbClient
             _localPortNumber = localPortNumber;
             _localIpAddress = localIpAddress;
 
+            _eventManager = new EventManager();
+
             _local = new Location(null, _localIpAddress, _localPortNumber, "FrostDbClient");
             _remote = new Location(null, _remoteIpAddress, _remotePortNumber, string.Empty);
             _info = new FrostClientInfo();
-            _processor = new MessageClientConsoleProcessor(ref _info);
+            _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
             
             SetupServer();
         }

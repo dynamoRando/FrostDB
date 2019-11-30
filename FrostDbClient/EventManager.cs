@@ -16,23 +16,8 @@ namespace FrostDbClient
     public class EventManager 
     {
         private Dictionary<string, Action<IEventArgs>> eventDictionary;
-        private static EventManager eventManager;
-
-        public static EventManager Instance
-        {
-            get
-            {
-                if (eventManager is null)
-                {
-                    eventManager = new EventManager();
-                    eventManager.Init();
-                }
-
-                return eventManager;
-            }
-        }
-
-        void Init()
+        
+        public EventManager()
         {
             if (eventDictionary is null)
             {
@@ -40,43 +25,44 @@ namespace FrostDbClient
             }
         }
 
-        public static void StartListening(string eventName, Action<IEventArgs> listener)
+
+        public void StartListening(string eventName, Action<IEventArgs> listener)
         {
             Action<IEventArgs> thisEvent;
-            if (Instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+            if (eventDictionary.TryGetValue(eventName, out thisEvent))
             {
                 //Add more event to the existing one
                 thisEvent += listener;
 
                 //Update the Dictionary
-                Instance.eventDictionary[eventName] = thisEvent;
+                eventDictionary[eventName] = thisEvent;
             }
             else
             {
                 //Add event to the Dictionary for the first time
                 thisEvent += listener;
-                Instance.eventDictionary.Add(eventName, thisEvent);
+                eventDictionary.Add(eventName, thisEvent);
             }
         }
 
-        public static void StopListening(string eventName, Action<IEventArgs> listener)
+        public  void StopListening(string eventName, Action<IEventArgs> listener)
         {
-            if (eventManager == null) return;
+            
             Action<IEventArgs> thisEvent;
-            if (Instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+            if (eventDictionary.TryGetValue(eventName, out thisEvent))
             {
                 //Remove event from the existing one
                 thisEvent -= listener;
 
                 //Update the Dictionary
-                Instance.eventDictionary[eventName] = thisEvent;
+                eventDictionary[eventName] = thisEvent;
             }
         }
 
-        public static void TriggerEvent(string eventName, IEventArgs eventParam)
+        public void TriggerEvent(string eventName, IEventArgs eventParam)
         {
             Action<IEventArgs> thisEvent = null;
-            if (Instance.eventDictionary.TryGetValue(eventName, out thisEvent))
+            if (eventDictionary.TryGetValue(eventName, out thisEvent))
             {
                 Task.Run(() => thisEvent.Invoke(eventParam));
                 // OR USE  instance.eventDictionary[eventName](eventParam);

@@ -11,6 +11,7 @@ namespace FrostDbClient
 
         #region Private Fields
         FrostClientInfo _info;
+        EventManager _eventManager;
         #endregion
 
         #region Public Properties
@@ -24,9 +25,10 @@ namespace FrostDbClient
         #endregion
 
         #region Constructors
-        public MessageClientConsoleProcessor(ref FrostClientInfo info)
+        public MessageClientConsoleProcessor(ref FrostClientInfo info, ref EventManager eventManager)
         {
             _info = info;
+            _eventManager = eventManager;
         }
         #endregion
 
@@ -80,7 +82,7 @@ namespace FrostDbClient
 
             _info.ProcessId = id;
 
-            EventManager.TriggerEvent(ClientEvents.GotProcessId, null);
+            _eventManager.TriggerEvent(ClientEvents.GotProcessId, null);
         }
 
         private void HandleDatabaseList(Message message)
@@ -91,7 +93,7 @@ namespace FrostDbClient
 
             _info.DatabaseNames = databases;
 
-            EventManager.TriggerEvent(ClientEvents.GotDatabaseNames, null);
+            _eventManager.TriggerEvent(ClientEvents.GotDatabaseNames, null);
         }
         #endregion
 
