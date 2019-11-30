@@ -25,6 +25,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static Contract GetContract(Guid? databaseId)
+        {
+            return ProcessReference.Process.GetDatabase(databaseId).Contract;
+        }
         public static IDatabase GetDatabase(Guid? databaseId) 
         {
             return ProcessReference.Process.GetDatabase(databaseId);

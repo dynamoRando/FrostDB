@@ -1,9 +1,9 @@
 ﻿using FrostDB.Interface;
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Linq;
+using FrostDB.Enum;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -61,6 +61,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        // is the participant okay with the action we're doing?
+        // this logic should probably live in a different class
+        public bool AcceptsAction(TableAction action)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool HasAcceptedContract(Guid? databaseId)
         {

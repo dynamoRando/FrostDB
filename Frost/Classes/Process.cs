@@ -1,10 +1,9 @@
-﻿using FrostDB.Enum;
-using FrostDB.Interface;
+﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Linq;
+using FrostCommon;
+using FrostCommon.Net;
 
 namespace FrostDB
 {
@@ -12,6 +11,7 @@ namespace FrostDB
     {
         #region Private Fields
         private IContractManager _contractManager;
+        private Network _networkManager;
         #endregion
 
         #region Public Properties
@@ -38,13 +38,15 @@ namespace FrostDB
                Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
+            _networkManager = new Network();
 
             ProcessReference.Process = this;
+            NetworkReference.Network = _networkManager;
         }
         #endregion
 
         #region Public Methods
-        public static ILocation GetLocation()
+        public static Location GetLocation()
         {
             return Configuration.GetLocation();
         }
@@ -197,12 +199,22 @@ namespace FrostDB
 
         public void StartRemoteServer()
         {
-            Server.Start();
+            _networkManager.StartDataServer();
         }
         
         public void StopRemoteServer()
         {
-            Server.Stop();
+            _networkManager.StopDataServer();
+        }
+
+        public void StartConsoleServer()
+        {
+            _networkManager.StartConsoleServer();
+        }
+
+        public void StopConsoleServer()
+        {
+            _networkManager.StopConsoleServer();
         }
         #endregion
 

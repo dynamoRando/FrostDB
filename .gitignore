@@ -11,3 +11,13 @@
 /_Obj
 /.gitattributes
 /Directory.build.props
+/FrostConsole/bin/Debug/netcoreapp3.0
+/FrostForm/bin/Debug/netcoreapp3.0
+/FrostUWP/bin/x86/Debug
+/FrostElect/node_modules
+/FrostConsoleClient/bin/Debug
+/FrostDbClient/bin/Debug/netstandard2.1
+/FrostConsole/obj
+/FrostDbClient/obj
+/FrostUWP/obj
+/FrostCommon/bin/Debug/netstandard2.1

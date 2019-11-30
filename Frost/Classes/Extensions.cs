@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using FrostCommon;
 
 namespace FrostDB.Extensions
 {
@@ -18,6 +17,25 @@ namespace FrostDB.Extensions
              */
 
             throw new NotImplementedException();
+        }
+
+        public static void SendResponse(this Message message)
+        {
+            // once a message has been processed, generate the appropriate response message and send it
+            Message m = MessageResponse.Create(message);
+            NetworkReference.SendMessage(m);
+        }
+
+        public static bool IsLocal(this Location location)
+        {
+            if (location.IpAddress.Contains("127.0.0.1") || location.Url.Contains("localhost") || (location.IpAddress == Process.GetLocation().IpAddress && location.PortNumber == Process.GetLocation().PortNumber))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

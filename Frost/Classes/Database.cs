@@ -1,11 +1,12 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Linq;
 using FrostDB.EventArgs;
 using System.Threading.Tasks;
+using FrostCommon;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
@@ -45,10 +46,16 @@ namespace FrostDB
             _tables = new List<Table>();
             _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>());
 
+            if (_schema is null)
+            {
+                _schema = new DbSchema(this);
+            }
+
             if (_contract is null)
             {
-                _contract = new Contract(this);
+                _contract = new Contract();
             }
+
         }
         public Database(string name, DataManager<IDatabase> manager, Guid id,
             List<Table> tables) : this(name)
@@ -92,6 +99,7 @@ namespace FrostDB
         public Database(string name) : this()
         {
             _name = name;
+            _contract = new Contract(this);
         }
 
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -112,12 +120,28 @@ namespace FrostDB
                 (Location)Process.GetLocation());
         }
 
+        public Participant GetParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Where(p => p.Id == participantId).First();
+        }
+
+        public bool HasParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Any(p => p.Id == participantId);
+        }
+
         public void AddPendingParticipant(Participant participant)
         {
-            Message contractMessage = new Message(participant.Location, Process.GetLocation(), this.Contract, MessageAction.Contract.Save_Pending_Contract);
+            var contractMessage = new Message(
+                destination: participant.Location, 
+                origin: Process.GetLocation(), 
+                messageContent: JsonExt.SeralizeContract(this.Contract), 
+                messageAction: MessageDataAction.Contract.Save_Pending_Contract,
+                messageType: MessageType.Data
+                );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => Client.Send(contractMessage));
+            Task.Run(() => NetworkReference.SendMessage(contractMessage));
             _participantManager.AddPendingParticipant(participant);
         }
 

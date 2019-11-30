@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FrostCommon\FrostCommon.csproj" />
     <ProjectReference Include="..\Frost\FrostDB.csproj" />
   </ItemGroup>
 

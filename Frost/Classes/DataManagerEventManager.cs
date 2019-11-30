@@ -38,10 +38,24 @@ namespace FrostDB
             RegisterRowAccessedEvents();
             RegisterPendingPartcipantAddedEvents();
             RegisterPendingContractAddedEvents();
+            RegisterMessageRecievedEvents();
+            RegisterMessageSentEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterMessageSentEvents()
+        {
+            EventManager.StartListening(EventName.Message.Message_Sent,
+                new Action<IEventArgs>(HandleMessageSentEvent));
+        }
+
+        private void RegisterMessageRecievedEvents()
+        {
+            EventManager.StartListening(EventName.Message.Message_Recieved,
+                new Action<IEventArgs>(HandleMessageRecievedEvent));
+        }
+
         private void RegisterPendingContractAddedEvents()
         {
             EventManager.StartListening(EventName.Contract.Pending_Added,
@@ -59,7 +73,7 @@ namespace FrostDB
         }
         private void RegisterTableCreatedEvents()
         {
-            EventManager.StartListening(EventName.Table.Created, 
+            EventManager.StartListening(EventName.Table.Created,
                 new Action<IEventArgs>(HandleCreatedTableEvent));
         }
 
@@ -73,6 +87,33 @@ namespace FrostDB
         {
             EventManager.StartListening(EventName.Row.Read,
                new Action<IEventArgs>(HandleRowAccessedEvent));
+        }
+
+        private void HandleMessageSentEvent(IEventArgs e)
+        {
+            if (e is MessageSentEventArgs)
+            {
+                var args = (MessageSentEventArgs)e;
+                Console.WriteLine($"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}");
+            }
+        }
+
+        private void HandleMessageRecievedEvent(IEventArgs e)
+        {
+            if (e is MessageRecievedEventArgs)
+            {
+                var args = (MessageRecievedEventArgs)e;
+                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                    args.MessageLength, args.StringMessage);
+
+                if (args.Message.ReferenceMessageId.HasValue)
+                {
+                    if (args.Message.ReferenceMessageId.Value != Guid.Empty)
+                    {
+                        Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
+                    }
+                }
+            }
         }
 
         private void HandleRowDeletedEvent(IEventArgs e)

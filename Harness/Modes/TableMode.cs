@@ -166,9 +166,9 @@ namespace Harness.Modes
 
             if (!(_table is null))
             {
-                var row = _table.GetNewRow();
+                var form = _table.GetNewRow(Database.Id);
 
-                row.ColumnIds.ForEach(c =>
+                form.Row.ColumnIds.ForEach(c =>
                 {
                     var x = _table.GetColumn(c);
                     var val = this.Prompt($"For column " +
@@ -176,13 +176,13 @@ namespace Harness.Modes
                         $"{x.DataType.ToString()} " +
                         $"Please enter a value: ");
 
-                    row.AddValue(c,
+                    form.Row.AddValue(c,
                         Convert.ChangeType(val, x.DataType), x.Name, x.DataType);
 
                 });
 
                 this.Prompt("Adding row");
-                _table.AddRow(row);
+                _table.AddRow(form);
             }
         }
         private void AddVirtualTable()

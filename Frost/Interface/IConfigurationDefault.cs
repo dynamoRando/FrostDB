@@ -13,7 +13,8 @@ namespace FrostDB.Interface
         string ContractFolder { get; }
         string Name { get; }
         string IPAddress { get; }
-        int PortNumber { get; }
+        int DataPortNumber { get; }
+        int ConsolePortNumber { get; }
         string ContractExtension { get; }
         bool ConfigFileExists();
     }

@@ -15,6 +15,7 @@ namespace Harness.Modes
         private bool _stayInMode = false;
         private TableMode _tableMode;
         private ParticipantMode _participantMode;
+        private ContractMode _contractMode;
         #endregion
 
         #region Public Properties
@@ -73,7 +74,7 @@ namespace Harness.Modes
 
         public void PerformActionOnDb()
         {
-            var result = this.Prompt("Specify action: (v)iew tables, (m)odify tables, (ap) - add participant, (l)eave prompt");
+            var result = this.Prompt("Specify action: (v)iew tables, (m)odify tables, (ap) - add participant, (c) - view/modify contracts, (l)eave prompt");
             switch (result)
             {
                 case "l":
@@ -89,6 +90,10 @@ namespace Harness.Modes
                 case "ap":
                     _participantMode = new ParticipantMode(App, Database);
                     _participantMode.Prompt();
+                    break;
+                case "c":
+                    _contractMode = new ContractMode(App, Database);
+                    _contractMode.Prompt();
                     break;
             }
         }

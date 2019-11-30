@@ -1,24 +1,58 @@
-﻿using FrostDB.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using System;
+using FrostCommon;
 namespace FrostDB
 {
     public class MessageResponse
     {
+        #region Private Fields
+        #endregion
+
+        #region Public Properties
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Constructors
+        #endregion
+
+        #region Public Methods
         public static Message Create(Message message)
         {
-            MessageContent content = new MessageContent();
+            Message response = null;
 
-            // figure out here based on what kind of message what to send back.
-            // using the message origin, send back to the origin
-            // return response message.
+            switch(message.Action)
+            {
+                case MessageDataAction.Contract.Save_Pending_Contract:
+                    response = BuildSaveContractMessageReceived(message);
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown Message");
+            }
 
-            Message response = new Message(message.Origin, Process.GetLocation(), content, string.Empty);
             return response;
-            
-            //throw new NotImplementedException();
         }
+        #endregion
+
+        #region Private Methods
+        private static Message BuildSaveContractMessageReceived(Message message)
+        {
+            Message response = new Message(
+               destination: message.Origin,
+               origin: Process.GetLocation(),
+               messageContent: string.Empty,
+               messageAction: MessageDataAction.Contract.Save_Pending_Contract_Recieved,
+               referenceMessageId: message.Id,
+               messageType: message.MessageType
+               );
+
+            return response;
+        }
+        #endregion
+
+
     }
 }
