@@ -79,7 +79,6 @@ namespace FrostDbClient
             Guid? id;
             var content = message.Content;
             id = JsonConvert.DeserializeObject<Guid?>(content);
-
             _info.ProcessId = id;
 
             _eventManager.TriggerEvent(ClientEvents.GotProcessId, null);
@@ -90,7 +89,6 @@ namespace FrostDbClient
             List<string> databases = new List<string>();
             var content = message.Content;
             databases = JsonConvert.DeserializeObject<List<string>>(content);
-
             _info.DatabaseNames = databases;
 
             _eventManager.TriggerEvent(ClientEvents.GotDatabaseNames, null);

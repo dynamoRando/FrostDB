@@ -53,30 +53,11 @@ namespace FrostDbClient
         #region Public Methods
         public void GetProcessId()
         {
-            string messageContent = string.Empty;
-
-            Message response = new Message(
-                destination: _remote,
-                origin: _local,
-                messageContent: messageContent,
-                messageAction: MessageConsoleAction.Process.Get_Id,
-                messageType: MessageType.Console);
-
-            Client.Send(response);
+            Client.Send(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id));
         }
         public void GetDatabases()
         {
-            string messageContent = string.Empty;
-            
-            Message response = new Message(
-                destination: _remote,
-                origin: _local,
-                messageContent: messageContent,
-                messageAction: MessageConsoleAction.Process.Get_Databases,
-                messageType: MessageType.Console);
-
-            Client.Send(response);
-
+            Client.Send(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
         }
         public void Connect()
         {
@@ -85,6 +66,17 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private Message BuildMessage(string content, string action)
+        {
+            Message message = new Message(
+               destination: _remote,
+               origin: _local,
+               messageContent: content,
+               messageAction: action,
+               messageType: MessageType.Console);
+
+            return message;
+        }
         private void SetupServer()
         {
             _localServer = new Server();
