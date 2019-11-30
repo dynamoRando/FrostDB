@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using FrostCommon;
 
 namespace FrostDbClient
 {
@@ -39,25 +40,20 @@ namespace FrostDbClient
                 connectDone.Reset();
                 sendDone.Reset();
 
-                // Establish the remote endpoint for the socket.  
                 IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
 
-                // Create a TCP/IP socket.  
                 Socket client = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
 
-                // Connect to the remote endpoint.  
                 client.BeginConnect(remoteEP,
                     new AsyncCallback(ConnectCallback), client);
                 connectDone.WaitOne();
 
-                // Send test data to the remote device.  
                 if (client.Connected)
                 {
                     Send(client, message);
                     sendDone.WaitOne();
-                    // Release the socket.  
                     client.Shutdown(SocketShutdown.Both);
                     client.Close();
                     client.Dispose();

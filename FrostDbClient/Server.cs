@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using FrostCommon;
 
 namespace FrostDbClient
 {
@@ -123,6 +124,7 @@ namespace FrostDbClient
                 if (Json.TryParse(content, out message))
                 {
                     message.JsonData = content;
+                    // should do something with the message here
                 }
                 else
                 {
