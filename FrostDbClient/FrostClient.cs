@@ -6,10 +6,11 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
-        IPAddress _localIpAddress;
-        IPAddress _remoteIpAddress;
+        string _localIpAddress;
+        string _remoteIpAddress;
         int _remotePortNumber;
         int _localPortNumber;
+        Server _localServer;
         #endregion
 
         #region Public Properties
@@ -22,12 +23,14 @@ namespace FrostDbClient
         #endregion
 
         #region Constructors
-        public FrostClient(IPAddress remoteIpAddress, IPAddress localIpAddress, int remotePortNumber, int localPortNumber)
+        public FrostClient(string remoteIpAddress, string localIpAddress, int remotePortNumber, int localPortNumber)
         {
             _remoteIpAddress = remoteIpAddress;
             _remotePortNumber = remotePortNumber;
             _localPortNumber = localPortNumber;
             _localIpAddress = localIpAddress;
+
+            SetupServer();
         }
         #endregion
 
@@ -43,6 +46,12 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private void SetupServer()
+        {
+            _localServer = new Server();
+            Server.IpAddress = _localIpAddress;
+            _localServer.Start(_localPortNumber);
+        }
         #endregion
 
 
