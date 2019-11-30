@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net;
+using FrostCommon;
+using FrostCommon.Net;
 
 namespace FrostDbClient
 {
@@ -49,8 +51,7 @@ namespace FrostDbClient
         private void SetupServer()
         {
             _localServer = new Server();
-            Server.IpAddress = _localIpAddress;
-            _localServer.Start(_localPortNumber);
+            _localServer.Start(_localPortNumber, _localIpAddress, null);
         }
         #endregion
 

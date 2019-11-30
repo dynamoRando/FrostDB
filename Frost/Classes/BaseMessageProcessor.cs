@@ -33,7 +33,7 @@ namespace FrostDB
         public void HandleProcessMessage(IMessage message)
         {
             Message m = (message as Message);
-            EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.Content));
+            EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));
         }
 
         #endregion

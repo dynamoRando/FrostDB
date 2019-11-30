@@ -30,7 +30,9 @@ namespace FrostDB
         #region Public Methods
         public override void Process(IMessage message)
         {
-            base.HandleProcessMessage(message);
+            HandleProcessMessage(message);
+            Message m = (message as Message);
+
             // process messages from the console
         }
         #endregion

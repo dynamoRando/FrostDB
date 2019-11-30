@@ -32,7 +32,7 @@ namespace FrostDB
 
         public override void Process(IMessage message)
         {
-            base.HandleProcessMessage(message);
+            HandleProcessMessage(message);
 
             // process data messages
 

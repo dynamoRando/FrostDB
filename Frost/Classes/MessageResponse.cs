@@ -26,7 +26,7 @@ namespace FrostDB
 
             switch(message.Action)
             {
-                case MessageAction.Contract.Save_Pending_Contract:
+                case MessageDataAction.Contract.Save_Pending_Contract:
                     response = BuildSaveContractMessageReceived(message);
                     break;
                 default:
@@ -44,7 +44,7 @@ namespace FrostDB
                destination: message.Origin,
                origin: Process.GetLocation(),
                messageContent: string.Empty,
-               messageAction: MessageAction.Contract.Save_Pending_Contract_Recieved,
+               messageAction: MessageDataAction.Contract.Save_Pending_Contract_Recieved,
                referenceMessageId: message.Id,
                messageType: message.MessageType
                );

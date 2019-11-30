@@ -136,7 +136,7 @@ namespace FrostDB
                 destination: participant.Location, 
                 origin: Process.GetLocation(), 
                 messageContent: JsonExt.SeralizeContract(this.Contract), 
-                messageAction: MessageAction.Contract.Save_Pending_Contract,
+                messageAction: MessageDataAction.Contract.Save_Pending_Contract,
                 messageType: MessageType.Data
                 );
 

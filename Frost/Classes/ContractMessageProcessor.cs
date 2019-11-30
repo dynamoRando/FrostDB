@@ -28,7 +28,7 @@ namespace FrostDB
         {
             switch (message.Action)
             {
-                case MessageAction.Contract.Save_Pending_Contract:
+                case MessageDataAction.Contract.Save_Pending_Contract:
                     SavePendingContract(message);
                     break;
                 default:
