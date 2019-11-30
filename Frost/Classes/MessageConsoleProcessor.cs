@@ -77,14 +77,7 @@ namespace FrostDB
             string messageContent = string.Empty;
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
 
-            Message response = new Message(
-               destination: message.Origin,
-               origin: FrostDB.Process.GetLocation(),
-               messageContent: messageContent,
-               messageAction: MessageConsoleAction.Process.Get_Id_Response,
-               messageType: MessageType.Console);
-
-            NetworkReference.SendMessage(message);
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Id_Response));
         }
 
         private void HandleProcessGetDatabases(Message message)
@@ -96,15 +89,20 @@ namespace FrostDB
 
             messageContent = JsonConvert.SerializeObject(databases);
 
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Databases_Response)));
+
+        }
+
+        private Message BuildMessage(Location destination, string content, string action)
+        {
             Message response = new Message(
-                destination: message.Origin,
+                destination: destination,
                 origin: FrostDB.Process.GetLocation(),
-                messageContent: messageContent,
-                messageAction: MessageConsoleAction.Process.Get_Databases_Response,
+                messageContent: content,
+                messageAction: action,
                 messageType: MessageType.Console);
 
-            NetworkReference.SendMessage(message);
-
+            return response;
         }
         #endregion
 
