@@ -56,7 +56,7 @@ namespace FrostDbClient
                 // do nothing
             }
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         #endregion
 

@@ -41,8 +41,8 @@ namespace FrostDbClient
 
             _eventManager = new EventManager();
 
-            _local = new Location(null, _localIpAddress, _localPortNumber, "FrostDbClient");
-            _remote = new Location(null, _remoteIpAddress, _remotePortNumber, string.Empty);
+            _local = new Location(Guid.NewGuid(), _localIpAddress, _localPortNumber, "FrostDbClient");
+            _remote = new Location(Guid.NewGuid(), _remoteIpAddress, _remotePortNumber, string.Empty);
             _info = new FrostClientInfo();
             _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
             
