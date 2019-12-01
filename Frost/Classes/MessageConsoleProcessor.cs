@@ -2,6 +2,7 @@
 using FrostCommon;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -69,7 +70,28 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
+                case MessageConsoleAction.Database.Get_Database_Info:
+                    HandleGetDatabaseInfo(message);
+                    break;
             }
+        }
+
+        private void HandleGetDatabaseInfo(Message message)
+        {
+            string dbName = message.Content;
+
+            var db = ProcessReference.GetDatabase(dbName);
+
+            DatabaseInfo info = new DatabaseInfo();
+            
+            info.Name = db.Name;
+            info.Id = db.Id;
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type));
         }
 
         private void HandleGetProcessId(Message message)

@@ -8,5 +8,6 @@ namespace FrostDbClient
     {
         public const string GotProcessId = "Process.Got_Id";
         public const string GotDatabaseNames = "Process.Got_Database_Names";
+        public const string GotDatabaseInfo = "Database.Got_Information";
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDbClient
 {
@@ -12,6 +12,7 @@ namespace FrostDbClient
         #region Public Properties
         public Guid? ProcessId { get; set; }
         public List<string> DatabaseNames { get; set; }
+        public List<DatabaseInfo> DatabaseInfos { get; set; }
         #endregion
 
         #region Protected Methods
@@ -25,6 +26,7 @@ namespace FrostDbClient
         {
             ProcessId = Guid.NewGuid();
             DatabaseNames = new List<string>();
+            DatabaseInfos = new List<DatabaseInfo>();
         }
         #endregion
 

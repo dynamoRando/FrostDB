@@ -59,6 +59,12 @@ namespace FrostDbClient
         {
             Client.Send(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
         }
+
+        public void GetDatabaseInfo(string databaseName)
+        {
+            Client.Send(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info));
+        }
+
         public void Connect()
         {
             throw new NotImplementedException();
