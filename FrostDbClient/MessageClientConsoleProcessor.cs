@@ -88,17 +88,14 @@ namespace FrostDbClient
         {
             DatabaseInfo dbInformation = JsonConvert.DeserializeObject<DatabaseInfo>(message.Content);
             
-            if (!_info.DatabaseInfos.Any(i => i.Id == dbInformation.Id))
+            var item = _info.DatabaseInfos.SingleOrDefault(i => i.Id == dbInformation.Id);
+            
+            if (item != null)
             {
-                _info.DatabaseInfos.Add(dbInformation);
-            }
-            else
-            {
-                var item = _info.DatabaseInfos.Where(i => i.Id == dbInformation.Id).First();
                 _info.DatabaseInfos.Remove(item);
-                _info.DatabaseInfos.Add(dbInformation);
             }
 
+            _info.DatabaseInfos.Add(dbInformation);
             _eventManager.TriggerEvent(ClientEvents.GotDatabaseInfo, null);
         }
 
