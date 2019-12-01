@@ -98,7 +98,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type));
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, message.Id));
         }
 
         private void HandleGetProcessId(Message message)
@@ -107,7 +107,7 @@ namespace FrostDB
             Type type = ProcessReference.Process.Id.GetType();
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
 
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Id_Response, type));
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, message.Id));
         }
 
         private void HandleProcessGetDatabases(Message message)
@@ -119,11 +119,11 @@ namespace FrostDB
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type));
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, message.Id));
 
         }
 
-        private Message BuildMessage(Location destination, string content, string action, Type contentType)
+        private Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId)
         {
             Message response = new Message(
                 destination: destination,
@@ -133,6 +133,8 @@ namespace FrostDB
                 messageType: MessageType.Console,
                 contentType: contentType
                 );
+
+            response.ReferenceMessageId = referenceMessageId;
 
             return response;
         }

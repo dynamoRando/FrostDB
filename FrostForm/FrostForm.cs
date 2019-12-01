@@ -17,7 +17,7 @@ namespace FrostForm
             InitializeComponent();
         }
 
-        private void buttonConnectRemote_Click(object sender, EventArgs e)
+        private async void buttonConnectRemote_Click(object sender, EventArgs e)
         {
             string ipAddress = textRemoteAddress.Text;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
@@ -26,7 +26,12 @@ namespace FrostForm
             app.SetupClient(ipAddress, portNumber);
             AppReference.Client = app.Client;
 
-            AppReference.Client.GetDatabases();
+            //AppReference.Client.GetDatabases();
+
+            // can do this also to get results
+            var task = AppReference.Client.GetDatabasesAsync();
+            await task;
+            MessageBox.Show(task.Result.Count.ToString());
         }
 
         private void formFrost_Load(object sender, EventArgs e)
