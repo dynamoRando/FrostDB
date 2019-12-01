@@ -68,10 +68,16 @@ namespace FrostDbClient
         // or, i can send a message and then check for when the data has come back and return to the caller
         public async Task<List<string>> GetDatabasesAsync()
         {
+            var result = new List<string>();
             var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
-            // really should take the result here and if it's false, then just return an empty list
-            await WaitForMessageAsync(id);
-            return _info.DatabaseNames;
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.DatabaseNames;
+            }
+
+            return result;
         }
 
         public void GetDatabaseInfo(string databaseName)
