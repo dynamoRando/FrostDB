@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using FrostCommon;
 using Newtonsoft.Json;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDbClient
 {
@@ -46,7 +47,7 @@ namespace FrostDbClient
 
                 if (m.Action.Contains("Database"))
                 {
-                    // call database processor, or whatever
+                    HandleDatabaseMessage(m);
                 }
 
                 //m.SendResponse();
@@ -56,11 +57,20 @@ namespace FrostDbClient
                 // do nothing
             }
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         #endregion
 
         #region Private Methods
+        private void HandleDatabaseMessage(Message message)
+        {
+            switch (message.Action)
+            {
+                case MessageConsoleAction.Database.Get_Database_Info_Response:
+                    HandleDbInfo(message);
+                    break;
+            }
+        }
         private void HandleProcessMessage(Message message)
         {
             switch (message.Action) 
@@ -72,6 +82,21 @@ namespace FrostDbClient
                     HandleProcessId(message);
                     break;
             }
+        }
+
+        private void HandleDbInfo(Message message)
+        {
+            DatabaseInfo dbInformation = JsonConvert.DeserializeObject<DatabaseInfo>(message.Content);
+            
+            var item = _info.DatabaseInfos.SingleOrDefault(i => i.Id == dbInformation.Id);
+            
+            if (item != null)
+            {
+                _info.DatabaseInfos.Remove(item);
+            }
+
+            _info.DatabaseInfos.Add(dbInformation);
+            _eventManager.TriggerEvent(ClientEvents.GotDatabaseInfo, null);
         }
 
         private void HandleProcessId(Message message)

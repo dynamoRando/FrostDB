@@ -23,6 +23,13 @@ namespace FrostCommon
         #endregion
 
         #region Constructors
+        public Location()
+        {
+            if (Id.HasValue == false)
+            {
+                Id = Guid.NewGuid();
+            }
+        }
         protected Location(SerializationInfo serializationInfo, StreamingContext streamingContext)
         {
             Id = (Guid?)serializationInfo.GetValue

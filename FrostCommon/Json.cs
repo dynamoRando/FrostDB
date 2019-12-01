@@ -5,8 +5,6 @@ namespace FrostCommon.Net
 {
     public static class Json
     {
-        
-
         public static bool TryParse(string json, out Message message)
         {
             try
@@ -42,7 +40,5 @@ namespace FrostCommon.Net
             data = JsonConvert.SerializeObject(message);
             return data;
         }
-
-        
     }
 }

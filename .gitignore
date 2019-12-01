@@ -21,3 +21,5 @@
 /FrostDbClient/obj
 /FrostUWP/obj
 /FrostCommon/bin/Debug/netstandard2.1
+/FrostCommon/obj
+/FrostForm/obj

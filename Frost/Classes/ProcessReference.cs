@@ -29,6 +29,12 @@ namespace FrostDB
         {
             return ProcessReference.Process.GetDatabase(databaseId).Contract;
         }
+
+        public static IDatabase GetDatabase(string databaseName)
+        {
+            return ProcessReference.Process.GetDatabase(databaseName);
+        }
+
         public static IDatabase GetDatabase(Guid? databaseId) 
         {
             return ProcessReference.Process.GetDatabase(databaseId);

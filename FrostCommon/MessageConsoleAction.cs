@@ -14,5 +14,11 @@ namespace FrostCommon
             public const string Get_Id = "Process.Get_Id";
             public const string Get_Id_Response = "Process.Get_Id_Response";
         }
+
+        public class Database
+        {
+            public const string Get_Database_Info = "Database.Get_Info";
+            public const string Get_Database_Info_Response = "Database.Get_Info_Response";
+        }
     }
 }

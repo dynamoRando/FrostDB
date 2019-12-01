@@ -2,6 +2,7 @@
 using FrostCommon;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -45,7 +46,7 @@ namespace FrostDB
 
                 if (m.Action.Contains("Database"))
                 {
-                    // call database processor, or whatever
+                    HandleDatabaseMessage(m);
                 }
 
                 //m.SendResponse();
@@ -57,6 +58,15 @@ namespace FrostDB
 
         }
         #endregion
+        private void HandleDatabaseMessage(Message message)
+        {
+            switch (message.Action)
+            {
+                case MessageConsoleAction.Database.Get_Database_Info:
+                    HandleGetDatabaseInfo(message);
+                    break;
+            }
+        }
 
         #region Private Methods
         private void HandleProcessMessage(Message message)
@@ -69,7 +79,26 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
+
             }
+        }
+
+        private void HandleGetDatabaseInfo(Message message)
+        {
+            string dbName = message.Content;
+
+            var db = ProcessReference.GetDatabase(dbName);
+
+            DatabaseInfo info = new DatabaseInfo();
+
+            info.Name = db.Name;
+            info.Id = db.Id;
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type));
         }
 
         private void HandleGetProcessId(Message message)
@@ -77,7 +106,7 @@ namespace FrostDB
             string messageContent = string.Empty;
             Type type = ProcessReference.Process.Id.GetType();
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
-            
+
             NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Id_Response, type));
         }
 
