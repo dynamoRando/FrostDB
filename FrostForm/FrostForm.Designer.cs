@@ -34,6 +34,8 @@
             this.textRemotePort = new System.Windows.Forms.TextBox();
             this.buttonConnectRemote = new System.Windows.Forms.Button();
             this.listDatabases = new System.Windows.Forms.ListBox();
+            this.labelDatabaseName = new System.Windows.Forms.Label();
+            this.labelDatabaseId = new System.Windows.Forms.Label();
             // 
             // labelRemoteAddress
             // 
@@ -88,11 +90,31 @@
             this.listDatabases.Size = new System.Drawing.Size(116, 394);
             this.listDatabases.TabIndex = 5;
             // 
+            // labelDatabaseName
+            // 
+            this.labelDatabaseName.AutoSize = true;
+            this.labelDatabaseName.Location = new System.Drawing.Point(142, 43);
+            this.labelDatabaseName.Name = "labelDatabaseName";
+            this.labelDatabaseName.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseName.TabIndex = 6;
+            this.labelDatabaseName.Text = "label1";
+            // 
+            // labelDatabaseId
+            // 
+            this.labelDatabaseId.AutoSize = true;
+            this.labelDatabaseId.Location = new System.Drawing.Point(142, 68);
+            this.labelDatabaseId.Name = "labelDatabaseId";
+            this.labelDatabaseId.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseId.TabIndex = 7;
+            this.labelDatabaseId.Text = "label2";
+            // 
             // formFrost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.labelDatabaseId);
+            this.Controls.Add(this.labelDatabaseName);
             this.Controls.Add(this.listDatabases);
             this.Controls.Add(this.buttonConnectRemote);
             this.Controls.Add(this.textRemotePort);
@@ -113,6 +135,8 @@
         internal System.Windows.Forms.TextBox textRemotePort;
         internal System.Windows.Forms.Button buttonConnectRemote;
         internal System.Windows.Forms.ListBox listDatabases;
+        internal System.Windows.Forms.Label labelDatabaseName;
+        internal System.Windows.Forms.Label labelDatabaseId;
     }
 }
 
