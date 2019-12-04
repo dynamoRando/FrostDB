@@ -42,40 +42,40 @@
             this.labelRemoteAddress.AutoSize = true;
             this.labelRemoteAddress.Location = new System.Drawing.Point(10, 8);
             this.labelRemoteAddress.Name = "labelRemoteAddress";
-            this.labelRemoteAddress.Size = new System.Drawing.Size(106, 15);
+            this.labelRemoteAddress.Size = new System.Drawing.Size(163, 25);
             this.labelRemoteAddress.TabIndex = 0;
             this.labelRemoteAddress.Text = "Remote IP Address";
             // 
             // textRemoteAddress
             // 
-            this.textRemoteAddress.Location = new System.Drawing.Point(122, 5);
+            this.textRemoteAddress.Location = new System.Drawing.Point(179, 8);
             this.textRemoteAddress.Name = "textRemoteAddress";
-            this.textRemoteAddress.Size = new System.Drawing.Size(152, 23);
+            this.textRemoteAddress.Size = new System.Drawing.Size(294, 31);
             this.textRemoteAddress.TabIndex = 1;
             this.textRemoteAddress.Text = "127.0.0.1";
             // 
             // labelRemotePort
             // 
             this.labelRemotePort.AutoSize = true;
-            this.labelRemotePort.Location = new System.Drawing.Point(280, 8);
+            this.labelRemotePort.Location = new System.Drawing.Point(479, 8);
             this.labelRemotePort.Name = "labelRemotePort";
-            this.labelRemotePort.Size = new System.Drawing.Size(70, 15);
+            this.labelRemotePort.Size = new System.Drawing.Size(105, 25);
             this.labelRemotePort.TabIndex = 2;
             this.labelRemotePort.Text = "RemotePort";
             // 
             // textRemotePort
             // 
-            this.textRemotePort.Location = new System.Drawing.Point(356, 5);
+            this.textRemotePort.Location = new System.Drawing.Point(590, 5);
             this.textRemotePort.Name = "textRemotePort";
-            this.textRemotePort.Size = new System.Drawing.Size(82, 23);
+            this.textRemotePort.Size = new System.Drawing.Size(82, 31);
             this.textRemotePort.TabIndex = 3;
             this.textRemotePort.Text = "519";
             // 
             // buttonConnectRemote
             // 
-            this.buttonConnectRemote.Location = new System.Drawing.Point(444, 5);
+            this.buttonConnectRemote.Location = new System.Drawing.Point(692, 5);
             this.buttonConnectRemote.Name = "buttonConnectRemote";
-            this.buttonConnectRemote.Size = new System.Drawing.Size(99, 23);
+            this.buttonConnectRemote.Size = new System.Drawing.Size(99, 31);
             this.buttonConnectRemote.TabIndex = 4;
             this.buttonConnectRemote.Text = "Connect";
             this.buttonConnectRemote.UseVisualStyleBackColor = true;
@@ -84,33 +84,33 @@
             // listDatabases
             // 
             this.listDatabases.FormattingEnabled = true;
-            this.listDatabases.ItemHeight = 15;
+            this.listDatabases.ItemHeight = 25;
             this.listDatabases.Location = new System.Drawing.Point(10, 43);
             this.listDatabases.Name = "listDatabases";
-            this.listDatabases.Size = new System.Drawing.Size(116, 394);
+            this.listDatabases.Size = new System.Drawing.Size(116, 379);
             this.listDatabases.TabIndex = 5;
             // 
             // labelDatabaseName
             // 
             this.labelDatabaseName.AutoSize = true;
-            this.labelDatabaseName.Location = new System.Drawing.Point(142, 43);
+            this.labelDatabaseName.Location = new System.Drawing.Point(142, 60);
             this.labelDatabaseName.Name = "labelDatabaseName";
-            this.labelDatabaseName.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseName.Size = new System.Drawing.Size(59, 25);
             this.labelDatabaseName.TabIndex = 6;
             this.labelDatabaseName.Text = "label1";
             // 
             // labelDatabaseId
             // 
             this.labelDatabaseId.AutoSize = true;
-            this.labelDatabaseId.Location = new System.Drawing.Point(142, 68);
+            this.labelDatabaseId.Location = new System.Drawing.Point(142, 85);
             this.labelDatabaseId.Name = "labelDatabaseId";
-            this.labelDatabaseId.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseId.Size = new System.Drawing.Size(59, 25);
             this.labelDatabaseId.TabIndex = 7;
             this.labelDatabaseId.Text = "label2";
             // 
             // formFrost
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.labelDatabaseId);
@@ -121,6 +121,7 @@
             this.Controls.Add(this.labelRemotePort);
             this.Controls.Add(this.textRemoteAddress);
             this.Controls.Add(this.labelRemoteAddress);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "formFrost";
             this.Text = "FrostForm";
             this.Load += new System.EventHandler(this.formFrost_Load);
