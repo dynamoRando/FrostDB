@@ -87,15 +87,16 @@ namespace FrostDbClient
         {
             DatabaseInfo dbInformation = JsonConvert.DeserializeObject<DatabaseInfo>(message.Content);
             
-            var item = _info.DatabaseInfos.SingleOrDefault(i => i.Id == dbInformation.Id);
-            
-            if (item != null)
+            if (_info.DatabaseInfos.ContainsKey(dbInformation.Name))
             {
-                _info.DatabaseInfos.Remove(item);
+                DatabaseInfo removed = null;
+                _info.DatabaseInfos.TryRemove(dbInformation.Name, out removed);
             }
 
-            _info.DatabaseInfos.Add(dbInformation);
-            _eventManager.TriggerEvent(ClientEvents.GotDatabaseInfo, null);
+            if(_info.DatabaseInfos.TryAdd(dbInformation.Name, dbInformation))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotDatabaseInfo, null);
+            }
         }
 
         private void HandleProcessId(Message message)

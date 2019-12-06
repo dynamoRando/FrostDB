@@ -1,4 +1,5 @@
-﻿using FrostDbClient;
+﻿using FrostCommon.ConsoleMessages;
+using FrostDbClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -51,7 +52,9 @@ namespace FrostForm
 
             if (_form.listDatabases.InvokeRequired)
             {
-                _form.listDatabases.Invoke(new MethodInvoker(delegate { dbs.ForEach(d => _form.listDatabases.Items.Add(d)); }));
+                _form.listDatabases.Invoke(new MethodInvoker(delegate {
+                    _form.listDatabases.Items.Clear();
+                    dbs.ForEach(d => _form.listDatabases.Items.Add(d)); }));
             }
         }
 
@@ -66,16 +69,26 @@ namespace FrostForm
 
             if (currentDb != string.Empty)
             {
-                var item = _client.Info.DatabaseInfos.Where(d => d.Name == currentDb).First();
-
-                if (_form.labelDatabaseName.InvokeRequired)
+                DatabaseInfo item;
+                if (_client.Info.DatabaseInfos.TryGetValue(currentDb, out item))
                 {
-                    _form.listDatabases.Invoke(new MethodInvoker(delegate { _form.labelDatabaseName.Text = item.Name; }));
-                }
+                    if (_form.labelDatabaseName.InvokeRequired)
+                    {
+                        _form.listDatabases.Invoke(new MethodInvoker(delegate { _form.labelDatabaseName.Text = item.Name; }));
+                    }
 
-                if (_form.labelDatabaseId.InvokeRequired)
-                {
-                    _form.listDatabases.Invoke(new MethodInvoker(delegate { _form.labelDatabaseId.Text = item.Id.ToString(); }));
+                    if (_form.labelDatabaseId.InvokeRequired)
+                    {
+                        _form.listDatabases.Invoke(new MethodInvoker(delegate { _form.labelDatabaseId.Text = item.Id.ToString(); }));
+                    }
+
+                    if (_form.listTables.InvokeRequired)
+                    {
+                        _form.listTables.Invoke(new MethodInvoker(delegate {
+                            _form.listTables.Items.Clear();
+                            item.Tables.ForEach(t => _form.listTables.Items.Add(t));
+                        }));
+                    }
                 }
             }
         }
@@ -87,11 +100,14 @@ namespace FrostForm
 
         private void ListDatabases_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            string currentDb = _form.listDatabases.SelectedItem.ToString();
-            
-            if (currentDb != string.Empty)
+            if (_form.listDatabases.SelectedItem != null)
             {
-                _client.GetDatabaseInfo(currentDb);
+                string currentDb = _form.listDatabases.SelectedItem.ToString();
+
+                if (currentDb != string.Empty)
+                {
+                    _client.GetDatabaseInfo(currentDb);
+                }
             }
         }
         #endregion

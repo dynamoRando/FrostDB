@@ -67,6 +67,7 @@ namespace FrostDbClient
 
         public void GetTables(Guid? databaseId)
         {
+            SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables));
             throw new NotImplementedException();
         }
 

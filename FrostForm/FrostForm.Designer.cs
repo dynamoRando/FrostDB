@@ -186,9 +186,9 @@
         internal System.Windows.Forms.ListBox listDatabases;
         internal System.Windows.Forms.Label labelDatabaseName;
         internal System.Windows.Forms.Label labelDatabaseId;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.ListBox listTables;
+        internal System.Windows.Forms.GroupBox groupBox1;
+        internal System.Windows.Forms.GroupBox groupBox2;
+        internal System.Windows.Forms.ListBox listTables;
     }
 }
 
