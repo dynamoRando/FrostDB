@@ -38,6 +38,7 @@
             this.labelDatabaseId = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.listTables = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -137,6 +138,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.listTables);
             this.groupBox2.Controls.Add(this.labelDatabaseId);
             this.groupBox2.Controls.Add(this.labelDatabaseName);
             this.groupBox2.Controls.Add(this.listDatabases);
@@ -146,6 +148,15 @@
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Databases";
+            // 
+            // listTables
+            // 
+            this.listTables.FormattingEnabled = true;
+            this.listTables.ItemHeight = 15;
+            this.listTables.Location = new System.Drawing.Point(105, 64);
+            this.listTables.Name = "listTables";
+            this.listTables.Size = new System.Drawing.Size(114, 184);
+            this.listTables.TabIndex = 8;
             // 
             // formFrost
             // 
@@ -177,6 +188,7 @@
         internal System.Windows.Forms.Label labelDatabaseId;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ListBox listTables;
     }
 }
 

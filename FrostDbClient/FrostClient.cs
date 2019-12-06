@@ -48,7 +48,7 @@ namespace FrostDbClient
             _remote = new Location(Guid.NewGuid(), _remoteIpAddress, _remotePortNumber, string.Empty);
             _info = new FrostClientInfo();
             _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
-            
+
             SetupServer();
         }
         #endregion
@@ -58,11 +58,21 @@ namespace FrostDbClient
         {
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id));
         }
-        
+
         // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+        }
+
+        public void GetTables(Guid? databaseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<string>> GetTablesAsync(Guid? databaseId)
+        {
+            throw new NotImplementedException();
         }
 
         // or, i can send a message and then check for when the data has come back and return to the caller
