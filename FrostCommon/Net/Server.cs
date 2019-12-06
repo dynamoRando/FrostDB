@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using FrostCommon;
+using System.Diagnostics;
 
 namespace FrostCommon.Net
 {
@@ -70,8 +71,17 @@ namespace FrostCommon.Net
             StateObject state = (StateObject)ar.AsyncState;
             Socket handler = state.workSocket;
 
-            // Read data from the client socket.   
-            int bytesRead = handler.EndReceive(ar);
+            // Read data from the client socket. 
+            int bytesRead = 0;
+            try
+            {
+                bytesRead = handler.EndReceive(ar);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Debug.WriteLine(e.ToString());
+            }
 
             if (bytesRead > 0)
             {

@@ -19,6 +19,8 @@ namespace FrostCommon
         {
             public const string Get_Database_Info = "Database.Get_Info";
             public const string Get_Database_Info_Response = "Database.Get_Info_Response";
+            public const string Get_Database_Tables = "Database.Get_Tables";
+            public const string Get_Database_Tables_Response = "Database.Get_Tables_Response";
         }
     }
 }

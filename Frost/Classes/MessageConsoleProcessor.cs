@@ -65,6 +65,9 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Get_Database_Info:
                     HandleGetDatabaseInfo(message);
                     break;
+                case MessageConsoleAction.Database.Get_Database_Tables:
+                    HandleGetDatabaseTables(message);
+                    break;
             }
         }
 
@@ -83,6 +86,11 @@ namespace FrostDB
             }
         }
 
+        private void HandleGetDatabaseTables(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
         private void HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;
@@ -93,6 +101,10 @@ namespace FrostDB
 
             info.Name = db.Name;
             info.Id = db.Id;
+
+            info.Tables = new List<string>();
+
+            db.Tables.ForEach(t => info.Tables.Add(t.Name));
 
             Type type = info.GetType();
             string messageContent = string.Empty;
