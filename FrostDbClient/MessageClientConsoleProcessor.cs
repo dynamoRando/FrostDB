@@ -37,31 +37,30 @@ namespace FrostDbClient
         public void Process(IMessage message)
         {
             var m = (message as Message);
-            if (m.ReferenceMessageId.Value == Guid.Empty)
+            if (m.Action.Contains("Process"))
             {
-                // do something with data that can be rendered to the UI
-                if (m.Action.Contains("Process"))
-                {
-                    HandleProcessMessage(m);
-                }
-
-                if (m.Action.Contains("Database"))
-                {
-                    HandleDatabaseMessage(m);
-                }
-
-                //m.SendResponse();
+                HandleProcessMessage(m);
             }
-            else
+
+            if (m.Action.Contains("Database"))
             {
-                // do nothing
+                HandleDatabaseMessage(m);
             }
+
+            HandleInfoQueue(m.ReferenceMessageId);
 
             //throw new NotImplementedException();
         }
         #endregion
 
         #region Private Methods
+        private void HandleInfoQueue(Guid? id)
+        {
+            if (_info.HasMessageId(id))
+            {
+                _info.RemoveFromQueue(id);
+            }
+        }
         private void HandleDatabaseMessage(Message message)
         {
             switch (message.Action)

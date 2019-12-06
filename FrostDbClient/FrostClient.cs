@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using FrostCommon;
 using FrostCommon.Net;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace FrostDbClient
 {
@@ -45,7 +48,7 @@ namespace FrostDbClient
             _remote = new Location(Guid.NewGuid(), _remoteIpAddress, _remotePortNumber, string.Empty);
             _info = new FrostClientInfo();
             _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
-            
+
             SetupServer();
         }
         #endregion
@@ -53,16 +56,43 @@ namespace FrostDbClient
         #region Public Methods
         public void GetProcessId()
         {
-            Client.Send(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id));
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id));
         }
+
+        // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
-            Client.Send(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+        }
+
+        public void GetTables(Guid? databaseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<string>> GetTablesAsync(Guid? databaseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // or, i can send a message and then check for when the data has come back and return to the caller
+        public async Task<List<string>> GetDatabasesAsync()
+        {
+            var result = new List<string>();
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.DatabaseNames;
+            }
+
+            return result;
         }
 
         public void GetDatabaseInfo(string databaseName)
         {
-            Client.Send(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info));
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info));
         }
 
         public void Connect()
@@ -72,6 +102,50 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private async Task<bool> WaitForMessageAsync(Guid? id)
+        {
+            return await Task.Run(() => WaitForMessage(id));
+        }
+
+        private bool WaitForMessage(Guid? id)
+        {
+            Stopwatch watch = new Stopwatch();
+            bool responseRecieved = false;
+            double timeOut = 3.0;
+
+            watch.Start();
+
+            while (watch.Elapsed.TotalSeconds < timeOut)
+            {
+                if (!_info.HasMessageId(id))
+                {
+                    responseRecieved = true;
+
+                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+
+                    break;
+
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            watch.Stop();
+
+            return responseRecieved;
+        }
+
+        private Guid? SendMessage(Message message)
+        {
+            Guid? id = message.Id;
+            Client.Send(message);
+            _info.AddToQueue(id);
+
+            return id;
+        }
         private Message BuildMessage(string content, string action)
         {
             Message message = new Message(

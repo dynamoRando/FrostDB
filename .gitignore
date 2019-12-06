@@ -23,3 +23,6 @@
 /FrostCommon/bin/Debug/netstandard2.1
 /FrostCommon/obj
 /FrostForm/obj
+/FrostForm/bin/Debug/netcoreapp3.1
+/FrostConsole/bin/Debug/netcoreapp3.1
+/Harness/bin/Debug/netcoreapp3.1
