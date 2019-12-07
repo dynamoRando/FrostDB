@@ -15,8 +15,10 @@ namespace FrostForm
         
         string _currentSelectedDbName = string.Empty;
         string _currentSelectedTableName = string.Empty;
+        string _currentSelectedColumnName = string.Empty;
         Guid? _currentDbId;
         Guid? _currentTableId;
+        Guid? _currentColumnId;
         #endregion
 
         #region Public Properties
@@ -126,6 +128,22 @@ namespace FrostForm
                             _form.listColumns.Items.Clear();
                         }));
                     }
+
+                    if (_form.labelColumnName.InvokeRequired)
+                    {
+                        _form.labelColumnName.Invoke(new MethodInvoker(delegate
+                        {
+                            _form.labelColumnName.Text = string.Empty;
+                        }));
+                    }
+
+                    if (_form.labelColumnDataType.InvokeRequired)
+                    {
+                        _form.labelColumnDataType.Invoke(new MethodInvoker(delegate
+                        {
+                            _form.labelColumnDataType.Text = string.Empty;
+                        }));
+                    }
                 }
             }
         }
@@ -134,6 +152,47 @@ namespace FrostForm
         {
             _form.listDatabases.SelectedIndexChanged += ListDatabases_SelectedIndexChanged;
             _form.listTables.SelectedIndexChanged += ListTables_SelectedIndexChanged;
+            _form.listColumns.SelectedIndexChanged += ListColumns_SelectedIndexChanged;
+        }
+
+        private void ListColumns_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_form.listColumns.SelectedItem != null)
+            {
+                string currentColumn = _form.listColumns.SelectedItem.ToString();
+                if (currentColumn != string.Empty)
+                {
+                    _currentSelectedColumnName = currentColumn;
+
+                    TableInfo info = null;
+                    if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out info))
+                    {
+                        var column = info.Columns.Where(c => c.Item1 == _currentSelectedColumnName).First();
+
+                        if (_form.labelColumnName.InvokeRequired)
+                        {
+                            _form.labelColumnName.Invoke(new MethodInvoker(delegate {
+                                _form.labelColumnName.Text = _currentSelectedColumnName;
+                            }));
+                        }
+                        else
+                        {
+                            _form.labelColumnName.Text = _currentSelectedColumnName;
+                        }
+
+                        if (_form.labelColumnDataType.InvokeRequired)
+                        {
+                            _form.labelColumnName.Invoke(new MethodInvoker(delegate {
+                                _form.labelColumnDataType.Text = column.Item2.ToString();
+                            }));
+                        }
+                        else
+                        {
+                            _form.labelColumnDataType.Text = column.Item2.ToString();
+                        }
+                    }
+                }
+            }
         }
 
         private void ListTables_SelectedIndexChanged(object sender, System.EventArgs e)
