@@ -73,6 +73,17 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void GetColumnInfo(string databaseName, string tableName, string columnName)
+        {
+            TableInfo item;
+            if (_info.TableInfos.TryGetValue(columnName, out item))
+            {
+                var column = item.Columns.Where(c => c.Item1 == columnName).First();
+                
+            }
+            throw new NotImplementedException();
+        }
+
         public void GetTableInfo(string databaseName, string tableName)
         {
             DatabaseInfo item;
