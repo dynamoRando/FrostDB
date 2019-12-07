@@ -18,6 +18,7 @@ namespace FrostDbClient
         public Guid? ProcessId { get; set; }
         public List<string> DatabaseNames { get; set; }
         public ConcurrentDictionary<string,DatabaseInfo> DatabaseInfos { get; set; }
+        public ConcurrentDictionary<string, TableInfo> TableInfos { get; set; }
         #endregion
 
         #region Protected Methods
@@ -33,6 +34,7 @@ namespace FrostDbClient
             ProcessId = Guid.NewGuid();
             DatabaseNames = new List<string>();
             DatabaseInfos = new ConcurrentDictionary<string, DatabaseInfo>();
+            TableInfos = new ConcurrentDictionary<string, TableInfo>();
         }
         #endregion
 

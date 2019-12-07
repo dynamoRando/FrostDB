@@ -5,6 +5,8 @@ using FrostCommon;
 using FrostCommon.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using FrostCommon.ConsoleMessages;
+using System.Linq;
 
 namespace FrostDbClient
 {
@@ -71,6 +73,17 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void GetTableInfo(string databaseName, string tableName)
+        {
+            DatabaseInfo item;
+            if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
+            {
+                var table = item.Tables.Where(t => t.Item2 == tableName).First();
+                Guid? tableId = table.Item1;
+                GetTableInfo(item.Id, tableId);
+            }
+        }
+
         public async Task<List<string>> GetTablesAsync(Guid? databaseId)
         {
             throw new NotImplementedException();
@@ -103,6 +116,11 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private void GetTableInfo(Guid? databaseId, Guid? tableId)
+        {
+            var requestInfo = (database: databaseId, table: tableId);
+            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info));
+        }
         private async Task<bool> WaitForMessageAsync(Guid? id)
         {
             return await Task.Run(() => WaitForMessage(id));
@@ -146,6 +164,19 @@ namespace FrostDbClient
             _info.AddToQueue(id);
 
             return id;
+        }
+        private Message BuildMessage((Guid?, Guid?) tuple, string action)
+        {
+            Message message = new Message(
+              destination: _remote,
+              origin: _local,
+              messageContent: string.Empty,
+              messageAction: action,
+              messageType: MessageType.Console);
+
+            message.TwoGuidTuple = tuple;
+
+            return message;
         }
         private Message BuildMessage(string content, string action)
         {
