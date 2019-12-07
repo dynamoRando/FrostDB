@@ -49,6 +49,11 @@ namespace FrostDB
                     HandleDatabaseMessage(m);
                 }
 
+                if (m.Action.Contains("Table"))
+                {
+                    HandleTableMessage(m);
+                }
+
                 //m.SendResponse();
             }
             else
@@ -58,6 +63,16 @@ namespace FrostDB
 
         }
         #endregion
+        #region Private Methods
+        private void HandleTableMessage(Message message)
+        {
+            switch(message.Action)
+            {
+                case MessageConsoleAction.Table.Get_Table_Info:
+                    HandleGetTableInfo(message);
+                    break;
+            }
+        }
         private void HandleDatabaseMessage(Message message)
         {
             switch (message.Action)
@@ -71,7 +86,32 @@ namespace FrostDB
             }
         }
 
-        #region Private Methods
+        private void HandleGetTableInfo(Message message)
+        {
+            var databaseTable = message.TwoGuidTuple;
+            var db = ProcessReference.GetDatabase(databaseTable.Item1);
+            var table = ProcessReference.GetTable(databaseTable.Item1, databaseTable.Item2);
+
+            TableInfo info = new TableInfo();
+            info.TableId = table.Id;
+            info.TableName = table.Name;
+            info.DatabaseName = db.Name;
+            info.DatabaseId = table.DatabaseId;
+
+            table.Columns.ForEach(c => info.Columns.Add((c.Name, c.DataType)));
+         
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            SendMessage(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type);
+        }
+
+        private void SendMessage(Message message, string responseType, string action, Type type)
+        {
+            NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id));
+        }
+       
         private void HandleProcessMessage(Message message)
         {
             switch (message.Action)
@@ -82,7 +122,6 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
-
             }
         }
 
@@ -102,15 +141,13 @@ namespace FrostDB
             info.Name = db.Name;
             info.Id = db.Id;
 
-            info.Tables = new List<string>();
-
-            db.Tables.ForEach(t => info.Tables.Add(t.Name));
+            db.Tables.ForEach(t => info.Tables.Add((t.Id, t.Name)));
 
             Type type = info.GetType();
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, message.Id));
+            SendMessage(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type);
         }
 
         private void HandleGetProcessId(Message message)
@@ -119,7 +156,7 @@ namespace FrostDB
             Type type = ProcessReference.Process.Id.GetType();
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
 
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, message.Id));
+            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type);
         }
 
         private void HandleProcessGetDatabases(Message message)
@@ -131,8 +168,7 @@ namespace FrostDB
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 
-            NetworkReference.SendMessage(BuildMessage(message.Origin, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, message.Id));
-
+            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type);
         }
 
         private Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId)

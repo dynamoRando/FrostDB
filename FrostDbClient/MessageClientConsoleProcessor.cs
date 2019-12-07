@@ -47,6 +47,11 @@ namespace FrostDbClient
                 HandleDatabaseMessage(m);
             }
 
+            if (m.Action.Contains("Table"))
+            {
+                HandleTableMessage(m);
+            }
+
             HandleInfoQueue(m.ReferenceMessageId);
 
             //throw new NotImplementedException();
@@ -54,6 +59,32 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private void HandleTableMessage(Message message)
+        {
+            switch(message.Action)
+            {
+                case MessageConsoleAction.Table.Get_Table_Info_Response:
+                    HandleGetTableInfo(message);
+                    break;
+            }
+        }
+
+        private void HandleGetTableInfo(Message message)
+        {
+            TableInfo data = JsonConvert.DeserializeObject<TableInfo>(message.Content);
+
+            if (_info.TableInfos.ContainsKey(data.TableName))
+            {
+                TableInfo removed = null;
+                _info.TableInfos.TryRemove(data.TableName, out removed);
+            }
+
+            if (_info.TableInfos.TryAdd(data.TableName, data))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotTableInfo, null);
+            }
+        }
+
         private void HandleInfoQueue(Guid? id)
         {
             if (_info.HasMessageId(id))

@@ -21,6 +21,7 @@ namespace FrostCommon
         public Guid? ReferenceMessageId { get; set; }
         public MessageType MessageType { get; set; }
         public string Content { get; } // can be a row, can be a contract, etc
+        public (Guid?, Guid?) TwoGuidTuple { get; set; }
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         public string JsonData { get; set; }
         public string ContentType { get; set; }
@@ -57,6 +58,7 @@ namespace FrostCommon
             JsonData = (string)serializationInfo.GetValue("MessageJsonData", typeof(string));
             MessageType = (MessageType)serializationInfo.GetValue("MessageType", typeof(MessageType));
             ContentType = (string)serializationInfo.GetValue("MessageContentType", typeof(string));
+            TwoGuidTuple = ((Guid?,Guid?))serializationInfo.GetValue("MessageTwoGuidTuple", typeof((Guid?, Guid?)));
 
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType) : this()
@@ -105,6 +107,7 @@ namespace FrostCommon
             info.AddValue("MessageJsonData", JsonData, typeof(string));
             info.AddValue("MessageType", MessageType, typeof(MessageType));
             info.AddValue("MessageContentType", ContentType, typeof(string));
+            info.AddValue("MessageTwoGuidTuple", TwoGuidTuple, typeof((Guid?, Guid?)));
         }
         #endregion
 

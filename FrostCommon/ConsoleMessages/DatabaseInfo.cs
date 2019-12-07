@@ -8,7 +8,11 @@ namespace FrostCommon.ConsoleMessages
     {
         public Guid? Id { get; set; }
         public string Name { get; set; }
-        public List<string> Tables { get; set; }
+        public List<(Guid?, string)> Tables { get; set; }
 
+        public DatabaseInfo()
+        {
+            Tables = new List<(Guid?, string)>();
+        }
     }
 }
