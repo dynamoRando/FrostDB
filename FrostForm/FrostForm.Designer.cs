@@ -394,18 +394,18 @@
         internal System.Windows.Forms.Label label4;
         internal System.Windows.Forms.Label labelColumnDataType;
         internal System.Windows.Forms.Label labelColumnName;
-        private System.Windows.Forms.Button buttonRemoveColumn;
-        private System.Windows.Forms.Button buttonRemoveTable;
-        private System.Windows.Forms.Button buttonRemoveDb;
-        private System.Windows.Forms.Button buttonAddColumn;
-        private System.Windows.Forms.Button buttonAddDb;
-        private System.Windows.Forms.Button buttonAddTable;
-        private System.Windows.Forms.Button buttonAddParticipant;
-        private System.Windows.Forms.ListBox listAcceptedParticipants;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button buttonManageContract;
-        private System.Windows.Forms.Button buttonQuery;
-        private System.Windows.Forms.ListBox listPendingParticipants;
+        internal System.Windows.Forms.Button buttonRemoveColumn;
+        internal System.Windows.Forms.Button buttonRemoveTable;
+        internal System.Windows.Forms.Button buttonRemoveDb;
+        internal System.Windows.Forms.Button buttonAddColumn;
+        internal System.Windows.Forms.Button buttonAddDb;
+        internal System.Windows.Forms.Button buttonAddTable;
+        internal System.Windows.Forms.Button buttonAddParticipant;
+        internal System.Windows.Forms.ListBox listAcceptedParticipants;
+        internal System.Windows.Forms.Label label2;
+        internal System.Windows.Forms.Button buttonManageContract;
+        internal System.Windows.Forms.Button buttonQuery;
+        internal System.Windows.Forms.ListBox listPendingParticipants;
     }
 }
 
