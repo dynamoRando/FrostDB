@@ -141,7 +141,7 @@ namespace FrostDB
             info.Name = db.Name;
             info.Id = db.Id;
 
-            db.Tables.ForEach(t => info.Tables.Add((t.Id, t.Name)));
+            db.Tables.ForEach(t => info.AddToTables((t.Id, t.Name)));
 
             Type type = info.GetType();
             string messageContent = string.Empty;

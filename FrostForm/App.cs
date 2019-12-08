@@ -1,5 +1,6 @@
 ﻿using FrostCommon.ConsoleMessages;
 using FrostDbClient;
+using FrostForm.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,12 +60,11 @@ namespace FrostForm
         {
             List<string> dbs = _client.Info.DatabaseNames;
 
-            if (_form.listDatabases.InvokeRequired)
-            {
-                _form.listDatabases.Invoke(new MethodInvoker(delegate {
-                    _form.listDatabases.Items.Clear();
-                    dbs.ForEach(d => _form.listDatabases.Items.Add(d)); }));
-            }
+            _form.listDatabases.InvokeIfRequired(() => {
+                _form.listDatabases.Items.Clear();
+                dbs.ForEach(d => _form.listDatabases.Items.Add(d));
+            });
+            
         }
 
         private void ShowTableInfo(IEventArgs args)
@@ -72,14 +72,10 @@ namespace FrostForm
             TableInfo item;
             if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out item))
             {
-                if (_form.listColumns.InvokeRequired)
-                {
-                    _form.listColumns.Invoke(new MethodInvoker(delegate 
-                    {
-                        _form.listColumns.Items.Clear();
-                        item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
-                    }));
-                }
+                _form.listColumns.InvokeIfRequired(() => {
+                    _form.listColumns.Items.Clear();
+                    item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
+                });
             }
         }
 
@@ -87,63 +83,38 @@ namespace FrostForm
         {
             string currentDb = string.Empty;
 
-            if (_form.listDatabases.InvokeRequired)
-            {
-                _form.listDatabases.Invoke(new MethodInvoker(delegate { 
-                    currentDb = _form.listDatabases.SelectedItem.ToString();
-                    _currentSelectedDbName = currentDb;
-                }));
-            }
-
-            if (currentDb != string.Empty)
+            _form.listDatabases.InvokeIfRequired(() => {
+                currentDb = _form.listDatabases.SelectedItem.ToString();
+                _currentSelectedDbName = currentDb;
+            });
+           
+            if (!string.IsNullOrEmpty(currentDb))
             {
                 DatabaseInfo item;
                 if (_client.Info.DatabaseInfos.TryGetValue(currentDb, out item))
                 {
-                    if (_form.labelDatabaseName.InvokeRequired)
-                    {
-                        _form.listDatabases.Invoke(new MethodInvoker(delegate { _form.labelDatabaseName.Text = item.Name; }));
-                    }
+                    _form.labelDatabaseName.InvokeIfRequired(() => { _form.labelDatabaseName.Text = item.Name; });
 
-                    if (_form.labelDatabaseId.InvokeRequired)
-                    {
-                        _form.listDatabases.Invoke(new MethodInvoker(delegate { 
-                            _form.labelDatabaseId.Text = item.Id.ToString();
-                            _currentDbId = item.Id;
-                        }));
-                    }
+                    _form.labelDatabaseId.InvokeIfRequired(() => {
+                        _form.labelDatabaseId.Text = item.Id.ToString();
+                        _currentDbId = item.Id;
+                    });
 
-                    if (_form.listTables.InvokeRequired)
-                    {
-                        _form.listTables.Invoke(new MethodInvoker(delegate {
-                            _form.listTables.Items.Clear();
-                            item.Tables.ForEach(t => _form.listTables.Items.Add(t.Item2));
-                        }));
-                    }
+                    _form.listTables.InvokeIfRequired(() => {
+                        _form.listTables.Items.Clear();
+                        item.Tables.ForEach(t => _form.listTables.Items.Add(t.Item2));
+                    });
 
-                    if (_form.listColumns.InvokeRequired)
-                    {
-                        _form.listColumns.Invoke(new MethodInvoker(delegate 
-                        {
-                            _form.listColumns.Items.Clear();
-                        }));
-                    }
+                    _form.listColumns.InvokeIfRequired(() => { _form.listColumns.Items.Clear(); });
 
-                    if (_form.labelColumnName.InvokeRequired)
-                    {
-                        _form.labelColumnName.Invoke(new MethodInvoker(delegate
-                        {
-                            _form.labelColumnName.Text = string.Empty;
-                        }));
-                    }
 
-                    if (_form.labelColumnDataType.InvokeRequired)
-                    {
-                        _form.labelColumnDataType.Invoke(new MethodInvoker(delegate
-                        {
-                            _form.labelColumnDataType.Text = string.Empty;
-                        }));
-                    }
+                    _form.labelColumnName.InvokeIfRequired(() => {
+                        _form.labelColumnName.Text = string.Empty;
+                    });
+
+                    _form.labelColumnDataType.InvokeIfRequired(() => {
+                        _form.labelColumnDataType.Text = string.Empty;
+                    });
                 }
             }
         }
@@ -160,7 +131,7 @@ namespace FrostForm
             if (_form.listColumns.SelectedItem != null)
             {
                 string currentColumn = _form.listColumns.SelectedItem.ToString();
-                if (currentColumn != string.Empty)
+                if (!string.IsNullOrEmpty(currentColumn))
                 {
                     _currentSelectedColumnName = currentColumn;
 
@@ -169,27 +140,13 @@ namespace FrostForm
                     {
                         var column = info.Columns.Where(c => c.Item1 == _currentSelectedColumnName).First();
 
-                        if (_form.labelColumnName.InvokeRequired)
-                        {
-                            _form.labelColumnName.Invoke(new MethodInvoker(delegate {
-                                _form.labelColumnName.Text = _currentSelectedColumnName;
-                            }));
-                        }
-                        else
-                        {
+                        _form.labelColumnName.InvokeIfRequired(() => {
                             _form.labelColumnName.Text = _currentSelectedColumnName;
-                        }
+                        });
 
-                        if (_form.labelColumnDataType.InvokeRequired)
-                        {
-                            _form.labelColumnName.Invoke(new MethodInvoker(delegate {
-                                _form.labelColumnDataType.Text = column.Item2.ToString();
-                            }));
-                        }
-                        else
-                        {
+                        _form.labelColumnDataType.InvokeIfRequired(() => {
                             _form.labelColumnDataType.Text = column.Item2.ToString();
-                        }
+                        });
                     }
                 }
             }
@@ -200,7 +157,7 @@ namespace FrostForm
             if (_form.listTables.SelectedItem != null)
             {
                 string currentTable = _form.listTables.SelectedItem.ToString();
-                if (currentTable != string.Empty)
+                if (!string.IsNullOrEmpty(currentTable))
                 {
                     _currentSelectedTableName = currentTable;
                     _client.GetTableInfo(_currentSelectedDbName, _currentSelectedTableName);
@@ -214,7 +171,7 @@ namespace FrostForm
             {
                 string currentDb = _form.listDatabases.SelectedItem.ToString();
 
-                if (currentDb != string.Empty)
+                if (!string.IsNullOrEmpty(currentDb))
                 {
                     _currentSelectedDbName = currentDb;
                     _client.GetDatabaseInfo(currentDb);
