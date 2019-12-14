@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostCommon", "FrostCommon\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostForm", "FrostForm\FrostForm.csproj", "{9AFA39B5-59C2-44C0-9EED-E072C33F4C3F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostBlaze", "FrostBlaze\FrostBlaze.csproj", "{4EB6D331-C40A-461C-8077-43334E9DFF57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +151,26 @@ Global
 		{9AFA39B5-59C2-44C0-9EED-E072C33F4C3F}.Release|x64.Build.0 = Release|Any CPU
 		{9AFA39B5-59C2-44C0-9EED-E072C33F4C3F}.Release|x86.ActiveCfg = Release|Any CPU
 		{9AFA39B5-59C2-44C0-9EED-E072C33F4C3F}.Release|x86.Build.0 = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|x64.Build.0 = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Debug|x86.Build.0 = Debug|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|ARM.Build.0 = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|ARM64.Build.0 = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|x64.ActiveCfg = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|x64.Build.0 = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|x86.ActiveCfg = Release|Any CPU
+		{4EB6D331-C40A-461C-8077-43334E9DFF57}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -26,3 +26,6 @@
 /FrostForm/bin/Debug/netcoreapp3.1
 /FrostConsole/bin/Debug/netcoreapp3.1
 /Harness/bin/Debug/netcoreapp3.1
+/FrostBlaze/obj
+/FrostBlaze/bin/Debug/netstandard2.0
+/FrostBlaze/bin/Debug/netstandard2.1
