@@ -12,6 +12,7 @@ namespace FrostForm
 {
     public partial class formFrost : Form
     {
+        App _app;
         public formFrost()
         {
             InitializeComponent();
@@ -22,9 +23,9 @@ namespace FrostForm
             string ipAddress = textRemoteAddress.Text;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
 
-            App app = new App(this);
-            app.SetupClient(ipAddress, portNumber);
-            AppReference.Client = app.Client;
+            _app = new App(this);
+            _app.SetupClient(ipAddress, portNumber);
+            AppReference.Client = _app.Client;
 
             //AppReference.Client.GetDatabases();
 
@@ -42,6 +43,26 @@ namespace FrostForm
         private void listTables_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void buttonAddDb_Click(object sender, EventArgs e)
+        {
+            var form = new formNewDb(_app);
+            form.Show();
+        }
+
+        private void buttonRemoveDb_Click(object sender, EventArgs e)
+        {
+            var selectedDb = listDatabases.SelectedItem.ToString();
+
+            if (!string.IsNullOrEmpty(selectedDb))
+            {
+                var result = MessageBox.Show("Are you sure?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    _app.RemoveDb(selectedDb);
+                }
+            }
         }
     }
 }

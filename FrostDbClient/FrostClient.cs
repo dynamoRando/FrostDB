@@ -84,6 +84,16 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void AddNewDatabase(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Add_Database));
+        }
+
+        public void RemoveDatabase(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase));
+        }
+
         public void GetTableInfo(string databaseName, string tableName)
         {
             DatabaseInfo item;

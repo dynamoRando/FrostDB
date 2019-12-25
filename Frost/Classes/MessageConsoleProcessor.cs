@@ -66,7 +66,7 @@ namespace FrostDB
         #region Private Methods
         private void HandleTableMessage(Message message)
         {
-            switch(message.Action)
+            switch (message.Action)
             {
                 case MessageConsoleAction.Table.Get_Table_Info:
                     HandleGetTableInfo(message);
@@ -99,7 +99,7 @@ namespace FrostDB
             info.DatabaseId = table.DatabaseId;
 
             table.Columns.ForEach(c => info.Columns.Add((c.Name, c.DataType)));
-         
+
             Type type = info.GetType();
             string messageContent = string.Empty;
 
@@ -111,7 +111,7 @@ namespace FrostDB
         {
             NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id));
         }
-       
+
         private void HandleProcessMessage(Message message)
         {
             switch (message.Action)
@@ -122,7 +122,27 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
+                case MessageConsoleAction.Process.Add_Database:
+                    HandleAddNewDatabase(message);
+                    break;
+                case MessageConsoleAction.Process.Remove_Datababase:
+                    HandleRemoveDatabase(message);
+                    break;
+                default:
+                    throw new NotImplementedException("Unknown message console message");
             }
+        }
+
+        private void HandleRemoveDatabase(Message message)
+        {
+            ProcessReference.RemoveDatabase(message.Content);
+            SendMessage(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType());
+        }
+
+        private void HandleAddNewDatabase(Message message)
+        {
+            ProcessReference.AddDatabase(message.Content);
+            SendMessage(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType());
         }
 
         private void HandleGetDatabaseTables(Message message)
@@ -133,7 +153,6 @@ namespace FrostDB
         private void HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;
-
             var db = ProcessReference.GetDatabase(dbName);
 
             DatabaseInfo info = new DatabaseInfo();

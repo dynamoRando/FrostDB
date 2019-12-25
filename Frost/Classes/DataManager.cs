@@ -98,7 +98,9 @@ namespace FrostDB
 
         public void RemoveDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
+            var db = (TDatabase)ProcessReference.GetDatabase(databaseName);
+            _databases.Remove(db);
         }
 
         public int LoadDatabases(string databaseFolderLocation)
