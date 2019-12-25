@@ -25,6 +25,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static void RemoveDatabase(string databaseName)
+        {
+            ProcessReference.Process.RemoveDatabase(databaseName);
+        }
         public static void AddDatabase(string databaseName)
         {
             ProcessReference.Process.AddDatabase(databaseName);

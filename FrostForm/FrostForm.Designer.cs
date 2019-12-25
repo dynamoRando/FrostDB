@@ -64,47 +64,47 @@
             // labelRemoteAddress
             // 
             this.labelRemoteAddress.AutoSize = true;
-            this.labelRemoteAddress.Location = new System.Drawing.Point(12, 19);
+            this.labelRemoteAddress.Location = new System.Drawing.Point(14, 25);
             this.labelRemoteAddress.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelRemoteAddress.Name = "labelRemoteAddress";
-            this.labelRemoteAddress.Size = new System.Drawing.Size(106, 15);
+            this.labelRemoteAddress.Size = new System.Drawing.Size(134, 20);
             this.labelRemoteAddress.TabIndex = 0;
             this.labelRemoteAddress.Text = "Remote IP Address";
             // 
             // textRemoteAddress
             // 
-            this.textRemoteAddress.Location = new System.Drawing.Point(12, 36);
-            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2);
+            this.textRemoteAddress.Location = new System.Drawing.Point(14, 48);
+            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.textRemoteAddress.Name = "textRemoteAddress";
-            this.textRemoteAddress.Size = new System.Drawing.Size(207, 23);
+            this.textRemoteAddress.Size = new System.Drawing.Size(236, 27);
             this.textRemoteAddress.TabIndex = 1;
             this.textRemoteAddress.Text = "127.0.0.1";
             // 
             // labelRemotePort
             // 
             this.labelRemotePort.AutoSize = true;
-            this.labelRemotePort.Location = new System.Drawing.Point(232, 19);
+            this.labelRemotePort.Location = new System.Drawing.Point(265, 25);
             this.labelRemotePort.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelRemotePort.Name = "labelRemotePort";
-            this.labelRemotePort.Size = new System.Drawing.Size(70, 15);
+            this.labelRemotePort.Size = new System.Drawing.Size(87, 20);
             this.labelRemotePort.TabIndex = 2;
             this.labelRemotePort.Text = "RemotePort";
             // 
             // textRemotePort
             // 
-            this.textRemotePort.Location = new System.Drawing.Point(232, 36);
-            this.textRemotePort.Margin = new System.Windows.Forms.Padding(2);
+            this.textRemotePort.Location = new System.Drawing.Point(265, 48);
+            this.textRemotePort.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.textRemotePort.Name = "textRemotePort";
-            this.textRemotePort.Size = new System.Drawing.Size(59, 23);
+            this.textRemotePort.Size = new System.Drawing.Size(67, 27);
             this.textRemotePort.TabIndex = 3;
             this.textRemotePort.Text = "519";
             // 
             // buttonConnectRemote
             // 
-            this.buttonConnectRemote.Location = new System.Drawing.Point(311, 36);
-            this.buttonConnectRemote.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonConnectRemote.Location = new System.Drawing.Point(355, 48);
+            this.buttonConnectRemote.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.buttonConnectRemote.Name = "buttonConnectRemote";
-            this.buttonConnectRemote.Size = new System.Drawing.Size(69, 25);
+            this.buttonConnectRemote.Size = new System.Drawing.Size(79, 33);
             this.buttonConnectRemote.TabIndex = 4;
             this.buttonConnectRemote.Text = "Connect";
             this.buttonConnectRemote.UseVisualStyleBackColor = true;
@@ -113,30 +113,30 @@
             // listDatabases
             // 
             this.listDatabases.FormattingEnabled = true;
-            this.listDatabases.ItemHeight = 15;
-            this.listDatabases.Location = new System.Drawing.Point(5, 96);
-            this.listDatabases.Margin = new System.Windows.Forms.Padding(2);
+            this.listDatabases.ItemHeight = 20;
+            this.listDatabases.Location = new System.Drawing.Point(6, 128);
+            this.listDatabases.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.listDatabases.Name = "listDatabases";
-            this.listDatabases.Size = new System.Drawing.Size(82, 154);
+            this.listDatabases.Size = new System.Drawing.Size(93, 204);
             this.listDatabases.TabIndex = 5;
             // 
             // labelDatabaseName
             // 
             this.labelDatabaseName.AutoSize = true;
-            this.labelDatabaseName.Location = new System.Drawing.Point(6, 28);
+            this.labelDatabaseName.Location = new System.Drawing.Point(7, 37);
             this.labelDatabaseName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelDatabaseName.Name = "labelDatabaseName";
-            this.labelDatabaseName.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseName.Size = new System.Drawing.Size(50, 20);
             this.labelDatabaseName.TabIndex = 6;
             this.labelDatabaseName.Text = "label1";
             // 
             // labelDatabaseId
             // 
             this.labelDatabaseId.AutoSize = true;
-            this.labelDatabaseId.Location = new System.Drawing.Point(6, 43);
+            this.labelDatabaseId.Location = new System.Drawing.Point(7, 57);
             this.labelDatabaseId.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelDatabaseId.Name = "labelDatabaseId";
-            this.labelDatabaseId.Size = new System.Drawing.Size(38, 15);
+            this.labelDatabaseId.Size = new System.Drawing.Size(50, 20);
             this.labelDatabaseId.TabIndex = 7;
             this.labelDatabaseId.Text = "label2";
             // 
@@ -147,9 +147,11 @@
             this.groupBox1.Controls.Add(this.textRemoteAddress);
             this.groupBox1.Controls.Add(this.labelRemotePort);
             this.groupBox1.Controls.Add(this.labelRemoteAddress);
-            this.groupBox1.Location = new System.Drawing.Point(12, 3);
+            this.groupBox1.Location = new System.Drawing.Point(14, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(385, 71);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Size = new System.Drawing.Size(440, 95);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Instance";
@@ -178,18 +180,21 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.listTables);
             this.groupBox2.Controls.Add(this.listDatabases);
-            this.groupBox2.Location = new System.Drawing.Point(12, 80);
+            this.groupBox2.Location = new System.Drawing.Point(14, 107);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(760, 332);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox2.Size = new System.Drawing.Size(869, 443);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Databases";
             // 
             // buttonManageContract
             // 
-            this.buttonManageContract.Location = new System.Drawing.Point(642, 14);
+            this.buttonManageContract.Location = new System.Drawing.Point(734, 19);
+            this.buttonManageContract.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonManageContract.Name = "buttonManageContract";
-            this.buttonManageContract.Size = new System.Drawing.Size(107, 23);
+            this.buttonManageContract.Size = new System.Drawing.Size(122, 31);
             this.buttonManageContract.TabIndex = 22;
             this.buttonManageContract.Text = "Manage Contract";
             this.buttonManageContract.UseVisualStyleBackColor = true;
@@ -197,17 +202,18 @@
             // labelColumnDataType
             // 
             this.labelColumnDataType.AutoSize = true;
-            this.labelColumnDataType.Location = new System.Drawing.Point(311, 106);
+            this.labelColumnDataType.Location = new System.Drawing.Point(355, 141);
             this.labelColumnDataType.Name = "labelColumnDataType";
-            this.labelColumnDataType.Size = new System.Drawing.Size(124, 15);
+            this.labelColumnDataType.Size = new System.Drawing.Size(156, 20);
             this.labelColumnDataType.TabIndex = 15;
             this.labelColumnDataType.Text = "labelColumnDataType";
             // 
             // buttonQuery
             // 
-            this.buttonQuery.Location = new System.Drawing.Point(642, 43);
+            this.buttonQuery.Location = new System.Drawing.Point(734, 57);
+            this.buttonQuery.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonQuery.Name = "buttonQuery";
-            this.buttonQuery.Size = new System.Drawing.Size(107, 23);
+            this.buttonQuery.Size = new System.Drawing.Size(122, 31);
             this.buttonQuery.TabIndex = 27;
             this.buttonQuery.Text = "Query Window";
             this.buttonQuery.UseVisualStyleBackColor = true;
@@ -215,26 +221,27 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(441, 73);
+            this.label2.Location = new System.Drawing.Point(504, 97);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 15);
+            this.label2.Size = new System.Drawing.Size(88, 20);
             this.label2.TabIndex = 23;
             this.label2.Text = "Participants:";
             // 
             // labelColumnName
             // 
             this.labelColumnName.AutoSize = true;
-            this.labelColumnName.Location = new System.Drawing.Point(311, 91);
+            this.labelColumnName.Location = new System.Drawing.Point(355, 121);
             this.labelColumnName.Name = "labelColumnName";
-            this.labelColumnName.Size = new System.Drawing.Size(107, 15);
+            this.labelColumnName.Size = new System.Drawing.Size(133, 20);
             this.labelColumnName.TabIndex = 14;
             this.labelColumnName.Text = "labelColumnName";
             // 
             // buttonAddParticipant
             // 
-            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
+            this.buttonAddParticipant.Location = new System.Drawing.Point(504, 348);
+            this.buttonAddParticipant.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
-            this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
+            this.buttonAddParticipant.Size = new System.Drawing.Size(159, 31);
             this.buttonAddParticipant.TabIndex = 25;
             this.buttonAddParticipant.Text = "+ Participant";
             this.buttonAddParticipant.UseVisualStyleBackColor = true;
@@ -242,62 +249,70 @@
             // listPendingParticipants
             // 
             this.listPendingParticipants.FormattingEnabled = true;
-            this.listPendingParticipants.ItemHeight = 15;
-            this.listPendingParticipants.Location = new System.Drawing.Point(601, 91);
+            this.listPendingParticipants.ItemHeight = 20;
+            this.listPendingParticipants.Location = new System.Drawing.Point(687, 121);
+            this.listPendingParticipants.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listPendingParticipants.Name = "listPendingParticipants";
-            this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
+            this.listPendingParticipants.Size = new System.Drawing.Size(169, 204);
             this.listPendingParticipants.TabIndex = 26;
             // 
             // listAcceptedParticipants
             // 
             this.listAcceptedParticipants.FormattingEnabled = true;
-            this.listAcceptedParticipants.ItemHeight = 15;
-            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 91);
+            this.listAcceptedParticipants.ItemHeight = 20;
+            this.listAcceptedParticipants.Location = new System.Drawing.Point(504, 121);
+            this.listAcceptedParticipants.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listAcceptedParticipants.Name = "listAcceptedParticipants";
-            this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
+            this.listAcceptedParticipants.Size = new System.Drawing.Size(158, 204);
             this.listAcceptedParticipants.TabIndex = 24;
             // 
             // buttonRemoveColumn
             // 
-            this.buttonRemoveColumn.Location = new System.Drawing.Point(208, 293);
+            this.buttonRemoveColumn.Location = new System.Drawing.Point(238, 391);
+            this.buttonRemoveColumn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemoveColumn.Name = "buttonRemoveColumn";
-            this.buttonRemoveColumn.Size = new System.Drawing.Size(83, 23);
+            this.buttonRemoveColumn.Size = new System.Drawing.Size(95, 31);
             this.buttonRemoveColumn.TabIndex = 21;
             this.buttonRemoveColumn.Text = "- Column";
             this.buttonRemoveColumn.UseVisualStyleBackColor = true;
             // 
             // buttonRemoveTable
             // 
-            this.buttonRemoveTable.Location = new System.Drawing.Point(105, 293);
+            this.buttonRemoveTable.Location = new System.Drawing.Point(120, 391);
+            this.buttonRemoveTable.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemoveTable.Name = "buttonRemoveTable";
-            this.buttonRemoveTable.Size = new System.Drawing.Size(87, 23);
+            this.buttonRemoveTable.Size = new System.Drawing.Size(99, 31);
             this.buttonRemoveTable.TabIndex = 20;
             this.buttonRemoveTable.Text = "- Table";
             this.buttonRemoveTable.UseVisualStyleBackColor = true;
             // 
             // buttonRemoveDb
             // 
-            this.buttonRemoveDb.Location = new System.Drawing.Point(5, 293);
+            this.buttonRemoveDb.Location = new System.Drawing.Point(6, 391);
+            this.buttonRemoveDb.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemoveDb.Name = "buttonRemoveDb";
-            this.buttonRemoveDb.Size = new System.Drawing.Size(82, 23);
+            this.buttonRemoveDb.Size = new System.Drawing.Size(94, 31);
             this.buttonRemoveDb.TabIndex = 19;
             this.buttonRemoveDb.Text = "- DB";
             this.buttonRemoveDb.UseVisualStyleBackColor = true;
+            this.buttonRemoveDb.Click += new System.EventHandler(this.buttonRemoveDb_Click);
             // 
             // buttonAddColumn
             // 
-            this.buttonAddColumn.Location = new System.Drawing.Point(208, 264);
+            this.buttonAddColumn.Location = new System.Drawing.Point(238, 352);
+            this.buttonAddColumn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonAddColumn.Name = "buttonAddColumn";
-            this.buttonAddColumn.Size = new System.Drawing.Size(83, 23);
+            this.buttonAddColumn.Size = new System.Drawing.Size(95, 31);
             this.buttonAddColumn.TabIndex = 18;
             this.buttonAddColumn.Text = "+ Column";
             this.buttonAddColumn.UseVisualStyleBackColor = true;
             // 
             // buttonAddDb
             // 
-            this.buttonAddDb.Location = new System.Drawing.Point(5, 264);
+            this.buttonAddDb.Location = new System.Drawing.Point(6, 352);
+            this.buttonAddDb.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonAddDb.Name = "buttonAddDb";
-            this.buttonAddDb.Size = new System.Drawing.Size(82, 23);
+            this.buttonAddDb.Size = new System.Drawing.Size(94, 31);
             this.buttonAddDb.TabIndex = 16;
             this.buttonAddDb.Text = "+ DB";
             this.buttonAddDb.UseVisualStyleBackColor = true;
@@ -305,9 +320,10 @@
             // 
             // buttonAddTable
             // 
-            this.buttonAddTable.Location = new System.Drawing.Point(105, 264);
+            this.buttonAddTable.Location = new System.Drawing.Point(120, 352);
+            this.buttonAddTable.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonAddTable.Name = "buttonAddTable";
-            this.buttonAddTable.Size = new System.Drawing.Size(87, 23);
+            this.buttonAddTable.Size = new System.Drawing.Size(99, 31);
             this.buttonAddTable.TabIndex = 17;
             this.buttonAddTable.Text = "+ Table";
             this.buttonAddTable.UseVisualStyleBackColor = true;
@@ -315,56 +331,59 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(208, 76);
+            this.label4.Location = new System.Drawing.Point(238, 101);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 15);
+            this.label4.Size = new System.Drawing.Size(69, 20);
             this.label4.TabIndex = 13;
             this.label4.Text = "Columns:";
             // 
             // listColumns
             // 
             this.listColumns.FormattingEnabled = true;
-            this.listColumns.ItemHeight = 15;
-            this.listColumns.Location = new System.Drawing.Point(208, 94);
+            this.listColumns.ItemHeight = 20;
+            this.listColumns.Location = new System.Drawing.Point(238, 125);
+            this.listColumns.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listColumns.Name = "listColumns";
-            this.listColumns.Size = new System.Drawing.Size(83, 154);
+            this.listColumns.Size = new System.Drawing.Size(94, 204);
             this.listColumns.TabIndex = 12;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 76);
+            this.label1.Location = new System.Drawing.Point(6, 101);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 15);
+            this.label1.Size = new System.Drawing.Size(81, 20);
             this.label1.TabIndex = 9;
             this.label1.Text = "Databases:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(105, 76);
+            this.label3.Location = new System.Drawing.Point(120, 101);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(43, 15);
+            this.label3.Size = new System.Drawing.Size(53, 20);
             this.label3.TabIndex = 11;
             this.label3.Text = "Tables:";
             // 
             // listTables
             // 
             this.listTables.FormattingEnabled = true;
-            this.listTables.ItemHeight = 15;
-            this.listTables.Location = new System.Drawing.Point(105, 94);
+            this.listTables.ItemHeight = 20;
+            this.listTables.Location = new System.Drawing.Point(120, 125);
+            this.listTables.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.listTables.Name = "listTables";
-            this.listTables.Size = new System.Drawing.Size(87, 154);
+            this.listTables.Size = new System.Drawing.Size(99, 204);
             this.listTables.TabIndex = 8;
             this.listTables.SelectedIndexChanged += new System.EventHandler(this.listTables_SelectedIndexChanged);
             // 
             // formFrost
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 421);
+            this.ClientSize = new System.Drawing.Size(889, 561);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "formFrost";
             this.Text = "FrostForm";
             this.Load += new System.EventHandler(this.formFrost_Load);

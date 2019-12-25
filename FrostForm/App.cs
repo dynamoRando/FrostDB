@@ -52,6 +52,11 @@ namespace FrostForm
         {
             _client.AddNewDatabase(databaseName);
         }
+
+        public void RemoveDb(string databaseName)
+        {
+            _client.RemoveDatabase(databaseName);
+        }
         #endregion
 
         #region Private Methods

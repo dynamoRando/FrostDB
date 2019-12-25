@@ -50,5 +50,19 @@ namespace FrostForm
             var form = new formNewDb(_app);
             form.Show();
         }
+
+        private void buttonRemoveDb_Click(object sender, EventArgs e)
+        {
+            var selectedDb = listDatabases.SelectedItem.ToString();
+
+            if (!string.IsNullOrEmpty(selectedDb))
+            {
+                var result = MessageBox.Show("Are you sure?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    _app.RemoveDb(selectedDb);
+                }
+            }
+        }
     }
 }

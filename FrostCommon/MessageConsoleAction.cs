@@ -16,6 +16,9 @@ namespace FrostCommon
 
             public const string Add_Database = "Process.Add_Database";
             public const string Add_Database_Response = "Process.Add_Database_Response";
+
+            public const string Remove_Datababase = "Process.Remove_Database";
+            public const string Remove_Database_Response = "Process.Remove_Database_Response";
         }
 
         public class Database

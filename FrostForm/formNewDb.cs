@@ -24,6 +24,13 @@ namespace FrostForm
             {
                 _app.AddNewDb(textboxDbName.Text);
             }
+
+            Close();
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
