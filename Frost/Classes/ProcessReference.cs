@@ -25,6 +25,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static void AddDatabase(string databaseName)
+        {
+            ProcessReference.Process.AddDatabase(databaseName);
+        }
         public static Contract GetContract(Guid? databaseId)
         {
             return ProcessReference.Process.GetDatabase(databaseId).Contract;

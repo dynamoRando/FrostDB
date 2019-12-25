@@ -122,7 +122,18 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
+                case MessageConsoleAction.Process.Add_Database:
+                    HandleAddNewDatabase(message);
+                    break;
+                default:
+                    throw new NotImplementedException("Unknown message console message");
             }
+        }
+
+        private void HandleAddNewDatabase(Message message)
+        {
+            ProcessReference.AddDatabase(message.Content);
+            SendMessage(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType()) ;
         }
 
         private void HandleGetDatabaseTables(Message message)
@@ -133,7 +144,6 @@ namespace FrostDB
         private void HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;
-
             var db = ProcessReference.GetDatabase(dbName);
 
             DatabaseInfo info = new DatabaseInfo();

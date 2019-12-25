@@ -13,6 +13,7 @@ namespace FrostForm
         #region Private Fields
         FrostClient _client;
         formFrost _form;
+        formNewDb _formNewDb;
         
         string _currentSelectedDbName = string.Empty;
         string _currentSelectedTableName = string.Empty;
@@ -45,6 +46,11 @@ namespace FrostForm
         {
             _client = new FrostClient(remoteAddress, "127.0.0.1", remotePort, 520);
             ListenForAppEvents();
+        }
+
+        public void AddNewDb(string databaseName)
+        {
+            _client.AddNewDatabase(databaseName);
         }
         #endregion
 
