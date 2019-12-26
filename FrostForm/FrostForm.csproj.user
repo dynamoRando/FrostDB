@@ -5,6 +5,9 @@
     <Compile Update="formNewDb.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="formNewTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FrostForm.cs">
       <SubType>Form</SubType>
     </Compile>
