@@ -15,6 +15,8 @@ namespace FrostDB.Interface
         bool HasTable(string tableName);
         bool HasTable(Guid? tableName);
         void AddTable(Table table);
+        void RemoveTable(string tableName);
+        void RemoveTable(Guid? tableId);
         void UpdateSchema();
         DbSchema Schema { get; }
         List<Participant> AcceptedParticipants { get; }
