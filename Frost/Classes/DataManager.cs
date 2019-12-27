@@ -31,6 +31,16 @@ namespace FrostDB
         #region Constructors
         public DataManager()
         {
+            if (_databaseFileMapper is null)
+            {
+                _databaseFileMapper = (IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>>)new DatabaseFileMapper();
+            }
+
+            if (_dataFileManager is null)
+            {
+                _dataFileManager = new DataFileManager();
+            }
+
             _databases = new List<TDatabase>();
             _dataEventManager = new DataManagerEventManager<TDatabase>(this);
             RegisterEvents();
@@ -44,6 +54,12 @@ namespace FrostDB
 
             _databaseFolder = databaseFolder;
             _databaseExtension = databaseExtension;
+
+            if (_databaseFileMapper is null)
+            {
+                _databaseFileMapper = (IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>>)new DatabaseFileMapper();
+            }
+
         }
         #endregion  
 

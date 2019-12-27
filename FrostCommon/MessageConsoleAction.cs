@@ -27,12 +27,15 @@ namespace FrostCommon
             public const string Get_Database_Info_Response = "Database.Get_Info_Response";
             public const string Get_Database_Tables = "Database.Get_Tables";
             public const string Get_Database_Tables_Response = "Database.Get_Tables_Response";
+            public const string Add_Table_To_Database = "Database.Add_New_Table";
+            public const string Add_Table_To_Database_Response = "Database.Add_New_Table_Response";
         }
 
         public class Table
         {
             public const string Get_Table_Info = "Table.Get_Info";
             public const string Get_Table_Info_Response = "Table.Get_Info_Response";
+
         }
     }
 }

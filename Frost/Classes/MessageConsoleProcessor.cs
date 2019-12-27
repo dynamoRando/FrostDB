@@ -83,7 +83,27 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Get_Database_Tables:
                     HandleGetDatabaseTables(message);
                     break;
+                case MessageConsoleAction.Database.Add_Table_To_Database:
+                    HandleAddNewTable(message);
+                    break;
             }
+        }
+        
+        private void HandleAddNewTable(Message message)
+        {
+            var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+
+            var columns = new List<Column>();
+
+            foreach(var c in info.Columns)
+            {
+                var col = new Column(c.Item1, c.Item2);
+                columns.Add(col);
+            }
+
+            var table = new Table(info.TableName, columns, db.Id);
+            db.AddTable(table);
         }
 
         private void HandleGetTableInfo(Message message)

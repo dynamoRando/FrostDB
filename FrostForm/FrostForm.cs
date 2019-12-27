@@ -64,5 +64,16 @@ namespace FrostForm
                 }
             }
         }
+
+        private void buttonAddTable_Click(object sender, EventArgs e)
+        {
+            var selectedDb = listDatabases.SelectedItem.ToString();
+
+            if (!string.IsNullOrEmpty(selectedDb))
+            {
+                var form = new formNewTable(selectedDb, _app);
+                form.Show();
+            }
+        }
     }
 }

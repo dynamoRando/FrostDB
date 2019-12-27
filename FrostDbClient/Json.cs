@@ -44,5 +44,12 @@ namespace FrostDbClient
             data = JsonConvert.SerializeObject(message);
             return data;
         }
+
+        public static string SeralizeObject(object item)
+        {
+            var data = string.Empty;
+            data = JsonConvert.SerializeObject(item);
+            return data;
+        }
     }
 }

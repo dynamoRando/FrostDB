@@ -327,6 +327,7 @@
             this.buttonAddTable.TabIndex = 17;
             this.buttonAddTable.Text = "+ Table";
             this.buttonAddTable.UseVisualStyleBackColor = true;
+            this.buttonAddTable.Click += new System.EventHandler(this.buttonAddTable_Click);
             // 
             // label4
             // 
