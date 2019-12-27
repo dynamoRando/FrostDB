@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostForm
 {
@@ -76,7 +77,17 @@ namespace FrostForm
 
         private void buttonCreateTable_Click(object sender, EventArgs e)
         {
-
+            var tableName = textBoxTableName.Text;
+            var dbName = labelDatabaseName.Text;
+            if (!string.IsNullOrEmpty(tableName) && !string.IsNullOrEmpty(dbName))
+            {
+                var info = new TableInfo();
+                info.Columns.AddRange(_columns);
+                info.TableName = tableName;
+                info.DatabaseName = dbName;
+                _app.AddTableToDb(info);
+                Close();
+            }
         }
 
         private void buttonRemoveColumn_Click(object sender, EventArgs e)

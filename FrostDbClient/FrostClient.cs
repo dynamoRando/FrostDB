@@ -84,6 +84,11 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void AddTableToDb(TableInfo info)
+        {
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Table_To_Database));
+        }
+
         public void AddNewDatabase(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Add_Database));
