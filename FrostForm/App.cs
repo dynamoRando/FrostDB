@@ -58,10 +58,11 @@ namespace FrostForm
             _client.RemoveDatabase(databaseName);
         }
 
-        public void AddTableToDb(TableInfo info)
+        public void AddTableToDb(string databaseName, string tableName, List<(string, Type)> columns)
         {
-            _client.AddTableToDb(info);
+            _client.AddTableToDb(databaseName, tableName, columns);
         }
+
         #endregion
 
         #region Private Methods

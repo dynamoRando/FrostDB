@@ -81,11 +81,7 @@ namespace FrostForm
             var dbName = labelDatabaseName.Text;
             if (!string.IsNullOrEmpty(tableName) && !string.IsNullOrEmpty(dbName))
             {
-                var info = new TableInfo();
-                info.Columns.AddRange(_columns);
-                info.TableName = tableName;
-                info.DatabaseName = dbName;
-                _app.AddTableToDb(info);
+                _app.AddTableToDb(dbName, tableName, _columns);
                 Close();
             }
         }
