@@ -166,9 +166,12 @@ namespace FrostDB
 
         public void AddTable(Table table)
         {
-            _tables.Add(table);
-            EventManager.TriggerEvent(EventName.Table.Created,
-              CreateTableCreatedEventArgs(table));
+            if (!HasTable(table.Name))
+            {
+                _tables.Add(table);
+                EventManager.TriggerEvent(EventName.Table.Created,
+                  CreateTableCreatedEventArgs(table));
+            }
         }
 
         public Table GetTable(string tableName)
