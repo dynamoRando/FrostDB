@@ -75,5 +75,18 @@ namespace FrostForm
                 form.Show();
             }
         }
+
+        private void buttonRemoveTable_Click(object sender, EventArgs e)
+        {
+            if (listTables.SelectedItem != null && listDatabases.SelectedItem != null)
+            {
+                var tableName = listTables.SelectedItem.ToString();
+                var databaseName = listDatabases.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(tableName) && !string.IsNullOrEmpty(databaseName))
+                {
+                    _app.RemoveTableFromDb(databaseName, tableName);
+                }
+            }
+        }
     }
 }

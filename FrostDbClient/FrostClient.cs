@@ -93,6 +93,14 @@ namespace FrostDbClient
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Table_To_Database));
         }
 
+        public void RemoveTableFromDb(string databaseName, string tableName)
+        {
+            var info = new TableInfo();
+            info.TableName = tableName;
+            info.DatabaseName = databaseName;
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Remove_Table_From_Database));
+        }
+
         public void AddNewDatabase(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Add_Database));

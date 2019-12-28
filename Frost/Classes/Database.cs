@@ -190,7 +190,10 @@ namespace FrostDB
         }
         public void RemoveTable(string tableName)
         {
-            throw new NotImplementedException();
+            var table = this.GetTable(tableName);
+            _tables.Remove(table);
+            EventManager.TriggerEvent(EventName.Table.Dropped,
+                TableDroppedEventArgs(table));
         }
 
         public void RemoveTable(Guid? tableId)
@@ -203,6 +206,13 @@ namespace FrostDB
         private TableCreatedEventArgs CreateTableCreatedEventArgs(Table table)
         {
             var eventargs = new TableCreatedEventArgs();
+            eventargs.Table = table;
+            eventargs.Database = this;
+            return eventargs;
+        }
+        private TableDroppedEventArgs TableDroppedEventArgs(Table table)
+        {
+            var eventargs = new TableDroppedEventArgs();
             eventargs.Table = table;
             eventargs.Database = this;
             return eventargs;

@@ -86,7 +86,16 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Add_Table_To_Database:
                     HandleAddNewTable(message);
                     break;
+                case MessageConsoleAction.Database.Remove_Table_From_Database:
+                    HandleRemoveTable(message);
+                    break;
             }
+        }
+        private void HandleRemoveTable(Message message)
+        {
+            var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            db.RemoveTable(info.TableName);
         }
         
         private void HandleAddNewTable(Message message)

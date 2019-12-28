@@ -29,6 +29,8 @@ namespace FrostCommon
             public const string Get_Database_Tables_Response = "Database.Get_Tables_Response";
             public const string Add_Table_To_Database = "Database.Add_New_Table";
             public const string Add_Table_To_Database_Response = "Database.Add_New_Table_Response";
+            public const string Remove_Table_From_Database = "Database.Remove_Table";
+            public const string Remove_Table_From_Datababase_Response = "Database.Remove_Table_Response";
         }
 
         public static class Table

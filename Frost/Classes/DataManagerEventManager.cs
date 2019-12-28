@@ -33,6 +33,7 @@ namespace FrostDB
         public void RegisterEvents()
         {
             RegisterTableCreatedEvents();
+            RegisterTableDroppedEvents();
             RegisterRowAddedEvents();
             RegisterRowDeletedEvents();
             RegisterRowAccessedEvents();
@@ -44,6 +45,10 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void RegisterTableDroppedEvents()
+        {
+            EventManager.StartListening(EventName.Table.Dropped, new Action<IEventArgs>(HandleTableDroppedEvent));
+        }
         private void RegisterMessageSentEvents()
         {
             EventManager.StartListening(EventName.Message.Message_Sent,
@@ -176,6 +181,19 @@ namespace FrostDB
                 if (db is TDatabase)
                 {
                     _dataManager.SaveToDisk((TDatabase)db);
+                }
+            }
+        }
+
+        private void HandleTableDroppedEvent(IEventArgs e)
+        {
+            if (e is TableDroppedEventArgs)
+            {
+                var args = (TableDroppedEventArgs)e;
+                if (args.Database is TDatabase)
+                {
+                    args.Database.UpdateSchema();
+                    _dataManager.SaveToDisk((TDatabase)args.Database);
                 }
             }
         }

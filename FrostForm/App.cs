@@ -62,6 +62,10 @@ namespace FrostForm
         {
             _client.AddTableToDb(databaseName, tableName, columns);
         }
+        public void RemoveTableFromDb(string databaseName, string tableName)
+        {
+            _client.RemoveTableFromDb(databaseName, tableName);
+        }
 
         #endregion
 
