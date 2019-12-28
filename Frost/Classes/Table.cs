@@ -135,9 +135,33 @@ namespace FrostDB
             return new QueryRunner().Execute(parameters, rows);
         }
 
+        public bool HasColumn(string columnName)
+        {
+            return this.Columns.Any(c => c.Name == columnName);
+        }
+
+
         public Column GetColumn(Guid? id)
         {
             return Columns.Where(c => c.Id == id).FirstOrDefault();
+        }
+
+        public void AddColumn(string columnName, Type type)
+        {
+            Column column;
+            if (!HasColumn(columnName))
+            {
+                column = new Column(columnName, type);
+                _columns.Add(column);
+                
+                EventManager.TriggerEvent(EventName.Columm.Added,
+                       CreateColumnAddedEventArgs(column));
+            }
+        }
+
+        public void RemoveColumn(string columnName)
+        {
+            throw new NotImplementedException();
         }
 
         public void AddRow(RowForm form)
@@ -194,6 +218,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        
         private Row GetNewRow()
         {
             List<Guid?> ids = new List<Guid?>();
@@ -284,6 +309,18 @@ namespace FrostDB
 
             return new RowReference(colIds, this.Id, new Participant(location), DatabaseId, row.Id);
         }
+
+        private ColumnAddedEventArgs CreateColumnAddedEventArgs(Column column)
+        {
+            return new ColumnAddedEventArgs
+            {
+                DatabaseName = ProcessReference.GetDatabase(this.DatabaseId).Name,
+                TableName = this.Name,
+                ColumnName = column.Name,
+                Type = column.DataType
+            };
+        }
+        
         #endregion
 
     }

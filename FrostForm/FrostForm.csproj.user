@@ -2,6 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="formNewColumn.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="formNewDb.cs">
       <SubType>Form</SubType>
     </Compile>

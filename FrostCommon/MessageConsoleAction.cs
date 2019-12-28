@@ -38,6 +38,11 @@ namespace FrostCommon
             public const string Get_Table_Info = "Table.Get_Info";
             public const string Get_Table_Info_Response = "Table.Get_Info_Response";
 
+            public const string Add_Column = "Table.Add_Column";
+            public const string Add_Column_Response = "Table.Add_Column_Response";
+
+            public const string Remove_Column = "Table.Remove_Column";
+            public const string Remove_Column_Response = "Table.Remove_Column_Response";
         }
     }
 }
