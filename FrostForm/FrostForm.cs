@@ -88,5 +88,48 @@ namespace FrostForm
                 }
             }
         }
+
+        private void buttonAddColumn_Click(object sender, EventArgs e)
+        {
+            if (listDatabases.SelectedItem != null)
+            {
+                if (listTables.SelectedItem != null)
+                {
+                    var database = listDatabases.SelectedItem.ToString();
+                    var table = listTables.SelectedItem.ToString();
+                    if (!string.IsNullOrEmpty(database) && !string.IsNullOrEmpty(table))
+                    {
+                        var form = new formNewColumn(database, table, _app);
+                        form.Show();
+                    }
+                }
+            }
+        }
+
+        private void buttonRemoveColumn_Click(object sender, EventArgs e)
+        {
+            if (listDatabases.SelectedItem != null)
+            {
+                if (listTables.SelectedItem != null)
+                {
+                    if (listColumns.SelectedItem != null)
+                    {
+                        var selectedDb = listDatabases.SelectedItem.ToString();
+                        var selectedTable = listTables.SelectedItem.ToString();
+                        var selectedColumn = listColumns.SelectedItem.ToString();
+
+                        if (!string.IsNullOrEmpty(selectedDb) && !string.IsNullOrEmpty(selectedTable) && !string.IsNullOrEmpty(selectedColumn))
+                        {
+                            var result = MessageBox.Show("Are you sure?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (result == DialogResult.Yes)
+                            {
+                                _app.RemoveColumnFromTable(selectedDb, selectedTable, selectedColumn);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }

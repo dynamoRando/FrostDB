@@ -42,10 +42,17 @@ namespace FrostDB
             RegisterMessageRecievedEvents();
             RegisterMessageSentEvents();
             RegisterColumnAddedEvents();
+            RegisterColumnRemovedEvents();
         }
         #endregion
 
         #region Private Methods
+
+        private void RegisterColumnRemovedEvents()
+        {
+            EventManager.StartListening(EventName.Columm.Deleted, new Action<IEventArgs>(HandleColumnDeletedEvent));
+        }
+
         private void RegisterTableDroppedEvents()
         {
             EventManager.StartListening(EventName.Table.Dropped, new Action<IEventArgs>(HandleTableDroppedEvent));
@@ -123,6 +130,22 @@ namespace FrostDB
                     {
                         Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
                     }
+                }
+            }
+        }
+
+        private void HandleColumnDeletedEvent(IEventArgs e)
+        {
+            if (e is ColumnDeletedEventArgs)
+            {
+                var args = (ColumnDeletedEventArgs)e;
+
+                IDatabase db = _dataManager.GetDatabase(args.DatabaseName);
+                if (db is TDatabase)
+                {
+                    db.GetTable(args.TableName).UpdateSchema();
+                    db.UpdateSchema();
+                    _dataManager.SaveToDisk((TDatabase)db);
                 }
             }
         }

@@ -74,7 +74,19 @@ namespace FrostDB
                 case MessageConsoleAction.Table.Add_Column:
                     HandleAddColumnMessage(message);
                     break;
+                case MessageConsoleAction.Table.Remove_Column:
+                    HandleRemoveColumnMessage(message);
+                    break;
             }
+        }
+
+        private void HandleRemoveColumnMessage(Message message)
+        {
+            var info = JsonConvert.DeserializeObject<ColumnInfo>(message.Content);
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            var table = db.GetTable(info.TableName);
+
+            table.RemoveColumn(info.ColumnName);
         }
 
         private void HandleAddColumnMessage(Message message)

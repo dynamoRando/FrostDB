@@ -74,7 +74,7 @@
             // textRemoteAddress
             // 
             this.textRemoteAddress.Location = new System.Drawing.Point(12, 36);
-            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2);
             this.textRemoteAddress.Name = "textRemoteAddress";
             this.textRemoteAddress.Size = new System.Drawing.Size(207, 23);
             this.textRemoteAddress.TabIndex = 1;
@@ -93,7 +93,7 @@
             // textRemotePort
             // 
             this.textRemotePort.Location = new System.Drawing.Point(232, 36);
-            this.textRemotePort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textRemotePort.Margin = new System.Windows.Forms.Padding(2);
             this.textRemotePort.Name = "textRemotePort";
             this.textRemotePort.Size = new System.Drawing.Size(59, 23);
             this.textRemotePort.TabIndex = 3;
@@ -102,7 +102,7 @@
             // buttonConnectRemote
             // 
             this.buttonConnectRemote.Location = new System.Drawing.Point(311, 36);
-            this.buttonConnectRemote.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonConnectRemote.Margin = new System.Windows.Forms.Padding(2);
             this.buttonConnectRemote.Name = "buttonConnectRemote";
             this.buttonConnectRemote.Size = new System.Drawing.Size(69, 25);
             this.buttonConnectRemote.TabIndex = 4;
@@ -115,7 +115,7 @@
             this.listDatabases.FormattingEnabled = true;
             this.listDatabases.ItemHeight = 15;
             this.listDatabases.Location = new System.Drawing.Point(5, 96);
-            this.listDatabases.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listDatabases.Margin = new System.Windows.Forms.Padding(2);
             this.listDatabases.Name = "listDatabases";
             this.listDatabases.Size = new System.Drawing.Size(82, 154);
             this.listDatabases.TabIndex = 5;
@@ -265,6 +265,7 @@
             this.buttonRemoveColumn.TabIndex = 21;
             this.buttonRemoveColumn.Text = "- Column";
             this.buttonRemoveColumn.UseVisualStyleBackColor = true;
+            this.buttonRemoveColumn.Click += new System.EventHandler(this.buttonRemoveColumn_Click);
             // 
             // buttonRemoveTable
             // 
@@ -294,6 +295,7 @@
             this.buttonAddColumn.TabIndex = 18;
             this.buttonAddColumn.Text = "+ Column";
             this.buttonAddColumn.UseVisualStyleBackColor = true;
+            this.buttonAddColumn.Click += new System.EventHandler(this.buttonAddColumn_Click);
             // 
             // buttonAddDb
             // 

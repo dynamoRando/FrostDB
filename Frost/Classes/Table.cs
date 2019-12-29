@@ -146,6 +146,11 @@ namespace FrostDB
             return Columns.Where(c => c.Id == id).FirstOrDefault();
         }
 
+        public Column GetColumn(string columnName)
+        {
+            return Columns.Where(c => c.Name == columnName).FirstOrDefault();
+        }
+
         public void AddColumn(string columnName, Type type)
         {
             Column column;
@@ -161,7 +166,14 @@ namespace FrostDB
 
         public void RemoveColumn(string columnName)
         {
-            throw new NotImplementedException();
+            if (HasColumn(columnName))
+            {
+                var col = GetColumn(columnName);
+                _columns.Remove(col);
+
+                EventManager.TriggerEvent(EventName.Columm.Deleted,
+                       CreateColumnDeletedEventArgs(col));
+            }
         }
 
         public void AddRow(RowForm form)
@@ -318,6 +330,16 @@ namespace FrostDB
                 TableName = this.Name,
                 ColumnName = column.Name,
                 Type = column.DataType
+            };
+        }
+
+        private ColumnDeletedEventArgs CreateColumnDeletedEventArgs(Column column)
+        {
+            return new ColumnDeletedEventArgs
+            {
+                DatabaseName = ProcessReference.GetDatabase(this.DatabaseId).Name,
+                TableName = this.Name,
+                ColumnName = column.Name
             };
         }
         

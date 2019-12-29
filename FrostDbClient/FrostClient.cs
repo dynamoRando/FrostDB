@@ -84,6 +84,17 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
+        {
+            ColumnInfo info = new ColumnInfo();
+            info.DatabaseName = databaseName;
+            info.TableName = tableName;
+            info.ColumnName = columnName;
+
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Remove_Column));
+
+        }
+
         public void AddColumnToTable(string databaseName, string tableName, string columnName, string dataType)
         {
             ColumnInfo info = new ColumnInfo();

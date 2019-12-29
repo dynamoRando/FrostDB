@@ -70,6 +70,10 @@ namespace FrostForm
         {
             _client.AddColumnToTable(databaseName, tableName, columnName, dataType);
         }
+        public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
+        {
+            _client.RemoveColumnFromTable(databaseName, tableName, columnName);
+        }
         #endregion
 
         #region Private Methods
