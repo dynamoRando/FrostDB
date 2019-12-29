@@ -33,6 +33,7 @@ namespace FrostDB
         public void RegisterEvents()
         {
             RegisterTableCreatedEvents();
+            RegisterTableDroppedEvents();
             RegisterRowAddedEvents();
             RegisterRowDeletedEvents();
             RegisterRowAccessedEvents();
@@ -40,10 +41,22 @@ namespace FrostDB
             RegisterPendingContractAddedEvents();
             RegisterMessageRecievedEvents();
             RegisterMessageSentEvents();
+            RegisterColumnAddedEvents();
+            RegisterColumnRemovedEvents();
         }
         #endregion
 
         #region Private Methods
+
+        private void RegisterColumnRemovedEvents()
+        {
+            EventManager.StartListening(EventName.Columm.Deleted, new Action<IEventArgs>(HandleColumnDeletedEvent));
+        }
+
+        private void RegisterTableDroppedEvents()
+        {
+            EventManager.StartListening(EventName.Table.Dropped, new Action<IEventArgs>(HandleTableDroppedEvent));
+        }
         private void RegisterMessageSentEvents()
         {
             EventManager.StartListening(EventName.Message.Message_Sent,
@@ -89,6 +102,11 @@ namespace FrostDB
                new Action<IEventArgs>(HandleRowAccessedEvent));
         }
 
+        private void RegisterColumnAddedEvents()
+        {
+            EventManager.StartListening(EventName.Columm.Added, new Action<IEventArgs>(HandleColumnAddedEvent));
+        }
+
         private void HandleMessageSentEvent(IEventArgs e)
         {
             if (e is MessageSentEventArgs)
@@ -112,6 +130,38 @@ namespace FrostDB
                     {
                         Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
                     }
+                }
+            }
+        }
+
+        private void HandleColumnDeletedEvent(IEventArgs e)
+        {
+            if (e is ColumnDeletedEventArgs)
+            {
+                var args = (ColumnDeletedEventArgs)e;
+
+                IDatabase db = _dataManager.GetDatabase(args.DatabaseName);
+                if (db is TDatabase)
+                {
+                    db.GetTable(args.TableName).UpdateSchema();
+                    db.UpdateSchema();
+                    _dataManager.SaveToDisk((TDatabase)db);
+                }
+            }
+        }
+
+        private void HandleColumnAddedEvent(IEventArgs e)
+        {
+            if (e is ColumnAddedEventArgs)
+            {
+                var args = (ColumnAddedEventArgs)e;
+
+                IDatabase db = _dataManager.GetDatabase(args.DatabaseName);
+                if (db is TDatabase)
+                {
+                    db.GetTable(args.TableName).UpdateSchema();
+                    db.UpdateSchema();
+                    _dataManager.SaveToDisk((TDatabase)db);
                 }
             }
         }
@@ -176,6 +226,19 @@ namespace FrostDB
                 if (db is TDatabase)
                 {
                     _dataManager.SaveToDisk((TDatabase)db);
+                }
+            }
+        }
+
+        private void HandleTableDroppedEvent(IEventArgs e)
+        {
+            if (e is TableDroppedEventArgs)
+            {
+                var args = (TableDroppedEventArgs)e;
+                if (args.Database is TDatabase)
+                {
+                    args.Database.UpdateSchema();
+                    _dataManager.SaveToDisk((TDatabase)args.Database);
                 }
             }
         }

@@ -188,7 +188,18 @@ namespace FrostDB
         {
             return AcceptedParticipants.Any(participant => !participant.Location.IsLocal());
         }
+        public void RemoveTable(string tableName)
+        {
+            var table = this.GetTable(tableName);
+            _tables.Remove(table);
+            EventManager.TriggerEvent(EventName.Table.Dropped,
+                TableDroppedEventArgs(table));
+        }
 
+        public void RemoveTable(Guid? tableId)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
@@ -199,6 +210,14 @@ namespace FrostDB
             eventargs.Database = this;
             return eventargs;
         }
+        private TableDroppedEventArgs TableDroppedEventArgs(Table table)
+        {
+            var eventargs = new TableDroppedEventArgs();
+            eventargs.Table = table;
+            eventargs.Database = this;
+            return eventargs;
+        }
+
         #endregion
 
     }

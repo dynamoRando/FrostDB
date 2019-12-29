@@ -84,9 +84,43 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
-        public void AddTableToDb(TableInfo info)
+        public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
         {
+            ColumnInfo info = new ColumnInfo();
+            info.DatabaseName = databaseName;
+            info.TableName = tableName;
+            info.ColumnName = columnName;
+
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Remove_Column));
+
+        }
+
+        public void AddColumnToTable(string databaseName, string tableName, string columnName, string dataType)
+        {
+            ColumnInfo info = new ColumnInfo();
+            info.DatabaseName = databaseName;
+            info.TableName = tableName;
+            info.ColumnName = columnName;
+            info.Type = Type.GetType(dataType);
+
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Add_Column));
+        }
+
+        public void AddTableToDb(string databaseName, string tableName, List<(string, Type)> columns)
+        {
+            var info = new TableInfo();
+            info.Columns.AddRange(columns);
+            info.TableName = tableName;
+            info.DatabaseName = databaseName;
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Table_To_Database));
+        }
+
+        public void RemoveTableFromDb(string databaseName, string tableName)
+        {
+            var info = new TableInfo();
+            info.TableName = tableName;
+            info.DatabaseName = databaseName;
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Remove_Table_From_Database));
         }
 
         public void AddNewDatabase(string databaseName)
