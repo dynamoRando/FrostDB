@@ -84,6 +84,11 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void GetContractInformation(string databaseName)
+        {
+            throw new NotImplementedException();    
+        }
+
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
         {
             ColumnInfo info = new ColumnInfo();

@@ -98,8 +98,17 @@ namespace FrostDbClient
                 case MessageConsoleAction.Database.Get_Database_Info_Response:
                     HandleDbInfo(message);
                     break;
+                case MessageConsoleAction.Database.Get_Contract_Information_Response:
+                    HandleContractInfo(message);
+                    break;
             }
         }
+
+        private void HandleContractInfo(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
         private void HandleProcessMessage(Message message)
         {
             switch (message.Action) 

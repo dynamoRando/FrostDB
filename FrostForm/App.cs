@@ -74,6 +74,10 @@ namespace FrostForm
         {
             _client.RemoveColumnFromTable(databaseName, tableName, columnName);
         }
+        public void GetContractInformation(string databaseName)
+        {
+            _client.GetContractInformation(databaseName);
+        }
         #endregion
 
         #region Private Methods

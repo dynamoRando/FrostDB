@@ -23,6 +23,7 @@ namespace FrostForm
         private void formManageContract_Load(object sender, EventArgs e)
         {
             labelDatabaseName.Text = _databaseName;
+            _app.GetContractInformation(_databaseName);
         }
     }
 }
