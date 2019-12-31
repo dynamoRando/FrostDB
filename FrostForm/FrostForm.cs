@@ -108,13 +108,13 @@ namespace FrostForm
 
         private void buttonRemoveColumn_Click(object sender, EventArgs e)
         {
-            if (listDatabases.SelectedItem != null)
+            if (IsDbSelected())
             {
                 if (listTables.SelectedItem != null)
                 {
                     if (listColumns.SelectedItem != null)
                     {
-                        var selectedDb = listDatabases.SelectedItem.ToString();
+                        var selectedDb = GetSelectedDb();
                         var selectedTable = listTables.SelectedItem.ToString();
                         var selectedColumn = listColumns.SelectedItem.ToString();
 
@@ -130,6 +130,41 @@ namespace FrostForm
                 }
             }
 
+        }
+
+        private void buttonManageContract_Click(object sender, EventArgs e)
+        {
+            if (IsDbSelected())
+            {
+                var db = GetSelectedDb();
+                var form = new formManageContract(_app, db);
+                form.Show();
+            }
+        }
+
+        private bool IsDbSelected()
+        {
+            if (listDatabases.SelectedItem != null)
+            {
+                var selectedDb = listDatabases.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(selectedDb))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private string GetSelectedDb()
+        {
+            return listDatabases.SelectedItem.ToString();
+        }
+
+        private void buttonQuery_Click(object sender, EventArgs e)
+        {
+            var form = new FormQueryWindow();
+            form.Show();
         }
     }
 }
