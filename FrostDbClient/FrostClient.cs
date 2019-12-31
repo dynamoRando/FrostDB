@@ -58,18 +58,18 @@ namespace FrostDbClient
         #region Public Methods
         public void GetProcessId()
         {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id));
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));
         }
 
         // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
         }
 
         public void GetTables(Guid? databaseId)
         {
-            SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables));
+            SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables, MessageActionType.Database));
             throw new NotImplementedException();
         }
 
@@ -91,7 +91,7 @@ namespace FrostDbClient
             info.TableName = tableName;
             info.ColumnName = columnName;
 
-            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Remove_Column));
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Remove_Column, MessageActionType.Table));
 
         }
 
@@ -103,7 +103,7 @@ namespace FrostDbClient
             info.ColumnName = columnName;
             info.Type = Type.GetType(dataType);
 
-            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Add_Column));
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Add_Column, MessageActionType.Table));
         }
 
         public void AddTableToDb(string databaseName, string tableName, List<(string, Type)> columns)
@@ -112,7 +112,7 @@ namespace FrostDbClient
             info.Columns.AddRange(columns);
             info.TableName = tableName;
             info.DatabaseName = databaseName;
-            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Table_To_Database));
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Table_To_Database, MessageActionType.Database));
         }
 
         public void RemoveTableFromDb(string databaseName, string tableName)
@@ -120,17 +120,17 @@ namespace FrostDbClient
             var info = new TableInfo();
             info.TableName = tableName;
             info.DatabaseName = databaseName;
-            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Remove_Table_From_Database));
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Remove_Table_From_Database, MessageActionType.Database));
         }
 
         public void AddNewDatabase(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Add_Database));
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Add_Database, MessageActionType.Process));
         }
 
         public void RemoveDatabase(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase));
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase, MessageActionType.Process));
         }
 
         public void GetTableInfo(string databaseName, string tableName)
@@ -153,7 +153,7 @@ namespace FrostDbClient
         public async Task<List<string>> GetDatabasesAsync()
         {
             var result = new List<string>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases));
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
             bool gotData = await WaitForMessageAsync(id);
 
             if (gotData)
@@ -166,7 +166,7 @@ namespace FrostDbClient
 
         public void GetDatabaseInfo(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info));
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
         public void Connect()
@@ -179,7 +179,7 @@ namespace FrostDbClient
         private void GetTableInfo(Guid? databaseId, Guid? tableId)
         {
             var requestInfo = (database: databaseId, table: tableId);
-            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info));
+            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
         }
         private async Task<bool> WaitForMessageAsync(Guid? id)
         {
@@ -225,27 +225,31 @@ namespace FrostDbClient
 
             return id;
         }
-        private Message BuildMessage((Guid?, Guid?) tuple, string action)
+        private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)
         {
             Message message = new Message(
               destination: _remote,
               origin: _local,
               messageContent: string.Empty,
               messageAction: action,
-              messageType: MessageType.Console);
+              messageType: MessageType.Console,
+              messageActionType: actionType
+              );
 
             message.TwoGuidTuple = tuple;
 
             return message;
         }
-        private Message BuildMessage(string content, string action)
+        private Message BuildMessage(string content, string action, MessageActionType actionType)
         {
             Message message = new Message(
                destination: _remote,
                origin: _local,
                messageContent: content,
                messageAction: action,
-               messageType: MessageType.Console);
+               messageType: MessageType.Console,
+               messageActionType: actionType
+               );
 
             return message;
         }

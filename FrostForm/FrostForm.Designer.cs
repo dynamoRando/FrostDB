@@ -57,6 +57,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listTables = new System.Windows.Forms.ListBox();
+            this.buttonManagePartialDbs = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -193,6 +194,7 @@
             this.buttonManageContract.TabIndex = 22;
             this.buttonManageContract.Text = "Manage Contract";
             this.buttonManageContract.UseVisualStyleBackColor = true;
+            this.buttonManageContract.Click += new System.EventHandler(this.buttonManageContract_Click);
             // 
             // labelColumnDataType
             // 
@@ -211,6 +213,7 @@
             this.buttonQuery.TabIndex = 27;
             this.buttonQuery.Text = "Query Window";
             this.buttonQuery.UseVisualStyleBackColor = true;
+            this.buttonQuery.Click += new System.EventHandler(this.buttonQuery_Click);
             // 
             // label2
             // 
@@ -232,6 +235,7 @@
             // 
             // buttonAddParticipant
             // 
+            this.buttonAddParticipant.Enabled = false;
             this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
             this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
@@ -363,11 +367,22 @@
             this.listTables.TabIndex = 8;
             this.listTables.SelectedIndexChanged += new System.EventHandler(this.listTables_SelectedIndexChanged);
             // 
+            // buttonManagePartialDbs
+            // 
+            this.buttonManagePartialDbs.Enabled = false;
+            this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 41);
+            this.buttonManagePartialDbs.Name = "buttonManagePartialDbs";
+            this.buttonManagePartialDbs.Size = new System.Drawing.Size(148, 23);
+            this.buttonManagePartialDbs.TabIndex = 10;
+            this.buttonManagePartialDbs.Text = "Manage Partial Dbs";
+            this.buttonManagePartialDbs.UseVisualStyleBackColor = true;
+            // 
             // formFrost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 421);
+            this.Controls.Add(this.buttonManagePartialDbs);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "formFrost";
@@ -412,6 +427,7 @@
         internal System.Windows.Forms.Button buttonManageContract;
         internal System.Windows.Forms.Button buttonQuery;
         internal System.Windows.Forms.ListBox listPendingParticipants;
+        private System.Windows.Forms.Button buttonManagePartialDbs;
     }
 }
 

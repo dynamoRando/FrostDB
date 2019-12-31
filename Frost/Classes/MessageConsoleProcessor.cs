@@ -38,22 +38,18 @@ namespace FrostDB
             // likely to send data back to the console so it can render on it's UI
             if (m.ReferenceMessageId.Value == Guid.Empty)
             {
-                if (m.Action.Contains("Process"))
+                switch (m.ActionType)
                 {
-                    // call process processor, or whatever
-                    HandleProcessMessage(m);
+                    case MessageActionType.Process:
+                        HandleProcessMessage(m);
+                        break;
+                    case MessageActionType.Database:
+                        HandleDatabaseMessage(m);
+                        break;
+                    case MessageActionType.Table:
+                        HandleTableMessage(m);
+                        break;
                 }
-
-                if (m.Action.Contains("Database"))
-                {
-                    HandleDatabaseMessage(m);
-                }
-
-                if (m.Action.Contains("Table"))
-                {
-                    HandleTableMessage(m);
-                }
-
                 //m.SendResponse();
             }
             else
@@ -157,12 +153,12 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            SendMessage(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type);
+            SendMessage(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
         }
 
-        private void SendMessage(Message message, string responseType, string action, Type type)
+        private void SendMessage(Message message, string responseType, string action, Type type, MessageActionType actionType)
         {
-            NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id));
+            NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id, actionType));
         }
 
         private void HandleProcessMessage(Message message)
@@ -189,13 +185,13 @@ namespace FrostDB
         private void HandleRemoveDatabase(Message message)
         {
             ProcessReference.RemoveDatabase(message.Content);
-            SendMessage(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType());
+            SendMessage(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleAddNewDatabase(Message message)
         {
             ProcessReference.AddDatabase(message.Content);
-            SendMessage(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType());
+            SendMessage(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleGetDatabaseTables(Message message)
@@ -219,7 +215,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            SendMessage(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type);
+            SendMessage(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, MessageActionType.Database);
         }
 
         private void HandleGetProcessId(Message message)
@@ -228,7 +224,7 @@ namespace FrostDB
             Type type = ProcessReference.Process.Id.GetType();
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
 
-            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type);
+            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, MessageActionType.Process);
         }
 
         private void HandleProcessGetDatabases(Message message)
@@ -240,10 +236,10 @@ namespace FrostDB
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 
-            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type);
+            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, MessageActionType.Process);
         }
 
-        private Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId)
+        private Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId, MessageActionType actionType)
         {
             Message response = new Message(
                 destination: destination,
@@ -251,7 +247,8 @@ namespace FrostDB
                 messageContent: content,
                 messageAction: action,
                 messageType: MessageType.Console,
-                contentType: contentType
+                contentType: contentType,
+                messageActionType: actionType
                 );
 
             response.ReferenceMessageId = referenceMessageId;

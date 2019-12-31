@@ -25,6 +25,7 @@ namespace FrostCommon
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         public string JsonData { get; set; }
         public string ContentType { get; set; }
+        public MessageActionType ActionType { get; set;}
         #endregion
 
         #region Events
@@ -59,6 +60,7 @@ namespace FrostCommon
             MessageType = (MessageType)serializationInfo.GetValue("MessageType", typeof(MessageType));
             ContentType = (string)serializationInfo.GetValue("MessageContentType", typeof(string));
             TwoGuidTuple = ((Guid?,Guid?))serializationInfo.GetValue("MessageTwoGuidTuple", typeof((Guid?, Guid?)));
+            ActionType = (MessageActionType)serializationInfo.GetValue("MessageActionType", typeof(MessageActionType));
 
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType) : this()
@@ -70,7 +72,17 @@ namespace FrostCommon
             Action = messageAction;
             MessageType = messageType;
         }
-        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, Type contentType) : this()
+        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, MessageActionType messageActionType) : this()
+        {
+            CreatedDateTime = DateTime.Now;
+            Destination = destination;
+            Origin = origin;
+            Content = messageContent;
+            Action = messageAction;
+            MessageType = messageType;
+            ActionType = messageActionType;
+        }
+        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, Type contentType, MessageActionType messageActionType) : this()
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
@@ -79,14 +91,28 @@ namespace FrostCommon
             Action = messageAction;
             MessageType = messageType;
             ContentType = contentType.ToString();
+            ActionType = messageActionType;
         }
-        public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId, MessageType messageType)
+        public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId, MessageType messageType): this()
         {
             CreatedDateTime = DateTime.Now;
             Destination = destination;
             Origin = origin;
             _id = Guid.NewGuid();
             Content = messageContent;
+            Action = messageAction;
+            ReferenceMessageId = referenceMessageId;
+            MessageType = messageType;
+        }
+
+        public Message(Location destination, Location origin, string messageContent, string messageAction, Guid? referenceMessageId, MessageType messageType, MessageActionType messageActionType)
+        {
+            CreatedDateTime = DateTime.Now;
+            Destination = destination;
+            Origin = origin;
+            _id = Guid.NewGuid();
+            Content = messageContent;
+            ActionType = messageActionType;
             Action = messageAction;
             ReferenceMessageId = referenceMessageId;
             MessageType = messageType;
@@ -108,6 +134,7 @@ namespace FrostCommon
             info.AddValue("MessageType", MessageType, typeof(MessageType));
             info.AddValue("MessageContentType", ContentType, typeof(string));
             info.AddValue("MessageTwoGuidTuple", TwoGuidTuple, typeof((Guid?, Guid?)));
+            info.AddValue("MessageActionType", ActionType, typeof(MessageActionType));
         }
         #endregion
 
