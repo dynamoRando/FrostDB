@@ -37,19 +37,18 @@ namespace FrostDbClient
         public void Process(IMessage message)
         {
             var m = (message as Message);
-            if (m.Action.Contains("Process"))
-            {
-                HandleProcessMessage(m);
-            }
 
-            if (m.Action.Contains("Database"))
+            switch (m.ActionType)
             {
-                HandleDatabaseMessage(m);
-            }
-
-            if (m.Action.Contains("Table"))
-            {
-                HandleTableMessage(m);
+                case MessageActionType.Process:
+                    HandleProcessMessage(m);
+                    break;
+                case MessageActionType.Database:
+                    HandleDatabaseMessage(m);
+                    break;
+                case MessageActionType.Table:
+                    HandleTableMessage(m);
+                    break;
             }
 
             HandleInfoQueue(m.ReferenceMessageId);
