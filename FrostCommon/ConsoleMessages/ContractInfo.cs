@@ -13,13 +13,13 @@ namespace FrostCommon.ConsoleMessages
         /// <summary>
         /// TableName, Permission Owner, Permissions
         /// </summary>
-        public List<(string, List<string>, List<string>)> SchemaData { get; set; }
+        public List<(string, List<(string, List<string>)>)> SchemaData { get; set; }
 
 
         public ContractInfo()
         {
             TableNames = new List<string>();
-            SchemaData = new List<(string, List<string>, List<string>)>();
+            SchemaData = new List<(string, List<(string, List<string>)>)>();
         }
     }
 }
