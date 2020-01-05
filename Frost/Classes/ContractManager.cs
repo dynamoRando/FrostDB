@@ -35,6 +35,9 @@ namespace FrostDB
         #region Public Methods
         public void UpdateContractPermissions(ContractInfo info)
         {
+            /*
+             * Need to update contract permission, and then raise event to save data back to the database
+             */
             throw new NotImplementedException();
         }
         public void AddPendingContract(Contract contract)
