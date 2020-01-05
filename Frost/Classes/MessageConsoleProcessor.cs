@@ -112,7 +112,17 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Get_Contract_Information:
                     HandleGetContractInformation(message);
                     break;
+                case MessageConsoleAction.Database.Update_Contract_Information:
+                    HandleUpdateContractInformation(message);
+                    break;
             }
+        }
+
+        private void HandleUpdateContractInformation(Message message)
+        {
+            var info = JsonConvert.DeserializeObject<ContractInfo>(message.Content);
+            ProcessReference.UpdateContractInformation(info);
+            SendMessage(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
         }
 
         private void HandleGetContractInformation(Message message)

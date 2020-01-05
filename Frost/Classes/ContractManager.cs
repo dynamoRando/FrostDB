@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using FrostDB.EventArgs;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -32,6 +33,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void UpdateContractPermissions(ContractInfo info)
+        {
+            throw new NotImplementedException();
+        }
         public void AddPendingContract(Contract contract)
         {
             _contracts.Add(contract);

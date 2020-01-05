@@ -113,6 +113,10 @@ namespace FrostDB
         {
             return Tables.Where(t => t.Id == tableId).First().Name;
         }
+        public Guid? GetTableId(string tableName)
+        {
+            return Tables.Where(t => t.Name == tableName).First().Id;
+        }
         public bool HasTable(Guid? tableId)
         {
             return Tables.Any(t => t.Id == tableId);

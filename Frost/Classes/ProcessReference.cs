@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using FrostDB.Interface;
+using System.Linq;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -25,10 +27,29 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static void UpdateContractInformation(ContractInfo info)
+        {
+            ProcessReference.Process.ContractManager.UpdateContractPermissions(info);
+            throw new NotImplementedException();
+        }
+        public static string GetDatabaseName(Guid? databaseId)
+        {
+            return ProcessReference.Process.Databases.Where(d => d.Id == databaseId).First().Name;
+        }
+        public static Guid? GetDatabaseId(string databaseName)
+        {
+            return ProcessReference.Process.Databases.Where(d => d.Name == databaseName).First().Id;
+        }
         public static string GetTableName(string databaseName, Guid? tableId)
         {
             return ProcessReference.GetDatabase(databaseName).GetTableName(tableId);
         }
+
+        public static Guid? GetTableId(string databaseName, string tableName)
+        {
+            return ProcessReference.GetDatabase(databaseName).GetTableId(tableName);
+        }
+
         public static void RemoveDatabase(string databaseName)
         {
             ProcessReference.Process.RemoveDatabase(databaseName);
