@@ -37,6 +37,9 @@ namespace FrostCommon
 
             public const string Get_Contract_Information = "Get_Contract_Info";
             public const string Get_Contract_Information_Response = "Get_Contract_Info_Response";
+
+            public const string Update_Contract_Information = "Update_Contract_Info";
+            public const string Update_Contract_Information_Response = "Update_Contract_Info_Response";
         }
 
         public static class Table

@@ -106,7 +106,18 @@ namespace FrostDbClient
 
         private void HandleContractInfo(Message message)
         {
-            throw new NotImplementedException();
+            ContractInfo info = JsonConvert.DeserializeObject<ContractInfo>(message.Content);
+
+            if (_info.ContractInfos.ContainsKey(info.DatabaseName))
+            {
+                ContractInfo removed = null;
+                _info.ContractInfos.TryRemove(info.DatabaseName, out removed);
+            }
+
+            if (_info.ContractInfos.TryAdd(info.DatabaseName, info))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotDatabaseContractInfo, null);
+            }
         }
 
         private void HandleProcessMessage(Message message)

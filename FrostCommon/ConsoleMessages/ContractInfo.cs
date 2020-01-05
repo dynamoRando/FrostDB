@@ -10,6 +10,7 @@ namespace FrostCommon.ConsoleMessages
         public Guid? ContractId { get; set; }
         public Guid? ContractVersion { get; set; }
         public List<string> TableNames { get; set; }
+        public string ContractDescription { get; set; }
         /// <summary>
         /// TableName, Permission Owner, Permissions
         /// </summary>

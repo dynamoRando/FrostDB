@@ -149,6 +149,7 @@
             this.buttonSaveContract.TabIndex = 10;
             this.buttonSaveContract.Text = "Save Contract";
             this.buttonSaveContract.UseVisualStyleBackColor = true;
+            this.buttonSaveContract.Click += new System.EventHandler(this.buttonSaveContract_Click);
             // 
             // textboxParticipantDataOverviewRemarks
             // 
