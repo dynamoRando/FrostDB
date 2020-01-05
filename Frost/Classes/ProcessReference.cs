@@ -25,6 +25,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static string GetTableName(string databaseName, Guid? tableId)
+        {
+            return ProcessReference.GetDatabase(databaseName).GetTableName(tableId);
+        }
         public static void RemoveDatabase(string databaseName)
         {
             ProcessReference.Process.RemoveDatabase(databaseName);

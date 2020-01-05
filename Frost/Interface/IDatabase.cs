@@ -12,6 +12,7 @@ namespace FrostDB.Interface
         string Name { get; }
         List<Table> Tables { get; }
         Table GetTable(string tableName);
+        string GetTableName(Guid? tableId);
         bool HasTable(string tableName);
         bool HasTable(Guid? tableName);
         void AddTable(Table table);

@@ -109,6 +109,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public string GetTableName(Guid? tableId)
+        {
+            return Tables.Where(t => t.Id == tableId).First().Name;
+        }
         public bool HasTable(Guid? tableId)
         {
             return Tables.Any(t => t.Id == tableId);

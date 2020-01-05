@@ -125,6 +125,27 @@ namespace FrostDB
             info.DatabaseName = db.Name;
             db.Tables.ForEach(t => info.TableNames.Add(t.Name));
 
+            foreach(var p in db.Contract.ContractPermissions)
+            {
+                (string, List<(string, List<string>)>) item;
+
+                item.Item1 = ProcessReference.GetTableName(db.Name, p.TableId);
+                item.Item2 = new List<(string, List<string>)>();
+
+                (string, List<string>) permission;
+
+                permission.Item1 = p.Cooperator.ToString();
+                permission.Item2 = new List<string>();
+
+                foreach(var k in p.Permissions)
+                {
+                    permission.Item2.Add(k.ToString());
+                }
+
+                item.Item2.Add(permission);
+
+                info.SchemaData.Add(item);
+            }
 
             Type type = info.GetType();
             string messageContent = string.Empty;
