@@ -5,6 +5,7 @@ using System.Text;
 using System.Linq;
 using FrostDB.EventArgs;
 using FrostCommon.ConsoleMessages;
+using FrostDB.Enum;
 
 namespace FrostDB
 {
@@ -35,10 +36,57 @@ namespace FrostDB
         #region Public Methods
         public void UpdateContractPermissions(ContractInfo info)
         {
-            /*
-             * Need to update contract permission, and then raise event to save data back to the database
-             */
-            throw new NotImplementedException();
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            db.Contract.ContractPermissions.Clear();
+            
+            foreach(var item in info.SchemaData)
+            {
+                var tableName = item.Item1;
+
+                Cooperator cooperator;
+
+                if (item.Item2 == "Process")
+                {
+                    cooperator = Cooperator.Process;
+                }
+                else
+                {
+                    cooperator = Cooperator.Participant;
+                }
+                
+                List<TablePermission> permissions = new List<TablePermission>();
+                
+                foreach(var k in item.Item3)
+                {
+                    switch (k)
+                    {
+                        case "None":
+                            permissions.Add(TablePermission.None);
+                            break;
+                        case "All":
+                            permissions.Add(TablePermission.All);
+                            break;
+                        case "Read":
+                            permissions.Add(TablePermission.Read);
+                            break;
+                        case "Insert":
+                            permissions.Add(TablePermission.Insert);
+                            break;
+                        case "Update":
+                            permissions.Add(TablePermission.Update);
+                            break;
+                        case "Delete":
+                            permissions.Add(TablePermission.Delete);
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown permission");
+                    }
+                }
+
+                db.Contract.ContractPermissions.Add(new TableContractPermission(ProcessReference.GetTableId(db.Name, tableName), cooperator, permissions));
+            }
+
+            EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
         }
         public void AddPendingContract(Contract contract)
         {
@@ -61,6 +109,11 @@ namespace FrostDB
         private PendingContractAddedEventArgs CreateNewPendingContractEventArgs(Contract contract)
         {
             return new PendingContractAddedEventArgs { Contract = contract };
+        }
+
+        private ContractUpdatedEventArgs CreatewNewContractUpdatedEventArgs(Database database)
+        {
+            return new ContractUpdatedEventArgs { Database = database };
         }
         #endregion
     }

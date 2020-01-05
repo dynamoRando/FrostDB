@@ -43,10 +43,16 @@ namespace FrostDB
             RegisterMessageSentEvents();
             RegisterColumnAddedEvents();
             RegisterColumnRemovedEvents();
+            RegisterContractUpdatedEvents();
         }
         #endregion
 
         #region Private Methods
+
+        private void RegisterContractUpdatedEvents()
+        {
+            EventManager.StartListening(EventName.Contract.Contract_Updated, new Action<IEventArgs>(HandleContractUpdatedEvent));
+        }
 
         private void RegisterColumnRemovedEvents()
         {
@@ -113,6 +119,18 @@ namespace FrostDB
             {
                 var args = (MessageSentEventArgs)e;
                 Console.WriteLine($"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}");
+            }
+        }
+
+        private void HandleContractUpdatedEvent(IEventArgs e)
+        {
+            if (e is ContractUpdatedEventArgs)
+            {
+                var args = (ContractUpdatedEventArgs)e;
+                if (args.Database is TDatabase)
+                {
+                    _dataManager.SaveToDisk((TDatabase)args.Database);
+                }
             }
         }
 
