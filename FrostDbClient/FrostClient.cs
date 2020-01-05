@@ -83,7 +83,7 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
-        public void UpdateContractInformation(string contractDescription, List<(string, List<(string, List<string>)>)> schemaData)
+        public void UpdateContractInformation(string contractDescription, List<(string, string, List<string>)> schemaData)
         {
             ContractInfo info = new ContractInfo();
 

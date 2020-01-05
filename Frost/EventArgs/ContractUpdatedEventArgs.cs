@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FrostDB.Interface
+using FrostDB.Interface;
 
 namespace FrostDB.EventArgs
 {

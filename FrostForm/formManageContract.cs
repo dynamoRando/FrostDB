@@ -32,7 +32,7 @@ namespace FrostForm
         private void buttonSaveContract_Click(object sender, EventArgs e)
         {
             var contractDescription = textboxDescription.Text;
-            var schemaData = new List<(string, List<(string, List<string>)>)>();
+            var schemaData = new List<(string, string, List<string>)>();
 
             _app.UpdateContractInformation(contractDescription, schemaData);
         }
@@ -49,6 +49,22 @@ namespace FrostForm
                 foreach(var t in contractInfo.TableNames)
                 {
                     textboxSchema.Text += t + ", ";
+                }
+            });
+
+            listboxAuthorTables.InvokeIfRequired(() => 
+            {
+                foreach(var t in contractInfo.TableNames)
+                {
+                    listboxAuthorTables.Items.Add(t);
+                }
+            });
+
+            listboxParticipantTables.InvokeIfRequired(() => 
+            { 
+                foreach(var t in contractInfo.TableNames)
+                {
+                    listboxParticipantTables.Items.Add(t);
                 }
             });
 

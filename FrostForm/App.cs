@@ -91,7 +91,7 @@ namespace FrostForm
             return info;
         }
 
-        public void UpdateContractInformation(string contractDescription, List<(string, List<(string, List<string>)>)> schemaData)
+        public void UpdateContractInformation(string contractDescription, List<(string, string, List<string>)> schemaData)
         {
             _client.UpdateContractInformation(contractDescription, schemaData);
         }
