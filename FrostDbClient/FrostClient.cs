@@ -83,12 +83,13 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
-        public void UpdateContractInformation(string contractDescription, List<(string, string, List<string>)> schemaData)
+        public void UpdateContractInformation(string databaseName, string contractDescription, List<(string, string, List<string>)> schemaData)
         {
             ContractInfo info = new ContractInfo();
 
             info.ContractDescription = contractDescription;
             info.SchemaData = schemaData;
+            info.DatabaseName = databaseName;
 
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Update_Contract_Information, MessageActionType.Database));
         }

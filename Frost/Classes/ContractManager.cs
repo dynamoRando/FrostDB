@@ -84,6 +84,8 @@ namespace FrostDB
                 }
 
                 db.Contract.ContractPermissions.Add(new TableContractPermission(ProcessReference.GetTableId(db.Name, tableName), cooperator, permissions));
+                db.Contract.ContractDescription = info.ContractDescription;
+
             }
 
             EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));

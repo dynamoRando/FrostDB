@@ -30,7 +30,6 @@ namespace FrostDB
         public static void UpdateContractInformation(ContractInfo info)
         {
             ProcessReference.Process.ContractManager.UpdateContractPermissions(info);
-            throw new NotImplementedException();
         }
         public static string GetDatabaseName(Guid? databaseId)
         {

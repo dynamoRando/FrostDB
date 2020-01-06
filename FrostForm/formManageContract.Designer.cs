@@ -157,6 +157,7 @@
             this.buttonSaveParticipantRights.TabIndex = 14;
             this.buttonSaveParticipantRights.Text = "Save";
             this.buttonSaveParticipantRights.UseVisualStyleBackColor = true;
+            this.buttonSaveParticipantRights.Click += new System.EventHandler(this.buttonSaveParticipantRights_Click);
             // 
             // checkParticipantRead
             // 
@@ -206,6 +207,7 @@
             this.buttonSaveAuthorRights.TabIndex = 20;
             this.buttonSaveAuthorRights.Text = "Save";
             this.buttonSaveAuthorRights.UseVisualStyleBackColor = true;
+            this.buttonSaveAuthorRights.Click += new System.EventHandler(this.buttonSaveAuthorRights_Click);
             // 
             // checkAuthorRead
             // 
@@ -255,6 +257,7 @@
             this.listboxParticipantTables.Name = "listboxParticipantTables";
             this.listboxParticipantTables.Size = new System.Drawing.Size(314, 169);
             this.listboxParticipantTables.TabIndex = 25;
+            this.listboxParticipantTables.SelectedIndexChanged += new System.EventHandler(this.listboxParticipantTables_SelectedIndexChanged);
             // 
             // listboxAuthorTables
             // 
@@ -264,6 +267,7 @@
             this.listboxAuthorTables.Name = "listboxAuthorTables";
             this.listboxAuthorTables.Size = new System.Drawing.Size(314, 199);
             this.listboxAuthorTables.TabIndex = 26;
+            this.listboxAuthorTables.SelectedIndexChanged += new System.EventHandler(this.listboxAuthorTables_SelectedIndexChanged);
             // 
             // formManageContract
             // 
