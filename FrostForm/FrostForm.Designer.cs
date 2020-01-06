@@ -235,7 +235,6 @@
             // 
             // buttonAddParticipant
             // 
-            this.buttonAddParticipant.Enabled = false;
             this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
             this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
@@ -369,7 +368,6 @@
             // 
             // buttonManagePartialDbs
             // 
-            this.buttonManagePartialDbs.Enabled = false;
             this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 41);
             this.buttonManagePartialDbs.Name = "buttonManagePartialDbs";
             this.buttonManagePartialDbs.Size = new System.Drawing.Size(148, 23);
