@@ -109,8 +109,54 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Remove_Table_From_Database:
                     HandleRemoveTable(message);
                     break;
+                case MessageConsoleAction.Database.Get_Contract_Information:
+                    HandleGetContractInformation(message);
+                    break;
+                case MessageConsoleAction.Database.Update_Contract_Information:
+                    HandleUpdateContractInformation(message);
+                    break;
             }
         }
+
+        private void HandleUpdateContractInformation(Message message)
+        {
+            var info = JsonConvert.DeserializeObject<ContractInfo>(message.Content);
+            ProcessReference.UpdateContractInformation(info);
+            SendMessage(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
+        }
+
+        private void HandleGetContractInformation(Message message)
+        {
+            var databaseName = message.Content;
+            var db = ProcessReference.GetDatabase(databaseName);
+
+            var info = new ContractInfo();
+            info.ContractDescription = db.Contract.ContractDescription;
+            info.DatabaseName = db.Name;
+            db.Tables.ForEach(t => info.TableNames.Add(t.Name));
+
+            foreach(var p in db.Contract.ContractPermissions)
+            {
+                (string, string, List<string>) item;
+                item.Item1 = ProcessReference.GetTableName(databaseName, p.TableId);
+                item.Item2 = p.Cooperator.ToString();
+                item.Item3 = new List<string>();
+
+                foreach(var k in p.Permissions)
+                {
+                    item.Item3.Add(k.ToString());
+                }
+
+                info.SchemaData.Add(item);
+            }
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            SendMessage(message, messageContent, MessageConsoleAction.Database.Get_Contract_Information_Response, type, MessageActionType.Database);
+        }
+
         private void HandleRemoveTable(Message message)
         {
             var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);

@@ -38,6 +38,7 @@ namespace FrostDB
         {
             ParticipantTables = new List<Guid?>();
             ProcessTables = new List<Guid?>();
+            ContractPermissions = new List<TableContractPermission>();
         }
 
         public Contract(Database database)
@@ -55,6 +56,11 @@ namespace FrostDB
             if (ContractVersion is null)
             {
                 ContractVersion = Guid.NewGuid();
+            }
+
+            if (ContractPermissions is null)
+            {
+                ContractPermissions = new List<TableContractPermission>();
             }
 
             ProcessId = ProcessReference.Process.Id;

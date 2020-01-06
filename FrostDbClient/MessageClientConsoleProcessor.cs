@@ -98,8 +98,28 @@ namespace FrostDbClient
                 case MessageConsoleAction.Database.Get_Database_Info_Response:
                     HandleDbInfo(message);
                     break;
+                case MessageConsoleAction.Database.Get_Contract_Information_Response:
+                    HandleContractInfo(message);
+                    break;
             }
         }
+
+        private void HandleContractInfo(Message message)
+        {
+            ContractInfo info = JsonConvert.DeserializeObject<ContractInfo>(message.Content);
+
+            if (_info.ContractInfos.ContainsKey(info.DatabaseName))
+            {
+                ContractInfo removed = null;
+                _info.ContractInfos.TryRemove(info.DatabaseName, out removed);
+            }
+
+            if (_info.ContractInfos.TryAdd(info.DatabaseName, info))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotDatabaseContractInfo, null);
+            }
+        }
+
         private void HandleProcessMessage(Message message)
         {
             switch (message.Action) 

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FrostForm
 {
@@ -62,18 +64,38 @@ namespace FrostForm
         {
             _client.AddTableToDb(databaseName, tableName, columns);
         }
+
         public void RemoveTableFromDb(string databaseName, string tableName)
         {
             _client.RemoveTableFromDb(databaseName, tableName);
         }
+
         public void AddColumnToTable(string databaseName, string tableName, string columnName, string dataType)
         {
             _client.AddColumnToTable(databaseName, tableName, columnName, dataType);
         }
+
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
         {
             _client.RemoveColumnFromTable(databaseName, tableName, columnName);
         }
+
+        public void GetContractInformation(string databaseName)
+        {
+            _client.GetContractInformation(databaseName);
+        }
+
+        public async Task<ContractInfo> GetContractInformationAsync(string databaseName)
+        {
+            var info = await _client.GetContractInformationAsync(databaseName);
+            return info;
+        }
+
+        public void UpdateContractInformation(string databaseName, string contractDescription, List<(string, string, List<string>)> schemaData)
+        {
+            _client.UpdateContractInformation(databaseName, contractDescription, schemaData);
+        }
+
         #endregion
 
         #region Private Methods

@@ -19,6 +19,8 @@ namespace FrostDbClient
         public List<string> DatabaseNames { get; set; }
         public ConcurrentDictionary<string,DatabaseInfo> DatabaseInfos { get; set; }
         public ConcurrentDictionary<string, TableInfo> TableInfos { get; set; }
+        public ConcurrentDictionary<string, ContractInfo> ContractInfos { get; set; }
+        public ContractInfo ContractInfo { get; set; }
         #endregion
 
         #region Protected Methods
@@ -35,6 +37,7 @@ namespace FrostDbClient
             DatabaseNames = new List<string>();
             DatabaseInfos = new ConcurrentDictionary<string, DatabaseInfo>();
             TableInfos = new ConcurrentDictionary<string, TableInfo>();
+            ContractInfos = new ConcurrentDictionary<string, ContractInfo>();
         }
         #endregion
 

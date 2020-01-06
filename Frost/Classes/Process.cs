@@ -22,6 +22,7 @@ namespace FrostDB
         public static IProcessConfiguration Configuration { get; private set; }
         public List<IDatabase> Databases => DatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
+        public ContractManager ContractManager => (ContractManager)_contractManager;
         #endregion
 
         #region Events

@@ -70,7 +70,6 @@ namespace FrostDbClient
         public void GetTables(Guid? databaseId)
         {
             SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables, MessageActionType.Database));
-            throw new NotImplementedException();
         }
 
         public void GetColumnInfo(string databaseName, string tableName, string columnName)
@@ -82,6 +81,41 @@ namespace FrostDbClient
                 
             }
             throw new NotImplementedException();
+        }
+
+        public void UpdateContractInformation(string databaseName, string contractDescription, List<(string, string, List<string>)> schemaData)
+        {
+            ContractInfo info = new ContractInfo();
+
+            info.ContractDescription = contractDescription;
+            info.SchemaData = schemaData;
+            info.DatabaseName = databaseName;
+
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Update_Contract_Information, MessageActionType.Database));
+        }
+
+        public void GetContractInformation(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));  
+        }
+
+        public async Task<ContractInfo> GetContractInformationAsync(string databaseName)
+        {
+            var result = new ContractInfo();
+            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                if (_info.ContractInfos.ContainsKey(databaseName))
+                {
+                    ContractInfo removed = null;
+                    _info.ContractInfos.TryRemove(databaseName, out removed);
+                    result = removed;
+                }
+            }
+
+            return result;
         }
 
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)

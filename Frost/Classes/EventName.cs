@@ -12,6 +12,7 @@
         {
             public const string Pending_Added = "Pending_Contract_Added";
             public const string Accepted = "Contract_Accepted";
+            public const string Contract_Updated = "Contract_Updated";
         }
         public class Database
         {
