@@ -123,10 +123,12 @@ namespace FrostDB
 
         private void HandleAddParticipant(Message message)
         {
-            // we need to reach out to the instance and send a copy of the contract for the database to the participant,
-            // after which we mark in the database the the participant is pending accepting contract
+            ParticipantInfo info = new ParticipantInfo();
+            info = JsonConvert.DeserializeObject<ParticipantInfo>(message.Content);
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            var participant = new Participant(new Location(Guid.NewGuid(), info.IpAddress, Convert.ToInt32(info.PortNumber), string.Empty));
+            db.AddPendingParticipant(participant);
             SendMessage(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
-            throw new NotImplementedException();
         }
 
         private void HandleUpdateContractInformation(Message message)
