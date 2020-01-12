@@ -10,9 +10,19 @@ namespace FrostForm
 {
     public partial class formAddParticipant : Form
     {
-        public formAddParticipant()
+        App _app;
+        string _databaseName;
+
+        public formAddParticipant(App app, string databaseName)
         {
             InitializeComponent();
+            _app = app;
+            _databaseName = databaseName;
+        }
+
+        private void formAddParticipant_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

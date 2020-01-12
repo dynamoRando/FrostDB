@@ -241,6 +241,7 @@
             this.buttonAddParticipant.TabIndex = 25;
             this.buttonAddParticipant.Text = "+ Participant";
             this.buttonAddParticipant.UseVisualStyleBackColor = true;
+            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
             // 
             // listPendingParticipants
             // 
@@ -374,6 +375,7 @@
             this.buttonManagePartialDbs.TabIndex = 10;
             this.buttonManagePartialDbs.Text = "Manage Partial Dbs";
             this.buttonManagePartialDbs.UseVisualStyleBackColor = true;
+            this.buttonManagePartialDbs.Click += new System.EventHandler(this.buttonManagePartialDbs_Click);
             // 
             // formFrost
             // 

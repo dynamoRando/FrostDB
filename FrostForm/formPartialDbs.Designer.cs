@@ -1,6 +1,6 @@
 ﻿namespace FrostForm
 {
-    partial class formAddParticipant
+    partial class formPartialDbs
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // formAddParticipant
+            // formPartialDbs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "formAddParticipant";
-            this.Text = "formAddParticipant";
-            this.Load += new System.EventHandler(this.formAddParticipant_Load);
+            this.Name = "formPartialDbs";
+            this.Text = "formPartialDbs";
+            this.Load += new System.EventHandler(this.formPartialDbs_Load);
             this.ResumeLayout(false);
 
         }

@@ -163,7 +163,22 @@ namespace FrostForm
 
         private void buttonQuery_Click(object sender, EventArgs e)
         {
-            var form = new FormQueryWindow();
+            var form = new FormQueryWindow(_app);
+            form.Show();
+        }
+
+        private void buttonAddParticipant_Click(object sender, EventArgs e)
+        {
+            if (IsDbSelected())
+            {
+                var form = new formAddParticipant(_app, GetSelectedDb());
+                form.Show();
+            }
+        }
+
+        private void buttonManagePartialDbs_Click(object sender, EventArgs e)
+        {
+            var form = new formPartialDbs(_app);
             form.Show();
         }
     }
