@@ -115,7 +115,18 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Update_Contract_Information:
                     HandleUpdateContractInformation(message);
                     break;
+                case MessageConsoleAction.Database.Add_Participant:
+                    HandleAddParticipant(message);
+                    break;
             }
+        }
+
+        private void HandleAddParticipant(Message message)
+        {
+            // we need to reach out to the instance and send a copy of the contract for the database to the participant,
+            // after which we mark in the database the the participant is pending accepting contract
+            SendMessage(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
+            throw new NotImplementedException();
         }
 
         private void HandleUpdateContractInformation(Message message)

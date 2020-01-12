@@ -83,6 +83,16 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
+        public void AddParticipantToDb(string ipAddress, string portNumber, string databaseName)
+        {
+            ParticipantInfo info = new ParticipantInfo();
+            info.IpAddress = ipAddress;
+            info.PortNumber = Convert.ToInt32(portNumber);
+            info.DatabaseName = databaseName;
+
+            SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Add_Participant, MessageActionType.Database));
+        }
+
         public void UpdateContractInformation(string databaseName, string contractDescription, List<(string, string, List<string>)> schemaData)
         {
             ContractInfo info = new ContractInfo();

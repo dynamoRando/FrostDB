@@ -16,7 +16,7 @@ namespace FrostForm
         FrostClient _client;
         formFrost _form;
         formNewDb _formNewDb;
-        
+
         string _currentSelectedDbName = string.Empty;
         string _currentSelectedTableName = string.Empty;
         string _currentSelectedColumnName = string.Empty;
@@ -36,7 +36,7 @@ namespace FrostForm
         #endregion
 
         #region Constructors
-        public App(formFrost form) 
+        public App(formFrost form)
         {
             _form = form;
             ListenForFormEvents();
@@ -91,6 +91,11 @@ namespace FrostForm
             return info;
         }
 
+        public void AddParticipantToDb(string ipAddress, string portNumber, string databaseName)
+        {
+            _client.AddParticipantToDb(ipAddress, portNumber, databaseName);
+        }
+
         public void UpdateContractInformation(string databaseName, string contractDescription, List<(string, string, List<string>)> schemaData)
         {
             _client.UpdateContractInformation(databaseName, contractDescription, schemaData);
@@ -110,11 +115,12 @@ namespace FrostForm
         {
             List<string> dbs = _client.Info.DatabaseNames;
 
-            _form.listDatabases.InvokeIfRequired(() => {
+            _form.listDatabases.InvokeIfRequired(() =>
+            {
                 _form.listDatabases.Items.Clear();
                 dbs.ForEach(d => _form.listDatabases.Items.Add(d));
             });
-            
+
         }
 
         private void ShowTableInfo(IEventArgs args)
@@ -122,7 +128,8 @@ namespace FrostForm
             TableInfo item;
             if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out item))
             {
-                _form.listColumns.InvokeIfRequired(() => {
+                _form.listColumns.InvokeIfRequired(() =>
+                {
                     _form.listColumns.Items.Clear();
                     item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
                 });
@@ -133,11 +140,12 @@ namespace FrostForm
         {
             string currentDb = string.Empty;
 
-            _form.listDatabases.InvokeIfRequired(() => {
+            _form.listDatabases.InvokeIfRequired(() =>
+            {
                 currentDb = _form.listDatabases.SelectedItem.ToString();
                 _currentSelectedDbName = currentDb;
             });
-           
+
             if (!string.IsNullOrEmpty(currentDb))
             {
                 DatabaseInfo item;
@@ -145,12 +153,14 @@ namespace FrostForm
                 {
                     _form.labelDatabaseName.InvokeIfRequired(() => { _form.labelDatabaseName.Text = item.Name; });
 
-                    _form.labelDatabaseId.InvokeIfRequired(() => {
+                    _form.labelDatabaseId.InvokeIfRequired(() =>
+                    {
                         _form.labelDatabaseId.Text = item.Id.ToString();
                         _currentDbId = item.Id;
                     });
 
-                    _form.listTables.InvokeIfRequired(() => {
+                    _form.listTables.InvokeIfRequired(() =>
+                    {
                         _form.listTables.Items.Clear();
                         item.Tables.ForEach(t => _form.listTables.Items.Add(t.Item2));
                     });
@@ -158,11 +168,13 @@ namespace FrostForm
                     _form.listColumns.InvokeIfRequired(() => { _form.listColumns.Items.Clear(); });
 
 
-                    _form.labelColumnName.InvokeIfRequired(() => {
+                    _form.labelColumnName.InvokeIfRequired(() =>
+                    {
                         _form.labelColumnName.Text = string.Empty;
                     });
 
-                    _form.labelColumnDataType.InvokeIfRequired(() => {
+                    _form.labelColumnDataType.InvokeIfRequired(() =>
+                    {
                         _form.labelColumnDataType.Text = string.Empty;
                     });
                 }
@@ -190,11 +202,13 @@ namespace FrostForm
                     {
                         var column = info.Columns.Where(c => c.Item1 == _currentSelectedColumnName).First();
 
-                        _form.labelColumnName.InvokeIfRequired(() => {
+                        _form.labelColumnName.InvokeIfRequired(() =>
+                        {
                             _form.labelColumnName.Text = _currentSelectedColumnName;
                         });
 
-                        _form.labelColumnDataType.InvokeIfRequired(() => {
+                        _form.labelColumnDataType.InvokeIfRequired(() =>
+                        {
                             _form.labelColumnDataType.Text = column.Item2.ToString();
                         });
                     }

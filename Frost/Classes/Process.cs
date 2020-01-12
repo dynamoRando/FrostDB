@@ -15,7 +15,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
-        
+
         public DataManager<IDatabase> DatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
@@ -37,6 +37,29 @@ namespace FrostDB
                new DatabaseFileMapper(),
                Configuration.DatabaseFolder,
                Configuration.DatabaseExtension);
+
+            _contractManager = new ContractManager(this);
+            _networkManager = new Network();
+
+            ProcessReference.Process = this;
+            NetworkReference.Network = _networkManager;
+        }
+        public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber) 
+        {
+            var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+            var configurator = new ProcessConfigurator(info);
+            var config = configurator.GetConfiguration();
+
+            config.Address = instanceIpAddress;
+            config.DataServerPort = dataPortNumber;
+            config.ConsoleServerPort = consolePortNumber;
+            configurator.SaveConfiguration(config);
+            Configuration = config;
+
+            DatabaseManager = new DatabaseManager(
+              new DatabaseFileMapper(),
+              Configuration.DatabaseFolder,
+              Configuration.DatabaseExtension);
 
             _contractManager = new ContractManager(this);
             _networkManager = new Network();

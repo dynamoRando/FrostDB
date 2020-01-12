@@ -8,13 +8,19 @@ using System.Windows.Forms;
 
 namespace FrostForm
 {
-    public partial class FormQueryWindow : Form
+    public partial class formPartialDbs : Form
     {
         App _app;
-        public FormQueryWindow(App app)
+
+        public formPartialDbs(App app)
         {
-            _app = app;
             InitializeComponent();
+            _app = app;
+        }
+
+        private void formPartialDbs_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -30,3 +30,5 @@
 /FrostBlaze/bin/Debug/netstandard2.0
 /FrostBlaze/bin/Debug/netstandard2.1
 /FrostBlazeServer/bin/Debug/netcoreapp3.1
+/FrostBlazeServer/obj/Debug/netcoreapp3.1
+/FrostBlazeServer/obj

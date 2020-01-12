@@ -235,13 +235,13 @@
             // 
             // buttonAddParticipant
             // 
-            this.buttonAddParticipant.Enabled = false;
             this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
             this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
             this.buttonAddParticipant.TabIndex = 25;
             this.buttonAddParticipant.Text = "+ Participant";
             this.buttonAddParticipant.UseVisualStyleBackColor = true;
+            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
             // 
             // listPendingParticipants
             // 
@@ -369,13 +369,13 @@
             // 
             // buttonManagePartialDbs
             // 
-            this.buttonManagePartialDbs.Enabled = false;
             this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 41);
             this.buttonManagePartialDbs.Name = "buttonManagePartialDbs";
             this.buttonManagePartialDbs.Size = new System.Drawing.Size(148, 23);
             this.buttonManagePartialDbs.TabIndex = 10;
             this.buttonManagePartialDbs.Text = "Manage Partial Dbs";
             this.buttonManagePartialDbs.UseVisualStyleBackColor = true;
+            this.buttonManagePartialDbs.Click += new System.EventHandler(this.buttonManagePartialDbs_Click);
             // 
             // formFrost
             // 
