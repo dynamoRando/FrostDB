@@ -14,9 +14,6 @@
     <Compile Update="formNewDb.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="formNewParticipant.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="formNewTable.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -22,7 +22,22 @@ namespace FrostForm
 
         private void formAddParticipant_Load(object sender, EventArgs e)
         {
+            labelDatabaseName.Text = _databaseName;
+        }
 
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonAddParticipant_Click(object sender, EventArgs e)
+        {
+            var ipAddress = textboxIPAddress.Text;
+            var portNumber = textboxPortNumber.Text;
+            if (!string.IsNullOrEmpty(ipAddress) && !string.IsNullOrEmpty(portNumber))
+            {
+                _app.AddParticipantToDb(ipAddress, portNumber, _databaseName);
+            }
         }
     }
 }

@@ -40,6 +40,12 @@ namespace FrostCommon
 
             public const string Update_Contract_Information = "Update_Contract_Info";
             public const string Update_Contract_Information_Response = "Update_Contract_Info_Response";
+
+            public const string Add_Participant = "Add_Participant";
+            public const string Add_Participant_Response = "Add_Participant_Response";
+
+            public const string Remove_Participant = "Remove_Participant";
+            public const string Remove_Participant_Response = "Remove_Participant_Response";
         }
 
         public static class Table
