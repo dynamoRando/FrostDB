@@ -49,15 +49,12 @@ namespace FrostDB
             return config;
         }
 
-        #endregion
-
-        #region Private Methods
-        private void SaveConfiguration(Configuration configuration)
+        public void SaveConfiguration(Configuration configuration)
         {
             _configManager.SaveConfiguration(configuration);
         }
 
-        private void SetDefaultValues(Configuration config)
+        public void SetDefaultValues(Configuration config)
         {
             config.DatabaseFolder = _default.DatabaseFolder;
             config.FileLocation = _default.ConfigurationFileLocation;
@@ -71,6 +68,11 @@ namespace FrostDB
             config.ContractFolder = _default.ContractFolder;
             config.ConsoleServerPort = _default.ConsolePortNumber;
         }
+
+        #endregion
+
+        #region Private Methods
+
         #endregion
     }
 }

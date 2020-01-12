@@ -29,7 +29,22 @@ namespace FrostConsole
         #region Public Methods
         public static void Configure()
         {
-            throw new NotImplementedException();
+            var ipAddress = Prompt("Enter IP Address");
+            var portNumber = Prompt("Enter Data PortNumber (default 516)");
+            var consolePortNumber = Prompt("Enter Data PortNumber (default 519)");
+
+            Console.WriteLine($"IP Address: {ipAddress} and PortNumber: {portNumber} and ConsolePort {consolePortNumber} - correct y/n?");
+            var result = Console.ReadLine();
+            if (result == "y")
+            {
+                Process = new Process(ipAddress, Convert.ToInt32(portNumber), Convert.ToInt32(consolePortNumber));
+                Process.LoadDatabases();
+                Process.StartRemoteServer();
+                Process.StartConsoleServer();
+                keepRunning = true;
+                OutputProcessInfo();
+            }
+
         }
         public static void Startup()
         {
@@ -61,6 +76,13 @@ namespace FrostConsole
         #endregion
 
         #region Private Methods
+        private static void ConfigureInstance()
+        {
+            if (Process is null)
+            {
+                Process = new Process();
+            }
+        }
         private static void OutputProcessInfo()
         {
             Console.WriteLine("==========================");
