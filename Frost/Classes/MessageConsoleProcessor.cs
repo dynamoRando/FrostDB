@@ -34,28 +34,36 @@ namespace FrostDB
             HandleProcessMessage(message);
             var m = (message as Message);
 
-            // process messages from the console
-            // likely to send data back to the console so it can render on it's UI
-            if (m.ReferenceMessageId.Value == Guid.Empty)
+            if (m.MessageType == MessageType.Console)
             {
-                switch (m.ActionType)
+                // process messages from the console
+                // likely to send data back to the console so it can render on it's UI
+                if (m.ReferenceMessageId.Value == Guid.Empty)
                 {
-                    case MessageActionType.Process:
-                        HandleProcessMessage(m);
-                        break;
-                    case MessageActionType.Database:
-                        HandleDatabaseMessage(m);
-                        break;
-                    case MessageActionType.Table:
-                        HandleTableMessage(m);
-                        break;
+                    switch (m.ActionType)
+                    {
+                        case MessageActionType.Process:
+                            HandleProcessMessage(m);
+                            break;
+                        case MessageActionType.Database:
+                            HandleDatabaseMessage(m);
+                            break;
+                        case MessageActionType.Table:
+                            HandleTableMessage(m);
+                            break;
+                    }
+                    //m.SendResponse();
                 }
-                //m.SendResponse();
+                else
+                {
+                    // do nothing
+                }
             }
             else
             {
-                // do nothing
+                Console.WriteLine("Message data arrived on console port");
             }
+           
 
         }
         #endregion

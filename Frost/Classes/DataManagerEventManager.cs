@@ -205,6 +205,9 @@ namespace FrostDB
             {
                 var args = (PendingContractAddedEventArgs)e;
                 Console.WriteLine($"Pending Contract {args.Contract.DatabaseId} recieved");
+
+                var db = ProcessReference.GetDatabase(args.Contract.DatabaseId);
+                _dataManager.SaveToDisk((TDatabase)db);
             }
         }
 

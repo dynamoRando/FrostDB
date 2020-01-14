@@ -43,6 +43,7 @@ namespace FrostDB
             Contract contract = null;
             if (JsonExt.TryParse(message.Content, out contract))
             {
+                Console.WriteLine("Saving pending contract");
                 ProcessReference.Process.AddPendingContract(contract);
             }
         }

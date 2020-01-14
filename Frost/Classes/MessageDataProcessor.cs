@@ -37,24 +37,34 @@ namespace FrostDB
             // process data messages
 
             var m = (message as Message);
-            if (message.ReferenceMessageId.Value == Guid.Empty)
+
+            if (m.MessageType == MessageType.Data)
             {
-                if (message.Action.Contains("Row"))
+                if (message.ReferenceMessageId.Value == Guid.Empty)
                 {
-                    // call RowProcessor, or whatever
-                }
+                    if (message.Action.Contains("Row"))
+                    {
+                        // call RowProcessor, or whatever
+                    }
 
-                if (message.Action.Contains("Contract"))
+                    if (message.Action.Contains("Contract"))
+                    {
+                        ContractMessageProcessor.Process(m);
+                    }
+
+                    m.SendResponse();
+                }
+                else
                 {
-                    ContractMessageProcessor.Process(m);
+                    // do nothing
                 }
-
-                m.SendResponse();
             }
             else
             {
-                // do nothing
+                Console.WriteLine("Message console arrived on data port");
             }
+
+            
         }
         #endregion
 
