@@ -58,6 +58,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listTables = new System.Windows.Forms.ListBox();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textLocalPort = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -102,7 +104,7 @@
             // 
             // buttonConnectRemote
             // 
-            this.buttonConnectRemote.Location = new System.Drawing.Point(311, 36);
+            this.buttonConnectRemote.Location = new System.Drawing.Point(506, 34);
             this.buttonConnectRemote.Margin = new System.Windows.Forms.Padding(2);
             this.buttonConnectRemote.Name = "buttonConnectRemote";
             this.buttonConnectRemote.Size = new System.Drawing.Size(69, 25);
@@ -143,6 +145,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.textLocalPort);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.buttonConnectRemote);
             this.groupBox1.Controls.Add(this.textRemotePort);
             this.groupBox1.Controls.Add(this.textRemoteAddress);
@@ -150,7 +154,7 @@
             this.groupBox1.Controls.Add(this.labelRemoteAddress);
             this.groupBox1.Location = new System.Drawing.Point(12, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(385, 71);
+            this.groupBox1.Size = new System.Drawing.Size(580, 71);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Instance";
@@ -201,7 +205,7 @@
             this.labelColumnDataType.AutoSize = true;
             this.labelColumnDataType.Location = new System.Drawing.Point(311, 106);
             this.labelColumnDataType.Name = "labelColumnDataType";
-            this.labelColumnDataType.Size = new System.Drawing.Size(124, 15);
+            this.labelColumnDataType.Size = new System.Drawing.Size(123, 15);
             this.labelColumnDataType.TabIndex = 15;
             this.labelColumnDataType.Text = "labelColumnDataType";
             // 
@@ -353,7 +357,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(105, 76);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(43, 15);
+            this.label3.Size = new System.Drawing.Size(42, 15);
             this.label3.TabIndex = 11;
             this.label3.Text = "Tables:";
             // 
@@ -376,6 +380,23 @@
             this.buttonManagePartialDbs.Text = "Manage Partial Dbs";
             this.buttonManagePartialDbs.UseVisualStyleBackColor = true;
             this.buttonManagePartialDbs.Click += new System.EventHandler(this.buttonManagePartialDbs_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(311, 19);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(57, 15);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "LocalPort";
+            // 
+            // textLocalPort
+            // 
+            this.textLocalPort.Location = new System.Drawing.Point(311, 36);
+            this.textLocalPort.Name = "textLocalPort";
+            this.textLocalPort.Size = new System.Drawing.Size(100, 23);
+            this.textLocalPort.TabIndex = 6;
+            this.textLocalPort.Text = "520";
             // 
             // formFrost
             // 
@@ -428,6 +449,8 @@
         internal System.Windows.Forms.Button buttonQuery;
         internal System.Windows.Forms.ListBox listPendingParticipants;
         private System.Windows.Forms.Button buttonManagePartialDbs;
+        private System.Windows.Forms.TextBox textLocalPort;
+        private System.Windows.Forms.Label label5;
     }
 }
 

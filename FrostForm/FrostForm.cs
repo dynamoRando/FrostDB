@@ -22,9 +22,10 @@ namespace FrostForm
         {
             string ipAddress = textRemoteAddress.Text;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
-
+            int localPort = Convert.ToInt32(textLocalPort.Text)
+;
             _app = new App(this);
-            _app.SetupClient(ipAddress, portNumber);
+            _app.SetupClient(ipAddress, portNumber, localPort);
             AppReference.Client = _app.Client;
 
             //AppReference.Client.GetDatabases();

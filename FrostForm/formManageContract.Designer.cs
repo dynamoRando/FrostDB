@@ -273,7 +273,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(816, 1100);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(816, 1061);
             this.Controls.Add(this.buttonSaveAuthorRights);
             this.Controls.Add(this.checkAuthorRead);
             this.Controls.Add(this.checkAuthorWrite);

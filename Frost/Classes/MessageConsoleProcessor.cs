@@ -241,6 +241,11 @@ namespace FrostDB
             }
         }
 
+        private void HandlePendingContract(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
         private void HandleRemoveDatabase(Message message)
         {
             ProcessReference.RemoveDatabase(message.Content);
