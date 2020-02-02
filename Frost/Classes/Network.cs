@@ -29,13 +29,16 @@ namespace FrostDB
             _messageConsoleProcessor = new MessageConsoleProcessor();
             _messageDataProcessor = new MessageDataProcessor();
             _dataServer = new Server();
+            _dataServer.ServerName = "Data";
             _consoleServer = new Server();
+            _consoleServer.ServerName = "Console";
         }
         #endregion
 
         #region Public Methods
         public void StartDataServer()
         {
+            _messageDataProcessor.PortNumber = Process.Configuration.DataServerPort;
             _dataServer.Start(Process.Configuration.DataServerPort, Process.Configuration.Address, _messageDataProcessor);
         }
 
@@ -46,6 +49,7 @@ namespace FrostDB
 
         public void StartConsoleServer()
         {
+            _messageConsoleProcessor.PortNumber = Process.Configuration.ConsoleServerPort;
             _consoleServer.Start(Process.Configuration.ConsoleServerPort, Process.Configuration.Address, _messageConsoleProcessor);
         }
 

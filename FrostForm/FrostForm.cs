@@ -33,7 +33,8 @@ namespace FrostForm
             // can do this also to get results
             var task = AppReference.Client.GetDatabasesAsync();
             await task;
-            MessageBox.Show(task.Result.Count.ToString());
+            //MessageBox.Show(task.Result.Count.ToString());
+            Console.WriteLine(task.Result.Count.ToString());
         }
 
         private void formFrost_Load(object sender, EventArgs e)
