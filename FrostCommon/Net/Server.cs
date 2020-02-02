@@ -22,6 +22,7 @@ namespace FrostCommon.Net
 
         #region Public Properties
         public string ServerName { get; set; }
+        public int PortNumber { get; set; }
         #endregion
 
         #region Protected Methods

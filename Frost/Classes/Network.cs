@@ -39,6 +39,7 @@ namespace FrostDB
         public void StartDataServer()
         {
             _messageDataProcessor.PortNumber = Process.Configuration.DataServerPort;
+            _dataServer.PortNumber = Process.Configuration.DataServerPort;
             _dataServer.Start(Process.Configuration.DataServerPort, Process.Configuration.Address, _messageDataProcessor);
         }
 
@@ -50,6 +51,7 @@ namespace FrostDB
         public void StartConsoleServer()
         {
             _messageConsoleProcessor.PortNumber = Process.Configuration.ConsoleServerPort;
+            _consoleServer.PortNumber = Process.Configuration.ConsoleServerPort;
             _consoleServer.Start(Process.Configuration.ConsoleServerPort, Process.Configuration.Address, _messageConsoleProcessor);
         }
 
