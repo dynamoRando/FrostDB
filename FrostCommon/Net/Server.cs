@@ -13,11 +13,11 @@ namespace FrostCommon.Net
     {
         #region Private Fields
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
-        private static IMessageProcessor _messageProcessor;
+        private IMessageProcessor _messageProcessor;
         #endregion
 
         #region Public Fields
-        public static bool IsRunning = true;
+        public bool IsRunning = true;
         #endregion
 
         #region Public Properties
