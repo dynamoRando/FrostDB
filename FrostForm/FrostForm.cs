@@ -22,9 +22,10 @@ namespace FrostForm
         {
             string ipAddress = textRemoteAddress.Text;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
-
+            int localPort = Convert.ToInt32(textLocalPort.Text)
+;
             _app = new App(this);
-            _app.SetupClient(ipAddress, portNumber);
+            _app.SetupClient(ipAddress, portNumber, localPort);
             AppReference.Client = _app.Client;
 
             //AppReference.Client.GetDatabases();
@@ -32,7 +33,8 @@ namespace FrostForm
             // can do this also to get results
             var task = AppReference.Client.GetDatabasesAsync();
             await task;
-            MessageBox.Show(task.Result.Count.ToString());
+            //MessageBox.Show(task.Result.Count.ToString());
+            Console.WriteLine(task.Result.Count.ToString());
         }
 
         private void formFrost_Load(object sender, EventArgs e)

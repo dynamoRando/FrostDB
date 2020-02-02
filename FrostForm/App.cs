@@ -44,9 +44,9 @@ namespace FrostForm
         #endregion
 
         #region Public Methods
-        public void SetupClient(string remoteAddress, int remotePort)
+        public void SetupClient(string remoteAddress, int remotePort, int localPort)
         {
-            _client = new FrostClient(remoteAddress, "127.0.0.1", remotePort, 520);
+            _client = new FrostClient(remoteAddress, "127.0.0.1", remotePort, localPort);
             ListenForAppEvents();
         }
 

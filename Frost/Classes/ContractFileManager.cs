@@ -57,6 +57,8 @@ namespace FrostDB
                 serializer.Serialize(writer, contract, typeof(Contract));
             }
 
+            Console.WriteLine("Saving contract file to disk");
+
             _locker.ExitWriteLock();
         }
     }

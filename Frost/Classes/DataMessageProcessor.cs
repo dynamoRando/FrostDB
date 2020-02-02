@@ -11,6 +11,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public int PortNumber { get; set; }
         #endregion
 
         #region Events

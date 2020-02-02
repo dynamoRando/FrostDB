@@ -13,6 +13,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public int PortNumber { get; set; }
         #endregion
 
         #region Protected Methods
@@ -34,28 +35,36 @@ namespace FrostDB
             HandleProcessMessage(message);
             var m = (message as Message);
 
-            // process messages from the console
-            // likely to send data back to the console so it can render on it's UI
-            if (m.ReferenceMessageId.Value == Guid.Empty)
+            if (m.MessageType == MessageType.Console)
             {
-                switch (m.ActionType)
+                // process messages from the console
+                // likely to send data back to the console so it can render on it's UI
+                if (m.ReferenceMessageId.Value == Guid.Empty)
                 {
-                    case MessageActionType.Process:
-                        HandleProcessMessage(m);
-                        break;
-                    case MessageActionType.Database:
-                        HandleDatabaseMessage(m);
-                        break;
-                    case MessageActionType.Table:
-                        HandleTableMessage(m);
-                        break;
+                    switch (m.ActionType)
+                    {
+                        case MessageActionType.Process:
+                            HandleProcessMessage(m);
+                            break;
+                        case MessageActionType.Database:
+                            HandleDatabaseMessage(m);
+                            break;
+                        case MessageActionType.Table:
+                            HandleTableMessage(m);
+                            break;
+                    }
+                    //m.SendResponse();
                 }
-                //m.SendResponse();
+                else
+                {
+                    // do nothing
+                }
             }
             else
             {
-                // do nothing
+                Console.WriteLine("Message data arrived on console port");
             }
+           
 
         }
         #endregion
@@ -123,10 +132,12 @@ namespace FrostDB
 
         private void HandleAddParticipant(Message message)
         {
-            // we need to reach out to the instance and send a copy of the contract for the database to the participant,
-            // after which we mark in the database the the participant is pending accepting contract
+            ParticipantInfo info = new ParticipantInfo();
+            info = JsonConvert.DeserializeObject<ParticipantInfo>(message.Content);
+            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            var participant = new Participant(new Location(Guid.NewGuid(), info.IpAddress, Convert.ToInt32(info.PortNumber), string.Empty));
+            db.AddPendingParticipant(participant);
             SendMessage(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
-            throw new NotImplementedException();
         }
 
         private void HandleUpdateContractInformation(Message message)
@@ -237,6 +248,11 @@ namespace FrostDB
                 default:
                     throw new NotImplementedException("Unknown message console message");
             }
+        }
+
+        private void HandlePendingContract(Message message)
+        {
+            throw new NotImplementedException();
         }
 
         private void HandleRemoveDatabase(Message message)
