@@ -206,8 +206,12 @@ namespace FrostDB
                 var args = (PendingContractAddedEventArgs)e;
                 Console.WriteLine($"Pending Contract {args.Contract.DatabaseId} recieved");
 
-                var db = ProcessReference.GetDatabase(args.Contract.DatabaseId);
-                _dataManager.SaveToDisk((TDatabase)db);
+                // TO DO: Check if db exists first, if not, then this is a new partial db to be created
+                if (ProcessReference.HasDatabase(args.Contract.DatabaseId))
+                {
+                    var db = ProcessReference.GetDatabase(args.Contract.DatabaseId);
+                    _dataManager.SaveToDisk((TDatabase)db);
+                }
             }
         }
 
@@ -216,6 +220,8 @@ namespace FrostDB
             if (e is ParticipantPendingEventArgs)
             {
                 var args = (ParticipantPendingEventArgs)e;
+                var db = ProcessReference.GetDatabase(args.DatabaseId);
+                _dataManager.SaveToDisk((TDatabase)db);
 
                 Console.WriteLine($"{args.DatabaseId} has pending participant at {args.Participant.Location.IpAddress}");
             }
