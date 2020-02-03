@@ -38,6 +38,12 @@ namespace FrostCommon
             public const string Get_Contract_Information = "Get_Contract_Info";
             public const string Get_Contract_Information_Response = "Get_Contract_Info_Response";
 
+            public const string Get_Pending_Contracts = "Get_Pending_Contracts";
+            public const string Get_Pending_Contracts_Response = "Get_Pending_Contracts_Response";
+
+            public const string Get_Accepted_Contracts = "Get_Accepted_Contracts";
+            public const string Get_Accepted_Contracts_Response = "Get_Accepted_Contracts_Response";
+
             public const string Update_Contract_Information = "Update_Contract_Info";
             public const string Update_Contract_Information_Response = "Update_Contract_Info_Response";
 

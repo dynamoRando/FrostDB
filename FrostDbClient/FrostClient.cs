@@ -213,6 +213,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
+        public void GetPendingContractsForDb(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));
+        }
+
         public void Connect()
         {
             throw new NotImplementedException();

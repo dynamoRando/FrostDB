@@ -239,6 +239,7 @@ namespace FrostForm
                 {
                     _currentSelectedDbName = currentDb;
                     _client.GetDatabaseInfo(currentDb);
+                    _client.GetPendingContractsForDb(currentDb);
                 }
             }
         }

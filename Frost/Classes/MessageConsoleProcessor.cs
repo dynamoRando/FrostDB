@@ -127,7 +127,28 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Add_Participant:
                     HandleAddParticipant(message);
                     break;
+                case MessageConsoleAction.Database.Get_Pending_Contracts:
+                    HandleGetPendingContracts(message);
+                    break;
             }
+        }
+
+        private void HandleGetPendingContracts(Message message)
+        {
+            var info = new PendingContractInfo();
+
+            string dbName = message.Content;
+            var db = ProcessReference.GetDatabase(dbName);
+            db.PendingParticipants.ForEach(p => 
+            {
+                info.PendingContracts.Add(p.Location.IpAddress + ":" + p.Location.PortNumber.ToString());
+            });
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            SendMessage(message, messageContent, MessageConsoleAction.Database.Get_Pending_Contracts_Response, type, MessageActionType.Database);
         }
 
         private void HandleAddParticipant(Message message)
