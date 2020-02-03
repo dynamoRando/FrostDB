@@ -407,6 +407,7 @@
             this.buttonMyPendingContracts.TabIndex = 11;
             this.buttonMyPendingContracts.Text = "Manage My Pending Contracts";
             this.buttonMyPendingContracts.UseVisualStyleBackColor = true;
+            this.buttonMyPendingContracts.Click += new System.EventHandler(this.buttonMyPendingContracts_Click);
             // 
             // formFrost
             // 
