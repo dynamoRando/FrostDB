@@ -111,7 +111,17 @@ namespace FrostDbClient
         {
             PendingContractInfo info = JsonConvert.DeserializeObject<PendingContractInfo>(message.Content);
 
-            throw new NotImplementedException();
+            if (_info.PendingContractInfos.ContainsKey(info.DatabaseName))
+            {
+                PendingContractInfo removed = null;
+                _info.PendingContractInfos.TryRemove(info.DatabaseName, out removed);
+            }
+
+            if (_info.PendingContractInfos.TryAdd(info.DatabaseName, info))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotPendingContractInfo, null);
+            }
+
         }
 
         private void HandleContractInfo(Message message)

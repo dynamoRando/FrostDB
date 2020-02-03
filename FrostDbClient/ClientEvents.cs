@@ -11,5 +11,6 @@ namespace FrostDbClient
         public const string GotDatabaseInfo = "Database.Got_Information";
         public const string GotTableInfo = "Table.Got_Information";
         public const string GotDatabaseContractInfo = "Database.Got_Contract_Information";
+        public const string GotPendingContractInfo = "Database.Got_Pending_Contract_Information";
     }
 }

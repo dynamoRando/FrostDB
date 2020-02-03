@@ -144,6 +144,9 @@ namespace FrostDB
                 info.PendingContracts.Add(p.Location.IpAddress + ":" + p.Location.PortNumber.ToString());
             });
 
+            info.DatabaseId = db.Id;
+            info.DatabaseName = db.Name;
+
             Type type = info.GetType();
             string messageContent = string.Empty;
 
