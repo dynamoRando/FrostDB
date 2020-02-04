@@ -17,4 +17,10 @@
     <ProjectReference Include="..\FrostDbClient\FrostDbClient.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="formManagePendingContracts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

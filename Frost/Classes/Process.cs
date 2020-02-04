@@ -160,6 +160,11 @@ namespace FrostDB
             return db;
         }
 
+        public virtual List<string> GetPendingContracts()
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual List<PartialDatabase> GetPartialDatabases()
         {
             var dbs = new List<PartialDatabase>();

@@ -37,6 +37,8 @@
             this.labelDatabaseName = new System.Windows.Forms.Label();
             this.labelDatabaseId = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textLocalPort = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonManageContract = new System.Windows.Forms.Button();
             this.labelColumnDataType = new System.Windows.Forms.Label();
@@ -58,8 +60,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listTables = new System.Windows.Forms.ListBox();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textLocalPort = new System.Windows.Forms.TextBox();
+            this.buttonMyPendingContracts = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -159,6 +160,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Instance";
             // 
+            // textLocalPort
+            // 
+            this.textLocalPort.Location = new System.Drawing.Point(311, 36);
+            this.textLocalPort.Name = "textLocalPort";
+            this.textLocalPort.Size = new System.Drawing.Size(100, 23);
+            this.textLocalPort.TabIndex = 6;
+            this.textLocalPort.Text = "520";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(311, 19);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(57, 15);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "LocalPort";
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.buttonManageContract);
@@ -183,7 +201,7 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.listTables);
             this.groupBox2.Controls.Add(this.listDatabases);
-            this.groupBox2.Location = new System.Drawing.Point(12, 80);
+            this.groupBox2.Location = new System.Drawing.Point(12, 97);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(760, 332);
             this.groupBox2.TabIndex = 9;
@@ -373,7 +391,7 @@
             // 
             // buttonManagePartialDbs
             // 
-            this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 41);
+            this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 12);
             this.buttonManagePartialDbs.Name = "buttonManagePartialDbs";
             this.buttonManagePartialDbs.Size = new System.Drawing.Size(148, 23);
             this.buttonManagePartialDbs.TabIndex = 10;
@@ -381,28 +399,22 @@
             this.buttonManagePartialDbs.UseVisualStyleBackColor = true;
             this.buttonManagePartialDbs.Click += new System.EventHandler(this.buttonManagePartialDbs_Click);
             // 
-            // label5
+            // buttonMyPendingContracts
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(311, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(57, 15);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "LocalPort";
-            // 
-            // textLocalPort
-            // 
-            this.textLocalPort.Location = new System.Drawing.Point(311, 36);
-            this.textLocalPort.Name = "textLocalPort";
-            this.textLocalPort.Size = new System.Drawing.Size(100, 23);
-            this.textLocalPort.TabIndex = 6;
-            this.textLocalPort.Text = "520";
+            this.buttonMyPendingContracts.Location = new System.Drawing.Point(613, 41);
+            this.buttonMyPendingContracts.Name = "buttonMyPendingContracts";
+            this.buttonMyPendingContracts.Size = new System.Drawing.Size(148, 52);
+            this.buttonMyPendingContracts.TabIndex = 11;
+            this.buttonMyPendingContracts.Text = "Manage My Pending Contracts";
+            this.buttonMyPendingContracts.UseVisualStyleBackColor = true;
+            this.buttonMyPendingContracts.Click += new System.EventHandler(this.buttonMyPendingContracts_Click);
             // 
             // formFrost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 421);
+            this.ClientSize = new System.Drawing.Size(778, 435);
+            this.Controls.Add(this.buttonMyPendingContracts);
             this.Controls.Add(this.buttonManagePartialDbs);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -451,6 +463,7 @@
         private System.Windows.Forms.Button buttonManagePartialDbs;
         private System.Windows.Forms.TextBox textLocalPort;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button buttonMyPendingContracts;
     }
 }
 

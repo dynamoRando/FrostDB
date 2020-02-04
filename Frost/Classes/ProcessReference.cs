@@ -31,6 +31,10 @@ namespace FrostDB
         {
             ProcessReference.Process.ContractManager.UpdateContractPermissions(info);
         }
+        public static bool HasDatabase(Guid? databaseId)
+        {
+            return ProcessReference.Process.Databases.Any(d => d.Id == databaseId);
+        }
         public static string GetDatabaseName(Guid? databaseId)
         {
             return ProcessReference.Process.Databases.Where(d => d.Id == databaseId).First().Name;

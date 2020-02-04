@@ -183,5 +183,11 @@ namespace FrostForm
             var form = new formPartialDbs(_app);
             form.Show();
         }
+
+        private void buttonMyPendingContracts_Click(object sender, EventArgs e)
+        {
+            var form = new formManagePendingContract(_app);
+            form.Show();
+        }
     }
 }
