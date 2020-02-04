@@ -10,5 +10,6 @@ namespace FrostDB.Interface
         bool HasContract(Guid? contractId);
         List<Contract> Contracts { get; }
         void AddPendingContract(Contract contract);
+        List<Contract> GetContractsFromDisk();
     }
 }
