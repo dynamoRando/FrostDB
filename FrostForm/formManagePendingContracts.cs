@@ -55,6 +55,11 @@ namespace FrostForm
                 if (!string.IsNullOrEmpty(dbName))
                 {
                     var item = GetContractInfoForDb(dbName);
+
+                    textDatabaseName.Text = item.DatabaseName;
+                    textDatabaseIpAddress.Text = item.Location.IpAddress;
+                    textDatabasePortNumber.Text = item.Location.PortNumber.ToString();
+                    textDatabaseDescription.Text = item.ContractDescription;
                 }
             }
         }
