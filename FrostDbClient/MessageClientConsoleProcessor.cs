@@ -150,6 +150,25 @@ namespace FrostDbClient
                 case MessageConsoleAction.Process.Get_Id_Response:
                     HandleProcessId(message);
                     break;
+                case MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse:
+                    HandleGetPendingProcessContractsResponse(message);
+                    break;
+            }
+        }
+
+        private void HandleGetPendingProcessContractsResponse(Message message)
+        {
+            List<ContractInfo> info = JsonConvert.DeserializeObject<List<ContractInfo>>(message.Content);
+
+            if (_info.ProcessPendingContracts.ContainsKey(string.Empty))
+            {
+                List<ContractInfo> removed = null;
+                _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
+            }
+
+            if (_info.ProcessPendingContracts.TryAdd(string.Empty, info))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GetProcessPendingContractInfo, null);
             }
         }
 

@@ -75,6 +75,17 @@ namespace FrostForm
             _client.AddColumnToTable(databaseName, tableName, columnName, dataType);
         }
 
+        public async Task<List<ContractInfo>> GetPendingContractInformationAsync() 
+        {
+            var result = await _client.GetProcessPendingContractInformationAsync();
+            return result;
+        }
+
+        public void GetPendingContractInformation()
+        {
+            _client.GetProcessPendingContractInformation();
+        }
+
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
         {
             _client.RemoveColumnFromTable(databaseName, tableName, columnName);

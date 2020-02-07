@@ -269,9 +269,23 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Remove_Datababase:
                     HandleRemoveDatabase(message);
                     break;
+                case MessageConsoleAction.Process.Get_Pending_Process_Contracts:
+                    HandleGetPendingProcessContracts(message);
+                    break;
                 default:
                     throw new NotImplementedException("Unknown message console message");
             }
+        }
+
+        private void HandleGetPendingProcessContracts(Message message)
+        {
+            var info = ProcessReference.GetPendingProcessContracts();
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            SendMessage(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
         }
 
         private void HandlePendingContract(Message message)

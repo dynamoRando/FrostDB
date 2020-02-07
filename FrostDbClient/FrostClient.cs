@@ -104,6 +104,16 @@ namespace FrostDbClient
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Update_Contract_Information, MessageActionType.Database));
         }
 
+        public void GetProcessPendingContractInformation()
+        {
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
+        }
+
+        public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public void GetContractInformation(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));  

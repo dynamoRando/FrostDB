@@ -93,7 +93,7 @@ namespace FrostDB
 
         public List<Contract> GetContractsFromDisk()
         {
-            return _fileManager.GetContracts(Process.Configuration.ContractExtension);
+            return _fileManager.GetContracts(Process.Configuration.ContractFolder);
         }
 
         public void AddPendingContract(Contract contract)
