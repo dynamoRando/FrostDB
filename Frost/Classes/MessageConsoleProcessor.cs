@@ -6,6 +6,7 @@ using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
+    // TO DO: Should have a process to info translation class
     public class MessageConsoleProcessor : BaseMessageProcessor
     {
 
@@ -279,7 +280,24 @@ namespace FrostDB
 
         private void HandleGetPendingProcessContracts(Message message)
         {
-            var info = ProcessReference.GetPendingProcessContracts();
+            var list = ProcessReference.GetPendingProcessContracts();
+            var info = new List<ContractInfo>();
+
+            list.ForEach(c =>
+            {
+                var t = new ContractInfo();
+
+                t.ContractDescription = c.ContractDescription;
+                t.DatabaseName = c.DatabaseName;
+                t.ContractVersion = c.ContractVersion;
+                t.ContractId = c.ContractId;
+                t.Location.IpAddress = c.DatabaseLocation.IpAddress;
+                t.Location.PortNumber = c.DatabaseLocation.PortNumber;
+
+                // TODO: Need to fix this mapping up.
+
+                info.Add(t);
+            });
 
             Type type = info.GetType();
             string messageContent = string.Empty;

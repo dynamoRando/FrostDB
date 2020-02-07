@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using FrostCommon.ConsoleMessages;
 using FrostDbClient;
 using FrostForm.Extensions;
+using System.Linq;
 
 namespace FrostForm
 {
@@ -44,6 +45,31 @@ namespace FrostForm
                     });
                 });
             }
+        }
+
+        private void listPendingContracts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listPendingContracts.SelectedItem != null)
+            {
+                var dbName = listPendingContracts.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(dbName))
+                {
+                    var item = GetContractInfoForDb(dbName);
+                }
+            }
+        }
+
+        private ContractInfo GetContractInfoForDb(string dbName)
+        {
+            List<ContractInfo> item;
+            ContractInfo info = null;
+
+            if (_app.Client.Info.ProcessPendingContracts.TryGetValue(string.Empty, out item))
+            {
+                info = item.Where(i => i.DatabaseName == dbName).FirstOrDefault();
+            }
+
+            return info;
         }
     }
 }

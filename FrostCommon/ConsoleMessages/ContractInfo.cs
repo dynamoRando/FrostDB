@@ -11,6 +11,7 @@ namespace FrostCommon.ConsoleMessages
         public Guid? ContractVersion { get; set; }
         public List<string> TableNames { get; set; }
         public string ContractDescription { get; set; }
+        public LocationInfo Location { get; set; }
         /// <summary>
         /// TableName, Permission Owner, Permissions
         /// </summary>
@@ -21,6 +22,7 @@ namespace FrostCommon.ConsoleMessages
         {
             TableNames = new List<string>();
             SchemaData = new List<(string, string, List<string>)>();
+            Location = new LocationInfo();
         }
     }
 }
