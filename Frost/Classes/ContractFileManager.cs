@@ -31,11 +31,6 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        #endregion
-
-        #region Private Methods
-        #endregion
-
         public void SaveContract(Contract contract, string contractFolder, string contractExtension)
         {
             string fileLocation = contractFolder + contract.DatabaseName + contractExtension;
@@ -61,5 +56,33 @@ namespace FrostDB
 
             _locker.ExitWriteLock();
         }
+
+        public List<Contract> GetContracts(string contractFolder)
+        {
+            var contracts = new List<Contract>();
+
+            foreach (var file in Directory.GetFiles(contractFolder))
+            {
+                contracts.Add(GetContractFromDisk(file));
+            }
+
+            return contracts;
+        }
+        #endregion
+
+        #region Private Methods
+        private Contract GetContractFromDisk(string contractFile)
+        {
+            var dbJson = File.ReadAllText(contractFile);
+
+            return JsonConvert.DeserializeObject<Contract>(dbJson, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+        }
+        #endregion
+
+
     }
 }

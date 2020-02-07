@@ -19,6 +19,9 @@ namespace FrostCommon
 
             public const string Remove_Datababase = "Remove_Database";
             public const string Remove_Database_Response = "Remove_Database_Response";
+
+            public const string Get_Pending_Process_Contracts = "Get_Pending_Process_Contracts";
+            public const string Get_Pending_Process_Contracts_Respoonse = "Get_Pending_Process_Contracts_Response";
         }
 
         public static class Database

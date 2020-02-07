@@ -90,6 +90,12 @@ namespace FrostDB
 
             EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
         }
+
+        public List<Contract> GetContractsFromDisk()
+        {
+            return _fileManager.GetContracts(Process.Configuration.ContractFolder);
+        }
+
         public void AddPendingContract(Contract contract)
         {
             _contracts.Add(contract);

@@ -160,9 +160,9 @@ namespace FrostDB
             return db;
         }
 
-        public virtual List<string> GetPendingContracts()
+        public virtual List<Contract> GetPendingContracts()
         {
-            throw new NotImplementedException();
+            return _contractManager.GetContractsFromDisk().Where(c => c.IsAccepted == false).ToList();
         }
 
         public virtual List<PartialDatabase> GetPartialDatabases()
