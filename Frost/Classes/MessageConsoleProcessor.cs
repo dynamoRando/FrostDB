@@ -88,7 +88,7 @@ namespace FrostDB
 
         private void HandleRemoveColumnMessage(Message message)
         {
-            var info = JsonConvert.DeserializeObject<ColumnInfo>(message.Content);
+            var info = message.GetContentAs<ColumnInfo>();
             var db = ProcessReference.GetDatabase(info.DatabaseName);
             var table = db.GetTable(info.TableName);
 
@@ -97,7 +97,7 @@ namespace FrostDB
 
         private void HandleAddColumnMessage(Message message)
         {
-            var info = JsonConvert.DeserializeObject<ColumnInfo>(message.Content);
+            var info = message.GetContentAs<ColumnInfo>();
             var db = ProcessReference.GetDatabase(info.DatabaseName);
             var table = db.GetTable(info.TableName);
             table.AddColumn(info.ColumnName, info.Type);
@@ -158,7 +158,7 @@ namespace FrostDB
         private void HandleAddParticipant(Message message)
         {
             ParticipantInfo info = new ParticipantInfo();
-            info = JsonConvert.DeserializeObject<ParticipantInfo>(message.Content);
+            info = message.GetContentAs<ParticipantInfo>();
             var db = ProcessReference.GetDatabase(info.DatabaseName);
             var participant = new Participant(new Location(Guid.NewGuid(), info.IpAddress, Convert.ToInt32(info.PortNumber), string.Empty));
             db.AddPendingParticipant(participant);
@@ -167,7 +167,7 @@ namespace FrostDB
 
         private void HandleUpdateContractInformation(Message message)
         {
-            var info = JsonConvert.DeserializeObject<ContractInfo>(message.Content);
+            var info = message.GetContentAs<ContractInfo>();
             ProcessReference.UpdateContractInformation(info);
             SendMessage(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
         }
@@ -273,9 +273,27 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Pending_Process_Contracts:
                     HandleGetPendingProcessContracts(message);
                     break;
+                case MessageConsoleAction.Process.Accept_Pending_Contract:
+                    HandleAcceptPendingContract(message);
+                    break;
                 default:
                     throw new NotImplementedException("Unknown message console message");
             }
+        }
+
+        private void HandleAcceptPendingContract(Message message)
+        {
+            /*
+             * We need to accept the incoming contract on our side (mark it as accepted)
+             * and then create a new partial database on our side
+             * and then send to the original host of the database that we accept the contract
+             * 
+             */
+
+            var contract = message.GetContentAs<ContractInfo>();
+            ProcessReference.AcceptPendingContract(contract);
+
+            throw new NotImplementedException();
         }
 
         private void HandleGetPendingProcessContracts(Message message)

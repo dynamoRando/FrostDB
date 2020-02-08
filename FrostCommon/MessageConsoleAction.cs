@@ -22,6 +22,12 @@ namespace FrostCommon
 
             public const string Get_Pending_Process_Contracts = "Get_Pending_Process_Contracts";
             public const string Get_Pending_Process_Contracts_Respoonse = "Get_Pending_Process_Contracts_Response";
+
+            public const string Accept_Pending_Contract = "Accept_Pending_Contract";
+            public const string Accept_Pending_Contract_Response = "Accept_Pending_Contract_Response";
+
+            public const string Reject_Pending_Contract = "Reject_Pending_Contract";
+            public const string Reject_Pending_Contract_Response = "Reject_Pending_Contract_Response";
         }
 
         public static class Database

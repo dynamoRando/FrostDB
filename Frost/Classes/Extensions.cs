@@ -1,5 +1,6 @@
 ﻿using System;
 using FrostCommon;
+using Newtonsoft.Json;
 
 namespace FrostDB.Extensions
 {
@@ -37,5 +38,6 @@ namespace FrostDB.Extensions
                 return false;
             }
         }
+
     }
 }

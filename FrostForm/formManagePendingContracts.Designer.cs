@@ -146,6 +146,7 @@
             this.buttonAcceptContract.TabIndex = 11;
             this.buttonAcceptContract.Text = "Accept";
             this.buttonAcceptContract.UseVisualStyleBackColor = true;
+            this.buttonAcceptContract.Click += new System.EventHandler(this.buttonAcceptContract_Click);
             // 
             // buttonDeclineContract
             // 
@@ -155,6 +156,7 @@
             this.buttonDeclineContract.TabIndex = 12;
             this.buttonDeclineContract.Text = "Decline";
             this.buttonDeclineContract.UseVisualStyleBackColor = true;
+            this.buttonDeclineContract.Click += new System.EventHandler(this.buttonDeclineContract_Click);
             // 
             // formManagePendingContract
             // 

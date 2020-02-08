@@ -27,6 +27,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static void AcceptPendingContract(ContractInfo contract)
+        {
+            Process.ContractManager.AcceptPendingContract(contract);
+        }
         public static List<Contract> GetPendingProcessContracts()
         {
             return ProcessReference.Process.GetPendingContracts();

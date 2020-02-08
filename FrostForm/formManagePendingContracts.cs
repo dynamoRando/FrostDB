@@ -15,6 +15,7 @@ namespace FrostForm
     public partial class formManagePendingContract : Form
     {
         App _app;
+        ContractInfo _currentContract;
 
         public formManagePendingContract(App app)
         {
@@ -55,6 +56,7 @@ namespace FrostForm
                 if (!string.IsNullOrEmpty(dbName))
                 {
                     var item = GetContractInfoForDb(dbName);
+                    _currentContract = item;
 
                     textDatabaseName.Text = item.DatabaseName;
                     textDatabaseIpAddress.Text = item.Location.IpAddress;
@@ -75,6 +77,22 @@ namespace FrostForm
             }
 
             return info;
+        }
+
+        private void buttonAcceptContract_Click(object sender, EventArgs e)
+        {
+            if (_currentContract != null)
+            {
+                _app.AcceptContract(_currentContract);
+            }
+        }
+
+        private void buttonDeclineContract_Click(object sender, EventArgs e)
+        {
+            if (_currentContract != null)
+            {
+                _app.RejectContract(_currentContract);
+            }
         }
     }
 }

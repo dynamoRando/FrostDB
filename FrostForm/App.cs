@@ -50,6 +50,16 @@ namespace FrostForm
             ListenForAppEvents();
         }
 
+        public void AcceptContract(ContractInfo contract)
+        {
+            _client.AcceptContract(contract);
+        }
+
+        public void RejectContract(ContractInfo contract)
+        {
+            _client.RejectContract(contract);
+        }
+
         public void AddNewDb(string databaseName)
         {
             _client.AddNewDatabase(databaseName);
