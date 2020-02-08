@@ -27,26 +27,14 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static List<ContractInfo> GetPendingProcessContracts()
+        public static void AcceptPendingContract(ContractInfo contract)
         {
-            var contracts =  ProcessReference.Process.GetPendingContracts();
-            var list = new List<ContractInfo>();
-
-            contracts.ForEach(c => 
-            {
-                var info = new ContractInfo();
-
-                info.ContractDescription = c.ContractDescription;
-                info.DatabaseName = c.DatabaseName;
-                info.ContractVersion = c.ContractVersion;
-                info.ContractId = c.ContractId;
-
-                // TODO: Need to fix this mapping up.
-
-                list.Add(info);
-            });
-
-            return list;
+            Process.ContractManager.AcceptPendingContract(contract);
+        }
+        public static List<Contract> GetPendingProcessContracts()
+        {
+            return ProcessReference.Process.GetPendingContracts();
+            
         }
         public static void UpdateContractInformation(ContractInfo info)
         {

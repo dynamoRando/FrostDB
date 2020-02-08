@@ -56,6 +56,17 @@ namespace FrostDbClient
         #endregion
 
         #region Public Methods
+
+        public void AcceptContract(ContractInfo contract)
+        {
+            SendMessage(BuildMessage(Json.SeralizeObject(contract), MessageConsoleAction.Process.Accept_Pending_Contract, MessageActionType.Process));
+        }
+
+        public void RejectContract(ContractInfo contract)
+        {
+            SendMessage(BuildMessage(Json.SeralizeObject(contract), MessageConsoleAction.Process.Reject_Pending_Contract, MessageActionType.Process));
+        }
+
         public void GetProcessId()
         {
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
@@ -120,6 +121,11 @@ namespace FrostCommon
         #endregion
 
         #region Public Methods
+        public T GetContentAs<T>()
+        {
+            return JsonConvert.DeserializeObject<T>(this.Content);
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("MessageId", Id.Value, typeof(Guid?));

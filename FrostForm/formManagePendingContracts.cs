@@ -8,12 +8,14 @@ using System.Windows.Forms;
 using FrostCommon.ConsoleMessages;
 using FrostDbClient;
 using FrostForm.Extensions;
+using System.Linq;
 
 namespace FrostForm
 {
     public partial class formManagePendingContract : Form
     {
         App _app;
+        ContractInfo _currentContract;
 
         public formManagePendingContract(App app)
         {
@@ -43,6 +45,53 @@ namespace FrostForm
                         this.listPendingContracts.Items.Add(i.DatabaseName);
                     });
                 });
+            }
+        }
+
+        private void listPendingContracts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listPendingContracts.SelectedItem != null)
+            {
+                var dbName = listPendingContracts.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(dbName))
+                {
+                    var item = GetContractInfoForDb(dbName);
+                    _currentContract = item;
+
+                    textDatabaseName.Text = item.DatabaseName;
+                    textDatabaseIpAddress.Text = item.Location.IpAddress;
+                    textDatabasePortNumber.Text = item.Location.PortNumber.ToString();
+                    textDatabaseDescription.Text = item.ContractDescription;
+                }
+            }
+        }
+
+        private ContractInfo GetContractInfoForDb(string dbName)
+        {
+            List<ContractInfo> item;
+            ContractInfo info = null;
+
+            if (_app.Client.Info.ProcessPendingContracts.TryGetValue(string.Empty, out item))
+            {
+                info = item.Where(i => i.DatabaseName == dbName).FirstOrDefault();
+            }
+
+            return info;
+        }
+
+        private void buttonAcceptContract_Click(object sender, EventArgs e)
+        {
+            if (_currentContract != null)
+            {
+                _app.AcceptContract(_currentContract);
+            }
+        }
+
+        private void buttonDeclineContract_Click(object sender, EventArgs e)
+        {
+            if (_currentContract != null)
+            {
+                _app.RejectContract(_currentContract);
             }
         }
     }

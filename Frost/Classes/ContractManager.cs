@@ -22,7 +22,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ContractManager() 
+        public ContractManager()
         {
             _fileManager = new ContractFileManager();
             _contracts = new List<Contract>();
@@ -38,8 +38,8 @@ namespace FrostDB
         {
             var db = ProcessReference.GetDatabase(info.DatabaseName);
             db.Contract.ContractPermissions.Clear();
-            
-            foreach(var item in info.SchemaData)
+
+            foreach (var item in info.SchemaData)
             {
                 var tableName = item.Item1;
 
@@ -53,10 +53,10 @@ namespace FrostDB
                 {
                     cooperator = Cooperator.Participant;
                 }
-                
+
                 List<TablePermission> permissions = new List<TablePermission>();
-                
-                foreach(var k in item.Item3)
+
+                foreach (var k in item.Item3)
                 {
                     switch (k)
                     {
@@ -94,6 +94,18 @@ namespace FrostDB
         public List<Contract> GetContractsFromDisk()
         {
             return _fileManager.GetContracts(Process.Configuration.ContractFolder);
+        }
+
+        public void AcceptPendingContract(ContractInfo contact)
+        {
+            // TO DO: Should the contracts already be loaded into memory?
+            /*
+            * We need to accept the incoming contract on our side (mark it as accepted)
+            * and then create a new partial database on our side
+            * and then send to the original host of the database that we accept the contract
+            * 
+            */
+            throw new NotImplementedException();
         }
 
         public void AddPendingContract(Contract contract)
