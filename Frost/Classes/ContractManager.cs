@@ -93,10 +93,11 @@ namespace FrostDB
 
         public List<Contract> GetContractsFromDisk()
         {
-            return _fileManager.GetContracts(Process.Configuration.ContractFolder);
+            _contracts = _fileManager.GetContracts(Process.Configuration.ContractFolder);
+            return _contracts;
         }
 
-        public void AcceptPendingContract(ContractInfo contact)
+        public void AcceptPendingContract(ContractInfo contract)
         {
             // TO DO: Should the contracts already be loaded into memory?
             /*
@@ -105,17 +106,23 @@ namespace FrostDB
             * and then send to the original host of the database that we accept the contract
             * 
             */
+
+            // accept incoming contract
+            var localContract = _contracts.Where(c => c.DatabaseName == contract.DatabaseName).First();
+            localContract.IsAccepted = true;
+            SaveContract(localContract);
+
+            // make new partial database from the schema of the contract
+
+
             throw new NotImplementedException();
         }
 
         public void AddPendingContract(Contract contract)
         {
             _contracts.Add(contract);
-            _fileManager
-                .SaveContract(contract,
-                Process.Configuration.ContractFolder,
-                Process.Configuration.ContractExtension);
-
+            SaveContract(contract);
+          
             EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
         }
@@ -126,6 +133,13 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SaveContract(Contract contract)
+        {
+            _fileManager
+              .SaveContract(contract,
+              Process.Configuration.ContractFolder,
+              Process.Configuration.ContractExtension);
+        }
         private PendingContractAddedEventArgs CreateNewPendingContractEventArgs(Contract contract)
         {
             return new PendingContractAddedEventArgs { Contract = contract };
