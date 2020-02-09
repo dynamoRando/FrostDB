@@ -133,6 +133,22 @@ namespace FrostDB
             return AcceptedParticipants.Where(p => p.Id == participantId).First();
         }
 
+        public void RemovePendingParticipant(Participant participant)
+        {
+            var p = PendingParticipants.Where(p => p.Location.IpAddress == participant.Location.IpAddress && p.Location.PortNumber == participant.Location.PortNumber).FirstOrDefault();
+            PendingParticipants.Remove(p);
+        }
+
+        public Participant GetParticipant(string ipAddress, int portNumber)
+        {
+            return AcceptedParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == portNumber).First();
+        }
+
+        public Participant GetPendingParticipant(string ipAddress, int portNumber)
+        {
+            return PendingParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == portNumber).First();
+        }
+
         public bool HasParticipant(Guid? participantId)
         {
             return AcceptedParticipants.Any(p => p.Id == participantId);
@@ -149,7 +165,7 @@ namespace FrostDB
                 );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => NetworkReference.SendMessage(contractMessage));
+            NetworkReference.SendMessage(contractMessage);
             _participantManager.AddPendingParticipant(participant);
         }
 

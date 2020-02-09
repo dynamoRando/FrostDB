@@ -44,10 +44,17 @@ namespace FrostDB
             RegisterColumnAddedEvents();
             RegisterColumnRemovedEvents();
             RegisterContractUpdatedEvents();
+            RegisterParticipantAddedEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterParticipantAddedEvents()
+        {
+            EventManager.StartListening(EventName.Participant.Added,
+                new Action<IEventArgs>(HandleParticipantAddedEvent));
+
+        }
 
         private void RegisterContractUpdatedEvents()
         {
@@ -111,6 +118,19 @@ namespace FrostDB
         private void RegisterColumnAddedEvents()
         {
             EventManager.StartListening(EventName.Columm.Added, new Action<IEventArgs>(HandleColumnAddedEvent));
+        }
+
+        private void HandleParticipantAddedEvent(IEventArgs e)
+        {
+            if (e is ParticipantAddedEventArgs)
+            {
+                var args = (ParticipantAddedEventArgs)e;
+                var db = ProcessReference.GetDatabase(args.DatabaseId);
+                if (db is TDatabase)
+                {
+                    _dataManager.SaveToDisk((TDatabase)db);
+                }
+            }
         }
 
         private void HandleMessageSentEvent(IEventArgs e)
