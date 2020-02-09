@@ -114,7 +114,7 @@ namespace FrostDB
 
             // make new partial database from the schema of the contract
 
-
+            // then send back to host of DB that we accept the contract
             throw new NotImplementedException();
         }
 

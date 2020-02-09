@@ -165,7 +165,7 @@ namespace FrostDB
                 );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => NetworkReference.SendMessage(contractMessage));
+            NetworkReference.SendMessage(contractMessage);
             _participantManager.AddPendingParticipant(participant);
         }
 
