@@ -54,7 +54,6 @@ namespace FrostDB
             EventManager.StartListening(EventName.Participant.Added,
                 new Action<IEventArgs>(HandleParticipantAddedEvent));
 
-            throw new NotImplementedException();
         }
 
         private void RegisterContractUpdatedEvents()
