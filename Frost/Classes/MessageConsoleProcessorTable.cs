@@ -62,7 +62,7 @@ namespace FrostDB
 			string messageContent = string.Empty;
 
 			messageContent = JsonConvert.SerializeObject(info);
-			MessageBuilder.Send(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
+			MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
 		}
 
 		private void HandleAddColumnMessage(Message message)

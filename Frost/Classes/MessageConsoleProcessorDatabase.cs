@@ -76,7 +76,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, MessageActionType.Database);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, MessageActionType.Database);
         }
 
         private void HandleGetDatabaseTables(Message message)
@@ -135,14 +135,14 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Database.Get_Contract_Information_Response, type, MessageActionType.Database);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Contract_Information_Response, type, MessageActionType.Database);
         }
 
         private void HandleUpdateContractInformation(Message message)
         {
             var info = message.GetContentAs<ContractInfo>();
             ProcessReference.UpdateContractInformation(info);
-            MessageBuilder.Send(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
+            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
         }
 
         private void HandleAddParticipant(Message message)
@@ -152,7 +152,7 @@ namespace FrostDB
             var db = ProcessReference.GetDatabase(info.DatabaseName);
             var participant = new Participant(new Location(Guid.NewGuid(), info.IpAddress, Convert.ToInt32(info.PortNumber), string.Empty));
             db.AddPendingParticipant(participant);
-            MessageBuilder.Send(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
+            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
         }
 
         private void HandleGetPendingContracts(Message message)
@@ -173,7 +173,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Database.Get_Pending_Contracts_Response, type, MessageActionType.Database);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Pending_Contracts_Response, type, MessageActionType.Database);
         }
 
         #endregion

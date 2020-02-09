@@ -67,7 +67,7 @@ namespace FrostDB
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, MessageActionType.Process);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, MessageActionType.Process);
         }
 
         private void HandleGetProcessId(Message message)
@@ -76,19 +76,19 @@ namespace FrostDB
             Type type = ProcessReference.Process.Id.GetType();
             messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
 
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, MessageActionType.Process);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, MessageActionType.Process);
         }
 
         private void HandleAddNewDatabase(Message message)
         {
             ProcessReference.AddDatabase(message.Content);
-            MessageBuilder.Send(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType(), MessageActionType.Process);
+            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleRemoveDatabase(Message message)
         {
             ProcessReference.RemoveDatabase(message.Content);
-            MessageBuilder.Send(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType(), MessageActionType.Process);
+            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleGetPendingProcessContracts(Message message)
@@ -116,7 +116,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            MessageBuilder.Send(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
+            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
         }
 
         private void HandleAcceptPendingContract(Message message)

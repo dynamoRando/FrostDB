@@ -23,7 +23,15 @@ namespace FrostDB
 		#endregion
 
 		#region Public Methods
-		public static void Send(Message message, string responseType, string action, Type type, MessageActionType actionType)
+		/// <summary>
+		/// Sends a response message back to the parameters message's origin with data. This method is usually intended to send some data back to the requestor.
+		/// </summary>
+		/// <param name="message">The original message we are replying to</param>
+		/// <param name="responseType">Message Content (string data seralized as JSON)</param>
+		/// <param name="action">Uusually a CONST STRING identifying the requested action being taken</param>
+		/// <param name="type">The type of the message content (parameter 2)</param>
+		/// <param name="actionType">An enumeration of the type of action being requested</param>
+		public static void SendResponse(Message message, string responseType, string action, Type type, MessageActionType actionType)
 		{
 			NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id, actionType));
 		}
