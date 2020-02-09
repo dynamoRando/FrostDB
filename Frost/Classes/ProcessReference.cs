@@ -33,8 +33,11 @@ namespace FrostDB
         }
         public static List<Contract> GetPendingProcessContracts()
         {
-            return ProcessReference.Process.GetPendingContracts();
-            
+            return ProcessReference.Process.GetPendingContracts();   
+        }
+        public static void AddPartialDatabase(string databaseName)
+        {
+            Process.AddPartialDatabase(databaseName);
         }
         public static void UpdateContractInformation(ContractInfo info)
         {
