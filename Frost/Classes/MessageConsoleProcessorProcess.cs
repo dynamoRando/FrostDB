@@ -107,7 +107,7 @@ namespace FrostDB
                 t.Location.IpAddress = c.DatabaseLocation.IpAddress;
                 t.Location.PortNumber = c.DatabaseLocation.PortNumber;
 
-                // TODO: Need to fix this mapping up.
+                // TODO: Need to fix this mapping up. Should there be a mapping object for this?
 
                 info.Add(t);
             });
