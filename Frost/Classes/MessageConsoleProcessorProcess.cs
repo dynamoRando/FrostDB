@@ -131,6 +131,10 @@ namespace FrostDB
             var contract = message.GetContentAs<ContractInfo>();
             ProcessReference.AcceptPendingContract(contract);
             ProcessReference.AddPartialDatabase(contract.DatabaseName);
+            var location = new Location(Guid.NewGuid(), contract.Location.IpAddress, contract.Location.PortNumber, string.Empty);
+
+            Message acceptContract = new Message(location, ProcessReference.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
+            NetworkReference.SendMessage(acceptContract);
 
             throw new NotImplementedException();
         }

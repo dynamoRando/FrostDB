@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FrostCommon;
+using System.Linq;
 
 namespace FrostDB
 {
@@ -31,6 +32,9 @@ namespace FrostDB
                 case MessageDataAction.Contract.Save_Pending_Contract:
                     SavePendingContract(message);
                     break;
+                case MessageDataAction.Contract.Accept_Pending_Contract:
+                    AcceptPendingContract(message);
+                    break;
                 default:
                     throw new InvalidOperationException("Unknown Contract Message");
             }
@@ -38,6 +42,14 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private static void AcceptPendingContract(Message message)
+        {
+            var databaseName = message.Content;
+            var db = ProcessReference.GetDatabase(databaseName);
+            var pendingParticipant = db.GetPendingParticipant(message.Origin.IpAddress, message.Origin.PortNumber);
+            db.RemovePendingParticipant(pendingParticipant);
+            db.AddParticipant(pendingParticipant);
+        }
         private static void SavePendingContract(Message message)
         {
             Contract contract = null;

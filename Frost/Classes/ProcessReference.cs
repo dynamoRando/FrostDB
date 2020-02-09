@@ -4,6 +4,7 @@ using System.Text;
 using FrostDB.Interface;
 using System.Linq;
 using FrostCommon.ConsoleMessages;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -27,6 +28,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public static Location GetLocation()
+        {
+            return Process.Configuration.GetLocation();
+        }
         public static void AcceptPendingContract(ContractInfo contract)
         {
             Process.ContractManager.AcceptPendingContract(contract);

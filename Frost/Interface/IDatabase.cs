@@ -29,5 +29,7 @@ namespace FrostDB.Interface
         bool IsCooperative();
         bool HasParticipant(Guid? participantId);
         Participant GetParticipant(Guid? participantId);
+        Participant GetPendingParticipant(string ipAddress, int portNumber);
+        void RemovePendingParticipant(Participant participant);
     }
 }
