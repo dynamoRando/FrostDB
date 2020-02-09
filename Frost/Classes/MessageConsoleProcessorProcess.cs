@@ -135,8 +135,6 @@ namespace FrostDB
 
             Message acceptContract = new Message(location, ProcessReference.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
             NetworkReference.SendMessage(acceptContract);
-
-            throw new NotImplementedException();
         }
 
         #endregion
