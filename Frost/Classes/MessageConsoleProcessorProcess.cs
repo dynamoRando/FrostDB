@@ -4,10 +4,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FrostDB.Interface;
 
 namespace FrostDB
 {
-    public class MessageConsoleProcessorProcess
+    public class MessageConsoleProcessorProcess : IMessageConsoleProcessorObject
     {
 		#region Private Fields
 		#endregion

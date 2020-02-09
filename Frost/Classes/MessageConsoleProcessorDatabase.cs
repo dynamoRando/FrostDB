@@ -1,5 +1,6 @@
 ﻿using FrostCommon;
 using FrostCommon.ConsoleMessages;
+using FrostDB.Interface;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class MessageConsoleProcessorDatabase
+    public class MessageConsoleProcessorDatabase : IMessageConsoleProcessorObject
     {
 
         #region Private Fields

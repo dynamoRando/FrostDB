@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class PartialDatabaseManager : DataManager<PartialDatabase>
+    public class PartialDatabaseManager : DataManager<IDatabase>
     {
         #region Private Fields
        

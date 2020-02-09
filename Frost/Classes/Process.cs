@@ -17,10 +17,12 @@ namespace FrostDB
         #region Public Properties
 
         public DataManager<IDatabase> DatabaseManager { get; }
+        public DataManager<IDatabase> PartialDatabaseManager { get; }
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
         public List<IDatabase> Databases => DatabaseManager.Databases;
+        public List<IDatabase> PartialDatabases => PartialDatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
         #endregion
@@ -37,6 +39,10 @@ namespace FrostDB
                new DatabaseFileMapper(),
                Configuration.DatabaseFolder,
                Configuration.DatabaseExtension);
+
+            PartialDatabaseManager = new PartialDatabaseManager(
+                new PartialDatabaseFileMapper(), 
+                Configuration.DatabaseFolder, Configuration.PartialDatabaseExtension);
 
             _contractManager = new ContractManager(this);
             _networkManager = new Network();
@@ -82,7 +88,7 @@ namespace FrostDB
 
         public virtual void AddPartialDatabase(string databaseName)
         {
-            DatabaseManager.AddDatabase(
+            PartialDatabaseManager.AddDatabase(
                new PartialDatabase(databaseName));
         }
 
@@ -124,7 +130,7 @@ namespace FrostDB
         {
             PartialDatabase db = null;
 
-            Databases.ForEach(database =>
+            PartialDatabases.ForEach(database =>
             {
                 if (database is PartialDatabase && database.Name == databaseName)
                 {
@@ -169,7 +175,7 @@ namespace FrostDB
         {
             var dbs = new List<PartialDatabase>();
 
-            Databases.ForEach(database =>
+            PartialDatabases.ForEach(database =>
             {
                 if (database is PartialDatabase)
                 {
@@ -210,7 +216,7 @@ namespace FrostDB
         {
             var dbs = new List<string>();
 
-            Databases.ForEach(database => 
+            PartialDatabases.ForEach(database => 
             { 
                 if (database is PartialDatabase)
                 {
