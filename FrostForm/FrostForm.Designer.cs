@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.labelRemoteAddress = new System.Windows.Forms.Label();
-            this.textRemoteAddress = new System.Windows.Forms.TextBox();
             this.labelRemotePort = new System.Windows.Forms.Label();
             this.textRemotePort = new System.Windows.Forms.TextBox();
             this.buttonConnectRemote = new System.Windows.Forms.Button();
@@ -61,6 +60,7 @@
             this.listTables = new System.Windows.Forms.ListBox();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
             this.buttonMyPendingContracts = new System.Windows.Forms.Button();
+            this.comboRemoteAddress = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -74,15 +74,6 @@
             this.labelRemoteAddress.Size = new System.Drawing.Size(106, 15);
             this.labelRemoteAddress.TabIndex = 0;
             this.labelRemoteAddress.Text = "Remote IP Address";
-            // 
-            // textRemoteAddress
-            // 
-            this.textRemoteAddress.Location = new System.Drawing.Point(12, 36);
-            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2);
-            this.textRemoteAddress.Name = "textRemoteAddress";
-            this.textRemoteAddress.Size = new System.Drawing.Size(207, 23);
-            this.textRemoteAddress.TabIndex = 1;
-            this.textRemoteAddress.Text = "127.0.0.1";
             // 
             // labelRemotePort
             // 
@@ -146,11 +137,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboRemoteAddress);
             this.groupBox1.Controls.Add(this.textLocalPort);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.buttonConnectRemote);
             this.groupBox1.Controls.Add(this.textRemotePort);
-            this.groupBox1.Controls.Add(this.textRemoteAddress);
             this.groupBox1.Controls.Add(this.labelRemotePort);
             this.groupBox1.Controls.Add(this.labelRemoteAddress);
             this.groupBox1.Location = new System.Drawing.Point(12, 3);
@@ -409,6 +400,14 @@
             this.buttonMyPendingContracts.UseVisualStyleBackColor = true;
             this.buttonMyPendingContracts.Click += new System.EventHandler(this.buttonMyPendingContracts_Click);
             // 
+            // comboRemoteAddress
+            // 
+            this.comboRemoteAddress.FormattingEnabled = true;
+            this.comboRemoteAddress.Location = new System.Drawing.Point(12, 36);
+            this.comboRemoteAddress.Name = "comboRemoteAddress";
+            this.comboRemoteAddress.Size = new System.Drawing.Size(215, 23);
+            this.comboRemoteAddress.TabIndex = 7;
+            // 
             // formFrost
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -432,7 +431,6 @@
         #endregion
 
         internal System.Windows.Forms.Label labelRemoteAddress;
-        internal System.Windows.Forms.TextBox textRemoteAddress;
         internal System.Windows.Forms.Label labelRemotePort;
         internal System.Windows.Forms.TextBox textRemotePort;
         internal System.Windows.Forms.Button buttonConnectRemote;
@@ -464,6 +462,7 @@
         private System.Windows.Forms.TextBox textLocalPort;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button buttonMyPendingContracts;
+        private System.Windows.Forms.ComboBox comboRemoteAddress;
     }
 }
 

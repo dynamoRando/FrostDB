@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using FrostForm.Extensions;
 
 namespace FrostForm
 {
@@ -20,7 +22,8 @@ namespace FrostForm
 
         private async void buttonConnectRemote_Click(object sender, EventArgs e)
         {
-            string ipAddress = textRemoteAddress.Text;
+            var selectedIp = comboRemoteAddress.SelectedItem.ToString();
+            string ipAddress = selectedIp;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
             int localPort = Convert.ToInt32(textLocalPort.Text)
 ;
@@ -39,6 +42,7 @@ namespace FrostForm
 
         private void formFrost_Load(object sender, EventArgs e)
         {
+            GetIPAddresses();
         }
 
 
@@ -188,6 +192,18 @@ namespace FrostForm
         {
             var form = new formManagePendingContract(_app);
             form.Show();
+        }
+
+        private void GetIPAddresses()
+        {
+            comboRemoteAddress.InvokeIfRequired(() => {
+                comboRemoteAddress.Items.Clear();
+
+                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();
+
+                comboRemoteAddress.Items.Add("127.0.0.1");
+                addresses.ForEach(a => comboRemoteAddress.Items.Add(a));
+            });
         }
     }
 }
