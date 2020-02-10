@@ -10,9 +10,6 @@ namespace FrostDB
     public class PartialDatabase : Database
     {
         #region Private Fields
-        private List<Table> _tables;
-        private string _name;
-        private Guid? _id;
         #endregion
 
         #region Public Properties
@@ -27,19 +24,14 @@ namespace FrostDB
         #region Constructors
         public PartialDatabase()
         {
-            _id = Guid.NewGuid();
-            _tables = new List<Table>();
         }
-        public PartialDatabase(string name) : this()
+        public PartialDatabase(string name) : base(name)
         {
-            _name = name;
         }
 
         public PartialDatabase(string name, Guid id,
-           List<Table> tables) : this(name)
+           List<Table> tables) : base(name, id, tables)
         {
-            _id = id;
-            _tables = tables;
         }
         #endregion
 
