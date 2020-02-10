@@ -92,6 +92,22 @@ namespace FrostDB
             _id = id;
             _tables = tables;
             _schema = schema;
+
+            if (acceptedParticipants is null)
+            {
+                acceptedParticipants = new List<Participant>();
+            }
+            
+            if (pendingParticipants is null)
+            {
+                pendingParticipants = new List<Participant>();
+            }
+
+            if (contract is null)
+            {
+                contract = new Contract(this);
+            } 
+
             _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants);
             _contract = contract;
         }
