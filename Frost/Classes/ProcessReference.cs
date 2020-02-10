@@ -42,7 +42,14 @@ namespace FrostDB
         }
         public static void AddPartialDatabase(string databaseName)
         {
-            Process.AddPartialDatabase(databaseName);
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                throw new InvalidOperationException("invalid database name");
+            }
+            else
+            {
+                Process.AddPartialDatabase(databaseName);
+            }
         }
         public static void UpdateContractInformation(ContractInfo info)
         {

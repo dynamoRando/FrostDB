@@ -156,6 +156,16 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
+            if (string.IsNullOrEmpty(this.Contract.DatabaseName))
+            {
+                this.UpdateSchema();
+
+                this.Contract.DatabaseName = this.Name;
+                this.Contract.DatabaseId = this.Id;
+                this.Contract.DatabaseLocation = ProcessReference.GetLocation();
+                this.Contract.DatabaseSchema = this.Schema;
+            }
+
             var contractMessage = new Message(
                 destination: participant.Location, 
                 origin: Process.GetLocation(), 

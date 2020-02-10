@@ -29,6 +29,9 @@ namespace FrostDB
                 case MessageDataAction.Contract.Save_Pending_Contract:
                     response = BuildSaveContractMessageReceived(message);
                     break;
+                case MessageDataAction.Contract.Accept_Pending_Contract:
+                    response = BuildContractAcceptPendingRecieved(message);
+                    break;
                 default:
                     throw new InvalidOperationException("Unknown Message");
             }
@@ -38,6 +41,19 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private static Message BuildContractAcceptPendingRecieved(Message message)
+        {
+            Message response = new Message(
+            destination: message.Origin,
+            origin: Process.GetLocation(),
+            messageContent: string.Empty,
+            messageAction: MessageDataAction.Contract.Accept_Pending_Contract_Recieved,
+            referenceMessageId: message.Id,
+            messageType: message.MessageType
+            );
+
+            return response;
+        }
         private static Message BuildSaveContractMessageReceived(Message message)
         {
             Message response = new Message(

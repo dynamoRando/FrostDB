@@ -25,8 +25,7 @@ namespace FrostDB
                 Id = database.Id,
                 Name = database.Name,
                 Tables = database.Tables,
-                Schema = database.Schema,
-                Contract = database.Contract
+                Schema = database.Schema
             };
         }
 
