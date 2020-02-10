@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FrostForm
+namespace TestHarnessForm
 {
     static class Program
     {
@@ -14,18 +14,10 @@ namespace FrostForm
         [STAThread]
         static void Main()
         {
-            var args = Environment.GetCommandLineArgs();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (args.Length == 0)
-            {
-                Application.Run(new formFrost());
-            }
-            else
-            {
-                Application.Run(new formFrost(args));
-            }
+            Application.Run(new Form1());
         }
     }
 }

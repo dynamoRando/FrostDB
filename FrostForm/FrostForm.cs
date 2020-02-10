@@ -15,9 +15,25 @@ namespace FrostForm
     public partial class formFrost : Form
     {
         App _app;
+        string _paramIpAddress;
+        int _paramPortNumber;
+        int _paramLocalPortNumber;
+        bool _hasArgs = false;
+
         public formFrost()
         {
             InitializeComponent();
+        }
+
+        public formFrost(string[] args)
+        {
+            if (args.Count() >= 3)
+            {
+                _hasArgs = true;
+                _paramIpAddress = args[0];
+                _paramPortNumber = Convert.ToInt32(args[1]);
+                _paramLocalPortNumber = Convert.ToInt32(args[2]);
+            }
         }
 
         private async void buttonConnectRemote_Click(object sender, EventArgs e)
@@ -43,8 +59,12 @@ namespace FrostForm
         private void formFrost_Load(object sender, EventArgs e)
         {
             GetIPAddresses();
+            if (_hasArgs)
+            {
+                textRemotePort.Text = _paramPortNumber.ToString();
+                textLocalPort.Text = _paramLocalPortNumber.ToString();
+            }
         }
-
 
         private void listTables_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -199,10 +219,18 @@ namespace FrostForm
             comboRemoteAddress.InvokeIfRequired(() => {
                 comboRemoteAddress.Items.Clear();
 
-                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();
+                if (_hasArgs)
+                {
+                    comboRemoteAddress.Items.Add(_paramIpAddress);
+                }
 
-                comboRemoteAddress.Items.Add("127.0.0.1");
+                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();  
                 addresses.ForEach(a => comboRemoteAddress.Items.Add(a));
+
+                if (!comboRemoteAddress.Items.Contains("127.0.0.1"))
+                {
+                    comboRemoteAddress.Items.Add("127.0.0.1");
+                }
             });
         }
     }
