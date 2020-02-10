@@ -20,7 +20,14 @@ namespace FrostDB
 
         public DataFile Map(PartialDatabase database)
         {
-            throw new NotImplementedException();
+            return new DataFile
+            {
+                Id = database.Id,
+                Name = database.Name,
+                Tables = database.Tables,
+                Schema = database.Schema,
+                Contract = database.Contract
+            };
         }
 
     }
