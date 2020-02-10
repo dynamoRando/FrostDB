@@ -2,39 +2,144 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace FrostDB
 {
-    public class PartialDatabaseManager : DataManager<IDatabase>
+    public class PartialDatabaseManager 
     {
         #region Private Fields
-       
+        private List<PartialDatabase> _databases;
+        private string _databaseFolder;
+        private string _databaseExtension;
+        private IDataFileManager<DataFile> _dataFileManager;
+        private IDatabaseFileMapper<PartialDatabase, DataFile> _databaseFileMapper;
+        private IDataManagerEventManager _dataEventManager;
         #endregion
 
         #region Public Properties
-   
+        public List<PartialDatabase> Databases => _databases;
+        #endregion
+
+        #region Protected Methods
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public PartialDatabaseManager(PartialDatabaseFileMapper mapper, 
-            string databaseFolder, string databaseExtension)
-            : base(databaseFolder, databaseExtension, mapper)
+        public PartialDatabaseManager(string databaseFolder,
+            string databaseExtension,
+            IDatabaseFileMapper<PartialDatabase, DataFile> mapper,
+            IDataManagerEventManager dataEventManager)
         {
+            _dataFileManager = new DataFileManager();
+            _databaseFileMapper = mapper;
+
+            _databaseFolder = databaseFolder;
+            _databaseExtension = databaseExtension;
+
+            if (_databaseFileMapper is null)
+            {
+                _databaseFileMapper = new PartialDatabaseFileMapper();
+            }
+
+            _databases = new List<PartialDatabase>();
+
         }
         #endregion
 
         #region Public Methods
+        public PartialDatabase GetFullDatabase(string databaseName)
+        {
+            PartialDatabase db = null;
+
+            Databases.ForEach(database =>
+            {
+                if ((database is PartialDatabase) && (database.Name == databaseName))
+                {
+                    db = database as PartialDatabase;
+                }
+            });
+
+            return db;
+        }
+        public void AddDatabase(PartialDatabase database)
+        {
+            if (!HasDatabase(database.Name))
+            {
+                _databases.Add(database);
+                SaveToDisk(database);
+            }
+        }
+
+        public PartialDatabase GetDatabase(string databaseName)
+        {
+            return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
+        }
+
+        public PartialDatabase GetDatabase(Guid? guid)
+        {
+            return Databases.Where(d => d.Id == guid).FirstOrDefault();
+        }
+
+        public bool HasDatabase(string databaseName)
+        {
+            return Databases.Any(d => d.Name == databaseName);
+        }
+
+        public bool HasDatabase(Guid guid)
+        {
+            return Databases.Any(d => d.Id == guid);
+        }
+
+        public void RemoveDatabase(Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDatabase(string databaseName)
+        {
+            File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
+            var db = (PartialDatabase)ProcessReference.GetDatabase(databaseName);
+            _databases.Remove(db);
+        }
+
+        public int LoadDatabases(string databaseFolderLocation)
+        {
+            int count = 0;
+
+            foreach (var file in Directory.GetFiles(databaseFolderLocation))
+            {
+                var database = GetDatabaseFromDisk(file);
+                _databases.Add(database);
+                count = Databases.Count;
+            }
+
+            return count;
+        }
+
+        public void SaveToDisk(PartialDatabase database)
+        {
+            var fileName = _databaseFolder + database.Name + _databaseExtension;
+            var file = _databaseFileMapper.Map(database);
+            _dataFileManager.SaveDataFile(fileName, file);
+        }
         #endregion
 
         #region Private Methods
+        private PartialDatabase GetDatabaseFromDisk(string file)
+        {
+            var dataFile = _dataFileManager.GetDataFile(file);
+            return _databaseFileMapper.Map(dataFile);
+        }
+
+        private void RegisterEvents()
+        {
+            _dataEventManager.RegisterEvents();
+        }
         #endregion
-
-
-
-
 
     }
 }

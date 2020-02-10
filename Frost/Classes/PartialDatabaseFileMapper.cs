@@ -5,23 +5,23 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class PartialDatabaseFileMapper : IDatabaseFileMapper<IDatabase, DataFile, DataManager<IDatabase>>
+    public class PartialDatabaseFileMapper : IDatabaseFileMapper<PartialDatabase, DataFile>
     {
-        public IDatabase Map(DataFile file, DataManager<IDatabase> manager)
+        public PartialDatabase Map(DataFile file)
         {
             var database = new PartialDatabase(
-             file.Name,
-             manager,
-             file.Id.Value,
-             file.Tables
-             );
+            file.Name,
+            file.Id.Value,
+            file.Tables
+            );
 
             return database;
         }
 
-        public DataFile Map(IDatabase database)
+        public DataFile Map(PartialDatabase database)
         {
             throw new NotImplementedException();
         }
+
     }
 }

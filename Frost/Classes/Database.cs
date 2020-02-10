@@ -57,7 +57,7 @@ namespace FrostDB
             }
 
         }
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables) : this(name)
         {
             _id = id;
@@ -65,7 +65,7 @@ namespace FrostDB
             _schema = new DbSchema(this);
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema) : this(name)
         {
             _id = id;
@@ -73,7 +73,7 @@ namespace FrostDB
             _schema = schema;
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> acceptedParticipants) : this(name)
         {
@@ -83,7 +83,7 @@ namespace FrostDB
             _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>());
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> acceptedParticipants,
             List<Participant> pendingParticipants,

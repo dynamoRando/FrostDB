@@ -35,7 +35,7 @@ namespace FrostDB
             _name = name;
         }
 
-        public PartialDatabase(string name, DataManager<IDatabase> manager, Guid id,
+        public PartialDatabase(string name, Guid id,
            List<Table> tables) : this(name)
         {
             _id = id;

@@ -7,37 +7,141 @@ using System.Linq;
 
 namespace FrostDB
 {
-    public class DatabaseManager : DataManager<IDatabase>
+    public class DatabaseManager 
     {
         #region Private Fields
+        private List<Database> _databases;
+        private string _databaseFolder;
+        private string _databaseExtension;
+        private IDataFileManager<DataFile> _dataFileManager;
+        private IDatabaseFileMapper<Database, DataFile> _databaseFileMapper;
+        private IDataManagerEventManager _dataEventManager;
         #endregion
 
         #region Public Properties
+        public List<Database> Databases => _databases;
+        #endregion
+
+        #region Protected Methods
         #endregion
 
         #region Events
         #endregion
 
         #region Constructors
-        public DatabaseManager() : base()
+        public DatabaseManager(string databaseFolder,
+            string databaseExtension,
+            IDatabaseFileMapper<Database, DataFile> mapper,
+            IDataManagerEventManager dataEventManager)
         {
-        }
+            _dataFileManager = new DataFileManager();
+            _databaseFileMapper = mapper;
 
-        public DatabaseManager(DatabaseFileMapper mapper, string databaseFolder,
-            string databaseExtension) : base(databaseFolder, databaseExtension, mapper)
-        {
+            _databaseFolder = databaseFolder;
+            _databaseExtension = databaseExtension;
+
+            if (_databaseFileMapper is null)
+            {
+                _databaseFileMapper = new DatabaseFileMapper();
+            }
+
+            _databases = new List<Database>();
+
         }
         #endregion
 
         #region Public Methods
+        public Database GetFullDatabase(string databaseName)
+        {
+            Database db = null;
 
+            Databases.ForEach(database =>
+            {
+                if ((database is Database) && (database.Name == databaseName))
+                {
+                    db = database as Database;
+                }
+            });
+
+            return db;
+        }
+        public void AddDatabase(Database database)
+        {
+            if (!HasDatabase(database.Name))
+            {
+                _databases.Add(database);
+                SaveToDisk(database);
+            }
+        }
+
+        public Database GetDatabase(string databaseName)
+        {
+            return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
+        }
+
+        public Database GetDatabase(Guid? guid)
+        {
+            return Databases.Where(d => d.Id == guid).FirstOrDefault();
+        }
+
+        public bool HasDatabase(string databaseName)
+        {
+            return Databases.Any(d => d.Name == databaseName);
+        }
+
+        public bool HasDatabase(Guid guid)
+        {
+            return Databases.Any(d => d.Id == guid);
+        }
+
+        public void RemoveDatabase(Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDatabase(string databaseName)
+        {
+            File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
+            var db = (Database)ProcessReference.GetDatabase(databaseName);
+            _databases.Remove(db);
+        }
+
+        public int LoadDatabases(string databaseFolderLocation)
+        {
+            int count = 0;
+
+            foreach (var file in Directory.GetFiles(databaseFolderLocation))
+            {
+                var database = GetDatabaseFromDisk(file);
+                _databases.Add(database);
+                count = Databases.Count;
+            }
+
+            return count;
+        }
+
+        public void SaveToDisk(Database database)
+        {
+            var fileName = _databaseFolder + database.Name + _databaseExtension;
+            var file = _databaseFileMapper.Map(database);
+            _dataFileManager.SaveDataFile(fileName, file);
+        }
         #endregion
+
+
 
         #region Private Methods
+        private Database GetDatabaseFromDisk(string file)
+        {
+            var dataFile = _dataFileManager.GetDataFile(file);
+            return _databaseFileMapper.Map(dataFile);
+        }
+
+        private void RegisterEvents()
+        {
+            _dataEventManager.RegisterEvents();
+        }
         #endregion
-
-
-
 
     }
 }
