@@ -13,6 +13,17 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public DatabaseManager Manager
+        {
+            get
+            {
+                return _dataManager;
+            }
+            set
+            {
+                _dataManager = value;
+            }
+        }
         #endregion
 
         #region Protected Methods

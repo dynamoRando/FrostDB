@@ -8,9 +8,21 @@ namespace FrostDB
     public class DataManagerEventManagerPartialDatabase : IDataManagerEventManager
     {
 		#region Private Fields
+		private PartialDatabaseManager _dataManager;
 		#endregion
 
 		#region Public Properties
+		public PartialDatabaseManager Manager
+		{
+			get
+			{
+				return _dataManager;
+			}
+			set
+			{
+				_dataManager = value;
+			}
+		}
 		#endregion
 
 		#region Protected Methods

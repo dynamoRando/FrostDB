@@ -12,12 +12,14 @@ namespace FrostDB
         #region Private Fields
         private IContractManager _contractManager;
         private Network _networkManager;
+        private DatabaseManager _dbManager;
+        private PartialDatabaseManager _pdbManager;
         #endregion
 
         #region Public Properties
 
-        public DatabaseManager DatabaseManager { get; }
-        public PartialDatabaseManager PartialDatabaseManager { get; }
+        public DatabaseManager DatabaseManager => _dbManager;
+        public PartialDatabaseManager PartialDatabaseManager => _pdbManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public static IProcessConfiguration Configuration { get; private set; }
@@ -34,28 +36,8 @@ namespace FrostDB
         public Process()
         {
             SetConfiguration();
-
-            var dbManager = new DataManagerEventManagerDatabase();
-
-            DatabaseManager = new DatabaseManager(
-               Configuration.DatabaseFolder,
-               Configuration.DatabaseExtension,
-               new DatabaseFileMapper(),
-               dbManager
-               );
-
-            dbManager.RegisterEvents();
-
-            var partialDbManager = new DataManagerEventManagerPartialDatabase();
-
-            PartialDatabaseManager = new PartialDatabaseManager(
-                Configuration.DatabaseFolder,
-                Configuration.PartialDatabaseExtension,
-                new PartialDatabaseFileMapper(),
-                partialDbManager
-                ); 
-
-            partialDbManager.RegisterEvents();
+            SetupManagers();
+           
 
             _contractManager = new ContractManager(this);
             _networkManager = new Network();
@@ -75,27 +57,7 @@ namespace FrostDB
             configurator.SaveConfiguration(config);
             Configuration = config;
 
-            var dbManager = new DataManagerEventManagerDatabase();
-
-            DatabaseManager = new DatabaseManager(
-               Configuration.DatabaseFolder,
-               Configuration.DatabaseExtension,
-               new DatabaseFileMapper(),
-               dbManager
-               );
-
-            dbManager.RegisterEvents();
-
-            var partialDbManager = new DataManagerEventManagerPartialDatabase();
-
-            PartialDatabaseManager = new PartialDatabaseManager(
-                Configuration.DatabaseFolder,
-                Configuration.PartialDatabaseExtension,
-                new PartialDatabaseFileMapper(),
-                partialDbManager
-                );
-
-            partialDbManager.RegisterEvents();
+            SetupManagers();
 
             _contractManager = new ContractManager(this);
             _networkManager = new Network();
@@ -280,6 +242,32 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SetupManagers()
+        {
+            var dbManager = new DataManagerEventManagerDatabase();
+
+            _dbManager = new DatabaseManager(
+               Configuration.DatabaseFolder,
+               Configuration.DatabaseExtension,
+               new DatabaseFileMapper(),
+               dbManager
+               );
+
+            dbManager.Manager = DatabaseManager;
+            dbManager.RegisterEvents();
+
+            var partialDbManager = new DataManagerEventManagerPartialDatabase();
+
+            _pdbManager = new PartialDatabaseManager(
+                Configuration.DatabaseFolder,
+                Configuration.PartialDatabaseExtension,
+                new PartialDatabaseFileMapper(),
+                partialDbManager
+                );
+
+            partialDbManager.Manager = PartialDatabaseManager;
+            partialDbManager.RegisterEvents();
+        }
         private void SetConfiguration()
         {
             var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
