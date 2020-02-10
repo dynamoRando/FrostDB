@@ -103,6 +103,11 @@ namespace FrostDB
                 pendingParticipants = new List<Participant>();
             }
 
+            if (contract is null)
+            {
+                contract = new Contract(this);
+            } 
+
             _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants);
             _contract = contract;
         }
