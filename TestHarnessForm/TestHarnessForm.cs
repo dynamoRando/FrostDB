@@ -10,12 +10,16 @@ using System.Windows.Forms;
 
 namespace TestHarnessForm
 {
-    public partial class Form1 : Form
+    public partial class TestHarnessForm : Form
     {
-        public Form1()
+        public TestHarnessForm()
         {
             InitializeComponent();
         }
 
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

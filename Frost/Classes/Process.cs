@@ -65,6 +65,29 @@ namespace FrostDB
             ProcessReference.Process = this;
             NetworkReference.Network = _networkManager;
         }
+
+        public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber, string rootDirectory)
+        {
+            var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+            var configurator = new ProcessConfigurator(info);
+            var config = configurator.GetConfiguration(rootDirectory);
+
+            config.Address = instanceIpAddress;
+            config.DataServerPort = dataPortNumber;
+            config.ConsoleServerPort = consolePortNumber;
+            config.ContractFolder = rootDirectory + @"\" + @"\contracts\";
+            config.DatabaseFolder = rootDirectory + @"\" + @"\dbs";
+            configurator.SaveConfiguration(config);
+            Configuration = config;
+
+            SetupManagers();
+
+            _contractManager = new ContractManager(this);
+            _networkManager = new Network();
+
+            ProcessReference.Process = this;
+            NetworkReference.Network = _networkManager;
+        }
         #endregion
 
         #region Public Methods

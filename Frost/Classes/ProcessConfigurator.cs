@@ -49,6 +49,24 @@ namespace FrostDB
             return config;
         }
 
+        public virtual Configuration GetConfiguration(string rootDirectory)
+        {
+            var config = new Configuration();
+            var filePath = rootDirectory + @"\" + @"frost.config";
+
+            if (File.Exists(filePath))
+            {
+                config = _configManager.LoadConfiguration(filePath);
+            }
+            else
+            {
+                SetDefaultValues(config, rootDirectory);
+                SaveConfiguration(config);
+            }
+
+            return config;
+        }
+
         public void SaveConfiguration(Configuration configuration)
         {
             _configManager.SaveConfiguration(configuration);
@@ -66,6 +84,21 @@ namespace FrostDB
             config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
             config.ContractExtension = _default.ContractExtension;
             config.ContractFolder = _default.ContractFolder;
+            config.ConsoleServerPort = _default.ConsolePortNumber;
+        }
+
+        public void SetDefaultValues(Configuration config, string rootDirectory)
+        {
+            config.DatabaseFolder = rootDirectory + @"\" + @"\dbs\";
+            config.FileLocation = rootDirectory + @"\" + @"\frost.config";
+            config.Address = _default.IPAddress;
+            config.DataServerPort = _default.DataPortNumber;
+            config.DatabaseExtension = _default.DatabaseExtension;
+            config.Id = Guid.NewGuid();
+            config.Name = _default.Name;
+            config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
+            config.ContractExtension = _default.ContractExtension;
+            config.ContractFolder = rootDirectory + @"\" + @"\contracts\";
             config.ConsoleServerPort = _default.ConsolePortNumber;
         }
 
