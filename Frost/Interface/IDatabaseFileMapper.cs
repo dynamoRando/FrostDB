@@ -9,7 +9,7 @@ namespace FrostDB.Interface
         where TDatabase : IDatabase 
         where YFile : IDataFile 
     {
-        TDatabase Map(YFile file);
+        TDatabase Map(YFile file, Process process);
         YFile Map(TDatabase database);
     }
 }

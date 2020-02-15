@@ -10,6 +10,7 @@ namespace FrostDB
     public class PartialDatabase : Database
     {
         #region Private Fields
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -22,15 +23,16 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public PartialDatabase()
+        public PartialDatabase(Process process) : base(process)
         {
+            _process = process;
         }
-        public PartialDatabase(string name) : base(name)
+        public PartialDatabase(string name, Process process) : base(name, process)
         {
         }
 
         public PartialDatabase(string name, Guid id,
-           List<Table> tables) : base(name, id, tables)
+           List<Table> tables, Process process) : base(name, id, tables, process)
         {
         }
         #endregion
@@ -41,7 +43,7 @@ namespace FrostDB
         #region Private Methods
         #endregion
 
-        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext, Process process) : base(process)
         {
             throw new NotImplementedException();
         }

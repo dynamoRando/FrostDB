@@ -15,6 +15,7 @@ namespace FrostDB
         IMessageConsoleProcessorObject _processProcess;
         IMessageConsoleProcessorObject _processDatabase;
         IMessageConsoleProcessorObject _processTable;
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -28,11 +29,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageConsoleProcessor() : base()
+        public MessageConsoleProcessor(Process process) : base()
         {
-            _processProcess = new MessageConsoleProcessorProcess();
-            _processDatabase = new MessageConsoleProcessorDatabase();
-            _processTable = new MessageConsoleProcessorTable();
+            _process = process;
+            _processProcess = new MessageConsoleProcessorProcess(_process);
+            _processDatabase = new MessageConsoleProcessorDatabase(_process);
+            _processTable = new MessageConsoleProcessorTable(_process);
         }
         #endregion
 

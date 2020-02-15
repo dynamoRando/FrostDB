@@ -10,6 +10,7 @@ namespace FrostDB
     public class ContractMessageProcessor 
     {
         #region Private Fields
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -22,10 +23,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public ContractMessageProcessor(Process process)
+        {
+            _process = process;
+        }
         #endregion
 
         #region Public Methods
-        public static void Process(Message message)
+        public void Process(Message message)
         {
             switch (message.Action)
             {
@@ -42,21 +47,21 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private static void AcceptPendingContract(Message message)
+        private void AcceptPendingContract(Message message)
         {
             var databaseName = message.Content;
-            var db = ProcessReference.GetDatabase(databaseName);
+            var db = _process.GetDatabase(databaseName);
             var pendingParticipant = db.GetPendingParticipant(message.Origin.IpAddress, message.Origin.PortNumber);
             db.RemovePendingParticipant(pendingParticipant);
             db.AddParticipant(pendingParticipant);
         }
-        private static void SavePendingContract(Message message)
+        private void SavePendingContract(Message message)
         {
             Contract contract = null;
             if (JsonExt.TryParse(message.Content, out contract))
             {
                 Console.WriteLine("Saving pending contract");
-                ProcessReference.Process.AddPendingContract(contract);
+                _process.AddPendingContract(contract);
             }
         }
         #endregion

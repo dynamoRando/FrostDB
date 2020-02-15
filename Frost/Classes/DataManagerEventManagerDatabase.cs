@@ -10,6 +10,7 @@ namespace FrostDB
     {
         #region Private Fields
         private DatabaseManager _dataManager;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -33,7 +34,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DataManagerEventManagerDatabase() { }
+        public DataManagerEventManagerDatabase(Process process) 
+        {
+            _process = process;
+        }
         public DataManagerEventManagerDatabase(DatabaseManager manager)
         {
             _dataManager = manager;
@@ -136,7 +140,7 @@ namespace FrostDB
             if (e is ParticipantAddedEventArgs)
             {
                 var args = (ParticipantAddedEventArgs)e;
-                var db = ProcessReference.GetDatabase(args.DatabaseId);
+                var db = _process.GetDatabase(args.DatabaseId);
                 if (db is Database)
                 {
                     _dataManager.SaveToDisk((Database)db);
@@ -238,9 +242,9 @@ namespace FrostDB
                 Console.WriteLine($"Pending Contract {args.Contract.DatabaseId} recieved");
 
                 // TO DO: Check if db exists first, if not, then this is a new partial db to be created
-                if (ProcessReference.HasDatabase(args.Contract.DatabaseId))
+                if (_process.HasDatabase(args.Contract.DatabaseId))
                 {
-                    var db = ProcessReference.GetDatabase(args.Contract.DatabaseId);
+                    var db = _process.GetDatabase(args.Contract.DatabaseId);
                     _dataManager.SaveToDisk((Database)db);
                 }
             }
@@ -251,9 +255,11 @@ namespace FrostDB
             if (e is ParticipantPendingEventArgs)
             {
                 var args = (ParticipantPendingEventArgs)e;
-                var db = ProcessReference.GetDatabase(args.DatabaseId);
-                _dataManager.SaveToDisk((Database)db);
-
+                if (_process.HasDatabase(args.DatabaseId))
+                {
+                    var db = _process.GetDatabase(args.DatabaseId);
+                    _dataManager.SaveToDisk((Database)db);
+                }
                 Console.WriteLine($"{args.DatabaseId} has pending participant at {args.Participant.Location.IpAddress}");
             }
         }

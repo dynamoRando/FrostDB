@@ -22,6 +22,7 @@ namespace FrostDB
         private List<Column> _columns;
         private TableSchema _schema;
         private ContractValidator _contractValidator;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -40,19 +41,21 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Table()
+        public Table(Process process)
         {
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
+
+            _process = process;
             
             if (DatabaseId != null)
             {
-                _contractValidator = new ContractValidator(ProcessReference.GetContract(DatabaseId), DatabaseId);
+                _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
             }
         }
 
-        public Table(string name, List<Column> columns, Guid? databaseId) : this()
+        public Table(string name, List<Column> columns, Guid? databaseId, Process process) : this(process)
         {
             _name = name;
             _columns = columns;
@@ -91,7 +94,7 @@ namespace FrostDB
 
         public bool HasCooperativeData()
         {
-            return _rows.Any(row => !(row.Participant.Location.IsLocal() ||
+            return _rows.Any(row => !(row.Participant.Location.IsLocal(_process) ||
             row.Participant.IsDatabase(DatabaseId)));
         }
 
@@ -104,7 +107,7 @@ namespace FrostDB
         {
             var row = new Row();
 
-            if (reference.Participant.Location.IsLocal()
+            if (reference.Participant.Location.IsLocal(_process)
                 || reference.Participant.IsDatabase(DatabaseId))
             {
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
@@ -187,7 +190,7 @@ namespace FrostDB
                     // we make sure the participant accepts this action if they're remote
                     if (form.Participant.AcceptsAction(TableAction.AddRow))
                     {
-                        if (form.Participant.Location.IsLocal() || form.Participant.IsDatabase(DatabaseId))
+                        if (form.Participant.Location.IsLocal(_process) || form.Participant.IsDatabase(DatabaseId))
                         {
                             AddRowLocally(form.Row);
                         }
@@ -204,7 +207,7 @@ namespace FrostDB
         {
             RowForm form = null;
 
-            var db = ProcessReference.GetDatabase(DatabaseId);
+            var db = _process.GetDatabase(DatabaseId);
             if (db.HasParticipant(participantId))
             {
                 form = new RowForm(GetNewRow(), db.GetParticipant(participantId));
@@ -307,7 +310,7 @@ namespace FrostDB
             });
 
             return new RowReference(colIds, Id, new Participant(DatabaseId, (Location)
-                Process.GetLocation()), DatabaseId, row.Id);
+                _process.GetLocation()), DatabaseId, row.Id, _process);
         }
 
         private RowReference GetNewRowReference(Row row, Location location)
@@ -319,14 +322,14 @@ namespace FrostDB
                 colIds.Add(c.Id);
             });
 
-            return new RowReference(colIds, this.Id, new Participant(location), DatabaseId, row.Id);
+            return new RowReference(colIds, this.Id, new Participant(location), DatabaseId, row.Id, _process);
         }
 
         private ColumnAddedEventArgs CreateColumnAddedEventArgs(Column column)
         {
             return new ColumnAddedEventArgs
             {
-                DatabaseName = ProcessReference.GetDatabase(this.DatabaseId).Name,
+                DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
                 TableName = this.Name,
                 ColumnName = column.Name,
                 Type = column.DataType
@@ -337,7 +340,7 @@ namespace FrostDB
         {
             return new ColumnDeletedEventArgs
             {
-                DatabaseName = ProcessReference.GetDatabase(this.DatabaseId).Name,
+                DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
                 TableName = this.Name,
                 ColumnName = column.Name
             };

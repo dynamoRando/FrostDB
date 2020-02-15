@@ -7,12 +7,13 @@ namespace FrostDB
 {
     public class PartialDatabaseFileMapper : IDatabaseFileMapper<PartialDatabase, DataFile>
     {
-        public PartialDatabase Map(DataFile file)
+        public PartialDatabase Map(DataFile file, Process process)
         {
             var database = new PartialDatabase(
             file.Name,
             file.Id.Value,
-            file.Tables
+            file.Tables,
+            process
             );
 
             return database;

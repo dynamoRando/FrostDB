@@ -14,6 +14,7 @@ namespace FrostDB
         private List<Guid?> _columnIds;
         private Guid? _tableId;
         private Guid? _databaseId;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -33,13 +34,14 @@ namespace FrostDB
         #region Constructors
         public RowReference() { }
 
-        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant, Guid? databaseId, Guid? rowId)
+        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant, Guid? databaseId, Guid? rowId, Process process)
         {
             _columnIds = columnIds;
             _tableId = tableId;
             Participant = participant;
             _databaseId = databaseId;
             RowId = rowId;
+            _process = process;
         }
         public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant)
         {
@@ -75,9 +77,9 @@ namespace FrostDB
         {
             var row = new Row();
 
-            if (Participant.Location.IsLocal() || Participant.IsDatabase(_databaseId))
+            if (Participant.Location.IsLocal(_process) || Participant.IsDatabase(_databaseId))
             {
-                row = ProcessReference.GetRow(DatabaseId, TableId, RowId);
+                row = _process.GetRow(DatabaseId, TableId, RowId);
             }
             else
             {

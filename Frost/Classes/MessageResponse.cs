@@ -5,6 +5,7 @@ namespace FrostDB
     public class MessageResponse
     {
         #region Private Fields
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -17,10 +18,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public MessageResponse(Process process)
+        {
+            _process = process;
+        }
         #endregion
 
         #region Public Methods
-        public static Message Create(Message message)
+        public Message Create(Message message)
         {
             Message response = null;
 
@@ -41,11 +46,11 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private static Message BuildContractAcceptPendingRecieved(Message message)
+        private Message BuildContractAcceptPendingRecieved(Message message)
         {
             Message response = new Message(
             destination: message.Origin,
-            origin: Process.GetLocation(),
+            origin: _process.GetLocation(),
             messageContent: string.Empty,
             messageAction: MessageDataAction.Contract.Accept_Pending_Contract_Recieved,
             referenceMessageId: message.Id,
@@ -54,11 +59,11 @@ namespace FrostDB
 
             return response;
         }
-        private static Message BuildSaveContractMessageReceived(Message message)
+        private Message BuildSaveContractMessageReceived(Message message)
         {
             Message response = new Message(
                destination: message.Origin,
-               origin: Process.GetLocation(),
+               origin: _process.Configuration.GetLocation(),
                messageContent: string.Empty,
                messageAction: MessageDataAction.Contract.Save_Pending_Contract_Recieved,
                referenceMessageId: message.Id,

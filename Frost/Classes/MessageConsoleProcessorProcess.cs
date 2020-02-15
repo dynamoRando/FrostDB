@@ -10,7 +10,9 @@ namespace FrostDB
 {
     public class MessageConsoleProcessorProcess : IMessageConsoleProcessorObject
     {
-		#region Private Fields
+        #region Private Fields
+        private MessageBuilder _messageBuilder;
+        private Process _process;
 		#endregion
 
 		#region Public Properties
@@ -23,9 +25,10 @@ namespace FrostDB
 		#endregion
 
 		#region Constructors
-		public MessageConsoleProcessorProcess()
+		public MessageConsoleProcessorProcess(Process process)
 		{
-
+            _process = process;
+            _messageBuilder = new MessageBuilder(_process);
 		}
 		#endregion
 
@@ -64,37 +67,37 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             List<string> databases = new List<string>();
-            ProcessReference.Process.Databases.ForEach(d => databases.Add(d.Name));
+            _process.Databases.ForEach(d => databases.Add(d.Name));
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 
-            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, MessageActionType.Process);
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Databases_Response, type, MessageActionType.Process);
         }
 
         private void HandleGetProcessId(Message message)
         {
             string messageContent = string.Empty;
-            Type type = ProcessReference.Process.Id.GetType();
-            messageContent = JsonConvert.SerializeObject(ProcessReference.Process.Id);
+            Type type = _process.Id.GetType();
+            messageContent = JsonConvert.SerializeObject(_process.Id);
 
-            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, MessageActionType.Process);
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Id_Response, type, MessageActionType.Process);
         }
 
         private void HandleAddNewDatabase(Message message)
         {
-            ProcessReference.AddDatabase(message.Content);
-            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType(), MessageActionType.Process);
+            _process.AddDatabase(message.Content);
+            _messageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Add_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleRemoveDatabase(Message message)
         {
-            ProcessReference.RemoveDatabase(message.Content);
-            MessageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType(), MessageActionType.Process);
+            _process.RemoveDatabase(message.Content);
+            _messageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Process.Remove_Database_Response, message.Content.GetType(), MessageActionType.Process);
         }
 
         private void HandleGetPendingProcessContracts(Message message)
         {
-            var list = ProcessReference.GetPendingProcessContracts();
+            var list = _process.GetPendingContracts();
             var info = new List<ContractInfo>();
 
             list.ForEach(c =>
@@ -117,7 +120,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
         }
 
         private void HandleAcceptPendingContract(Message message)
@@ -130,12 +133,12 @@ namespace FrostDB
              */
 
             var contract = message.GetContentAs<ContractInfo>();
-            ProcessReference.AcceptPendingContract(contract);
-            ProcessReference.AddPartialDatabase(contract.DatabaseName);
+            _process.ContractManager.AcceptPendingContract(contract);
+            _process.AddPartialDatabase(contract.DatabaseName);
             var location = new Location(Guid.NewGuid(), contract.Location.IpAddress, contract.Location.PortNumber, string.Empty);
 
-            Message acceptContract = new Message(location, ProcessReference.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
-            NetworkReference.SendMessage(acceptContract);
+            Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
+            _process.Network.SendMessage(acceptContract);
         }
 
         #endregion

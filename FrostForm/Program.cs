@@ -6,26 +6,26 @@ using System.Windows.Forms;
 
 namespace FrostForm
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             var args = Environment.GetCommandLineArgs();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (args.Length == 0)
-            {
-                Application.Run(new formFrost());
-            }
-            else
-            {
-                Application.Run(new formFrost(args));
-            }
+            Application.Run(new formFrost());
+        }
+
+        public static void Main(string ipAddress, int dataPort, int consolePort)
+        {
+            //Application.Run(new formFrost(ipAddress, dataPort, consolePort));
+            var form = new formFrost(ipAddress, dataPort, consolePort);
+            form.Show();
         }
     }
 }

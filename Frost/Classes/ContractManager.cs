@@ -37,7 +37,7 @@ namespace FrostDB
         #region Public Methods
         public void UpdateContractPermissions(ContractInfo info)
         {
-            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            var db = _process.GetDatabase(info.DatabaseName);
             db.Contract.ContractPermissions.Clear();
 
             foreach (var item in info.SchemaData)
@@ -84,7 +84,7 @@ namespace FrostDB
                     }
                 }
 
-                db.Contract.ContractPermissions.Add(new TableContractPermission(ProcessReference.GetTableId(db.Name, tableName), cooperator, permissions));
+                db.Contract.ContractPermissions.Add(new TableContractPermission(_process.GetDatabase(db.Name).GetTableId(tableName), cooperator, permissions));
                 db.Contract.ContractDescription = info.ContractDescription;
 
             }
@@ -94,7 +94,7 @@ namespace FrostDB
 
         public List<Contract> GetContractsFromDisk()
         {
-            _contracts = _fileManager.GetContracts(Process.Configuration.ContractFolder);
+            _contracts = _fileManager.GetContracts(_process.GetConfiguration().ContractFolder);
             return _contracts;
         }
 
@@ -124,8 +124,8 @@ namespace FrostDB
         {
             _fileManager
               .SaveContract(contract,
-              Process.Configuration.ContractFolder,
-              Process.Configuration.ContractExtension);
+              _process.GetConfiguration().ContractFolder,
+              _process.GetConfiguration().ContractExtension);
         }
         private PendingContractAddedEventArgs CreateNewPendingContractEventArgs(Contract contract)
         {

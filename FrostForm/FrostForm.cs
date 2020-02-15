@@ -27,6 +27,7 @@ namespace FrostForm
 
         public formFrost(string[] args)
         {
+            InitializeComponent();
             if (args.Count() >= 3)
             {
                 _hasArgs = true;
@@ -34,6 +35,14 @@ namespace FrostForm
                 _paramPortNumber = Convert.ToInt32(args[1]);
                 _paramLocalPortNumber = Convert.ToInt32(args[2]);
             }
+        }
+
+        public formFrost(string ipAddress, int dataPort, int consolePort)
+        {
+            InitializeComponent();
+            _paramIpAddress = ipAddress;
+            _paramPortNumber = dataPort;
+            _paramLocalPortNumber = consolePort;
         }
 
         private async void buttonConnectRemote_Click(object sender, EventArgs e)

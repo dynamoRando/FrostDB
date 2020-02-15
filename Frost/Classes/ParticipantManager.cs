@@ -13,6 +13,7 @@ namespace FrostDB
         private Database _database;
         private List<Participant> _acceptedParticipants;
         private List<Participant> _pendingParticipants;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -22,8 +23,9 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ParticipantManager(Database baseDatabase, List<Participant> acceptedParticipants, List<Participant> pendingParticipants)
+        public ParticipantManager(Database baseDatabase, List<Participant> acceptedParticipants, List<Participant> pendingParticipants, Process process)
         {
+            _process = process;
             _database = baseDatabase;
             _acceptedParticipants = acceptedParticipants;
             _pendingParticipants = pendingParticipants;
@@ -69,7 +71,7 @@ namespace FrostDB
 
         private void AddDatabaseAsParticipant()
         {
-            _acceptedParticipants.Add(new Participant(Database.Id, Process.GetLocation()));
+            _acceptedParticipants.Add(new Participant(Database.Id, _process.Configuration.GetLocation()));
         }
         #endregion
 

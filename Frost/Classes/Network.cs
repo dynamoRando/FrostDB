@@ -12,6 +12,7 @@ namespace FrostDB
         MessageConsoleProcessor _messageConsoleProcessor;
         Server _dataServer;
         Server _consoleServer;
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -24,10 +25,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Network()
+        public Network(Process process)
         {
-            _messageConsoleProcessor = new MessageConsoleProcessor();
-            _messageDataProcessor = new MessageDataProcessor();
+            _process = process;
+            _messageConsoleProcessor = new MessageConsoleProcessor(_process);
+            _messageDataProcessor = new MessageDataProcessor(_process);
             _dataServer = new Server();
             _dataServer.ServerName = "Data";
             _consoleServer = new Server();
@@ -38,9 +40,9 @@ namespace FrostDB
         #region Public Methods
         public void StartDataServer()
         {
-            _messageDataProcessor.PortNumber = Process.Configuration.DataServerPort;
-            _dataServer.PortNumber = Process.Configuration.DataServerPort;
-            _dataServer.Start(Process.Configuration.DataServerPort, Process.Configuration.Address, _messageDataProcessor);
+            _messageDataProcessor.PortNumber = _process.GetConfiguration().DataServerPort;
+            _dataServer.PortNumber = _process.GetConfiguration().DataServerPort;
+            _dataServer.Start(_process.GetConfiguration().DataServerPort, _process.GetConfiguration().Address, _messageDataProcessor);
         }
 
         public void StopDataServer()
@@ -50,9 +52,9 @@ namespace FrostDB
 
         public void StartConsoleServer()
         {
-            _messageConsoleProcessor.PortNumber = Process.Configuration.ConsoleServerPort;
-            _consoleServer.PortNumber = Process.Configuration.ConsoleServerPort;
-            _consoleServer.Start(Process.Configuration.ConsoleServerPort, Process.Configuration.Address, _messageConsoleProcessor);
+            _messageConsoleProcessor.PortNumber = _process.GetConfiguration().ConsoleServerPort;
+            _consoleServer.PortNumber = _process.GetConfiguration().ConsoleServerPort;
+            _consoleServer.Start(_process.GetConfiguration().ConsoleServerPort, _process.GetConfiguration().Address, _messageConsoleProcessor);
         }
 
         public void StopConsoleServer()

@@ -27,7 +27,7 @@ namespace FrostDB
              */
         }
 
-        public Database Map(DataFile file)
+        public Database Map(DataFile file, Process process)
         {
             var database = new Database(
               file.Name,
@@ -36,7 +36,8 @@ namespace FrostDB
               file.Schema,
               file.AcceptedParticipants,
               file.PendingParticipants,
-              file.Contract
+              file.Contract,
+              process
               );
 
             return database;

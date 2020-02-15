@@ -16,6 +16,7 @@ namespace FrostDB
         private IDataFileManager<DataFile> _dataFileManager;
         private IDatabaseFileMapper<PartialDatabase, DataFile> _databaseFileMapper;
         private IDataManagerEventManager _dataEventManager;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -32,7 +33,7 @@ namespace FrostDB
         public PartialDatabaseManager(string databaseFolder,
             string databaseExtension,
             IDatabaseFileMapper<PartialDatabase, DataFile> mapper,
-            IDataManagerEventManager dataEventManager)
+            IDataManagerEventManager dataEventManager, Process process)
         {
             _dataFileManager = new DataFileManager();
             _databaseFileMapper = mapper;
@@ -46,6 +47,8 @@ namespace FrostDB
             }
 
             _databases = new List<PartialDatabase>();
+
+            _process = process;
 
         }
         #endregion
@@ -102,7 +105,7 @@ namespace FrostDB
         public void RemoveDatabase(string databaseName)
         {
             File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
-            var db = (PartialDatabase)ProcessReference.GetDatabase(databaseName);
+            var db = (PartialDatabase)_process.GetDatabase(databaseName);
             _databases.Remove(db);
         }
 
@@ -132,7 +135,7 @@ namespace FrostDB
         private PartialDatabase GetDatabaseFromDisk(string file)
         {
             var dataFile = _dataFileManager.GetDataFile(file);
-            return _databaseFileMapper.Map(dataFile);
+            return _databaseFileMapper.Map(dataFile, _process);
         }
 
         private void RegisterEvents()

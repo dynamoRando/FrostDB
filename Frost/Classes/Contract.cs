@@ -11,6 +11,7 @@ namespace FrostDB
     public class Contract : ISerializable, IContract
     {
         #region Private Fields
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -34,18 +35,20 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Contract()
+        public Contract(Process process)
         {
+            _process = process;
             ParticipantTables = new List<Guid?>();
             ProcessTables = new List<Guid?>();
             ContractPermissions = new List<TableContractPermission>();
         }
 
-        public Contract(Database database)
+        public Contract(Process process, Database database)
         {
+            _process = process;
             DatabaseName = database.Name;
             DatabaseId = database.Id;
-            DatabaseLocation = Process.GetLocation();
+            DatabaseLocation = _process.GetLocation();
             DatabaseSchema = database.Schema;
 
             if (ContractId is null)
@@ -63,7 +66,7 @@ namespace FrostDB
                 ContractPermissions = new List<TableContractPermission>();
             }
 
-            ProcessId = ProcessReference.Process.Id;
+            ProcessId = _process.Id;
 
         }
 

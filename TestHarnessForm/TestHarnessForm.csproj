@@ -6,4 +6,9 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FrostForm\FrostForm.csproj" />
+    <ProjectReference Include="..\Frost\FrostDB.csproj" />
+  </ItemGroup>
+
 </Project>
