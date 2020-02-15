@@ -140,10 +140,13 @@ namespace FrostDB
             if (e is ParticipantAddedEventArgs)
             {
                 var args = (ParticipantAddedEventArgs)e;
-                var db = _process.GetDatabase(args.DatabaseId);
-                if (db is Database)
+                if (_process.HasDatabase(args.DatabaseId))
                 {
-                    _dataManager.SaveToDisk((Database)db);
+                    var db = _process.GetDatabase(args.DatabaseId);
+                    if (db is Database)
+                    {
+                        _dataManager.SaveToDisk((Database)db);
+                    }
                 }
             }
         }
