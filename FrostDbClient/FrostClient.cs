@@ -290,7 +290,8 @@ namespace FrostDbClient
         private Guid? SendMessage(Message message)
         {
             Guid? id = message.Id;
-            Client.Send(message);
+            // this timeout should be part of a configuration or a param passed in
+            Client.Send(message, 5000);
             _info.AddToQueue(id);
 
             return id;

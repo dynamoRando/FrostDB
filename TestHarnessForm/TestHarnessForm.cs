@@ -16,7 +16,7 @@ namespace TestHarnessForm
     {
         List<Process> _runningProcesses = new List<Process>();
         string _selectedProcess;
-        (string, int) _selectedProcessTuple;
+        (string, int, int) _selectedProcessTuple;
 
         public TestHarnessForm()
         {
@@ -34,7 +34,9 @@ namespace TestHarnessForm
             process.StartConsoleServer();
 
             listRunningProcesses.InvokeIfRequired(() => {
-                listRunningProcesses.Items.Add(process.GetConfiguration().Address + ":" + process.GetConfiguration().DataServerPort.ToString());
+                listRunningProcesses.Items.Add(process.GetConfiguration().Address 
+                    + ":" + process.GetConfiguration().DataServerPort.ToString() 
+                    + ":" + process.Configuration.ConsoleServerPort.ToString());
             });
 
             _runningProcesses.Add(process);
@@ -45,7 +47,7 @@ namespace TestHarnessForm
             var formConsolePort = textFormConsolePort.Text;
             if (!string.IsNullOrEmpty(formConsolePort))
             {
-                FrostForm.Program.Main(_selectedProcessTuple.Item1, _selectedProcessTuple.Item2, Convert.ToInt32(formConsolePort));
+                FrostForm.Program.Main(_selectedProcessTuple.Item1, _selectedProcessTuple.Item3, Convert.ToInt32(formConsolePort));
             }
         }
 
@@ -59,6 +61,7 @@ namespace TestHarnessForm
                     var items = _selectedProcess.Split(':');
                     _selectedProcessTuple.Item1 = items[0];
                     _selectedProcessTuple.Item2 = Convert.ToInt32(items[1]);
+                    _selectedProcessTuple.Item3 = Convert.ToInt32(items[2]);
                 }
             }
         }

@@ -36,6 +36,7 @@
             this.labelDatabaseName = new System.Windows.Forms.Label();
             this.labelDatabaseId = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboRemoteAddress = new System.Windows.Forms.ComboBox();
             this.textLocalPort = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -60,7 +61,8 @@
             this.listTables = new System.Windows.Forms.ListBox();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
             this.buttonMyPendingContracts = new System.Windows.Forms.Button();
-            this.comboRemoteAddress = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -151,6 +153,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Instance";
             // 
+            // comboRemoteAddress
+            // 
+            this.comboRemoteAddress.FormattingEnabled = true;
+            this.comboRemoteAddress.Location = new System.Drawing.Point(12, 36);
+            this.comboRemoteAddress.Name = "comboRemoteAddress";
+            this.comboRemoteAddress.Size = new System.Drawing.Size(215, 23);
+            this.comboRemoteAddress.TabIndex = 7;
+            // 
             // textLocalPort
             // 
             this.textLocalPort.Location = new System.Drawing.Point(311, 36);
@@ -170,14 +180,16 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonAddParticipant);
+            this.groupBox2.Controls.Add(this.listAcceptedParticipants);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.buttonManageContract);
             this.groupBox2.Controls.Add(this.labelColumnDataType);
             this.groupBox2.Controls.Add(this.buttonQuery);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.labelColumnName);
-            this.groupBox2.Controls.Add(this.buttonAddParticipant);
             this.groupBox2.Controls.Add(this.listPendingParticipants);
-            this.groupBox2.Controls.Add(this.listAcceptedParticipants);
             this.groupBox2.Controls.Add(this.buttonRemoveColumn);
             this.groupBox2.Controls.Add(this.buttonRemoveTable);
             this.groupBox2.Controls.Add(this.buttonRemoveDb);
@@ -248,7 +260,7 @@
             // 
             // buttonAddParticipant
             // 
-            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
+            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 270);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
             this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
             this.buttonAddParticipant.TabIndex = 25;
@@ -260,7 +272,7 @@
             // 
             this.listPendingParticipants.FormattingEnabled = true;
             this.listPendingParticipants.ItemHeight = 15;
-            this.listPendingParticipants.Location = new System.Drawing.Point(601, 91);
+            this.listPendingParticipants.Location = new System.Drawing.Point(601, 110);
             this.listPendingParticipants.Name = "listPendingParticipants";
             this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
             this.listPendingParticipants.TabIndex = 26;
@@ -269,7 +281,7 @@
             // 
             this.listAcceptedParticipants.FormattingEnabled = true;
             this.listAcceptedParticipants.ItemHeight = 15;
-            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 91);
+            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 110);
             this.listAcceptedParticipants.Name = "listAcceptedParticipants";
             this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
             this.listAcceptedParticipants.TabIndex = 24;
@@ -400,13 +412,23 @@
             this.buttonMyPendingContracts.UseVisualStyleBackColor = true;
             this.buttonMyPendingContracts.Click += new System.EventHandler(this.buttonMyPendingContracts_Click);
             // 
-            // comboRemoteAddress
+            // label6
             // 
-            this.comboRemoteAddress.FormattingEnabled = true;
-            this.comboRemoteAddress.Location = new System.Drawing.Point(12, 36);
-            this.comboRemoteAddress.Name = "comboRemoteAddress";
-            this.comboRemoteAddress.Size = new System.Drawing.Size(215, 23);
-            this.comboRemoteAddress.TabIndex = 7;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(441, 93);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 15);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Accepted:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(601, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(54, 15);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Pending:";
             // 
             // formFrost
             // 
@@ -463,6 +485,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button buttonMyPendingContracts;
         private System.Windows.Forms.ComboBox comboRemoteAddress;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
     }
 }
 

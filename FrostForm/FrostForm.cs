@@ -12,6 +12,17 @@ using FrostForm.Extensions;
 
 namespace FrostForm
 {
+    public static class TaskExtensions
+    {
+        public static async Task TimeoutAfter(this Task task, int millisecondsTimeout)
+        {
+            if (task == await Task.WhenAny(task, Task.Delay(millisecondsTimeout)))
+                await task;
+            else
+                throw new TimeoutException();
+        }
+    }
+
     public partial class formFrost : Form
     {
         App _app;
@@ -43,10 +54,14 @@ namespace FrostForm
             _paramIpAddress = ipAddress;
             _paramPortNumber = dataPort;
             _paramLocalPortNumber = consolePort;
+
+            _hasArgs = true;
         }
 
         private async void buttonConnectRemote_Click(object sender, EventArgs e)
         {
+            int timeout = 1000;
+
             var selectedIp = comboRemoteAddress.SelectedItem.ToString();
             string ipAddress = selectedIp;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
@@ -225,7 +240,8 @@ namespace FrostForm
 
         private void GetIPAddresses()
         {
-            comboRemoteAddress.InvokeIfRequired(() => {
+            comboRemoteAddress.InvokeIfRequired(() =>
+            {
                 comboRemoteAddress.Items.Clear();
 
                 if (_hasArgs)
@@ -233,7 +249,7 @@ namespace FrostForm
                     comboRemoteAddress.Items.Add(_paramIpAddress);
                 }
 
-                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();  
+                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();
                 addresses.ForEach(a => comboRemoteAddress.Items.Add(a));
 
                 if (!comboRemoteAddress.Items.Contains("127.0.0.1"))
