@@ -40,14 +40,16 @@
             this.textLocalPort = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonAddParticipant = new System.Windows.Forms.Button();
+            this.listAcceptedParticipants = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.buttonManageContract = new System.Windows.Forms.Button();
             this.labelColumnDataType = new System.Windows.Forms.Label();
             this.buttonQuery = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelColumnName = new System.Windows.Forms.Label();
-            this.buttonAddParticipant = new System.Windows.Forms.Button();
             this.listPendingParticipants = new System.Windows.Forms.ListBox();
-            this.listAcceptedParticipants = new System.Windows.Forms.ListBox();
             this.buttonRemoveColumn = new System.Windows.Forms.Button();
             this.buttonRemoveTable = new System.Windows.Forms.Button();
             this.buttonRemoveDb = new System.Windows.Forms.Button();
@@ -61,8 +63,6 @@
             this.listTables = new System.Windows.Forms.ListBox();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
             this.buttonMyPendingContracts = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -211,6 +211,44 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Databases";
             // 
+            // buttonAddParticipant
+            // 
+            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 270);
+            this.buttonAddParticipant.Name = "buttonAddParticipant";
+            this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
+            this.buttonAddParticipant.TabIndex = 25;
+            this.buttonAddParticipant.Text = "+ Participant";
+            this.buttonAddParticipant.UseVisualStyleBackColor = true;
+            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
+            // 
+            // listAcceptedParticipants
+            // 
+            this.listAcceptedParticipants.FormattingEnabled = true;
+            this.listAcceptedParticipants.ItemHeight = 15;
+            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 110);
+            this.listAcceptedParticipants.Name = "listAcceptedParticipants";
+            this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
+            this.listAcceptedParticipants.TabIndex = 24;
+            this.listAcceptedParticipants.SelectedIndexChanged += new System.EventHandler(this.listAcceptedParticipants_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(601, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(54, 15);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Pending:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(441, 93);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 15);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Accepted:";
+            // 
             // buttonManageContract
             // 
             this.buttonManageContract.Location = new System.Drawing.Point(642, 14);
@@ -258,16 +296,6 @@
             this.labelColumnName.TabIndex = 14;
             this.labelColumnName.Text = "labelColumnName";
             // 
-            // buttonAddParticipant
-            // 
-            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 270);
-            this.buttonAddParticipant.Name = "buttonAddParticipant";
-            this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
-            this.buttonAddParticipant.TabIndex = 25;
-            this.buttonAddParticipant.Text = "+ Participant";
-            this.buttonAddParticipant.UseVisualStyleBackColor = true;
-            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
-            // 
             // listPendingParticipants
             // 
             this.listPendingParticipants.FormattingEnabled = true;
@@ -276,15 +304,6 @@
             this.listPendingParticipants.Name = "listPendingParticipants";
             this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
             this.listPendingParticipants.TabIndex = 26;
-            // 
-            // listAcceptedParticipants
-            // 
-            this.listAcceptedParticipants.FormattingEnabled = true;
-            this.listAcceptedParticipants.ItemHeight = 15;
-            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 110);
-            this.listAcceptedParticipants.Name = "listAcceptedParticipants";
-            this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
-            this.listAcceptedParticipants.TabIndex = 24;
             // 
             // buttonRemoveColumn
             // 
@@ -411,24 +430,6 @@
             this.buttonMyPendingContracts.Text = "Manage My Pending Contracts";
             this.buttonMyPendingContracts.UseVisualStyleBackColor = true;
             this.buttonMyPendingContracts.Click += new System.EventHandler(this.buttonMyPendingContracts_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(441, 93);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(60, 15);
-            this.label6.TabIndex = 28;
-            this.label6.Text = "Accepted:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(601, 91);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(54, 15);
-            this.label7.TabIndex = 29;
-            this.label7.Text = "Pending:";
             // 
             // formFrost
             // 

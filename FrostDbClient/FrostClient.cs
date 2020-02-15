@@ -122,7 +122,21 @@ namespace FrostDbClient
 
         public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
         {
-            throw new NotImplementedException();
+            var list = new List<ContractInfo>();
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                if (_info.ProcessPendingContracts.ContainsKey(string.Empty))
+                {
+                    List<ContractInfo> removed = null;
+                    _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
+                    list = removed;
+                }
+            }
+
+            return list;
         }
 
         public void GetContractInformation(string databaseName)

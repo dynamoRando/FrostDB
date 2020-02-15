@@ -12,17 +12,6 @@ using FrostForm.Extensions;
 
 namespace FrostForm
 {
-    public static class TaskExtensions
-    {
-        public static async Task TimeoutAfter(this Task task, int millisecondsTimeout)
-        {
-            if (task == await Task.WhenAny(task, Task.Delay(millisecondsTimeout)))
-                await task;
-            else
-                throw new TimeoutException();
-        }
-    }
-
     public partial class formFrost : Form
     {
         App _app;
@@ -257,6 +246,11 @@ namespace FrostForm
                     comboRemoteAddress.Items.Add("127.0.0.1");
                 }
             });
+        }
+
+        private void listAcceptedParticipants_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
