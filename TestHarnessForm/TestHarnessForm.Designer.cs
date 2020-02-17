@@ -45,11 +45,23 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textProcessAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textTestSetupLocation = new System.Windows.Forms.TextBox();
+            this.buttonSaveTestSetup = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textLoadTestSetup = new System.Windows.Forms.TextBox();
+            this.buttonLoadTestSetup = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonLoadTestSetup);
+            this.groupBox1.Controls.Add(this.textLoadTestSetup);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.buttonSaveTestSetup);
+            this.groupBox1.Controls.Add(this.textTestSetupLocation);
             this.groupBox1.Controls.Add(this.buttonClearForm);
             this.groupBox1.Controls.Add(this.textFormConsolePort);
             this.groupBox1.Controls.Add(this.label6);
@@ -68,7 +80,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(22, 24);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(578, 359);
+            this.groupBox1.Size = new System.Drawing.Size(578, 414);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Running Processes:";
@@ -88,6 +100,7 @@
             this.textFormConsolePort.Name = "textFormConsolePort";
             this.textFormConsolePort.Size = new System.Drawing.Size(100, 23);
             this.textFormConsolePort.TabIndex = 15;
+            this.textFormConsolePort.TextChanged += new System.EventHandler(this.textFormConsolePort_TextChanged);
             // 
             // label6
             // 
@@ -123,7 +136,7 @@
             this.listRunningProcesses.ItemHeight = 15;
             this.listRunningProcesses.Location = new System.Drawing.Point(18, 179);
             this.listRunningProcesses.Name = "listRunningProcesses";
-            this.listRunningProcesses.Size = new System.Drawing.Size(170, 169);
+            this.listRunningProcesses.Size = new System.Drawing.Size(170, 214);
             this.listRunningProcesses.TabIndex = 10;
             this.listRunningProcesses.SelectedIndexChanged += new System.EventHandler(this.listRunningProcesses_SelectedIndexChanged);
             // 
@@ -211,6 +224,58 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "IP Address";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(208, 250);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 15);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Save Setup";
+            // 
+            // textTestSetupLocation
+            // 
+            this.textTestSetupLocation.Location = new System.Drawing.Point(208, 268);
+            this.textTestSetupLocation.Name = "textTestSetupLocation";
+            this.textTestSetupLocation.Size = new System.Drawing.Size(336, 23);
+            this.textTestSetupLocation.TabIndex = 17;
+            // 
+            // buttonSaveTestSetup
+            // 
+            this.buttonSaveTestSetup.Location = new System.Drawing.Point(469, 297);
+            this.buttonSaveTestSetup.Name = "buttonSaveTestSetup";
+            this.buttonSaveTestSetup.Size = new System.Drawing.Size(75, 23);
+            this.buttonSaveTestSetup.TabIndex = 18;
+            this.buttonSaveTestSetup.Text = "Save";
+            this.buttonSaveTestSetup.UseVisualStyleBackColor = true;
+            this.buttonSaveTestSetup.Click += new System.EventHandler(this.buttonSaveTestSetup_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(208, 328);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(66, 15);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Load Setup";
+            // 
+            // textLoadTestSetup
+            // 
+            this.textLoadTestSetup.Location = new System.Drawing.Point(208, 346);
+            this.textLoadTestSetup.Name = "textLoadTestSetup";
+            this.textLoadTestSetup.Size = new System.Drawing.Size(336, 23);
+            this.textLoadTestSetup.TabIndex = 20;
+            // 
+            // buttonLoadTestSetup
+            // 
+            this.buttonLoadTestSetup.Location = new System.Drawing.Point(469, 375);
+            this.buttonLoadTestSetup.Name = "buttonLoadTestSetup";
+            this.buttonLoadTestSetup.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadTestSetup.TabIndex = 21;
+            this.buttonLoadTestSetup.Text = "Load";
+            this.buttonLoadTestSetup.UseVisualStyleBackColor = true;
+            this.buttonLoadTestSetup.Click += new System.EventHandler(this.buttonLoadTestSetup_Click);
+            // 
             // TestHarnessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -244,6 +309,12 @@
         private System.Windows.Forms.TextBox textProcessAddress;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textFormConsolePort;
+        private System.Windows.Forms.Button buttonLoadTestSetup;
+        private System.Windows.Forms.TextBox textLoadTestSetup;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button buttonSaveTestSetup;
+        private System.Windows.Forms.TextBox textTestSetupLocation;
     }
 }
 
