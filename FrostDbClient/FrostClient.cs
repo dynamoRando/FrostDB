@@ -274,7 +274,7 @@ namespace FrostDbClient
         {
             Stopwatch watch = new Stopwatch();
             bool responseRecieved = false;
-            double timeOut = 3.0;
+            double timeOut = 30.0;
 
             watch.Start();
 
