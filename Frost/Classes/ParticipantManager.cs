@@ -42,13 +42,13 @@ namespace FrostDB
         public void AddPendingParticipant(Participant participant)
         {
             _pendingParticipants.Add(participant);
-            EventManager.TriggerEvent
+            _process.EventManager.TriggerEvent
                 (EventName.Participant.Pending, GetParticipantPendingEventArgs(participant));
         }
         public void AddParticipant(Participant participant)
         {
             _acceptedParticipants.Add(participant);
-            EventManager.TriggerEvent
+            _process.EventManager.TriggerEvent
                 (EventName.Participant.Added, GetParticipantEventArgs(participant));
         }
         #endregion

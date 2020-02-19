@@ -23,7 +23,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageDataProcessor(Process process) : base()
+        public MessageDataProcessor(Process process) : base(process)
         {
             _process = process;
             _dataProcessor = new DataMessageProcessor();

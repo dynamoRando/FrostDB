@@ -89,7 +89,7 @@ namespace FrostDB
 
             }
 
-            EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
+            _process.EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
         }
 
         public List<Contract> GetContractsFromDisk()
@@ -110,7 +110,7 @@ namespace FrostDB
             _contracts.Add(contract);
             SaveContract(contract);
           
-            EventManager.TriggerEvent(EventName.Contract.Pending_Added,
+            _process.EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
         }
         public bool HasContract(Guid? contractId)

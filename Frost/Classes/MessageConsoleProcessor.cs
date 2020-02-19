@@ -29,7 +29,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageConsoleProcessor(Process process) : base()
+        public MessageConsoleProcessor(Process process) : base(process)
         {
             _process = process;
             _processProcess = new MessageConsoleProcessorProcess(_process);

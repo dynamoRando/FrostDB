@@ -224,7 +224,7 @@ namespace FrostDB
             if (!HasTable(table.Name))
             {
                 _tables.Add(table);
-                EventManager.TriggerEvent(EventName.Table.Created,
+                _process.EventManager.TriggerEvent(EventName.Table.Created,
                   CreateTableCreatedEventArgs(table));
             }
         }
@@ -247,7 +247,7 @@ namespace FrostDB
         {
             var table = this.GetTable(tableName);
             _tables.Remove(table);
-            EventManager.TriggerEvent(EventName.Table.Dropped,
+            _process.EventManager.TriggerEvent(EventName.Table.Dropped,
                 TableDroppedEventArgs(table));
         }
 

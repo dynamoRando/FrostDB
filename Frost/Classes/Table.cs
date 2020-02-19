@@ -113,7 +113,7 @@ namespace FrostDB
                 row = _store.Rows.Where(r => r.Id == reference.RowId).First();
                 row.LastAccessed = DateTime.Now;
 
-                EventManager.TriggerEvent(EventName.Row.Read,
+                _process.EventManager.TriggerEvent(EventName.Row.Read,
                      CreateRowAccessedEventArgs(row));
             }
             else
@@ -161,8 +161,8 @@ namespace FrostDB
             {
                 column = new Column(columnName, type);
                 _columns.Add(column);
-                
-                EventManager.TriggerEvent(EventName.Columm.Added,
+
+                _process.EventManager.TriggerEvent(EventName.Columm.Added,
                        CreateColumnAddedEventArgs(column));
             }
         }
@@ -174,7 +174,7 @@ namespace FrostDB
                 var col = GetColumn(columnName);
                 _columns.Remove(col);
 
-                EventManager.TriggerEvent(EventName.Columm.Deleted,
+                _process.EventManager.TriggerEvent(EventName.Columm.Deleted,
                        CreateColumnDeletedEventArgs(col));
             }
         }
@@ -267,7 +267,7 @@ namespace FrostDB
             //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
             _rows.Add(GetNewRowReference(form.Row, form.Participant.Location));
 
-            EventManager.TriggerEvent(EventName.Row.Added_Remotely,
+            _process.EventManager.TriggerEvent(EventName.Row.Added_Remotely,
                    CreateRowAddedEventArgs(form.Row));
         }
 
@@ -276,7 +276,7 @@ namespace FrostDB
             _store.AddRow(row);
             _rows.Add(GetNewRowReference(row));
 
-            EventManager.TriggerEvent(EventName.Row.Added,
+            _process.EventManager.TriggerEvent(EventName.Row.Added,
                 CreateRowAddedEventArgs(row));
         }
 

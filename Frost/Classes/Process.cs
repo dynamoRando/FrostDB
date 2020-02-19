@@ -15,10 +15,11 @@ namespace FrostDB
         private Network _networkManager;
         private DatabaseManager _dbManager;
         private PartialDatabaseManager _pdbManager;
+        private EventManager _eventManager;
         #endregion
 
         #region Public Properties
-
+        public EventManager EventManager => _eventManager;
         public DatabaseManager DatabaseManager => _dbManager;
         public PartialDatabaseManager PartialDatabaseManager => _pdbManager;
         public Guid? Id { get => Configuration.Id; }
@@ -284,6 +285,8 @@ namespace FrostDB
         #region Private Methods
         private void SetupManagers()
         {
+            _eventManager = new EventManager();
+
             var dbManager = new DataManagerEventManagerDatabase(this);
 
             _dbManager = new DatabaseManager(

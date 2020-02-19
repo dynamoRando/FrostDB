@@ -66,73 +66,73 @@ namespace FrostDB
         #region Private Methods
         private void RegisterParticipantAddedEvents()
         {
-            EventManager.StartListening(EventName.Participant.Added,
+            _process.EventManager.StartListening(EventName.Participant.Added,
                 new Action<IEventArgs>(HandleParticipantAddedEvent));
 
         }
 
         private void RegisterContractUpdatedEvents()
         {
-            EventManager.StartListening(EventName.Contract.Contract_Updated, new Action<IEventArgs>(HandleContractUpdatedEvent));
+            _process.EventManager.StartListening(EventName.Contract.Contract_Updated, new Action<IEventArgs>(HandleContractUpdatedEvent));
         }
 
         private void RegisterColumnRemovedEvents()
         {
-            EventManager.StartListening(EventName.Columm.Deleted, new Action<IEventArgs>(HandleColumnDeletedEvent));
+            _process.EventManager.StartListening(EventName.Columm.Deleted, new Action<IEventArgs>(HandleColumnDeletedEvent));
         }
 
         private void RegisterTableDroppedEvents()
         {
-            EventManager.StartListening(EventName.Table.Dropped, new Action<IEventArgs>(HandleTableDroppedEvent));
+            _process.EventManager.StartListening(EventName.Table.Dropped, new Action<IEventArgs>(HandleTableDroppedEvent));
         }
         private void RegisterMessageSentEvents()
         {
-            EventManager.StartListening(EventName.Message.Message_Sent,
+            _process.EventManager.StartListening(EventName.Message.Message_Sent,
                 new Action<IEventArgs>(HandleMessageSentEvent));
         }
 
         private void RegisterMessageRecievedEvents()
         {
-            EventManager.StartListening(EventName.Message.Message_Recieved,
+            _process.EventManager.StartListening(EventName.Message.Message_Recieved,
                 new Action<IEventArgs>(HandleMessageRecievedEvent));
         }
 
         private void RegisterPendingContractAddedEvents()
         {
-            EventManager.StartListening(EventName.Contract.Pending_Added,
+            _process.EventManager.StartListening(EventName.Contract.Pending_Added,
             new Action<IEventArgs>(HandlePendingContractEvents));
         }
         private void RegisterPendingPartcipantAddedEvents()
         {
-            EventManager.StartListening(EventName.Participant.Pending,
+            _process.EventManager.StartListening(EventName.Participant.Pending,
              new Action<IEventArgs>(HandleRegisterPendingPartcipantAddedEvents));
         }
         private void RegisterRowDeletedEvents()
         {
-            EventManager.StartListening(EventName.Row.Deleted,
+            _process.EventManager.StartListening(EventName.Row.Deleted,
               new Action<IEventArgs>(HandleRowDeletedEvent));
         }
         private void RegisterTableCreatedEvents()
         {
-            EventManager.StartListening(EventName.Table.Created,
+            _process.EventManager.StartListening(EventName.Table.Created,
                 new Action<IEventArgs>(HandleCreatedTableEvent));
         }
 
         private void RegisterRowAddedEvents()
         {
-            EventManager.StartListening(EventName.Row.Added,
+            _process.EventManager.StartListening(EventName.Row.Added,
                new Action<IEventArgs>(HandleRowAddedEvent));
         }
 
         private void RegisterRowAccessedEvents()
         {
-            EventManager.StartListening(EventName.Row.Read,
+            _process.EventManager.StartListening(EventName.Row.Read,
                new Action<IEventArgs>(HandleRowAccessedEvent));
         }
 
         private void RegisterColumnAddedEvents()
         {
-            EventManager.StartListening(EventName.Columm.Added, new Action<IEventArgs>(HandleColumnAddedEvent));
+            _process.EventManager.StartListening(EventName.Columm.Added, new Action<IEventArgs>(HandleColumnAddedEvent));
         }
 
         private void HandleParticipantAddedEvent(IEventArgs e)
