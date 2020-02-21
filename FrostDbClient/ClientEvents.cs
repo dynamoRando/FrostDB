@@ -13,5 +13,6 @@ namespace FrostDbClient
         public const string GotDatabaseContractInfo = "Database.Got_Contract_Information";
         public const string GotPendingContractInfo = "Database.Got_Pending_Contract_Information";
         public const string GetProcessPendingContractInfo = "Process.Got_Process_Pending_Contract_Information";
+        public const string GotAcceptedContractsInfo = "Database.Got_Accepted_Contract_Info";
     }
 }

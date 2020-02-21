@@ -131,6 +131,20 @@ namespace FrostForm
             _client.EventManager.StartListening(ClientEvents.GotDatabaseInfo, ShowDbInfo);
             _client.EventManager.StartListening(ClientEvents.GotTableInfo, ShowTableInfo);
             _client.EventManager.StartListening(ClientEvents.GotPendingContractInfo, ShowPendingContracts);
+            _client.EventManager.StartListening(ClientEvents.GotAcceptedContractsInfo, ShowAcceptedContracts);
+        }
+
+        private void ShowAcceptedContracts(IEventArgs args)
+        {
+            AcceptedContractInfo item;
+            if (_client.Info.AcceptedContractInfos.TryGetValue(_currentSelectedDbName, out item))
+            {
+                _form.listAcceptedParticipants.InvokeIfRequired(() =>
+                {
+                    _form.listAcceptedParticipants.Items.Clear();
+                    item.AcceptedContracts.ForEach(i => _form.listAcceptedParticipants.Items.Add(i));
+                });
+            }
         }
 
         private void AddDbNames(IEventArgs args)
@@ -275,6 +289,7 @@ namespace FrostForm
                     _currentSelectedDbName = currentDb;
                     _client.GetDatabaseInfo(currentDb);
                     _client.GetPendingContractsForDb(currentDb);
+                    _client.GetAcceptedContractsForDb(currentDb);
                 }
             }
         }

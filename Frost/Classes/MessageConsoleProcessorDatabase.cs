@@ -62,11 +62,36 @@ namespace FrostDB
                 case MessageConsoleAction.Database.Get_Pending_Contracts:
                     HandleGetPendingContracts(message);
                     break;
+                case MessageConsoleAction.Database.Get_Accepted_Contracts:
+                    HandleGetAcceptedContracts(message);
+                    break;
             }
         }
         #endregion
 
         #region Private Methods
+        private void HandleGetAcceptedContracts(Message message)
+        {
+            var info = new AcceptedContractInfo();
+
+            string dbName = message.Content;
+            var db = _process.GetDatabase(dbName);
+            db.AcceptedParticipants.ForEach(p =>
+            {
+                info.AcceptedContracts.Add(p.Location.IpAddress + ":" + p.Location.PortNumber.ToString());
+            });
+
+            info.DatabaseId = db.Id;
+            info.DatabaseName = db.Name;
+
+            Type type = info.GetType();
+            string messageContent = string.Empty;
+
+            messageContent = JsonConvert.SerializeObject(info);
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Accepted_Contracts_Response, type, MessageActionType.Database);
+
+        }
+
         private void HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;

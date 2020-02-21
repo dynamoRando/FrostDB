@@ -104,6 +104,25 @@ namespace FrostDbClient
                 case MessageConsoleAction.Database.Get_Pending_Contracts_Response:
                     HandlePendingContractInfo(message);
                     break;
+                case MessageConsoleAction.Database.Get_Accepted_Contracts_Response:
+                    HandleAcceptedContractInfo(message);
+                    break;
+            }
+        }
+
+        private void HandleAcceptedContractInfo(Message message)
+        {
+            AcceptedContractInfo info = JsonConvert.DeserializeObject<AcceptedContractInfo>(message.Content);
+
+            if (_info.AcceptedContractInfos.ContainsKey(info.DatabaseName))
+            {
+                AcceptedContractInfo removed = null;
+                _info.AcceptedContractInfos.TryRemove(info.DatabaseName, out removed);
+            }
+
+            if (_info.AcceptedContractInfos.TryAdd(info.DatabaseName, info))
+            {
+                _eventManager.TriggerEvent(ClientEvents.GotAcceptedContractsInfo, null);
             }
         }
 

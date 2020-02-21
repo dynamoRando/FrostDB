@@ -248,6 +248,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
+        public void GetAcceptedContractsForDb(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+        }
+
         public void GetPendingContractsForDb(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));

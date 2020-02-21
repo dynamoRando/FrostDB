@@ -21,6 +21,7 @@ namespace FrostDbClient
         public ConcurrentDictionary<string, TableInfo> TableInfos { get; set; }
         public ConcurrentDictionary<string, ContractInfo> ContractInfos { get; set; }
         public ConcurrentDictionary<string, PendingContractInfo> PendingContractInfos { get; set; }
+        public ConcurrentDictionary<string, AcceptedContractInfo> AcceptedContractInfos { get; set; }
         public ConcurrentDictionary<string, List<ContractInfo>> ProcessPendingContracts { get; set; }
         public ContractInfo ContractInfo { get; set; }
         #endregion
@@ -42,6 +43,7 @@ namespace FrostDbClient
             ContractInfos = new ConcurrentDictionary<string, ContractInfo>();
             PendingContractInfos = new ConcurrentDictionary<string, PendingContractInfo>();
             ProcessPendingContracts = new ConcurrentDictionary<string, List<ContractInfo>>();
+            AcceptedContractInfos = new ConcurrentDictionary<string, AcceptedContractInfo>();
         }
         #endregion
 
