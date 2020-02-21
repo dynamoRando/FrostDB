@@ -68,15 +68,15 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public bool HasAcceptedContract(Guid? databaseId)
+        public bool HasAcceptedContract(Guid? databaseId, Process process)
         {
             if (this.IsDatabase(databaseId))
             {
                 return true;
             }
 
-            if (Contract.ContractVersion == ProcessReference.GetDatabase(databaseId).Contract.ContractVersion &&
-            ProcessReference.GetDatabase(databaseId).AcceptedParticipants.Any(participant => participant.Id == this.Id)
+            if (Contract.ContractVersion == process.GetDatabase(databaseId).Contract.ContractVersion &&
+            process.GetDatabase(databaseId).AcceptedParticipants.Any(participant => participant.Id == this.Id)
             && !this.IsDatabase(databaseId))
             {
                 return true;

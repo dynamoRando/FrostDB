@@ -20,7 +20,7 @@ namespace FrostDB
         #region Constructors
         public DataMessageProcessor()
         {
-            _dbManager = new DatabaseManager();
+            //_dbManager = new DatabaseManager();
         }
         #endregion
 
@@ -28,7 +28,7 @@ namespace FrostDB
         public void Process(IMessage message)
         {
             // act on the message and send to appropriate database
-            _dbManager.AddToInbox(message);
+            //_dbManager.AddToInbox(message);
             throw new NotImplementedException();
         }
         #endregion

@@ -33,6 +33,12 @@ namespace FrostDB
         #region Public Methods
         public void SaveContract(Contract contract, string contractFolder, string contractExtension)
         {
+
+            if (!Directory.Exists(contractFolder))
+            {
+                Directory.CreateDirectory(contractFolder);
+            }
+
             string fileLocation = contractFolder + contract.DatabaseName + contractExtension;
 
             _locker.EnterWriteLock();
@@ -60,6 +66,11 @@ namespace FrostDB
         public List<Contract> GetContracts(string contractFolder)
         {
             var contracts = new List<Contract>();
+
+            if (!Directory.Exists(contractFolder))
+            {
+                Directory.CreateDirectory(contractFolder);
+            }
 
             foreach (var file in Directory.GetFiles(contractFolder))
             {

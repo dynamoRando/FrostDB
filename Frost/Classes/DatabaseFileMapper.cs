@@ -5,25 +5,9 @@ using FrostDB.Interface;
 
 namespace FrostDB
 {
-    public class DatabaseFileMapper : IDatabaseFileMapper<IDatabase, DataFile, DataManager<IDatabase>>
+    public class DatabaseFileMapper : IDatabaseFileMapper<Database, DataFile>
     {
-        public Database MapDatabase(DataFile file, DataManager<IDatabase> manager)
-        {
-            var database = new Database(
-                file.Name,
-                manager,
-                file.Id.Value,
-                file.Tables,
-                file.Schema,
-                file.AcceptedParticipants,
-                file.PendingParticipants,
-                file.Contract
-                ); 
-      
-            return database;
-        }
-
-        public DataFile Map(IDatabase database)
+        public DataFile Map(Database database)
         {
             // TODO need to map tables, etc
             return new DataFile { 
@@ -43,23 +27,18 @@ namespace FrostDB
              */
         }
 
-        public DataFile Map(Database database)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDatabase Map(DataFile file, DataManager<IDatabase> manager)
+        public Database Map(DataFile file, Process process)
         {
             var database = new Database(
-                file.Name,
-                manager,
-                file.Id.Value,
-                file.Tables,
-                file.Schema,
-                file.AcceptedParticipants,
-                file.PendingParticipants,
-                file.Contract
-                );
+              file.Name,
+              file.Id.Value,
+              file.Tables,
+              file.Schema,
+              file.AcceptedParticipants,
+              file.PendingParticipants,
+              file.Contract,
+              process
+              );
 
             return database;
         }

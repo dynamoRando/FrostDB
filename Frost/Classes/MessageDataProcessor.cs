@@ -12,6 +12,7 @@ namespace FrostDB
         #region Private Fields
         private DataMessageProcessor _dataProcessor;
         private ContractMessageProcessor _contractProcessor;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -22,10 +23,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageDataProcessor() : base()
+        public MessageDataProcessor(Process process) : base(process)
         {
+            _process = process;
             _dataProcessor = new DataMessageProcessor();
-            _contractProcessor = new ContractMessageProcessor();
+            _contractProcessor = new ContractMessageProcessor(_process);
         }
         #endregion
 
@@ -50,10 +52,10 @@ namespace FrostDB
 
                     if (message.Action.Contains("Contract"))
                     {
-                        ContractMessageProcessor.Process(m);
+                        _contractProcessor.Process(m);
                     }
 
-                    m.SendResponse();
+                    m.SendResponse(new MessageResponse(_process), _process);
                 }
                 else
                 {

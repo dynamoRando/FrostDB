@@ -14,6 +14,7 @@ namespace FrostCommon.Net
         new ManualResetEvent(false);
         private static ManualResetEvent sendDone =
             new ManualResetEvent(false);
+        private static int _timeout;
         //private static ManualResetEvent receiveDone = new ManualResetEvent(false);
         //private static String response = String.Empty;
         #endregion
@@ -31,8 +32,9 @@ namespace FrostCommon.Net
         #endregion
 
         #region Public Methods
-        public static void Send(Message message)
+        public static void Send(Message message, int timeout)
         {
+            _timeout = timeout;
             Send(message.Destination, message);
         }
         public static void Send(Location location, Message message)
@@ -53,13 +55,13 @@ namespace FrostCommon.Net
                 // Connect to the remote endpoint.  
                 client.BeginConnect(remoteEP,
                     new AsyncCallback(ConnectCallback), client);
-                connectDone.WaitOne();
+                connectDone.WaitOne(_timeout);
 
                 // Send test data to the remote device.  
                 if (client.Connected)
                 {
                     Send(client, message);
-                    sendDone.WaitOne();
+                    sendDone.WaitOne(_timeout);
                     // Release the socket.  
                     client.Shutdown(SocketShutdown.Both);
                     client.Close();

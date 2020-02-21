@@ -7,20 +7,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using FrostForm.Extensions;
 
 namespace FrostForm
 {
     public partial class formFrost : Form
     {
         App _app;
+        string _paramIpAddress;
+        int _paramPortNumber;
+        int _paramLocalPortNumber;
+        bool _hasArgs = false;
+
         public formFrost()
         {
             InitializeComponent();
         }
 
+        public formFrost(string[] args)
+        {
+            InitializeComponent();
+            if (args.Count() >= 3)
+            {
+                _hasArgs = true;
+                _paramIpAddress = args[0];
+                _paramPortNumber = Convert.ToInt32(args[1]);
+                _paramLocalPortNumber = Convert.ToInt32(args[2]);
+            }
+        }
+
+        public formFrost(string ipAddress, int dataPort, int consolePort)
+        {
+            InitializeComponent();
+            _paramIpAddress = ipAddress;
+            _paramPortNumber = dataPort;
+            _paramLocalPortNumber = consolePort;
+
+            _hasArgs = true;
+        }
+
         private async void buttonConnectRemote_Click(object sender, EventArgs e)
         {
-            string ipAddress = textRemoteAddress.Text;
+            int timeout = 1000;
+
+            var selectedIp = comboRemoteAddress.SelectedItem.ToString();
+            string ipAddress = selectedIp;
             int portNumber = Convert.ToInt32(textRemotePort.Text);
             int localPort = Convert.ToInt32(textLocalPort.Text)
 ;
@@ -39,8 +71,13 @@ namespace FrostForm
 
         private void formFrost_Load(object sender, EventArgs e)
         {
+            GetIPAddresses();
+            if (_hasArgs)
+            {
+                textRemotePort.Text = _paramPortNumber.ToString();
+                textLocalPort.Text = _paramLocalPortNumber.ToString();
+            }
         }
-
 
         private void listTables_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -188,6 +225,32 @@ namespace FrostForm
         {
             var form = new formManagePendingContract(_app);
             form.Show();
+        }
+
+        private void GetIPAddresses()
+        {
+            comboRemoteAddress.InvokeIfRequired(() =>
+            {
+                comboRemoteAddress.Items.Clear();
+
+                if (_hasArgs)
+                {
+                    comboRemoteAddress.Items.Add(_paramIpAddress);
+                }
+
+                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();
+                addresses.ForEach(a => comboRemoteAddress.Items.Add(a));
+
+                if (!comboRemoteAddress.Items.Contains("127.0.0.1"))
+                {
+                    comboRemoteAddress.Items.Add("127.0.0.1");
+                }
+            });
+        }
+
+        private void listAcceptedParticipants_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

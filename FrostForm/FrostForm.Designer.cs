@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.labelRemoteAddress = new System.Windows.Forms.Label();
-            this.textRemoteAddress = new System.Windows.Forms.TextBox();
             this.labelRemotePort = new System.Windows.Forms.Label();
             this.textRemotePort = new System.Windows.Forms.TextBox();
             this.buttonConnectRemote = new System.Windows.Forms.Button();
@@ -37,17 +36,20 @@
             this.labelDatabaseName = new System.Windows.Forms.Label();
             this.labelDatabaseId = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboRemoteAddress = new System.Windows.Forms.ComboBox();
             this.textLocalPort = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonAddParticipant = new System.Windows.Forms.Button();
+            this.listAcceptedParticipants = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.buttonManageContract = new System.Windows.Forms.Button();
             this.labelColumnDataType = new System.Windows.Forms.Label();
             this.buttonQuery = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelColumnName = new System.Windows.Forms.Label();
-            this.buttonAddParticipant = new System.Windows.Forms.Button();
             this.listPendingParticipants = new System.Windows.Forms.ListBox();
-            this.listAcceptedParticipants = new System.Windows.Forms.ListBox();
             this.buttonRemoveColumn = new System.Windows.Forms.Button();
             this.buttonRemoveTable = new System.Windows.Forms.Button();
             this.buttonRemoveDb = new System.Windows.Forms.Button();
@@ -74,15 +76,6 @@
             this.labelRemoteAddress.Size = new System.Drawing.Size(106, 15);
             this.labelRemoteAddress.TabIndex = 0;
             this.labelRemoteAddress.Text = "Remote IP Address";
-            // 
-            // textRemoteAddress
-            // 
-            this.textRemoteAddress.Location = new System.Drawing.Point(12, 36);
-            this.textRemoteAddress.Margin = new System.Windows.Forms.Padding(2);
-            this.textRemoteAddress.Name = "textRemoteAddress";
-            this.textRemoteAddress.Size = new System.Drawing.Size(207, 23);
-            this.textRemoteAddress.TabIndex = 1;
-            this.textRemoteAddress.Text = "127.0.0.1";
             // 
             // labelRemotePort
             // 
@@ -146,11 +139,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboRemoteAddress);
             this.groupBox1.Controls.Add(this.textLocalPort);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.buttonConnectRemote);
             this.groupBox1.Controls.Add(this.textRemotePort);
-            this.groupBox1.Controls.Add(this.textRemoteAddress);
             this.groupBox1.Controls.Add(this.labelRemotePort);
             this.groupBox1.Controls.Add(this.labelRemoteAddress);
             this.groupBox1.Location = new System.Drawing.Point(12, 3);
@@ -159,6 +152,14 @@
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Instance";
+            // 
+            // comboRemoteAddress
+            // 
+            this.comboRemoteAddress.FormattingEnabled = true;
+            this.comboRemoteAddress.Location = new System.Drawing.Point(12, 36);
+            this.comboRemoteAddress.Name = "comboRemoteAddress";
+            this.comboRemoteAddress.Size = new System.Drawing.Size(215, 23);
+            this.comboRemoteAddress.TabIndex = 7;
             // 
             // textLocalPort
             // 
@@ -179,14 +180,16 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonAddParticipant);
+            this.groupBox2.Controls.Add(this.listAcceptedParticipants);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.buttonManageContract);
             this.groupBox2.Controls.Add(this.labelColumnDataType);
             this.groupBox2.Controls.Add(this.buttonQuery);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.labelColumnName);
-            this.groupBox2.Controls.Add(this.buttonAddParticipant);
             this.groupBox2.Controls.Add(this.listPendingParticipants);
-            this.groupBox2.Controls.Add(this.listAcceptedParticipants);
             this.groupBox2.Controls.Add(this.buttonRemoveColumn);
             this.groupBox2.Controls.Add(this.buttonRemoveTable);
             this.groupBox2.Controls.Add(this.buttonRemoveDb);
@@ -207,6 +210,44 @@
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Databases";
+            // 
+            // buttonAddParticipant
+            // 
+            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 270);
+            this.buttonAddParticipant.Name = "buttonAddParticipant";
+            this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
+            this.buttonAddParticipant.TabIndex = 25;
+            this.buttonAddParticipant.Text = "+ Participant";
+            this.buttonAddParticipant.UseVisualStyleBackColor = true;
+            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
+            // 
+            // listAcceptedParticipants
+            // 
+            this.listAcceptedParticipants.FormattingEnabled = true;
+            this.listAcceptedParticipants.ItemHeight = 15;
+            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 110);
+            this.listAcceptedParticipants.Name = "listAcceptedParticipants";
+            this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
+            this.listAcceptedParticipants.TabIndex = 24;
+            this.listAcceptedParticipants.SelectedIndexChanged += new System.EventHandler(this.listAcceptedParticipants_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(601, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(54, 15);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Pending:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(441, 93);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 15);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Accepted:";
             // 
             // buttonManageContract
             // 
@@ -255,33 +296,14 @@
             this.labelColumnName.TabIndex = 14;
             this.labelColumnName.Text = "labelColumnName";
             // 
-            // buttonAddParticipant
-            // 
-            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 261);
-            this.buttonAddParticipant.Name = "buttonAddParticipant";
-            this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
-            this.buttonAddParticipant.TabIndex = 25;
-            this.buttonAddParticipant.Text = "+ Participant";
-            this.buttonAddParticipant.UseVisualStyleBackColor = true;
-            this.buttonAddParticipant.Click += new System.EventHandler(this.buttonAddParticipant_Click);
-            // 
             // listPendingParticipants
             // 
             this.listPendingParticipants.FormattingEnabled = true;
             this.listPendingParticipants.ItemHeight = 15;
-            this.listPendingParticipants.Location = new System.Drawing.Point(601, 91);
+            this.listPendingParticipants.Location = new System.Drawing.Point(601, 110);
             this.listPendingParticipants.Name = "listPendingParticipants";
             this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
             this.listPendingParticipants.TabIndex = 26;
-            // 
-            // listAcceptedParticipants
-            // 
-            this.listAcceptedParticipants.FormattingEnabled = true;
-            this.listAcceptedParticipants.ItemHeight = 15;
-            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 91);
-            this.listAcceptedParticipants.Name = "listAcceptedParticipants";
-            this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
-            this.listAcceptedParticipants.TabIndex = 24;
             // 
             // buttonRemoveColumn
             // 
@@ -432,7 +454,6 @@
         #endregion
 
         internal System.Windows.Forms.Label labelRemoteAddress;
-        internal System.Windows.Forms.TextBox textRemoteAddress;
         internal System.Windows.Forms.Label labelRemotePort;
         internal System.Windows.Forms.TextBox textRemotePort;
         internal System.Windows.Forms.Button buttonConnectRemote;
@@ -464,6 +485,9 @@
         private System.Windows.Forms.TextBox textLocalPort;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button buttonMyPendingContracts;
+        private System.Windows.Forms.ComboBox comboRemoteAddress;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
     }
 }
 

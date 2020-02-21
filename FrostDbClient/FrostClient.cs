@@ -122,7 +122,21 @@ namespace FrostDbClient
 
         public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
         {
-            throw new NotImplementedException();
+            var list = new List<ContractInfo>();
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                if (_info.ProcessPendingContracts.ContainsKey(string.Empty))
+                {
+                    List<ContractInfo> removed = null;
+                    _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
+                    list = removed;
+                }
+            }
+
+            return list;
         }
 
         public void GetContractInformation(string databaseName)
@@ -234,6 +248,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
+        public void GetAcceptedContractsForDb(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+        }
+
         public void GetPendingContractsForDb(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));
@@ -260,7 +279,7 @@ namespace FrostDbClient
         {
             Stopwatch watch = new Stopwatch();
             bool responseRecieved = false;
-            double timeOut = 3.0;
+            double timeOut = 30.0;
 
             watch.Start();
 
@@ -290,7 +309,8 @@ namespace FrostDbClient
         private Guid? SendMessage(Message message)
         {
             Guid? id = message.Id;
-            Client.Send(message);
+            // this timeout should be part of a configuration or a param passed in
+            Client.Send(message, 5000);
             _info.AddToQueue(id);
 
             return id;

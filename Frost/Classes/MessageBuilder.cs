@@ -5,9 +5,10 @@ using System.Text;
 
 namespace FrostDB
 {
-    public static class MessageBuilder
+    public class MessageBuilder
     {
 		#region Private Fields
+		private Process _process;
 		#endregion
 
 		#region Public Properties
@@ -20,6 +21,10 @@ namespace FrostDB
 		#endregion
 
 		#region Constructors
+		public MessageBuilder(Process process)
+		{
+			_process = process;
+		}
 		#endregion
 
 		#region Public Methods
@@ -31,18 +36,18 @@ namespace FrostDB
 		/// <param name="action">Uusually a CONST STRING identifying the requested action being taken</param>
 		/// <param name="type">The type of the message content (parameter 2)</param>
 		/// <param name="actionType">An enumeration of the type of action being requested</param>
-		public static void SendResponse(Message message, string responseType, string action, Type type, MessageActionType actionType)
+		public void SendResponse(Message message, string responseType, string action, Type type, MessageActionType actionType)
 		{
-			NetworkReference.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id, actionType));
+			_process.Network.SendMessage(BuildMessage(message.Origin, responseType, action, type, message.Id, actionType));
 		}
 		#endregion
 
 		#region Private Methods
-		private static Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId, MessageActionType actionType)
+		private Message BuildMessage(Location destination, string content, string action, Type contentType, Guid? referenceMessageId, MessageActionType actionType)
 		{
 			Message response = new Message(
 				destination: destination,
-				origin: FrostDB.Process.GetLocation(),
+				origin: _process.GetLocation(),
 				messageContent: content,
 				messageAction: action,
 				messageType: MessageType.Console,

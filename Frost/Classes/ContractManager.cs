@@ -6,6 +6,7 @@ using System.Linq;
 using FrostDB.EventArgs;
 using FrostCommon.ConsoleMessages;
 using FrostDB.Enum;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -36,7 +37,7 @@ namespace FrostDB
         #region Public Methods
         public void UpdateContractPermissions(ContractInfo info)
         {
-            var db = ProcessReference.GetDatabase(info.DatabaseName);
+            var db = _process.GetDatabase(info.DatabaseName);
             db.Contract.ContractPermissions.Clear();
 
             foreach (var item in info.SchemaData)
@@ -83,39 +84,25 @@ namespace FrostDB
                     }
                 }
 
-                db.Contract.ContractPermissions.Add(new TableContractPermission(ProcessReference.GetTableId(db.Name, tableName), cooperator, permissions));
+                db.Contract.ContractPermissions.Add(new TableContractPermission(_process.GetDatabase(db.Name).GetTableId(tableName), cooperator, permissions));
                 db.Contract.ContractDescription = info.ContractDescription;
 
             }
 
-            EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
+            _process.EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
         }
 
         public List<Contract> GetContractsFromDisk()
         {
-            _contracts = _fileManager.GetContracts(Process.Configuration.ContractFolder);
+            _contracts = _fileManager.GetContracts(_process.GetConfiguration().ContractFolder);
             return _contracts;
         }
 
         public void AcceptPendingContract(ContractInfo contract)
         {
-            // TO DO: Should the contracts already be loaded into memory?
-            /*
-            * We need to accept the incoming contract on our side (mark it as accepted)
-            * and then create a new partial database on our side
-            * and then send to the original host of the database that we accept the contract
-            * 
-            */
-
-            // accept incoming contract
             var localContract = _contracts.Where(c => c.DatabaseName == contract.DatabaseName).First();
             localContract.IsAccepted = true;
             SaveContract(localContract);
-
-            // make new partial database from the schema of the contract
-
-            // then send back to host of DB that we accept the contract
-            throw new NotImplementedException();
         }
 
         public void AddPendingContract(Contract contract)
@@ -123,7 +110,7 @@ namespace FrostDB
             _contracts.Add(contract);
             SaveContract(contract);
           
-            EventManager.TriggerEvent(EventName.Contract.Pending_Added,
+            _process.EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
         }
         public bool HasContract(Guid? contractId)
@@ -137,8 +124,8 @@ namespace FrostDB
         {
             _fileManager
               .SaveContract(contract,
-              Process.Configuration.ContractFolder,
-              Process.Configuration.ContractExtension);
+              _process.GetConfiguration().ContractFolder,
+              _process.GetConfiguration().ContractExtension);
         }
         private PendingContractAddedEventArgs CreateNewPendingContractEventArgs(Contract contract)
         {

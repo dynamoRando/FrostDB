@@ -7,156 +7,140 @@ using FrostCommon;
 
 namespace FrostDB
 {
-    public class DataManager<TDatabase> where TDatabase : IDatabase
-    {
-        #region Private Fields
-        private List<TDatabase> _databases;
-        private string _databaseFolder;
-        private string _databaseExtension;
-        private IDataFileManager<DataFile> _dataFileManager;
-        private IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> _databaseFileMapper;
-        private IDataManagerEventManager _dataEventManager;
-        #endregion
+    //public class DataManager<TDatabase> where TDatabase : IDatabase
+    //{
+    //    #region Private Fields
+    //    private List<TDatabase> _databases;
+    //    private string _databaseFolder;
+    //    private string _databaseExtension;
+    //    private IDataFileManager<DataFile> _dataFileManager;
+    //    private IDatabaseFileMapper<TDatabase, DataFile> _databaseFileMapper;
+    //    #endregion
 
-        #region Public Properties
-        public List<TDatabase> Databases => _databases;
-        #endregion
+    //    #region Public Properties
+    //    public List<TDatabase> Databases => _databases;
+    //    public IDataManagerEventManager EventManager { get; set; }
+    //    #endregion
 
-        #region Events
-        #endregion
+    //    #region Events
+    //    #endregion
 
-        #region Protected Methods
-        #endregion
+    //    #region Protected Methods
+    //    #endregion
 
-        #region Constructors
-        public DataManager()
-        {
-            if (_databaseFileMapper is null)
-            {
-                _databaseFileMapper = (IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>>)new DatabaseFileMapper();
-            }
+    //    #region Constructors
+    //    public DataManager(string databaseFolder,
+    //        string databaseExtension,
+    //        IDatabaseFileMapper<TDatabase, DataFile> mapper)
+    //    {
+    //        _dataFileManager = new DataFileManager();
+    //        _databaseFileMapper = mapper;
 
-            if (_dataFileManager is null)
-            {
-                _dataFileManager = new DataFileManager();
-            }
+    //        _databaseFolder = databaseFolder;
+    //        _databaseExtension = databaseExtension;
 
-            _databases = new List<TDatabase>();
-            _dataEventManager = new DataManagerEventManager<TDatabase>(this);
-            RegisterEvents();
-        }
-        public DataManager(string databaseFolder,
-            string databaseExtension,
-            IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>> mapper) : this()
-        {
-            _dataFileManager = new DataFileManager();
-            _databaseFileMapper = mapper;
+    //        if (_databaseFileMapper is null)
+    //        {
+    //            _databaseFileMapper = (IDatabaseFileMapper<TDatabase, DataFile>)new DatabaseFileMapper();
+    //        }
 
-            _databaseFolder = databaseFolder;
-            _databaseExtension = databaseExtension;
+    //    }
+    //    #endregion  
 
-            if (_databaseFileMapper is null)
-            {
-                _databaseFileMapper = (IDatabaseFileMapper<TDatabase, DataFile, DataManager<TDatabase>>)new DatabaseFileMapper();
-            }
+    //    #region Public Methods
+    //    public Database GetFullDatabase(string databaseName)
+    //    {
+    //        Database db = null;
 
-        }
-        #endregion  
+    //        Databases.ForEach(database =>
+    //        {
+    //            if ((database is Database) && (database.Name == databaseName))
+    //            {
+    //                db = database as Database;
+    //            }
+    //        });
 
-        #region Public Methods
-        public Database GetFullDatabase(string databaseName)
-        {
-            Database db = null;
+    //        return db;
+    //    }
+    //    public void AddDatabase(TDatabase database)
+    //    {
+    //        if (!HasDatabase(database.Name))
+    //        {
+    //            _databases.Add(database);
+    //            SaveToDisk(database);
+    //        }
+    //    }
 
-            Databases.ForEach(database =>
-            {
-                if ((database is Database) && (database.Name == databaseName))
-                {
-                    db = database as Database;
-                }
-            });
+    //    public TDatabase GetDatabase(string databaseName)
+    //    {
+    //        return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
+    //    }
 
-            return db;
-        }
-        public void AddDatabase(TDatabase database)
-        {
-            if (!HasDatabase(database.Name))
-            {
-                _databases.Add(database);
-                SaveToDisk(database);
-            }
-        }
+    //    public TDatabase GetDatabase(Guid? guid)
+    //    {
+    //        return Databases.Where(d => d.Id == guid).FirstOrDefault();
+    //    }
 
-        public TDatabase GetDatabase(string databaseName)
-        {
-            return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
-        }
+    //    public bool HasDatabase(string databaseName)
+    //    {
+    //        return Databases.Any(d => d.Name == databaseName);
+    //    }
 
-        public TDatabase GetDatabase(Guid? guid)
-        {
-            return Databases.Where(d => d.Id == guid).FirstOrDefault();
-        }
+    //    public bool HasDatabase(Guid guid)
+    //    {
+    //        return Databases.Any(d => d.Id == guid);
+    //    }
 
-        public bool HasDatabase(string databaseName)
-        {
-            return Databases.Any(d => d.Name == databaseName);
-        }
+    //    public void RemoveDatabase(Guid guid)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public bool HasDatabase(Guid guid)
-        {
-            return Databases.Any(d => d.Id == guid);
-        }
+    //    public void RemoveDatabase(string databaseName)
+    //    {
+    //        File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
+    //        var db = (TDatabase)ProcessReference.GetDatabase(databaseName);
+    //        _databases.Remove(db);
+    //    }
 
-        public void RemoveDatabase(Guid guid)
-        {
-            throw new NotImplementedException();
-        }
+    //    public int LoadDatabases(string databaseFolderLocation)
+    //    {
+    //        int count = 0;
 
-        public void RemoveDatabase(string databaseName)
-        {
-            File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
-            var db = (TDatabase)ProcessReference.GetDatabase(databaseName);
-            _databases.Remove(db);
-        }
+    //        foreach (var file in Directory.GetFiles(databaseFolderLocation))
+    //        {
+    //            var database = GetDatabaseFromDisk(file);
+    //            _databases.Add(database);
+    //            count = Databases.Count;
+    //        }
 
-        public int LoadDatabases(string databaseFolderLocation)
-        {
-            int count = 0;
+    //        return count;
+    //    }
 
-            foreach (var file in Directory.GetFiles(databaseFolderLocation))
-            {
-                var database = GetDatabaseFromDisk(file);
-                _databases.Add(database);
-                count = Databases.Count;
-            }
+    //    public void AddToInbox(IMessage message)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-            return count;
-        }
+    //    public void SaveToDisk(TDatabase database)
+    //    {
+    //        var fileName = _databaseFolder + database.Name + _databaseExtension;
+    //        var file = _databaseFileMapper.Map(database);
+    //        _dataFileManager.SaveDataFile(fileName, file);
+    //    }
+    //    #endregion
 
-        public void AddToInbox(IMessage message)
-        {
-            throw new NotImplementedException();
-        }
+    //    #region Private Methods
+    //    private TDatabase GetDatabaseFromDisk(string file)
+    //    {
+    //        var dataFile = _dataFileManager.GetDataFile(file);
+    //        return _databaseFileMapper.Map(dataFile);
+    //    }
 
-        public void SaveToDisk(TDatabase database)
-        {
-            var fileName = _databaseFolder + database.Name + _databaseExtension;
-            var file = _databaseFileMapper.Map(database);
-            _dataFileManager.SaveDataFile(fileName, file);
-        }
-        #endregion
-
-        #region Private Methods
-        private TDatabase GetDatabaseFromDisk(string file)
-        {
-            var dataFile = _dataFileManager.GetDataFile(file);
-            return _databaseFileMapper.Map(dataFile, this);
-        }
-
-        private void RegisterEvents()
-        {
-            _dataEventManager.RegisterEvents();
-        }
-        #endregion
-    }
+    //    private void RegisterEvents()
+    //    {
+    //        EventManager.RegisterEvents();
+    //    }
+    //    #endregion
+    //}
 }

@@ -21,6 +21,8 @@ namespace FrostDB
         private DbSchema _schema;
         private ParticipantManager _participantManager;
         private Contract _contract;
+        private Process _process;
+        
         #endregion
 
         #region Public Properties
@@ -40,66 +42,85 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Database()
+        public Database(Process process)
         {
+            _process = process;
             _id = Guid.NewGuid();
             _tables = new List<Table>();
-            _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>());
+            _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>(), _process);
 
             if (_schema is null)
             {
-                _schema = new DbSchema(this);
+                _schema = new DbSchema(this, _process);
             }
 
             if (_contract is null)
             {
-                _contract = new Contract();
+                _contract = new Contract(_process);
             }
 
         }
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
-            List<Table> tables) : this(name)
+        public Database(string name, Guid id,
+            List<Table> tables, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
-            _schema = new DbSchema(this);
+            _schema = new DbSchema(this, _process);
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
-            List<Table> tables, DbSchema schema) : this(name)
+        public Database(string name, Guid id,
+            List<Table> tables, DbSchema schema, Process process) : this(name,process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
-            List<Participant> acceptedParticipants) : this(name)
+            List<Participant> acceptedParticipants, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>());
+            _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>(), _process);
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> acceptedParticipants,
             List<Participant> pendingParticipants,
-            Contract contract) : this(name)
+            Contract contract, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants);
+
+            if (acceptedParticipants is null)
+            {
+                acceptedParticipants = new List<Participant>();
+            }
+            
+            if (pendingParticipants is null)
+            {
+                pendingParticipants = new List<Participant>();
+            }
+
+            if (contract is null)
+            {
+                contract = new Contract(_process, this);
+            } 
+
+            _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants, _process);
             _contract = contract;
+
+            _process = process;
         }
 
-        public Database(string name) : this()
+        public Database(string name, Process process) : this(process)
         {
             _name = name;
-            _contract = new Contract(this);
+            _contract = new Contract(_process, this);
         }
 
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -124,8 +145,8 @@ namespace FrostDB
         public Participant GetProcessParticipant()
         {
             return new Participant(
-                ProcessReference.Process.Id,
-                (Location)Process.GetLocation());
+                _process.Id,
+                (Location)_process.GetLocation());
         }
 
         public Participant GetParticipant(Guid? participantId)
@@ -156,16 +177,26 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
+            if (string.IsNullOrEmpty(this.Contract.DatabaseName))
+            {
+                this.UpdateSchema();
+
+                this.Contract.DatabaseName = this.Name;
+                this.Contract.DatabaseId = this.Id;
+                this.Contract.DatabaseLocation = _process.GetLocation();
+                this.Contract.DatabaseSchema = this.Schema;
+            }
+
             var contractMessage = new Message(
                 destination: participant.Location, 
-                origin: Process.GetLocation(), 
+                origin: _process.GetLocation(), 
                 messageContent: JsonExt.SeralizeContract(this.Contract), 
                 messageAction: MessageDataAction.Contract.Save_Pending_Contract,
                 messageType: MessageType.Data
                 );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            NetworkReference.SendMessage(contractMessage);
+            _process.Network.SendMessage(contractMessage);
             _participantManager.AddPendingParticipant(participant);
         }
 
@@ -176,7 +207,7 @@ namespace FrostDB
 
         public void UpdateSchema()
         {
-            _schema = new DbSchema(this);
+            _schema = new DbSchema(this, _process);
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -193,7 +224,7 @@ namespace FrostDB
             if (!HasTable(table.Name))
             {
                 _tables.Add(table);
-                EventManager.TriggerEvent(EventName.Table.Created,
+                _process.EventManager.TriggerEvent(EventName.Table.Created,
                   CreateTableCreatedEventArgs(table));
             }
         }
@@ -210,13 +241,13 @@ namespace FrostDB
 
         public bool IsCooperative()
         {
-            return AcceptedParticipants.Any(participant => !participant.Location.IsLocal());
+            return AcceptedParticipants.Any(participant => !participant.Location.IsLocal(_process));
         }
         public void RemoveTable(string tableName)
         {
             var table = this.GetTable(tableName);
             _tables.Remove(table);
-            EventManager.TriggerEvent(EventName.Table.Dropped,
+            _process.EventManager.TriggerEvent(EventName.Table.Dropped,
                 TableDroppedEventArgs(table));
         }
 

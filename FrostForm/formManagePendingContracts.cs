@@ -9,6 +9,7 @@ using FrostCommon.ConsoleMessages;
 using FrostDbClient;
 using FrostForm.Extensions;
 using System.Linq;
+using System.Threading;
 
 namespace FrostForm
 {
@@ -16,21 +17,38 @@ namespace FrostForm
     {
         App _app;
         ContractInfo _currentContract;
+        List<ContractInfo> _pendingContracts;
 
         public formManagePendingContract(App app)
         {
             InitializeComponent();
             _app = app;
+            _pendingContracts = new List<ContractInfo>();
         }
 
         private void formManagePendingContract_Load(object sender, EventArgs e)
         {
-            _app.Client.EventManager.StartListening(ClientEvents.GetProcessPendingContractInfo, AddPendingProcessContractInfo);
+            //_app.Client.EventManager.StartListening(ClientEvents.GetProcessPendingContractInfo, AddPendingProcessContractInfo);
         }
 
-        private void buttonLoadPendingContracts_Click(object sender, EventArgs e)
+        private async void buttonLoadPendingContracts_Click(object sender, EventArgs e)
         {
-            _app.GetPendingContractInformation();
+            //_app.GetPendingContractInformation();
+
+            this.listPendingContracts.InvokeIfRequired(() =>
+            {
+                this.listPendingContracts.Items.Clear();
+            });
+
+            _pendingContracts = await _app.GetPendingContractInformationAsync();
+
+            this.listPendingContracts.InvokeIfRequired(() =>
+            {
+                _pendingContracts.ForEach(i =>
+                {
+                    this.listPendingContracts.Items.Add(i.DatabaseName);
+                });
+            });
         }
 
         private void AddPendingProcessContractInfo(IEventArgs args)
@@ -55,28 +73,14 @@ namespace FrostForm
                 var dbName = listPendingContracts.SelectedItem.ToString();
                 if (!string.IsNullOrEmpty(dbName))
                 {
-                    var item = GetContractInfoForDb(dbName);
-                    _currentContract = item;
+                    _currentContract = _pendingContracts.Where(p => p.DatabaseName == dbName).DefaultIfEmpty(new ContractInfo()).First();
 
-                    textDatabaseName.Text = item.DatabaseName;
-                    textDatabaseIpAddress.Text = item.Location.IpAddress;
-                    textDatabasePortNumber.Text = item.Location.PortNumber.ToString();
-                    textDatabaseDescription.Text = item.ContractDescription;
+                    textDatabaseName.Text = _currentContract.DatabaseName;
+                    textDatabaseIpAddress.Text = _currentContract.Location.IpAddress;
+                    textDatabasePortNumber.Text = _currentContract.Location.PortNumber.ToString();
+                    textDatabaseDescription.Text = _currentContract.ContractDescription;
                 }
             }
-        }
-
-        private ContractInfo GetContractInfoForDb(string dbName)
-        {
-            List<ContractInfo> item;
-            ContractInfo info = null;
-
-            if (_app.Client.Info.ProcessPendingContracts.TryGetValue(string.Empty, out item))
-            {
-                info = item.Where(i => i.DatabaseName == dbName).FirstOrDefault();
-            }
-
-            return info;
         }
 
         private void buttonAcceptContract_Click(object sender, EventArgs e)

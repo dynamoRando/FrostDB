@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FrostCommon;
 using FrostCommon.Net;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -12,17 +13,23 @@ namespace FrostDB
         #region Private Fields
         private IContractManager _contractManager;
         private Network _networkManager;
+        private DatabaseManager _dbManager;
+        private PartialDatabaseManager _pdbManager;
+        private EventManager _eventManager;
         #endregion
 
         #region Public Properties
-
-        public DataManager<IDatabase> DatabaseManager { get; }
+        public EventManager EventManager => _eventManager;
+        public DatabaseManager DatabaseManager => _dbManager;
+        public PartialDatabaseManager PartialDatabaseManager => _pdbManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
-        public static IProcessConfiguration Configuration { get; private set; }
-        public List<IDatabase> Databases => DatabaseManager.Databases;
+        public IProcessConfiguration Configuration { get; private set; }
+        public List<Database> Databases => DatabaseManager.Databases;
+        public List<PartialDatabase> PartialDatabases => PartialDatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
+        public Network Network => _networkManager;
         #endregion
 
         #region Events
@@ -32,17 +39,10 @@ namespace FrostDB
         public Process()
         {
             SetConfiguration();
-
-            DatabaseManager = new DatabaseManager(
-               new DatabaseFileMapper(),
-               Configuration.DatabaseFolder,
-               Configuration.DatabaseExtension);
+            SetupManagers();
 
             _contractManager = new ContractManager(this);
-            _networkManager = new Network();
-
-            ProcessReference.Process = this;
-            NetworkReference.Network = _networkManager;
+            _networkManager = new Network(this);
         }
         public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber) 
         {
@@ -56,34 +56,48 @@ namespace FrostDB
             configurator.SaveConfiguration(config);
             Configuration = config;
 
-            DatabaseManager = new DatabaseManager(
-              new DatabaseFileMapper(),
-              Configuration.DatabaseFolder,
-              Configuration.DatabaseExtension);
+            SetupManagers();
 
             _contractManager = new ContractManager(this);
-            _networkManager = new Network();
+            _networkManager = new Network(this);
+        }
 
-            ProcessReference.Process = this;
-            NetworkReference.Network = _networkManager;
+        public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber, string rootDirectory)
+        {
+            var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
+            var configurator = new ProcessConfigurator(info);
+            var config = configurator.GetConfiguration(rootDirectory);
+
+            config.Address = instanceIpAddress;
+            config.DataServerPort = dataPortNumber;
+            config.ConsoleServerPort = consolePortNumber;
+            config.ContractFolder = rootDirectory + @"\contracts\";
+            config.DatabaseFolder = rootDirectory + @"\dbs\";
+            configurator.SaveConfiguration(config);
+            Configuration = config;
+
+            SetupManagers();
+
+            _contractManager = new ContractManager(this);
+            _networkManager = new Network(this);
         }
         #endregion
 
         #region Public Methods
-        public static Location GetLocation()
+        public Location GetLocation()
         {
             return Configuration.GetLocation();
         }
         public virtual void AddDatabase(string databaseName)
         {
             DatabaseManager.AddDatabase(
-                new Database(databaseName));
+                new Database(databaseName, this));
         }
 
         public virtual void AddPartialDatabase(string databaseName)
         {
-            DatabaseManager.AddDatabase(
-               new PartialDatabase(databaseName));
+            PartialDatabaseManager.AddDatabase(
+               new PartialDatabase(databaseName, this));
         }
 
         public virtual void RemoveDatabase(Guid guid)
@@ -96,15 +110,16 @@ namespace FrostDB
             DatabaseManager.RemoveDatabase(databaseName);
         }
 
+        public virtual Table GetTable(Guid? databaseId, Guid? tableId)
+        {
+            return GetDatabase(databaseId).GetTable(tableId);
+        }
+
         public virtual int LoadDatabases()
         {
             return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder);
         }
-
-        public virtual IDatabase GetDatabase(Guid id)
-        {
-            return DatabaseManager.GetDatabase(id);
-        }
+  
         public virtual IDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
@@ -113,6 +128,21 @@ namespace FrostDB
         public bool HasDatabase(string databaseName)
         {
             return Databases.Any(d => d.Name == databaseName);
+        }
+
+        public virtual string GetTableName(string databaseName, Guid? tableId)
+        {
+            return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
+        }
+
+        public virtual void UpdateContractInformation(ContractInfo info)
+        {
+            ContractManager.UpdateContractPermissions(info);
+        }
+
+        public virtual Row GetRow(Guid? databaseId, Guid? tableId, Guid? rowId)
+        {
+            return GetDatabase(databaseId).GetTable(tableId).GetRow(rowId);
         }
 
         public bool HasDatabase(Guid? databaseId)
@@ -124,7 +154,7 @@ namespace FrostDB
         {
             PartialDatabase db = null;
 
-            Databases.ForEach(database =>
+            PartialDatabases.ForEach(database =>
             {
                 if (database is PartialDatabase && database.Name == databaseName)
                 {
@@ -169,7 +199,7 @@ namespace FrostDB
         {
             var dbs = new List<PartialDatabase>();
 
-            Databases.ForEach(database =>
+            PartialDatabases.ForEach(database =>
             {
                 if (database is PartialDatabase)
                 {
@@ -210,7 +240,7 @@ namespace FrostDB
         {
             var dbs = new List<string>();
 
-            Databases.ForEach(database => 
+            PartialDatabases.ForEach(database => 
             { 
                 if (database is PartialDatabase)
                 {
@@ -219,6 +249,11 @@ namespace FrostDB
             });
 
             return dbs;
+        }
+
+        public Configuration GetConfiguration()
+        {
+            return (Configuration)this.Configuration;
         }
 
         public IDatabase GetDatabase(Guid? databaseId)
@@ -248,6 +283,36 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SetupManagers()
+        {
+            _eventManager = new EventManager();
+
+            var dbManager = new DataManagerEventManagerDatabase(this);
+
+            _dbManager = new DatabaseManager(
+               Configuration.DatabaseFolder,
+               Configuration.DatabaseExtension,
+               new DatabaseFileMapper(),
+               dbManager,
+               this
+               );
+
+            dbManager.Manager = DatabaseManager;
+            dbManager.RegisterEvents();
+
+            var partialDbManager = new DataManagerEventManagerPartialDatabase();
+
+            _pdbManager = new PartialDatabaseManager(
+                Configuration.DatabaseFolder,
+                Configuration.PartialDatabaseExtension,
+                new PartialDatabaseFileMapper(),
+                partialDbManager,
+                this
+                );
+
+            partialDbManager.Manager = PartialDatabaseManager;
+            partialDbManager.RegisterEvents();
+        }
         private void SetConfiguration()
         {
             var info = new ProcessInfo(OperatingSystem.GetOSPlatform());

@@ -4,12 +4,15 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FrostDB.Interface;
 
 namespace FrostDB
 {
-    public class MessageConsoleProcessorTable
+    public class MessageConsoleProcessorTable : IMessageConsoleProcessorObject
 	{
 		#region Private Fields
+		private Process _process;
+		private MessageBuilder _messageBuilder;
 		#endregion
 
 		#region Public Properties
@@ -22,7 +25,11 @@ namespace FrostDB
 		#endregion
 
 		#region Constructors
-		public MessageConsoleProcessorTable() { }
+		public MessageConsoleProcessorTable(Process process) 
+		{
+			_process = process;
+			_messageBuilder = new MessageBuilder(_process);
+		}
 		#endregion
 
 		#region Public Methods
@@ -47,8 +54,8 @@ namespace FrostDB
 		private void HandleGetTableInfo(Message message)
 		{
 			var databaseTable = message.TwoGuidTuple;
-			var db = ProcessReference.GetDatabase(databaseTable.Item1);
-			var table = ProcessReference.GetTable(databaseTable.Item1, databaseTable.Item2);
+			var db = _process.GetDatabase(databaseTable.Item1);
+			var table = _process.GetTable(databaseTable.Item1, databaseTable.Item2);
 
 			TableInfo info = new TableInfo();
 			info.TableId = table.Id;
@@ -62,13 +69,13 @@ namespace FrostDB
 			string messageContent = string.Empty;
 
 			messageContent = JsonConvert.SerializeObject(info);
-			MessageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
+			_messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
 		}
 
 		private void HandleAddColumnMessage(Message message)
 		{
 			var info = message.GetContentAs<ColumnInfo>();
-			var db = ProcessReference.GetDatabase(info.DatabaseName);
+			var db = _process.GetDatabase(info.DatabaseName);
 			var table = db.GetTable(info.TableName);
 			table.AddColumn(info.ColumnName, info.Type);
 		}
@@ -76,7 +83,7 @@ namespace FrostDB
 		private void HandleRemoveColumnMessage(Message message)
 		{
 			var info = message.GetContentAs<ColumnInfo>();
-			var db = ProcessReference.GetDatabase(info.DatabaseName);
+			var db = _process.GetDatabase(info.DatabaseName);
 			var table = db.GetTable(info.TableName);
 
 			table.RemoveColumn(info.ColumnName);

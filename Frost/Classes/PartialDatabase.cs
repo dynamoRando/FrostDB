@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using FrostDB.Interface;
 
 namespace FrostDB
 {
@@ -9,9 +10,7 @@ namespace FrostDB
     public class PartialDatabase : Database
     {
         #region Private Fields
-        private List<Table> _tables;
-        private string _name;
-        private Guid? _id;
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -24,14 +23,17 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public PartialDatabase()
+        public PartialDatabase(Process process) : base(process)
         {
-            _id = Guid.NewGuid();
-            _tables = new List<Table>();
+            _process = process;
         }
-        public PartialDatabase(string name) : this()
+        public PartialDatabase(string name, Process process) : base(name, process)
         {
-            _name = name;
+        }
+
+        public PartialDatabase(string name, Guid id,
+           List<Table> tables, Process process) : base(name, id, tables, process)
+        {
         }
         #endregion
 
@@ -41,7 +43,7 @@ namespace FrostDB
         #region Private Methods
         #endregion
 
-        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        protected PartialDatabase(SerializationInfo serializationInfo, StreamingContext streamingContext, Process process) : base(process)
         {
             throw new NotImplementedException();
         }

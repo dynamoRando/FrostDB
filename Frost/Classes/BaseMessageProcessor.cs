@@ -9,6 +9,7 @@ namespace FrostDB
     public class BaseMessageProcessor : IMessageProcessor
     {
         #region Private Fields
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -22,7 +23,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public BaseMessageProcessor() { }
+        public BaseMessageProcessor(Process process) 
+        {
+            _process = process;
+        }
         #endregion
 
         #region Public Methods
@@ -34,7 +38,7 @@ namespace FrostDB
         public void HandleProcessMessage(IMessage message)
         {
             Message m = (message as Message);
-            EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));
+            _process.EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));
         }
 
         #endregion

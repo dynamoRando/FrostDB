@@ -5,12 +5,11 @@ using System.Text;
 
 namespace FrostDB.Interface
 {
-    public interface IDatabaseFileMapper<TDatabase, YFile, ZManager> 
+    public interface IDatabaseFileMapper<TDatabase, YFile> 
         where TDatabase : IDatabase 
         where YFile : IDataFile 
-        where ZManager : DataManager<TDatabase>
     {
-        TDatabase Map(YFile file, ZManager manager);
+        TDatabase Map(YFile file, Process process);
         YFile Map(TDatabase database);
     }
 }
