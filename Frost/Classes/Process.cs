@@ -34,7 +34,7 @@ namespace FrostDB
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
         public Network Network => _networkManager;
-        public ProcessLogger Logger => _log;
+        public ProcessLogger Log => _log;
         #endregion
 
         #region Events
@@ -85,8 +85,8 @@ namespace FrostDB
             configurator.SaveConfiguration(config);
             Configuration = config;
 
-            _log.LogDebug("App started");
-            _log.LogDebug($"" +
+            _log.Debug("App started");
+            _log.Debug($"" +
                 $"Instance IP: {instanceIpAddress.ToString()} " +
                 $"Data Port: {dataPortNumber.ToString()} " +
                 $"Console Port: {consolePortNumber.ToString()} " +

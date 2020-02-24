@@ -27,7 +27,7 @@ namespace FrostDB
             log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
         }
 
-        public void LogDebug(string message)
+        public void Debug(string message)
         {
             _logger.Debug($"{_process.Id.ToString()} {message}");
         }
