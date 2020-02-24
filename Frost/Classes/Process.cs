@@ -19,7 +19,7 @@ namespace FrostDB
         private DatabaseManager _dbManager;
         private PartialDatabaseManager _pdbManager;
         private EventManager _eventManager;
-        private readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private ProcessLogger _log;
         #endregion
 
         #region Public Properties
@@ -34,7 +34,7 @@ namespace FrostDB
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
         public Network Network => _networkManager;
-        public log4net.ILog Logger => _log;
+        public ProcessLogger Logger => _log;
         #endregion
 
         #region Events
@@ -85,7 +85,13 @@ namespace FrostDB
             configurator.SaveConfiguration(config);
             Configuration = config;
 
-            _log.Debug("App started");
+            _log.LogDebug("App started");
+            _log.LogDebug($"" +
+                $"Instance IP: {instanceIpAddress.ToString()} " +
+                $"Data Port: {dataPortNumber.ToString()} " +
+                $"Console Port: {consolePortNumber.ToString()} " +
+                $"Root Dir: {rootDirectory} " +
+                $"");
 
             SetupManagers();
 
@@ -334,12 +340,9 @@ namespace FrostDB
 
         private void SetupLogging()
         {
-            XmlDocument log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead("log4net.config"));
-            var repo = log4net.LogManager.CreateRepository(Assembly.GetEntryAssembly(),
-                       typeof(log4net.Repository.Hierarchy.Hierarchy));
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+            _log = new ProcessLogger(this);
         }
+
         #endregion
     }
 }
