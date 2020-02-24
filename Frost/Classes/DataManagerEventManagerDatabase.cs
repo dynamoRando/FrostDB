@@ -156,7 +156,9 @@ namespace FrostDB
             if (e is MessageSentEventArgs)
             {
                 var args = (MessageSentEventArgs)e;
-                Console.WriteLine($"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}");
+                string message = $"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}";
+                Console.WriteLine(message);
+                _process.Log.Debug(message);
             }
         }
 
@@ -177,14 +179,18 @@ namespace FrostDB
             if (e is MessageRecievedEventArgs)
             {
                 var args = (MessageRecievedEventArgs)e;
-                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                    args.MessageLength, args.StringMessage);
+                string debugMessage = $"Read {args.MessageLength.ToString()} bytes from socket. \n Data : {args.StringMessage}";
+               
+                Console.WriteLine(debugMessage);
+                _process.Log.Debug(debugMessage);
 
                 if (args.Message.ReferenceMessageId.HasValue)
                 {
                     if (args.Message.ReferenceMessageId.Value != Guid.Empty)
                     {
-                        Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
+                        string responseMessage = $"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}";
+                        Console.WriteLine(responseMessage);
+                        _process.Log.Debug(responseMessage);
                     }
                 }
             }

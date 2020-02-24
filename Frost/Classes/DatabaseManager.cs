@@ -132,6 +132,7 @@ namespace FrostDB
             var fileName = _databaseFolder + database.Name + _databaseExtension;
             var file = _databaseFileMapper.Map(database);
             _dataFileManager.SaveDataFile(fileName, file);
+            _process.Log.Debug($"{database.Name} saved to disk at {fileName}");
         }
         #endregion
 
