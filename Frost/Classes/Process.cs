@@ -85,7 +85,7 @@ namespace FrostDB
             configurator.SaveConfiguration(config);
             Configuration = config;
 
-            _log.Debug("App started");
+            _log.Debug(" --- Process started --- ");
             _log.Debug($"" +
                 $"Instance IP: {instanceIpAddress.ToString()} " +
                 $"Data Port: {dataPortNumber.ToString()} " +
