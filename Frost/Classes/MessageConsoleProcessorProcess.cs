@@ -134,6 +134,8 @@ namespace FrostDB
 
             var contract = message.GetContentAs<ContractInfo>();
             _process.ContractManager.AcceptPendingContract(contract);
+            // TODO: we need to make sure the construction of a partial database is done correctly
+            // so that there are no null values
             _process.AddPartialDatabase(contract.DatabaseName);
             var location = new Location(Guid.NewGuid(), contract.Location.IpAddress, contract.Location.PortNumber, string.Empty);
 
