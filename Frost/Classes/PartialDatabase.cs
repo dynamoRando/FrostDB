@@ -38,10 +38,24 @@ namespace FrostDB
         #region Constructors
         public PartialDatabase(Process process) 
         {
+            _id = Guid.NewGuid();
             _process = process;
+            _tables = new List<Table>();
+
+            if (_schema is null)
+            {
+                _schema = new DbSchema(this, _process);
+            }
+
+            if (_contract is null)
+            {
+                _contract = new Contract(_process);
+            }
         }
-        public PartialDatabase(string name, Process process) 
+        public PartialDatabase(string name, Process process) : this(process)
         {
+            _name = name;
+            _process = process;
         }
 
         public PartialDatabase(string name, Guid id,

@@ -54,6 +54,11 @@ namespace FrostDB
             _process = process;
             Map(database);
         }
+        public DbSchema(PartialDatabase database, Process process) : this()
+        {
+            _process = process;
+            Map(database);
+        }
         #endregion
 
         #region Public Methods
@@ -70,6 +75,13 @@ namespace FrostDB
 
         #region Private Methods
         private void Map(Database database)
+        {
+            DatabaseName = database.Name;
+            DatabaseId = database.Id;
+            database.Tables.ForEach(table => Tables.Add(table.Schema));
+            Location = (Location)_process.GetLocation();
+        }
+        private void Map(PartialDatabase database)
         {
             DatabaseName = database.Name;
             DatabaseId = database.Id;
