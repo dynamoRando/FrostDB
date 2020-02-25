@@ -156,7 +156,9 @@ namespace FrostDB
             if (e is MessageSentEventArgs)
             {
                 var args = (MessageSentEventArgs)e;
-                Console.WriteLine($"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}");
+                string message = $"Message {args.Message.Id.ToString()} was sent for action {args.Message.Action}";
+                Console.WriteLine(message);
+                _process.Log.Debug(message);
             }
         }
 
@@ -177,14 +179,18 @@ namespace FrostDB
             if (e is MessageRecievedEventArgs)
             {
                 var args = (MessageRecievedEventArgs)e;
-                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                    args.MessageLength, args.StringMessage);
+                string debugMessage = $"Read {args.MessageLength.ToString()} bytes from socket. \n Data : {args.StringMessage}";
+               
+                Console.WriteLine(debugMessage);
+                _process.Log.Debug(debugMessage);
 
                 if (args.Message.ReferenceMessageId.HasValue)
                 {
                     if (args.Message.ReferenceMessageId.Value != Guid.Empty)
                     {
-                        Console.WriteLine($"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}");
+                        string responseMessage = $"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}";
+                        Console.WriteLine(responseMessage);
+                        _process.Log.Debug(responseMessage);
                     }
                 }
             }
@@ -242,7 +248,10 @@ namespace FrostDB
             if (e is PendingContractAddedEventArgs)
             {
                 var args = (PendingContractAddedEventArgs)e;
-                Console.WriteLine($"Pending Contract {args.Contract.DatabaseId} recieved");
+                string message = $"Pending Contract {args.Contract.DatabaseId} recieved";
+                Console.WriteLine(message);
+                _process.Log.Debug(message);
+
 
                 // TO DO: Check if db exists first, if not, then this is a new partial db to be created
                 if (_process.HasDatabase(args.Contract.DatabaseId))
@@ -263,7 +272,9 @@ namespace FrostDB
                     var db = _process.GetDatabase(args.DatabaseId);
                     _dataManager.SaveToDisk((Database)db);
                 }
-                Console.WriteLine($"{args.DatabaseId} has pending participant at {args.Participant.Location.IpAddress}");
+                string message = $"{args.DatabaseId} has pending participant at {args.Participant.Location.IpAddress}";
+                Console.WriteLine(message);
+                _process.Log.Debug(message);
             }
         }
 

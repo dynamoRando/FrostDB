@@ -5,6 +5,9 @@ using System.Linq;
 using FrostCommon;
 using FrostCommon.Net;
 using FrostCommon.ConsoleMessages;
+using System.Xml;
+using System.Reflection;
+using System.IO;
 
 namespace FrostDB
 {
@@ -16,6 +19,7 @@ namespace FrostDB
         private DatabaseManager _dbManager;
         private PartialDatabaseManager _pdbManager;
         private EventManager _eventManager;
+        private ProcessLogger _log;
         #endregion
 
         #region Public Properties
@@ -30,6 +34,7 @@ namespace FrostDB
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
         public Network Network => _networkManager;
+        public ProcessLogger Log => _log;
         #endregion
 
         #region Events
@@ -38,6 +43,7 @@ namespace FrostDB
         #region Constructors
         public Process()
         {
+            SetupLogging();
             SetConfiguration();
             SetupManagers();
 
@@ -46,6 +52,8 @@ namespace FrostDB
         }
         public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber) 
         {
+            SetupLogging();
+
             var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
             var configurator = new ProcessConfigurator(info);
             var config = configurator.GetConfiguration();
@@ -64,6 +72,7 @@ namespace FrostDB
 
         public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber, string rootDirectory)
         {
+            SetupLogging();
             var info = new ProcessInfo(OperatingSystem.GetOSPlatform());
             var configurator = new ProcessConfigurator(info);
             var config = configurator.GetConfiguration(rootDirectory);
@@ -75,6 +84,14 @@ namespace FrostDB
             config.DatabaseFolder = rootDirectory + @"\dbs\";
             configurator.SaveConfiguration(config);
             Configuration = config;
+
+            _log.Debug(" --- Process started --- ");
+            _log.Debug($"" +
+                $"Instance IP: {instanceIpAddress.ToString()} " +
+                $"Data Port: {dataPortNumber.ToString()} " +
+                $"Console Port: {consolePortNumber.ToString()} " +
+                $"Root Dir: {rootDirectory} " +
+                $"");
 
             SetupManagers();
 
@@ -320,6 +337,12 @@ namespace FrostDB
 
             Configuration = configurator.GetConfiguration();
         }
+
+        private void SetupLogging()
+        {
+            _log = new ProcessLogger(this);
+        }
+
         #endregion
     }
 }
