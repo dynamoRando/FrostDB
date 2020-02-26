@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonLoadTestSetup = new System.Windows.Forms.Button();
+            this.textLoadTestSetup = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.buttonSaveTestSetup = new System.Windows.Forms.Button();
+            this.textTestSetupLocation = new System.Windows.Forms.TextBox();
             this.buttonClearForm = new System.Windows.Forms.Button();
             this.textFormConsolePort = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -45,13 +51,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textProcessAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textTestSetupLocation = new System.Windows.Forms.TextBox();
-            this.buttonSaveTestSetup = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textLoadTestSetup = new System.Windows.Forms.TextBox();
-            this.buttonLoadTestSetup = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textLogFileLocation = new System.Windows.Forms.TextBox();
+            this.buttonLoadLogFile = new System.Windows.Forms.Button();
+            this.buttonWatchLogFile = new System.Windows.Forms.Button();
+            this.textLogFile = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -84,6 +90,59 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Running Processes:";
+            // 
+            // buttonLoadTestSetup
+            // 
+            this.buttonLoadTestSetup.Location = new System.Drawing.Point(469, 375);
+            this.buttonLoadTestSetup.Name = "buttonLoadTestSetup";
+            this.buttonLoadTestSetup.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadTestSetup.TabIndex = 21;
+            this.buttonLoadTestSetup.Text = "Load";
+            this.buttonLoadTestSetup.UseVisualStyleBackColor = true;
+            this.buttonLoadTestSetup.Click += new System.EventHandler(this.buttonLoadTestSetup_Click);
+            // 
+            // textLoadTestSetup
+            // 
+            this.textLoadTestSetup.Location = new System.Drawing.Point(208, 346);
+            this.textLoadTestSetup.Name = "textLoadTestSetup";
+            this.textLoadTestSetup.Size = new System.Drawing.Size(336, 23);
+            this.textLoadTestSetup.TabIndex = 20;
+            this.textLoadTestSetup.Text = "C:\\FrostTest\\setup.txt";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(208, 328);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(66, 15);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Load Setup";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(208, 250);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 15);
+            this.label7.TabIndex = 16;
+            this.label7.Text = "Save Setup";
+            // 
+            // buttonSaveTestSetup
+            // 
+            this.buttonSaveTestSetup.Location = new System.Drawing.Point(469, 297);
+            this.buttonSaveTestSetup.Name = "buttonSaveTestSetup";
+            this.buttonSaveTestSetup.Size = new System.Drawing.Size(75, 23);
+            this.buttonSaveTestSetup.TabIndex = 18;
+            this.buttonSaveTestSetup.Text = "Save";
+            this.buttonSaveTestSetup.UseVisualStyleBackColor = true;
+            this.buttonSaveTestSetup.Click += new System.EventHandler(this.buttonSaveTestSetup_Click);
+            // 
+            // textTestSetupLocation
+            // 
+            this.textTestSetupLocation.Location = new System.Drawing.Point(208, 268);
+            this.textTestSetupLocation.Name = "textTestSetupLocation";
+            this.textTestSetupLocation.Size = new System.Drawing.Size(336, 23);
+            this.textTestSetupLocation.TabIndex = 17;
             // 
             // buttonClearForm
             // 
@@ -224,68 +283,67 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "IP Address";
             // 
-            // label7
+            // groupBox2
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(208, 250);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 15);
-            this.label7.TabIndex = 16;
-            this.label7.Text = "Save Setup";
+            this.groupBox2.Controls.Add(this.textLogFile);
+            this.groupBox2.Controls.Add(this.buttonWatchLogFile);
+            this.groupBox2.Controls.Add(this.buttonLoadLogFile);
+            this.groupBox2.Controls.Add(this.textLogFileLocation);
+            this.groupBox2.Location = new System.Drawing.Point(606, 24);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(493, 398);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Logging";
             // 
-            // textTestSetupLocation
+            // textLogFileLocation
             // 
-            this.textTestSetupLocation.Location = new System.Drawing.Point(208, 268);
-            this.textTestSetupLocation.Name = "textTestSetupLocation";
-            this.textTestSetupLocation.Size = new System.Drawing.Size(336, 23);
-            this.textTestSetupLocation.TabIndex = 17;
+            this.textLogFileLocation.Location = new System.Drawing.Point(6, 27);
+            this.textLogFileLocation.Name = "textLogFileLocation";
+            this.textLogFileLocation.Size = new System.Drawing.Size(481, 23);
+            this.textLogFileLocation.TabIndex = 0;
             // 
-            // buttonSaveTestSetup
+            // buttonLoadLogFile
             // 
-            this.buttonSaveTestSetup.Location = new System.Drawing.Point(469, 297);
-            this.buttonSaveTestSetup.Name = "buttonSaveTestSetup";
-            this.buttonSaveTestSetup.Size = new System.Drawing.Size(75, 23);
-            this.buttonSaveTestSetup.TabIndex = 18;
-            this.buttonSaveTestSetup.Text = "Save";
-            this.buttonSaveTestSetup.UseVisualStyleBackColor = true;
-            this.buttonSaveTestSetup.Click += new System.EventHandler(this.buttonSaveTestSetup_Click);
+            this.buttonLoadLogFile.Location = new System.Drawing.Point(412, 56);
+            this.buttonLoadLogFile.Name = "buttonLoadLogFile";
+            this.buttonLoadLogFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadLogFile.TabIndex = 1;
+            this.buttonLoadLogFile.Text = "Load";
+            this.buttonLoadLogFile.UseVisualStyleBackColor = true;
             // 
-            // label8
+            // buttonWatchLogFile
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(208, 328);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(66, 15);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "Load Setup";
+            this.buttonWatchLogFile.Location = new System.Drawing.Point(331, 56);
+            this.buttonWatchLogFile.Name = "buttonWatchLogFile";
+            this.buttonWatchLogFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonWatchLogFile.TabIndex = 2;
+            this.buttonWatchLogFile.Text = "Watch";
+            this.buttonWatchLogFile.UseVisualStyleBackColor = true;
+            this.buttonWatchLogFile.Click += new System.EventHandler(this.buttonWatchLogFile_Click);
             // 
-            // textLoadTestSetup
+            // textLogFile
             // 
-            this.textLoadTestSetup.Location = new System.Drawing.Point(208, 346);
-            this.textLoadTestSetup.Name = "textLoadTestSetup";
-            this.textLoadTestSetup.Size = new System.Drawing.Size(336, 23);
-            this.textLoadTestSetup.TabIndex = 20;
-            // 
-            // buttonLoadTestSetup
-            // 
-            this.buttonLoadTestSetup.Location = new System.Drawing.Point(469, 375);
-            this.buttonLoadTestSetup.Name = "buttonLoadTestSetup";
-            this.buttonLoadTestSetup.Size = new System.Drawing.Size(75, 23);
-            this.buttonLoadTestSetup.TabIndex = 21;
-            this.buttonLoadTestSetup.Text = "Load";
-            this.buttonLoadTestSetup.UseVisualStyleBackColor = true;
-            this.buttonLoadTestSetup.Click += new System.EventHandler(this.buttonLoadTestSetup_Click);
+            this.textLogFile.Location = new System.Drawing.Point(6, 85);
+            this.textLogFile.Multiline = true;
+            this.textLogFile.Name = "textLogFile";
+            this.textLogFile.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textLogFile.Size = new System.Drawing.Size(481, 293);
+            this.textLogFile.TabIndex = 3;
             // 
             // TestHarnessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 450);
+            this.ClientSize = new System.Drawing.Size(1111, 450);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "TestHarnessForm";
             this.Text = "Test Harness";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -315,6 +373,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button buttonSaveTestSetup;
         private System.Windows.Forms.TextBox textTestSetupLocation;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TextBox textLogFile;
+        private System.Windows.Forms.Button buttonWatchLogFile;
+        private System.Windows.Forms.Button buttonLoadLogFile;
+        private System.Windows.Forms.TextBox textLogFileLocation;
     }
 }
 

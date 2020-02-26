@@ -108,7 +108,7 @@ namespace FrostDB
             _databases.Remove(db);
         }
 
-        public int LoadDatabases(string databaseFolderLocation)
+        public int LoadDatabases(string databaseFolderLocation, string databaseExtension)
         {
             int count = 0;
 
@@ -117,7 +117,7 @@ namespace FrostDB
                 Directory.CreateDirectory(databaseFolderLocation);
             }
 
-            foreach (var file in Directory.GetFiles(databaseFolderLocation))
+            foreach (var file in Directory.GetFiles(databaseFolderLocation, "*" + databaseExtension))
             {
                 var database = GetDatabaseFromDisk(file);
                 _databases.Add(database);

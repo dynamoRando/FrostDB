@@ -132,9 +132,14 @@ namespace FrostDB
             return GetDatabase(databaseId).GetTable(tableId);
         }
 
+        public virtual int LoadPartialDatabases()
+        {
+            return PartialDatabaseManager.LoadDatabases(Configuration.DatabaseFolder, Configuration.PartialDatabaseExtension);
+        }
+
         public virtual int LoadDatabases()
         {
-            return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder);
+            return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder, Configuration.DatabaseExtension);
         }
   
         public virtual IDatabase GetDatabase(string databaseName)
@@ -150,6 +155,14 @@ namespace FrostDB
         public virtual string GetTableName(string databaseName, Guid? tableId)
         {
             return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
+        }
+
+        public virtual void Startup()
+        {
+            LoadDatabases();
+            LoadPartialDatabases();
+            StartRemoteServer();
+            StartConsoleServer();
         }
 
         public virtual void UpdateContractInformation(ContractInfo info)
