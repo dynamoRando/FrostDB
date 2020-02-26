@@ -51,7 +51,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textProcessAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textLogFileLocation = new System.Windows.Forms.TextBox();
+            this.buttonLoadLogFile = new System.Windows.Forms.Button();
+            this.buttonWatchLogFile = new System.Windows.Forms.Button();
+            this.textLogFile = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -277,16 +283,67 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "IP Address";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.textLogFile);
+            this.groupBox2.Controls.Add(this.buttonWatchLogFile);
+            this.groupBox2.Controls.Add(this.buttonLoadLogFile);
+            this.groupBox2.Controls.Add(this.textLogFileLocation);
+            this.groupBox2.Location = new System.Drawing.Point(606, 24);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(493, 398);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Logging";
+            // 
+            // textLogFileLocation
+            // 
+            this.textLogFileLocation.Location = new System.Drawing.Point(6, 27);
+            this.textLogFileLocation.Name = "textLogFileLocation";
+            this.textLogFileLocation.Size = new System.Drawing.Size(481, 23);
+            this.textLogFileLocation.TabIndex = 0;
+            // 
+            // buttonLoadLogFile
+            // 
+            this.buttonLoadLogFile.Location = new System.Drawing.Point(412, 56);
+            this.buttonLoadLogFile.Name = "buttonLoadLogFile";
+            this.buttonLoadLogFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadLogFile.TabIndex = 1;
+            this.buttonLoadLogFile.Text = "Load";
+            this.buttonLoadLogFile.UseVisualStyleBackColor = true;
+            // 
+            // buttonWatchLogFile
+            // 
+            this.buttonWatchLogFile.Location = new System.Drawing.Point(331, 56);
+            this.buttonWatchLogFile.Name = "buttonWatchLogFile";
+            this.buttonWatchLogFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonWatchLogFile.TabIndex = 2;
+            this.buttonWatchLogFile.Text = "Watch";
+            this.buttonWatchLogFile.UseVisualStyleBackColor = true;
+            this.buttonWatchLogFile.Click += new System.EventHandler(this.buttonWatchLogFile_Click);
+            // 
+            // textLogFile
+            // 
+            this.textLogFile.Location = new System.Drawing.Point(6, 85);
+            this.textLogFile.Multiline = true;
+            this.textLogFile.Name = "textLogFile";
+            this.textLogFile.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textLogFile.Size = new System.Drawing.Size(481, 293);
+            this.textLogFile.TabIndex = 3;
+            // 
             // TestHarnessForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 450);
+            this.ClientSize = new System.Drawing.Size(1111, 450);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "TestHarnessForm";
             this.Text = "Test Harness";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -316,6 +373,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button buttonSaveTestSetup;
         private System.Windows.Forms.TextBox textTestSetupLocation;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TextBox textLogFile;
+        private System.Windows.Forms.Button buttonWatchLogFile;
+        private System.Windows.Forms.Button buttonLoadLogFile;
+        private System.Windows.Forms.TextBox textLogFileLocation;
     }
 }
 

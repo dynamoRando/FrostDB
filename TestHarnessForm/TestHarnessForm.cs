@@ -1,4 +1,4 @@
-﻿using FrostDB;
+﻿using FrostProcess = FrostDB.Process;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,22 +9,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FrostForm;
+using System.Diagnostics;
+using System.IO;
+using static TestHarnessForm.Reader;
 
 namespace TestHarnessForm
 {
     public partial class TestHarnessForm : Form
     {
-        List<Process> _runningProcesses = new List<Process>();
+        List<FrostProcess> _runningProcesses = new List<FrostProcess>();
         string _selectedProcess;
         (string, int, int, int) _selectedProcessTuple;
         List<(string, int, int, int, string)> _testItems = new List<(string, int, int, int, string)>();
+        string _logFileLocation;
+        FileSystemWatcher _watcher = new FileSystemWatcher();
+        string _logFileName = "frostDb.log";
 
         public TestHarnessForm()
         {
             InitializeComponent();
         }
 
-        private void SetupProcess(Process process)
+        private void SetupProcess(FrostProcess process)
         {
             process.Startup();
         }
@@ -35,7 +41,7 @@ namespace TestHarnessForm
 
             if (!string.IsNullOrEmpty(formConsolePort))
             {
-                var process = new Process
+                var process = new FrostProcess
             (this.textProcessAddress.Text, Convert.ToInt32(textDataPort.Text),
             Convert.ToInt32(textConsolePort.Text), textRootDirectory.Text);
 
@@ -119,7 +125,7 @@ namespace TestHarnessForm
             var testSetup = new TestSetup();
             var harness = new TestSetupHarness();
 
-            foreach(var x in _testItems)
+            foreach (var x in _testItems)
             {
                 var testItem = GetTestProcess(x);
                 testSetup.Items.Add(testItem);
@@ -148,9 +154,9 @@ namespace TestHarnessForm
             var harness = new TestSetupHarness();
             var setup = harness.LoadSetup(textLoadTestSetup.Text);
 
-            foreach(var x in setup.Items)
+            foreach (var x in setup.Items)
             {
-                var process = new Process(x.IPAddress, x.DataPort, x.ConsolePort, x.RootDirectory);
+                var process = new FrostProcess(x.IPAddress, x.DataPort, x.ConsolePort, x.RootDirectory);
                 SetupProcess(process);
 
                 listRunningProcesses.InvokeIfRequired(() =>
@@ -172,6 +178,54 @@ namespace TestHarnessForm
         private void textFormConsolePort_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void buttonWatchLogFile_Click(object sender, EventArgs e)
+        {
+            textLogFile.Text = string.Empty;
+
+            if (!string.IsNullOrEmpty(textLogFileLocation.Text))
+            {
+                _logFileLocation = textLogFileLocation.Text;
+            }
+
+            _watcher.Path = _logFileLocation;
+            _watcher.Filter = _logFileName;
+            _watcher.InternalBufferSize = 64000;
+
+            _watcher.NotifyFilter = NotifyFilters.Attributes |
+NotifyFilters.CreationTime |
+NotifyFilters.FileName |
+NotifyFilters.LastAccess |
+NotifyFilters.LastWrite |
+NotifyFilters.Size |
+NotifyFilters.Security;
+
+            _watcher.Changed += _watcher_Changed;
+            _watcher.Error += _watcher_Error;
+            _watcher.EnableRaisingEvents = true;
+            MessageBox.Show("watching");
+
+        }
+
+        private void _watcher_Error(object sender, ErrorEventArgs e)
+        {
+            Console.WriteLine(" --- file watcher error --- ");
+        }
+
+        private void _watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            var file = _logFileLocation + @"\" + _logFileName;
+
+            var lines = new ReverseLineReader(file);
+            string text = lines.Take(1).First();
+
+            Console.WriteLine(text);
+
+            textLogFile.InvokeIfRequired(() =>
+            {
+                textLogFile.Text = text + Environment.NewLine + textLogFile.Text;
+            });
         }
     }
 }
