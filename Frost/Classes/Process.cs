@@ -157,6 +157,14 @@ namespace FrostDB
             return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
         }
 
+        public virtual void Startup()
+        {
+            LoadDatabases();
+            LoadPartialDatabases();
+            StartRemoteServer();
+            StartConsoleServer();
+        }
+
         public virtual void UpdateContractInformation(ContractInfo info)
         {
             ContractManager.UpdateContractPermissions(info);

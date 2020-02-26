@@ -26,9 +26,7 @@ namespace TestHarnessForm
 
         private void SetupProcess(Process process)
         {
-            process.LoadDatabases();
-            process.StartRemoteServer();
-            process.StartConsoleServer();
+            process.Startup();
         }
 
         private void buttonLaunchTestProcess_Click(object sender, EventArgs e)
