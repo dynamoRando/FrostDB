@@ -1,10 +1,7 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using FrostCommon;
+﻿using FrostCommon;
 using FrostCommon.ConsoleMessages;
+using System;
 using FrostLocation = FrostCommon.ConsoleMessages.LocationInfo;
-using log4net.Core;
-using Newtonsoft.Json;
 
 namespace FrostDB.Extensions
 {
