@@ -57,5 +57,26 @@ namespace FrostDB.Extensions
             return new Location(Guid.NewGuid(), location.IpAddress, location.PortNumber, string.Empty);
         }
 
+        public static ContractInfo Convert(this Contract contract)
+        {
+            var info = new ContractInfo();
+
+            info.ContractDescription = contract.ContractDescription;
+            info.DatabaseName = contract.DatabaseName;
+            info.ContractVersion = contract.ContractVersion;
+            info.ContractId = contract.ContractId;
+            info.Location = contract.DatabaseLocation.Convert();
+            info.DatabaseId = contract.DatabaseId;
+
+            return info;
+        }
+
+        public static Contract Convert(this ContractInfo info, Process process)
+        {
+            var contract = new Contract(process);
+            throw new NotImplementedException();
+            return contract;
+        }
+
     }
 }

@@ -103,18 +103,7 @@ namespace FrostDB
 
             list.ForEach(c =>
             {
-                var t = new ContractInfo();
-
-                t.ContractDescription = c.ContractDescription;
-                t.DatabaseName = c.DatabaseName;
-                t.ContractVersion = c.ContractVersion;
-                t.ContractId = c.ContractId;
-                t.Location = c.DatabaseLocation.Convert();
-                t.DatabaseId = c.DatabaseId;
-
-                // TODO: Need to fix this mapping up. Should there be a mapping object for this?
-
-                info.Add(t);
+                info.Add(c.Convert());
             });
 
             Type type = info.GetType();
