@@ -21,6 +21,7 @@ namespace FrostDB
         private ParticipantManager _participantManager;
         private Contract _contract;
         private Process _process;
+        private DatabaseReference _referenceDatabase;
 
         #endregion
 
@@ -32,6 +33,7 @@ namespace FrostDB
         public List<Participant> AcceptedParticipants => _participantManager.AcceptedParticipants;
         public List<Participant> PendingParticipants => _participantManager.PendingParticipants;
         public Contract Contract => _contract;
+        public DatabaseReference ReferenceDatabase => _referenceDatabase;
         #endregion
 
 
@@ -56,6 +58,13 @@ namespace FrostDB
         {
             _name = name;
             _process = process;
+        }
+
+        public PartialDatabase(string name, Process process, DatabaseReference reference) : this(process)
+        {
+            _name = name;
+            _process = process;
+            _referenceDatabase = reference;
         }
 
         public PartialDatabase(string name, Guid id,

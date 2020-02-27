@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using FrostCommon;
+using FrostCommon.ConsoleMessages;
+using FrostLocation = FrostCommon.ConsoleMessages.LocationInfo;
+using log4net.Core;
 using Newtonsoft.Json;
 
 namespace FrostDB.Extensions
@@ -37,6 +41,20 @@ namespace FrostDB.Extensions
             {
                 return false;
             }
+        }
+
+        public static FrostLocation Convert(this Location location)
+        {
+            var info = new FrostLocation();
+            info.IpAddress = location.IpAddress;
+            info.PortNumber = location.PortNumber;
+
+            return info;
+        }
+
+        public static Location Convert(this FrostLocation location)
+        {
+            return new Location(Guid.NewGuid(), location.IpAddress, location.PortNumber, string.Empty);
         }
 
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FrostDB.Interface;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
@@ -108,8 +109,8 @@ namespace FrostDB
                 t.DatabaseName = c.DatabaseName;
                 t.ContractVersion = c.ContractVersion;
                 t.ContractId = c.ContractId;
-                t.Location.IpAddress = c.DatabaseLocation.IpAddress;
-                t.Location.PortNumber = c.DatabaseLocation.PortNumber;
+                t.Location = c.DatabaseLocation.Convert();
+                t.DatabaseId = c.DatabaseId;
 
                 // TODO: Need to fix this mapping up. Should there be a mapping object for this?
 
@@ -136,8 +137,8 @@ namespace FrostDB
             _process.ContractManager.AcceptPendingContract(contract);
             // TODO: we need to make sure the construction of a partial database is done correctly
             // so that there are no null values
-            _process.AddPartialDatabase(contract.DatabaseName);
-            var location = new Location(Guid.NewGuid(), contract.Location.IpAddress, contract.Location.PortNumber, string.Empty);
+            _process.AddPartialDatabase(contract);
+            var location = contract.Location.Convert();
 
             Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
             _process.Network.SendMessage(acceptContract);
