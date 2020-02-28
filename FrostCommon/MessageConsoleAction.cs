@@ -11,6 +11,9 @@ namespace FrostCommon
             public const string Get_Databases = "Get_Databases";
             public const string Get_Databases_Response = "Get_Databases_Response";
 
+            public const string Get_Partial_Databases = "Get_Partial_Databases";
+            public const string Get_Partial_Databases_Response = "Get_Partial_Databases_Response";
+
             public const string Get_Id = "Get_Id";
             public const string Get_Id_Response = "Get_Id_Response";
 

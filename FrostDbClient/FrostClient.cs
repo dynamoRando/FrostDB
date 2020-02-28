@@ -243,6 +243,11 @@ namespace FrostDbClient
             return result;
         }
 
+        public async Task<List<string>> GetPartialDatabasesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public void GetDatabaseInfo(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
