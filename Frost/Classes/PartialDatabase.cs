@@ -68,8 +68,11 @@ namespace FrostDB
         }
 
         public PartialDatabase(string name, Guid id,
-           List<Table> tables, Process process) 
+           List<Table> tables, Process process)  : this(process)
         {
+            _name = name;
+            _process = process;
+            _tables = tables;
         }
         #endregion
 

@@ -65,6 +65,10 @@ namespace FrostForm
             // can do this also to get results
             var task = AppReference.Client.GetDatabasesAsync();
             await task;
+
+            var partialtask = AppReference.Client.GetPartialDatabasesAsync();
+            await task;
+
             //MessageBox.Show(task.Result.Count.ToString());
             Console.WriteLine(task.Result.Count.ToString());
         }

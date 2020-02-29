@@ -72,6 +72,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));
         }
 
+        public void GetPartialDatabases()
+        {
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+        }
+        
         // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
@@ -245,7 +250,16 @@ namespace FrostDbClient
 
         public async Task<List<string>> GetPartialDatabasesAsync()
         {
-            throw new NotImplementedException();
+            var result = new List<string>();
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.PartialDatabaseNames;
+            }
+
+            return result;
         }
 
         public void GetDatabaseInfo(string databaseName)

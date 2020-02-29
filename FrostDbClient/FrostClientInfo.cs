@@ -17,6 +17,7 @@ namespace FrostDbClient
         #region Public Properties
         public Guid? ProcessId { get; set; }
         public List<string> DatabaseNames { get; set; }
+        public List<string> PartialDatabaseNames { get; set; }
         public ConcurrentDictionary<string,DatabaseInfo> DatabaseInfos { get; set; }
         public ConcurrentDictionary<string, TableInfo> TableInfos { get; set; }
         public ConcurrentDictionary<string, ContractInfo> ContractInfos { get; set; }
@@ -38,6 +39,7 @@ namespace FrostDbClient
             _messageIds = new ConcurrentBag<Guid?>();
             ProcessId = Guid.NewGuid();
             DatabaseNames = new List<string>();
+            PartialDatabaseNames = new List<string>();
             DatabaseInfos = new ConcurrentDictionary<string, DatabaseInfo>();
             TableInfos = new ConcurrentDictionary<string, TableInfo>();
             ContractInfos = new ConcurrentDictionary<string, ContractInfo>();

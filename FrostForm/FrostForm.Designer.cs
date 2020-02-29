@@ -510,7 +510,7 @@
         private System.Windows.Forms.ComboBox comboRemoteAddress;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ListBox listPartialDatabases;
+        internal System.Windows.Forms.ListBox listPartialDatabases;
         private System.Windows.Forms.Label label8;
     }
 }

@@ -128,6 +128,7 @@ namespace FrostForm
         private void ListenForAppEvents()
         {
             _client.EventManager.StartListening(ClientEvents.GotDatabaseNames, AddDbNames);
+            _client.EventManager.StartListening(ClientEvents.GotPartialDatabaseNames, AddPartialDbNames);
             _client.EventManager.StartListening(ClientEvents.GotDatabaseInfo, ShowDbInfo);
             _client.EventManager.StartListening(ClientEvents.GotTableInfo, ShowTableInfo);
             _client.EventManager.StartListening(ClientEvents.GotPendingContractInfo, ShowPendingContracts);
@@ -145,6 +146,17 @@ namespace FrostForm
                     item.AcceptedContracts.ForEach(i => _form.listAcceptedParticipants.Items.Add(i));
                 });
             }
+        }
+
+        private void AddPartialDbNames(IEventArgs args)
+        {
+            List<string> dbs = _client.Info.PartialDatabaseNames;
+
+            _form.listPartialDatabases.InvokeIfRequired(() =>
+            {
+                _form.listPartialDatabases.Items.Clear();
+                dbs.ForEach(d => _form.listPartialDatabases.Items.Add(d));
+            });
         }
 
         private void AddDbNames(IEventArgs args)
@@ -183,6 +195,11 @@ namespace FrostForm
                     item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
                 });
             }
+        }
+
+        private void ShowPartialDbInfo(IEventArgs args)
+        {
+            throw new NotImplementedException();
         }
 
         private void ShowDbInfo(IEventArgs args)

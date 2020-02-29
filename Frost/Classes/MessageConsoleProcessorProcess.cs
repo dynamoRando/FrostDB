@@ -41,6 +41,9 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Databases:
                     HandleProcessGetDatabases(message);
                     break;
+                case MessageConsoleAction.Process.Get_Partial_Databases:
+                    HandleProcessGetPartialDatabases(message);
+                    break;
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
@@ -63,6 +66,18 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void HandleProcessGetPartialDatabases(Message message)
+        {
+            string messageContent = string.Empty;
+
+            List<string> databases = new List<string>();
+            _process.PartialDatabases.ForEach(d => databases.Add(d.Name));
+            Type type = databases.GetType();
+            messageContent = JsonConvert.SerializeObject(databases);
+
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Partial_Databases_Response, type, MessageActionType.Process);
+        }
+
         private void HandleProcessGetDatabases(Message message)
         {
             string messageContent = string.Empty;
