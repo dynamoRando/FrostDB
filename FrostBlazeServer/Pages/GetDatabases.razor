@@ -1,13 +1,14 @@
 ﻿@page "/getdatabases"
 
 @using FrostBlazeServer.Data
+@using FrostDbClient 
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (databases == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,20 +17,14 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>database name</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var name in databases)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@name</td>
                 </tr>
             }
         </tbody>
@@ -38,9 +33,24 @@ else
 
 @code {
     private WeatherForecast[] forecasts;
+    private List<string> databases;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        databases = await GetDatabaseNames();
+    }
+
+    private async Task<List<string>> GetDatabaseNames()
+    {
+        string ipAddress = "127.0.0.1";
+        int portNumber = 519;
+        int localPort = 520;
+        var client = new FrostClient(ipAddress, "127.0.0.1", portNumber, localPort);
+
+        var task = client.GetDatabasesAsync();
+        await task;
+
+        return task.Result;
     }
 }
