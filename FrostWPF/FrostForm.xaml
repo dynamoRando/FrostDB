@@ -1,0 +1,23 @@
+﻿<Window x:Class="FrostWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrostWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid>
+            <Button Content="Connect" HorizontalAlignment="Left" Margin="453,12,0,0" VerticalAlignment="Top" Click="Button_Click" RenderTransformOrigin="3.295,0.059"/>
+            <TextBox x:Name="textPort" HorizontalAlignment="Left" Margin="280,13,0,0" Text="519" TextWrapping="Wrap" VerticalAlignment="Top" Width="32"/>
+            <TextBox x:Name="textConsolePort" HorizontalAlignment="Left" Margin="408,13,0,0" Text="520" TextWrapping="Wrap" VerticalAlignment="Top" Width="36"/>
+            <ListBox HorizontalAlignment="Left" Height="2" Margin="87,27,0,0" VerticalAlignment="Top" Width="1"/>
+            <ListBox x:Name="listDatabases" HorizontalAlignment="Left" Height="65" Margin="16,73,0,0" VerticalAlignment="Top" Width="133"/>
+            <Label HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="67" Content="IP Address" Height="25"/>
+            <TextBox x:Name="textAddress" HorizontalAlignment="Left" Margin="82,13,0,0" Text="127.0.0.1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="Console Port" HorizontalAlignment="Left" Margin="202,8,0,0" VerticalAlignment="Top"/>
+            <Label Content="Response Port" HorizontalAlignment="Left" Margin="318,9,0,0" VerticalAlignment="Top"/>
+            <Label Content="Databases" HorizontalAlignment="Left" Margin="12,42,0,0" VerticalAlignment="Top"/>
+        </Grid>
+    </Grid>
+</Window>
