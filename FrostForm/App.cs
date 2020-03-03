@@ -208,8 +208,12 @@ namespace FrostForm
 
             _form.listDatabases.InvokeIfRequired(() =>
             {
-                currentDb = _form.listDatabases.SelectedItem.ToString();
-                _currentSelectedDbName = currentDb;
+                if (_form.listDatabases.SelectedItem != null)
+                {
+                    currentDb = _form.listDatabases.SelectedItem.ToString();
+                    _currentSelectedDbName = currentDb;
+                }
+         
             });
 
             if (!string.IsNullOrEmpty(currentDb))

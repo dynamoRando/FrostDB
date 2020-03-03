@@ -248,6 +248,21 @@ namespace FrostDbClient
             return result;
         }
 
+        public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
+        {
+            var result = new DatabaseInfo();
+            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
+
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value; ;
+            }
+
+            return result;
+        }
+
         public async Task<List<string>> GetPartialDatabasesAsync()
         {
             var result = new List<string>();

@@ -256,5 +256,10 @@ namespace FrostForm
         {
 
         }
+
+        private void listDatabases_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

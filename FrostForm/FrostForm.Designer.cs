@@ -118,6 +118,7 @@
             this.listDatabases.Name = "listDatabases";
             this.listDatabases.Size = new System.Drawing.Size(82, 154);
             this.listDatabases.TabIndex = 5;
+            this.listDatabases.SelectedIndexChanged += new System.EventHandler(this.listDatabases_SelectedIndexChanged);
             // 
             // labelDatabaseName
             // 
