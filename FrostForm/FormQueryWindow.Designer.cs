@@ -45,20 +45,20 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonExecute);
+            this.groupBox1.Controls.Add(this.buttonClear);
             this.groupBox1.Controls.Add(this.textResults);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.textQuery);
-            this.groupBox1.Controls.Add(this.buttonClear);
-            this.groupBox1.Controls.Add(this.buttonExecute);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.comboTable);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.comboDatabase);
             this.groupBox1.Location = new System.Drawing.Point(27, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(399, 426);
+            this.groupBox1.Size = new System.Drawing.Size(761, 508);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Read Data";
@@ -77,7 +77,7 @@
             this.comboDatabase.FormattingEnabled = true;
             this.comboDatabase.Location = new System.Drawing.Point(67, 26);
             this.comboDatabase.Name = "comboDatabase";
-            this.comboDatabase.Size = new System.Drawing.Size(313, 23);
+            this.comboDatabase.Size = new System.Drawing.Size(679, 23);
             this.comboDatabase.TabIndex = 1;
             // 
             // label2
@@ -94,12 +94,12 @@
             this.comboTable.FormattingEnabled = true;
             this.comboTable.Location = new System.Drawing.Point(67, 59);
             this.comboTable.Name = "comboTable";
-            this.comboTable.Size = new System.Drawing.Size(313, 23);
+            this.comboTable.Size = new System.Drawing.Size(679, 23);
             this.comboTable.TabIndex = 3;
             // 
             // buttonExecute
             // 
-            this.buttonExecute.Location = new System.Drawing.Point(305, 88);
+            this.buttonExecute.Location = new System.Drawing.Point(680, 108);
             this.buttonExecute.Name = "buttonExecute";
             this.buttonExecute.Size = new System.Drawing.Size(75, 23);
             this.buttonExecute.TabIndex = 4;
@@ -108,7 +108,7 @@
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(224, 88);
+            this.buttonClear.Location = new System.Drawing.Point(599, 108);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(75, 23);
             this.buttonClear.TabIndex = 5;
@@ -121,7 +121,7 @@
             this.textQuery.Multiline = true;
             this.textQuery.Name = "textQuery";
             this.textQuery.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textQuery.Size = new System.Drawing.Size(374, 120);
+            this.textQuery.Size = new System.Drawing.Size(749, 120);
             this.textQuery.TabIndex = 6;
             // 
             // label3
@@ -145,7 +145,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 264);
+            this.label5.Location = new System.Drawing.Point(7, 303);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(44, 15);
             this.label5.TabIndex = 9;
@@ -153,18 +153,18 @@
             // 
             // textResults
             // 
-            this.textResults.Location = new System.Drawing.Point(7, 282);
+            this.textResults.Location = new System.Drawing.Point(7, 321);
             this.textResults.Multiline = true;
             this.textResults.Name = "textResults";
             this.textResults.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textResults.Size = new System.Drawing.Size(373, 138);
+            this.textResults.Size = new System.Drawing.Size(748, 138);
             this.textResults.TabIndex = 10;
             // 
             // FormQueryWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 532);
             this.Controls.Add(this.groupBox1);
             this.Name = "FormQueryWindow";
             this.Text = "FormQueryWindow";
