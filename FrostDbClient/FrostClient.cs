@@ -23,6 +23,7 @@ namespace FrostDbClient
         Location _remote;
         FrostClientInfo _info;
         EventManager _eventManager;
+        Client _client;
         #endregion
 
         #region Public Properties
@@ -39,6 +40,7 @@ namespace FrostDbClient
         #region Constructors
         public FrostClient(string remoteIpAddress, string localIpAddress, int remotePortNumber, int localPortNumber)
         {
+            _client = new Client();
             _remoteIpAddress = remoteIpAddress;
             _remotePortNumber = remotePortNumber;
             _localPortNumber = localPortNumber;
@@ -344,7 +346,7 @@ namespace FrostDbClient
         {
             Guid? id = message.Id;
             // this timeout should be part of a configuration or a param passed in
-            Client.Send(message, 5000);
+            _client.Send(message, 10000);
             _info.AddToQueue(id);
 
             return id;

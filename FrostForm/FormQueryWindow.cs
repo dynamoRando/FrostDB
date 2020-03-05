@@ -58,5 +58,11 @@ namespace FrostForm
                 }
             }
         }
+
+        private async void buttonLoadDatabases_Click(object sender, EventArgs e)
+        {
+            comboDatabase.Items.Clear();
+            LoadDatabases();
+        }
     }
 }

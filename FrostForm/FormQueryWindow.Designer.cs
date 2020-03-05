@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.buttonExecute = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.buttonExecute = new System.Windows.Forms.Button();
             this.textResults = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -40,6 +40,7 @@
             this.comboTables = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.comboDatabase = new System.Windows.Forms.ComboBox();
+            this.buttonLoadDatabases = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,21 +57,12 @@
             this.groupBox1.Controls.Add(this.comboTables);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.comboDatabase);
-            this.groupBox1.Location = new System.Drawing.Point(27, 12);
+            this.groupBox1.Location = new System.Drawing.Point(27, 43);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(761, 508);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Query";
-            // 
-            // buttonExecute
-            // 
-            this.buttonExecute.Location = new System.Drawing.Point(680, 88);
-            this.buttonExecute.Name = "buttonExecute";
-            this.buttonExecute.Size = new System.Drawing.Size(75, 23);
-            this.buttonExecute.TabIndex = 4;
-            this.buttonExecute.Text = "Execute";
-            this.buttonExecute.UseVisualStyleBackColor = true;
             // 
             // buttonClear
             // 
@@ -80,6 +72,15 @@
             this.buttonClear.TabIndex = 5;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
+            // 
+            // buttonExecute
+            // 
+            this.buttonExecute.Location = new System.Drawing.Point(680, 88);
+            this.buttonExecute.Name = "buttonExecute";
+            this.buttonExecute.Size = new System.Drawing.Size(75, 23);
+            this.buttonExecute.TabIndex = 4;
+            this.buttonExecute.Text = "Execute";
+            this.buttonExecute.UseVisualStyleBackColor = true;
             // 
             // textResults
             // 
@@ -161,11 +162,22 @@
             this.comboDatabase.TabIndex = 1;
             this.comboDatabase.SelectedIndexChanged += new System.EventHandler(this.comboDatabase_SelectedIndexChanged);
             // 
+            // buttonLoadDatabases
+            // 
+            this.buttonLoadDatabases.Location = new System.Drawing.Point(27, 12);
+            this.buttonLoadDatabases.Name = "buttonLoadDatabases";
+            this.buttonLoadDatabases.Size = new System.Drawing.Size(102, 23);
+            this.buttonLoadDatabases.TabIndex = 1;
+            this.buttonLoadDatabases.Text = "Load Databases";
+            this.buttonLoadDatabases.UseVisualStyleBackColor = true;
+            this.buttonLoadDatabases.Click += new System.EventHandler(this.buttonLoadDatabases_Click);
+            // 
             // FormQueryWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 532);
+            this.ClientSize = new System.Drawing.Size(800, 559);
+            this.Controls.Add(this.buttonLoadDatabases);
             this.Controls.Add(this.groupBox1);
             this.Name = "FormQueryWindow";
             this.Text = "FormQueryWindow";
@@ -189,5 +201,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textResults;
+        private System.Windows.Forms.Button buttonLoadDatabases;
     }
 }

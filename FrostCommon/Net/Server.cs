@@ -109,6 +109,8 @@ namespace FrostCommon.Net
                     new AsyncCallback(ReadCallback), state);
                 }
             }
+
+            handler.Disconnect(false);
         }
         #endregion
 

@@ -4,19 +4,21 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using FrostCommon;
+using System.Diagnostics;
 
 namespace FrostCommon.Net
 {
     public class Client
     {
         #region Private Fields
-        private static ManualResetEvent connectDone =
+        private ManualResetEvent connectDone =
         new ManualResetEvent(false);
-        private static ManualResetEvent sendDone =
+        private ManualResetEvent sendDone =
             new ManualResetEvent(false);
-        private static int _timeout;
-        private static ManualResetEvent receiveDone = new ManualResetEvent(false);
-        private static String response = String.Empty;
+        private int _timeout;
+        private ManualResetEvent receiveDone = new ManualResetEvent(false);
+        private String response = String.Empty;
+        private Socket _client;
         #endregion
 
         #region Public Properties
@@ -32,12 +34,12 @@ namespace FrostCommon.Net
         #endregion
 
         #region Public Methods
-        public static void Send(Message message, int timeout)
+        public void Send(Message message, int timeout)
         {
             _timeout = timeout;
             Send(message.Destination, message);
         }
-        public static void Send(Location location, Message message)
+        public void Send(Location location, Message message)
         {
             try
             {
@@ -48,37 +50,36 @@ namespace FrostCommon.Net
                 IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
 
-                // Create a TCP/IP socket.  
-                Socket client = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
-
-                // Connect to the remote endpoint.  
-                client.BeginConnect(remoteEP,
-                    new AsyncCallback(ConnectCallback), client);
-                connectDone.WaitOne(_timeout);
-
-                // Send test data to the remote device.  
-                if (client.Connected)
+                using (var _client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    Send(client, message);
-                    sendDone.WaitOne(_timeout);
+                    // Connect to the remote endpoint.  
+                    _client.BeginConnect(remoteEP,
+                        new AsyncCallback(ConnectCallback), _client);
+                    connectDone.WaitOne(_timeout);
 
-                    // Receive the response from the remote device.  
-                    //Receive(client);
-                    //receiveDone.WaitOne();
+                    // Send test data to the remote device.  
+                    if (_client.Connected)
+                    {
+                        Send(_client, message);
+                        sendDone.WaitOne(_timeout);
 
-                    // Release the socket.  
-                    client.Shutdown(SocketShutdown.Both);
-                    client.Close();
-                    client.Dispose();
+                        // Receive the response from the remote device.  
+                        //Receive(client);
+                        //receiveDone.WaitOne();
+
+                        // Release the socket.  
+                        _client.Shutdown(SocketShutdown.Both);
+                        _client.Close();
+                    }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Debug.Write(e.ToString());
             }
         }
-        //public static void Send(Participant participant, Message message)
+        //public  void Send(Participant participant, Message message)
         //{
         //    Send(participant.Location, message);
         //}
@@ -86,7 +87,7 @@ namespace FrostCommon.Net
 
 
         #region Private Methods
-        private static void Receive(Socket client)
+        private void Receive(Socket client)
         {
             try
             {
@@ -104,7 +105,7 @@ namespace FrostCommon.Net
             }
         }
 
-        private static void ReceiveCallback(IAsyncResult ar)
+        private void ReceiveCallback(IAsyncResult ar)
         {
             try
             {
@@ -142,7 +143,7 @@ namespace FrostCommon.Net
             }
         }
 
-        private static void Send(Socket client, Message message)
+        private void Send(Socket client, Message message)
         {
             var data = Json.SeralizeMessage(message);
 
@@ -154,7 +155,7 @@ namespace FrostCommon.Net
                 new AsyncCallback(SendCallback), client);
         }
 
-        private static void SendCallback(IAsyncResult ar)
+        private void SendCallback(IAsyncResult ar)
         {
             try
             {
@@ -174,7 +175,7 @@ namespace FrostCommon.Net
             }
         }
 
-        private static void ConnectCallback(IAsyncResult ar)
+        private void ConnectCallback(IAsyncResult ar)
         {
             try
             {
