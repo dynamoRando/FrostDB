@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using FrostCommon.ConsoleMessages;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -54,6 +56,25 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void CreateDatabaseFromContractInfo(ContractInfo info, Process process)
+        {
+            var dbName = info.DatabaseName;
+
+            if (!HasDatabase(dbName))
+            {
+                var reference = new DatabaseReference();
+                reference.DatabaseName = dbName;
+                var location = new Location(null, info.Location.IpAddress, info.Location.PortNumber, string.Empty);
+                reference.Location = location;
+                reference.DatabaseId = info.DatabaseId;
+
+                var db = new PartialDatabase(dbName, process, reference);
+
+                _databases.Add(db);
+                SaveToDisk(db);
+            }
+        }
+
         public PartialDatabase GetFullDatabase(string databaseName)
         {
             PartialDatabase db = null;

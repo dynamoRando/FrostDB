@@ -40,6 +40,7 @@
             this.textLocalPort = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.listPendingParticipants = new System.Windows.Forms.ListBox();
             this.buttonAddParticipant = new System.Windows.Forms.Button();
             this.listAcceptedParticipants = new System.Windows.Forms.ListBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -49,7 +50,6 @@
             this.buttonQuery = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelColumnName = new System.Windows.Forms.Label();
-            this.listPendingParticipants = new System.Windows.Forms.ListBox();
             this.buttonRemoveColumn = new System.Windows.Forms.Button();
             this.buttonRemoveTable = new System.Windows.Forms.Button();
             this.buttonRemoveDb = new System.Windows.Forms.Button();
@@ -61,6 +61,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listTables = new System.Windows.Forms.ListBox();
+            this.listPartialDatabases = new System.Windows.Forms.ListBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.buttonManagePartialDbs = new System.Windows.Forms.Button();
             this.buttonMyPendingContracts = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -111,16 +113,17 @@
             // 
             this.listDatabases.FormattingEnabled = true;
             this.listDatabases.ItemHeight = 15;
-            this.listDatabases.Location = new System.Drawing.Point(5, 96);
+            this.listDatabases.Location = new System.Drawing.Point(113, 101);
             this.listDatabases.Margin = new System.Windows.Forms.Padding(2);
             this.listDatabases.Name = "listDatabases";
             this.listDatabases.Size = new System.Drawing.Size(82, 154);
             this.listDatabases.TabIndex = 5;
+            this.listDatabases.SelectedIndexChanged += new System.EventHandler(this.listDatabases_SelectedIndexChanged);
             // 
             // labelDatabaseName
             // 
             this.labelDatabaseName.AutoSize = true;
-            this.labelDatabaseName.Location = new System.Drawing.Point(6, 28);
+            this.labelDatabaseName.Location = new System.Drawing.Point(12, 27);
             this.labelDatabaseName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelDatabaseName.Name = "labelDatabaseName";
             this.labelDatabaseName.Size = new System.Drawing.Size(38, 15);
@@ -130,7 +133,7 @@
             // labelDatabaseId
             // 
             this.labelDatabaseId.AutoSize = true;
-            this.labelDatabaseId.Location = new System.Drawing.Point(6, 43);
+            this.labelDatabaseId.Location = new System.Drawing.Point(12, 42);
             this.labelDatabaseId.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelDatabaseId.Name = "labelDatabaseId";
             this.labelDatabaseId.Size = new System.Drawing.Size(38, 15);
@@ -180,6 +183,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelDatabaseId);
+            this.groupBox2.Controls.Add(this.listPendingParticipants);
+            this.groupBox2.Controls.Add(this.labelDatabaseName);
             this.groupBox2.Controls.Add(this.buttonAddParticipant);
             this.groupBox2.Controls.Add(this.listAcceptedParticipants);
             this.groupBox2.Controls.Add(this.label7);
@@ -189,7 +195,6 @@
             this.groupBox2.Controls.Add(this.buttonQuery);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.labelColumnName);
-            this.groupBox2.Controls.Add(this.listPendingParticipants);
             this.groupBox2.Controls.Add(this.buttonRemoveColumn);
             this.groupBox2.Controls.Add(this.buttonRemoveTable);
             this.groupBox2.Controls.Add(this.buttonRemoveDb);
@@ -199,21 +204,30 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.listColumns);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.labelDatabaseName);
-            this.groupBox2.Controls.Add(this.labelDatabaseId);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.listTables);
+            this.groupBox2.Controls.Add(this.listPartialDatabases);
+            this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.listDatabases);
             this.groupBox2.Location = new System.Drawing.Point(12, 97);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(760, 332);
+            this.groupBox2.Size = new System.Drawing.Size(870, 332);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Databases";
             // 
+            // listPendingParticipants
+            // 
+            this.listPendingParticipants.FormattingEnabled = true;
+            this.listPendingParticipants.ItemHeight = 15;
+            this.listPendingParticipants.Location = new System.Drawing.Point(709, 115);
+            this.listPendingParticipants.Name = "listPendingParticipants";
+            this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
+            this.listPendingParticipants.TabIndex = 26;
+            // 
             // buttonAddParticipant
             // 
-            this.buttonAddParticipant.Location = new System.Drawing.Point(441, 270);
+            this.buttonAddParticipant.Location = new System.Drawing.Point(549, 275);
             this.buttonAddParticipant.Name = "buttonAddParticipant";
             this.buttonAddParticipant.Size = new System.Drawing.Size(139, 23);
             this.buttonAddParticipant.TabIndex = 25;
@@ -225,7 +239,7 @@
             // 
             this.listAcceptedParticipants.FormattingEnabled = true;
             this.listAcceptedParticipants.ItemHeight = 15;
-            this.listAcceptedParticipants.Location = new System.Drawing.Point(441, 110);
+            this.listAcceptedParticipants.Location = new System.Drawing.Point(549, 115);
             this.listAcceptedParticipants.Name = "listAcceptedParticipants";
             this.listAcceptedParticipants.Size = new System.Drawing.Size(139, 154);
             this.listAcceptedParticipants.TabIndex = 24;
@@ -234,7 +248,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(601, 91);
+            this.label7.Location = new System.Drawing.Point(709, 96);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 15);
             this.label7.TabIndex = 29;
@@ -243,7 +257,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(441, 93);
+            this.label6.Location = new System.Drawing.Point(549, 98);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(60, 15);
             this.label6.TabIndex = 28;
@@ -251,7 +265,7 @@
             // 
             // buttonManageContract
             // 
-            this.buttonManageContract.Location = new System.Drawing.Point(642, 14);
+            this.buttonManageContract.Location = new System.Drawing.Point(750, 19);
             this.buttonManageContract.Name = "buttonManageContract";
             this.buttonManageContract.Size = new System.Drawing.Size(107, 23);
             this.buttonManageContract.TabIndex = 22;
@@ -262,7 +276,7 @@
             // labelColumnDataType
             // 
             this.labelColumnDataType.AutoSize = true;
-            this.labelColumnDataType.Location = new System.Drawing.Point(311, 106);
+            this.labelColumnDataType.Location = new System.Drawing.Point(419, 111);
             this.labelColumnDataType.Name = "labelColumnDataType";
             this.labelColumnDataType.Size = new System.Drawing.Size(123, 15);
             this.labelColumnDataType.TabIndex = 15;
@@ -270,7 +284,7 @@
             // 
             // buttonQuery
             // 
-            this.buttonQuery.Location = new System.Drawing.Point(642, 43);
+            this.buttonQuery.Location = new System.Drawing.Point(750, 48);
             this.buttonQuery.Name = "buttonQuery";
             this.buttonQuery.Size = new System.Drawing.Size(107, 23);
             this.buttonQuery.TabIndex = 27;
@@ -281,7 +295,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(441, 73);
+            this.label2.Location = new System.Drawing.Point(549, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(72, 15);
             this.label2.TabIndex = 23;
@@ -290,24 +304,15 @@
             // labelColumnName
             // 
             this.labelColumnName.AutoSize = true;
-            this.labelColumnName.Location = new System.Drawing.Point(311, 91);
+            this.labelColumnName.Location = new System.Drawing.Point(419, 96);
             this.labelColumnName.Name = "labelColumnName";
             this.labelColumnName.Size = new System.Drawing.Size(107, 15);
             this.labelColumnName.TabIndex = 14;
             this.labelColumnName.Text = "labelColumnName";
             // 
-            // listPendingParticipants
-            // 
-            this.listPendingParticipants.FormattingEnabled = true;
-            this.listPendingParticipants.ItemHeight = 15;
-            this.listPendingParticipants.Location = new System.Drawing.Point(601, 110);
-            this.listPendingParticipants.Name = "listPendingParticipants";
-            this.listPendingParticipants.Size = new System.Drawing.Size(148, 154);
-            this.listPendingParticipants.TabIndex = 26;
-            // 
             // buttonRemoveColumn
             // 
-            this.buttonRemoveColumn.Location = new System.Drawing.Point(208, 293);
+            this.buttonRemoveColumn.Location = new System.Drawing.Point(316, 298);
             this.buttonRemoveColumn.Name = "buttonRemoveColumn";
             this.buttonRemoveColumn.Size = new System.Drawing.Size(83, 23);
             this.buttonRemoveColumn.TabIndex = 21;
@@ -317,7 +322,7 @@
             // 
             // buttonRemoveTable
             // 
-            this.buttonRemoveTable.Location = new System.Drawing.Point(105, 293);
+            this.buttonRemoveTable.Location = new System.Drawing.Point(213, 298);
             this.buttonRemoveTable.Name = "buttonRemoveTable";
             this.buttonRemoveTable.Size = new System.Drawing.Size(87, 23);
             this.buttonRemoveTable.TabIndex = 20;
@@ -327,7 +332,7 @@
             // 
             // buttonRemoveDb
             // 
-            this.buttonRemoveDb.Location = new System.Drawing.Point(5, 293);
+            this.buttonRemoveDb.Location = new System.Drawing.Point(113, 298);
             this.buttonRemoveDb.Name = "buttonRemoveDb";
             this.buttonRemoveDb.Size = new System.Drawing.Size(82, 23);
             this.buttonRemoveDb.TabIndex = 19;
@@ -337,7 +342,7 @@
             // 
             // buttonAddColumn
             // 
-            this.buttonAddColumn.Location = new System.Drawing.Point(208, 264);
+            this.buttonAddColumn.Location = new System.Drawing.Point(316, 269);
             this.buttonAddColumn.Name = "buttonAddColumn";
             this.buttonAddColumn.Size = new System.Drawing.Size(83, 23);
             this.buttonAddColumn.TabIndex = 18;
@@ -347,7 +352,7 @@
             // 
             // buttonAddDb
             // 
-            this.buttonAddDb.Location = new System.Drawing.Point(5, 264);
+            this.buttonAddDb.Location = new System.Drawing.Point(113, 269);
             this.buttonAddDb.Name = "buttonAddDb";
             this.buttonAddDb.Size = new System.Drawing.Size(82, 23);
             this.buttonAddDb.TabIndex = 16;
@@ -357,7 +362,7 @@
             // 
             // buttonAddTable
             // 
-            this.buttonAddTable.Location = new System.Drawing.Point(105, 264);
+            this.buttonAddTable.Location = new System.Drawing.Point(213, 269);
             this.buttonAddTable.Name = "buttonAddTable";
             this.buttonAddTable.Size = new System.Drawing.Size(87, 23);
             this.buttonAddTable.TabIndex = 17;
@@ -368,7 +373,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(208, 76);
+            this.label4.Location = new System.Drawing.Point(316, 81);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(58, 15);
             this.label4.TabIndex = 13;
@@ -378,7 +383,7 @@
             // 
             this.listColumns.FormattingEnabled = true;
             this.listColumns.ItemHeight = 15;
-            this.listColumns.Location = new System.Drawing.Point(208, 94);
+            this.listColumns.Location = new System.Drawing.Point(316, 99);
             this.listColumns.Name = "listColumns";
             this.listColumns.Size = new System.Drawing.Size(83, 154);
             this.listColumns.TabIndex = 12;
@@ -386,7 +391,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 76);
+            this.label1.Location = new System.Drawing.Point(113, 81);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 15);
             this.label1.TabIndex = 9;
@@ -395,7 +400,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(105, 76);
+            this.label3.Location = new System.Drawing.Point(213, 81);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 15);
             this.label3.TabIndex = 11;
@@ -405,15 +410,33 @@
             // 
             this.listTables.FormattingEnabled = true;
             this.listTables.ItemHeight = 15;
-            this.listTables.Location = new System.Drawing.Point(105, 94);
+            this.listTables.Location = new System.Drawing.Point(213, 99);
             this.listTables.Name = "listTables";
             this.listTables.Size = new System.Drawing.Size(87, 154);
             this.listTables.TabIndex = 8;
             this.listTables.SelectedIndexChanged += new System.EventHandler(this.listTables_SelectedIndexChanged);
             // 
+            // listPartialDatabases
+            // 
+            this.listPartialDatabases.FormattingEnabled = true;
+            this.listPartialDatabases.ItemHeight = 15;
+            this.listPartialDatabases.Location = new System.Drawing.Point(12, 101);
+            this.listPartialDatabases.Name = "listPartialDatabases";
+            this.listPartialDatabases.Size = new System.Drawing.Size(82, 154);
+            this.listPartialDatabases.TabIndex = 31;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 81);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(99, 15);
+            this.label8.TabIndex = 30;
+            this.label8.Text = "Partial Databases:";
+            // 
             // buttonManagePartialDbs
             // 
-            this.buttonManagePartialDbs.Location = new System.Drawing.Point(613, 12);
+            this.buttonManagePartialDbs.Location = new System.Drawing.Point(733, 10);
             this.buttonManagePartialDbs.Name = "buttonManagePartialDbs";
             this.buttonManagePartialDbs.Size = new System.Drawing.Size(148, 23);
             this.buttonManagePartialDbs.TabIndex = 10;
@@ -423,7 +446,7 @@
             // 
             // buttonMyPendingContracts
             // 
-            this.buttonMyPendingContracts.Location = new System.Drawing.Point(613, 41);
+            this.buttonMyPendingContracts.Location = new System.Drawing.Point(733, 39);
             this.buttonMyPendingContracts.Name = "buttonMyPendingContracts";
             this.buttonMyPendingContracts.Size = new System.Drawing.Size(148, 52);
             this.buttonMyPendingContracts.TabIndex = 11;
@@ -435,9 +458,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 435);
-            this.Controls.Add(this.buttonMyPendingContracts);
+            this.ClientSize = new System.Drawing.Size(898, 435);
             this.Controls.Add(this.buttonManagePartialDbs);
+            this.Controls.Add(this.buttonMyPendingContracts);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "formFrost";
@@ -488,6 +511,8 @@
         private System.Windows.Forms.ComboBox comboRemoteAddress;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
+        internal System.Windows.Forms.ListBox listPartialDatabases;
+        private System.Windows.Forms.Label label8;
     }
 }
 

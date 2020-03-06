@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FrostDB.Interface;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
@@ -40,6 +41,9 @@ namespace FrostDB
                 case MessageConsoleAction.Process.Get_Databases:
                     HandleProcessGetDatabases(message);
                     break;
+                case MessageConsoleAction.Process.Get_Partial_Databases:
+                    HandleProcessGetPartialDatabases(message);
+                    break;
                 case MessageConsoleAction.Process.Get_Id:
                     HandleGetProcessId(message);
                     break;
@@ -62,6 +66,18 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void HandleProcessGetPartialDatabases(Message message)
+        {
+            string messageContent = string.Empty;
+
+            List<string> databases = new List<string>();
+            _process.PartialDatabases.ForEach(d => databases.Add(d.Name));
+            Type type = databases.GetType();
+            messageContent = JsonConvert.SerializeObject(databases);
+
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Partial_Databases_Response, type, MessageActionType.Process);
+        }
+
         private void HandleProcessGetDatabases(Message message)
         {
             string messageContent = string.Empty;
@@ -102,18 +118,7 @@ namespace FrostDB
 
             list.ForEach(c =>
             {
-                var t = new ContractInfo();
-
-                t.ContractDescription = c.ContractDescription;
-                t.DatabaseName = c.DatabaseName;
-                t.ContractVersion = c.ContractVersion;
-                t.ContractId = c.ContractId;
-                t.Location.IpAddress = c.DatabaseLocation.IpAddress;
-                t.Location.PortNumber = c.DatabaseLocation.PortNumber;
-
-                // TODO: Need to fix this mapping up. Should there be a mapping object for this?
-
-                info.Add(t);
+                info.Add(c.Convert());
             });
 
             Type type = info.GetType();
@@ -136,8 +141,8 @@ namespace FrostDB
             _process.ContractManager.AcceptPendingContract(contract);
             // TODO: we need to make sure the construction of a partial database is done correctly
             // so that there are no null values
-            _process.AddPartialDatabase(contract.DatabaseName);
-            var location = new Location(Guid.NewGuid(), contract.Location.IpAddress, contract.Location.PortNumber, string.Empty);
+            _process.AddPartialDatabase(contract);
+            var location = contract.Location.Convert();
 
             Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
             _process.Network.SendMessage(acceptContract);

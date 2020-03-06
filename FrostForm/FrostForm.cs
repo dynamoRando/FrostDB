@@ -65,6 +65,10 @@ namespace FrostForm
             // can do this also to get results
             var task = AppReference.Client.GetDatabasesAsync();
             await task;
+
+            var partialtask = AppReference.Client.GetPartialDatabasesAsync();
+            await task;
+
             //MessageBox.Show(task.Result.Count.ToString());
             Console.WriteLine(task.Result.Count.ToString());
         }
@@ -249,6 +253,11 @@ namespace FrostForm
         }
 
         private void listAcceptedParticipants_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listDatabases_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

@@ -57,11 +57,17 @@ namespace FrostCommon.Net
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
 
-            // Create the state object.  
-            StateObject state = new StateObject();
+            var state = new StateObject();
             state.workSocket = handler;
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReadCallback), state);
+
+            //Task.Run(() => GetDataFromSocket(state));
+            GetDataFromSocket(state);
+
+            // Create the state object.  
+            //StateObject state = new StateObject();
+            //state.workSocket = handler;
+            //handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+            //    new AsyncCallback(ReadCallback), state);
         }
 
         public void ReadCallback(IAsyncResult ar)
@@ -75,6 +81,7 @@ namespace FrostCommon.Net
 
             // Read data from the client socket. 
             int bytesRead = 0;
+
             try
             {
                 bytesRead = handler.EndReceive(ar);
@@ -95,12 +102,17 @@ namespace FrostCommon.Net
                 // more data.  
                 content = state.sb.ToString();
 
+                Debug.WriteLine($"Server - Content: {content}");
+
                 Message message;
 
                 if (Json.TryParse(content, out message))
                 {
-                    message.JsonData = content;
-                    _messageProcessor.Process(message);
+                    if (content.Length > 5)
+                    {
+                        message.JsonData = content;
+                        _messageProcessor.Process(message);
+                    }
                 }
                 else
                 {
@@ -109,10 +121,61 @@ namespace FrostCommon.Net
                     new AsyncCallback(ReadCallback), state);
                 }
             }
+
+            DisconnectSocket(handler);
         }
         #endregion
 
         #region Private Methods
+        private void DisconnectSocket(Socket socket)
+        {
+            try
+            {
+                if (socket.IsConnected())
+                {
+                    Debug.WriteLine($"Server: Disconnecting Socket {socket.LocalEndPoint.ToString()} : {socket.RemoteEndPoint.ToString()}");
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Disconnect(true);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                Debug.WriteLine(e.ToString());
+            }
+           
+            //socket.Close();
+        }
+
+        private void GetDataFromSocket(StateObject state)
+        {
+            Debug.WriteLine("--- Server - GetDataFromSocket ---");
+
+            var socket = state.workSocket;
+            //SetKeepAliveOnSocket(socket);
+
+           // while (socket.Connected)
+            //{
+                try
+                {
+                    socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
+                }
+                catch(SocketException se)
+                {
+                    Debug.WriteLine(se.ToString());
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                }
+            //}
+        }
+
+        private void SetKeepAliveOnSocket(Socket socket)
+        {
+            socket.SetKeepAlive(1000, 2);
+        }
+
         private void StartListening(int portNumber, string ipAddress)
         {
             if (IsRunning == false)
@@ -123,6 +186,7 @@ namespace FrostCommon.Net
             IPAddress ip = IPAddress.Parse(ipAddress);
             IPEndPoint localEndPoint = new IPEndPoint(ip, portNumber);
             Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             try
             {

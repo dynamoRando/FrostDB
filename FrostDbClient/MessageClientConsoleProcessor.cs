@@ -166,6 +166,9 @@ namespace FrostDbClient
                 case MessageConsoleAction.Process.Get_Databases_Response:
                     HandleDatabaseList(message);
                     break;
+                case MessageConsoleAction.Process.Get_Partial_Databases_Response:
+                    HandlePartialDatabaseList(message);
+                    break;
                 case MessageConsoleAction.Process.Get_Id_Response:
                     HandleProcessId(message);
                     break;
@@ -217,6 +220,11 @@ namespace FrostDbClient
         {
             _info.DatabaseNames = JsonConvert.DeserializeObject<List<string>>(message.Content);
             _eventManager.TriggerEvent(ClientEvents.GotDatabaseNames, null);
+        }
+        private void HandlePartialDatabaseList(Message message)
+        {
+            _info.PartialDatabaseNames = JsonConvert.DeserializeObject<List<string>>(message.Content);
+            _eventManager.TriggerEvent(ClientEvents.GotPartialDatabaseNames, null);
         }
         #endregion
 

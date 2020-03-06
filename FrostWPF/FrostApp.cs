@@ -1,22 +1,17 @@
 ﻿using FrostCommon.ConsoleMessages;
 using FrostDbClient;
-using FrostForm.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace FrostForm
+namespace FrostWPF
 {
-    public class App
+    public class FrostApp
     {
         #region Private Fields
         FrostClient _client;
-        formFrost _form;
-        formNewDb _formNewDb;
-
+      
         string _currentSelectedDbName = string.Empty;
         string _currentSelectedTableName = string.Empty;
         string _currentSelectedColumnName = string.Empty;
@@ -36,10 +31,9 @@ namespace FrostForm
         #endregion
 
         #region Constructors
-        public App(formFrost form)
+        public FrostApp()
         {
-            _form = form;
-            ListenForFormEvents();
+            
         }
         #endregion
 
@@ -85,7 +79,7 @@ namespace FrostForm
             _client.AddColumnToTable(databaseName, tableName, columnName, dataType);
         }
 
-        public async Task<List<ContractInfo>> GetPendingContractInformationAsync() 
+        public async Task<List<ContractInfo>> GetPendingContractInformationAsync()
         {
             var result = await _client.GetProcessPendingContractInformationAsync();
             return result;
@@ -138,36 +132,36 @@ namespace FrostForm
         private void ShowAcceptedContracts(IEventArgs args)
         {
             AcceptedContractInfo item;
-            if (_client.Info.AcceptedContractInfos.TryGetValue(_currentSelectedDbName, out item))
-            {
-                _form.listAcceptedParticipants.InvokeIfRequired(() =>
-                {
-                    _form.listAcceptedParticipants.Items.Clear();
-                    item.AcceptedContracts.ForEach(i => _form.listAcceptedParticipants.Items.Add(i));
-                });
-            }
+            //if (_client.Info.AcceptedContractInfos.TryGetValue(_currentSelectedDbName, out item))
+            //{
+            //    _form.listAcceptedParticipants.InvokeIfRequired(() =>
+            //    {
+            //        _form.listAcceptedParticipants.Items.Clear();
+            //        item.AcceptedContracts.ForEach(i => _form.listAcceptedParticipants.Items.Add(i));
+            //    });
+            //}
         }
 
         private void AddPartialDbNames(IEventArgs args)
         {
             List<string> dbs = _client.Info.PartialDatabaseNames;
 
-            _form.listPartialDatabases.InvokeIfRequired(() =>
-            {
-                _form.listPartialDatabases.Items.Clear();
-                dbs.ForEach(d => _form.listPartialDatabases.Items.Add(d));
-            });
+            //_form.listPartialDatabases.InvokeIfRequired(() =>
+            //{
+            //    _form.listPartialDatabases.Items.Clear();
+            //    dbs.ForEach(d => _form.listPartialDatabases.Items.Add(d));
+            //});
         }
 
         private void AddDbNames(IEventArgs args)
         {
             List<string> dbs = _client.Info.DatabaseNames;
 
-            _form.listDatabases.InvokeIfRequired(() =>
-            {
-                _form.listDatabases.Items.Clear();
-                dbs.ForEach(d => _form.listDatabases.Items.Add(d));
-            });
+            //_form.listDatabases.InvokeIfRequired(() =>
+            //{
+            //    _form.listDatabases.Items.Clear();
+            //    dbs.ForEach(d => _form.listDatabases.Items.Add(d));
+            //});
 
         }
 
@@ -176,11 +170,11 @@ namespace FrostForm
             PendingContractInfo item;
             if (_client.Info.PendingContractInfos.TryGetValue(_currentSelectedDbName, out item))
             {
-                _form.listPendingParticipants.InvokeIfRequired(() =>
-                {
-                    _form.listPendingParticipants.Items.Clear();
-                    item.PendingContracts.ForEach(i => _form.listPendingParticipants.Items.Add(i));
-                });
+                //_form.listPendingParticipants.InvokeIfRequired(() =>
+                //{
+                //    _form.listPendingParticipants.Items.Clear();
+                //    item.PendingContracts.ForEach(i => _form.listPendingParticipants.Items.Add(i));
+                //});
             }
         }
 
@@ -189,11 +183,11 @@ namespace FrostForm
             TableInfo item;
             if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out item))
             {
-                _form.listColumns.InvokeIfRequired(() =>
-                {
-                    _form.listColumns.Items.Clear();
-                    item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
-                });
+                //_form.listColumns.InvokeIfRequired(() =>
+                //{
+                //    _form.listColumns.Items.Clear();
+                //    item.Columns.ForEach(i => _form.listColumns.Items.Add(i.Item1));
+                //});
             }
         }
 
@@ -206,113 +200,109 @@ namespace FrostForm
         {
             string currentDb = string.Empty;
 
-            _form.listDatabases.InvokeIfRequired(() =>
-            {
-                if (_form.listDatabases.SelectedItem != null)
-                {
-                    currentDb = _form.listDatabases.SelectedItem.ToString();
-                    _currentSelectedDbName = currentDb;
-                }
-         
-            });
+            //_form.listDatabases.InvokeIfRequired(() =>
+            //{
+            //    currentDb = _form.listDatabases.SelectedItem.ToString();
+            //    _currentSelectedDbName = currentDb;
+            //});
 
-            if (!string.IsNullOrEmpty(currentDb))
-            {
-                DatabaseInfo item;
-                if (_client.Info.DatabaseInfos.TryGetValue(currentDb, out item))
-                {
-                    _form.labelDatabaseName.InvokeIfRequired(() => { _form.labelDatabaseName.Text = item.Name; });
+            //if (!string.IsNullOrEmpty(currentDb))
+            //{
+            //    DatabaseInfo item;
+            //    if (_client.Info.DatabaseInfos.TryGetValue(currentDb, out item))
+            //    {
+            //        _form.labelDatabaseName.InvokeIfRequired(() => { _form.labelDatabaseName.Text = item.Name; });
 
-                    _form.labelDatabaseId.InvokeIfRequired(() =>
-                    {
-                        _form.labelDatabaseId.Text = item.Id.ToString();
-                        _currentDbId = item.Id;
-                    });
+            //        _form.labelDatabaseId.InvokeIfRequired(() =>
+            //        {
+            //            _form.labelDatabaseId.Text = item.Id.ToString();
+            //            _currentDbId = item.Id;
+            //        });
 
-                    _form.listTables.InvokeIfRequired(() =>
-                    {
-                        _form.listTables.Items.Clear();
-                        item.Tables.ForEach(t => _form.listTables.Items.Add(t.Item2));
-                    });
+            //        _form.listTables.InvokeIfRequired(() =>
+            //        {
+            //            _form.listTables.Items.Clear();
+            //            item.Tables.ForEach(t => _form.listTables.Items.Add(t.Item2));
+            //        });
 
-                    _form.listColumns.InvokeIfRequired(() => { _form.listColumns.Items.Clear(); });
+            //        _form.listColumns.InvokeIfRequired(() => { _form.listColumns.Items.Clear(); });
 
 
-                    _form.labelColumnName.InvokeIfRequired(() =>
-                    {
-                        _form.labelColumnName.Text = string.Empty;
-                    });
+            //        _form.labelColumnName.InvokeIfRequired(() =>
+            //        {
+            //            _form.labelColumnName.Text = string.Empty;
+            //        });
 
-                    _form.labelColumnDataType.InvokeIfRequired(() =>
-                    {
-                        _form.labelColumnDataType.Text = string.Empty;
-                    });
-                }
-            }
+            //        _form.labelColumnDataType.InvokeIfRequired(() =>
+            //        {
+            //            _form.labelColumnDataType.Text = string.Empty;
+            //        });
+            //    }
+            //}
         }
 
         private void ListenForFormEvents()
         {
-            _form.listDatabases.SelectedIndexChanged += ListDatabases_SelectedIndexChanged;
-            _form.listTables.SelectedIndexChanged += ListTables_SelectedIndexChanged;
-            _form.listColumns.SelectedIndexChanged += ListColumns_SelectedIndexChanged;
+            //_form.listDatabases.SelectedIndexChanged += ListDatabases_SelectedIndexChanged;
+            //_form.listTables.SelectedIndexChanged += ListTables_SelectedIndexChanged;
+            //_form.listColumns.SelectedIndexChanged += ListColumns_SelectedIndexChanged;
         }
 
         private void ListColumns_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_form.listColumns.SelectedItem != null)
-            {
-                string currentColumn = _form.listColumns.SelectedItem.ToString();
-                if (!string.IsNullOrEmpty(currentColumn))
-                {
-                    _currentSelectedColumnName = currentColumn;
+            //if (_form.listColumns.SelectedItem != null)
+            //{
+            //    string currentColumn = _form.listColumns.SelectedItem.ToString();
+            //    if (!string.IsNullOrEmpty(currentColumn))
+            //    {
+            //        _currentSelectedColumnName = currentColumn;
 
-                    TableInfo info = null;
-                    if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out info))
-                    {
-                        var column = info.Columns.Where(c => c.Item1 == _currentSelectedColumnName).First();
+            //        TableInfo info = null;
+            //        if (_client.Info.TableInfos.TryGetValue(_currentSelectedTableName, out info))
+            //        {
+            //            var column = info.Columns.Where(c => c.Item1 == _currentSelectedColumnName).First();
 
-                        _form.labelColumnName.InvokeIfRequired(() =>
-                        {
-                            _form.labelColumnName.Text = _currentSelectedColumnName;
-                        });
+            //            _form.labelColumnName.InvokeIfRequired(() =>
+            //            {
+            //                _form.labelColumnName.Text = _currentSelectedColumnName;
+            //            });
 
-                        _form.labelColumnDataType.InvokeIfRequired(() =>
-                        {
-                            _form.labelColumnDataType.Text = column.Item2.ToString();
-                        });
-                    }
-                }
-            }
+            //            _form.labelColumnDataType.InvokeIfRequired(() =>
+            //            {
+            //                _form.labelColumnDataType.Text = column.Item2.ToString();
+            //            });
+            //        }
+            //    }
+            //}
         }
 
         private void ListTables_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            if (_form.listTables.SelectedItem != null)
-            {
-                string currentTable = _form.listTables.SelectedItem.ToString();
-                if (!string.IsNullOrEmpty(currentTable))
-                {
-                    _currentSelectedTableName = currentTable;
-                    _client.GetTableInfo(_currentSelectedDbName, _currentSelectedTableName);
-                }
-            }
+            //if (_form.listTables.SelectedItem != null)
+            //{
+            //    string currentTable = _form.listTables.SelectedItem.ToString();
+            //    if (!string.IsNullOrEmpty(currentTable))
+            //    {
+            //        _currentSelectedTableName = currentTable;
+            //        _client.GetTableInfo(_currentSelectedDbName, _currentSelectedTableName);
+            //    }
+            //}
         }
 
         private void ListDatabases_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            if (_form.listDatabases.SelectedItem != null)
-            {
-                string currentDb = _form.listDatabases.SelectedItem.ToString();
+            //if (_form.listDatabases.SelectedItem != null)
+            //{
+            //    string currentDb = _form.listDatabases.SelectedItem.ToString();
 
-                if (!string.IsNullOrEmpty(currentDb))
-                {
-                    _currentSelectedDbName = currentDb;
-                    _client.GetDatabaseInfo(currentDb);
-                    _client.GetPendingContractsForDb(currentDb);
-                    _client.GetAcceptedContractsForDb(currentDb);
-                }
-            }
+            //    if (!string.IsNullOrEmpty(currentDb))
+            //    {
+            //        _currentSelectedDbName = currentDb;
+            //        _client.GetDatabaseInfo(currentDb);
+            //        _client.GetPendingContractsForDb(currentDb);
+            //        _client.GetAcceptedContractsForDb(currentDb);
+            //    }
+            //}
         }
         #endregion
 

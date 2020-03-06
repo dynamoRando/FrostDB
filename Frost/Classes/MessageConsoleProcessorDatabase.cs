@@ -146,6 +146,7 @@ namespace FrostDB
             var info = new ContractInfo();
             info.ContractDescription = db.Contract.ContractDescription;
             info.DatabaseName = db.Name;
+            info.DatabaseId = db.Id;
             db.Tables.ForEach(t => info.TableNames.Add(t.Name));
 
             foreach (var p in db.Contract.ContractPermissions)

@@ -117,6 +117,11 @@ namespace FrostDB
                new PartialDatabase(databaseName, this));
         }
 
+        public virtual void AddPartialDatabase(ContractInfo contractInfo)
+        {
+            PartialDatabaseManager.CreateDatabaseFromContractInfo(contractInfo, this);
+        }
+
         public virtual void RemoveDatabase(Guid guid)
         {
             DatabaseManager.RemoveDatabase(guid);

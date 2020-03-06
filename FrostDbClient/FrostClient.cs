@@ -13,6 +13,7 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
+        double _queueTimeout = 30.0;
         string _localIpAddress;
         string _remoteIpAddress;
         int _remotePortNumber;
@@ -23,6 +24,7 @@ namespace FrostDbClient
         Location _remote;
         FrostClientInfo _info;
         EventManager _eventManager;
+        Client _client;
         #endregion
 
         #region Public Properties
@@ -39,6 +41,7 @@ namespace FrostDbClient
         #region Constructors
         public FrostClient(string remoteIpAddress, string localIpAddress, int remotePortNumber, int localPortNumber)
         {
+            _client = new Client();
             _remoteIpAddress = remoteIpAddress;
             _remotePortNumber = remotePortNumber;
             _localPortNumber = localPortNumber;
@@ -72,6 +75,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));
         }
 
+        public void GetPartialDatabases()
+        {
+            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+        }
+        
         // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
@@ -243,6 +251,35 @@ namespace FrostDbClient
             return result;
         }
 
+        public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
+        {
+            var result = new DatabaseInfo();
+            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
+
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
+            }
+
+            return result;
+        }
+
+        public async Task<List<string>> GetPartialDatabasesAsync()
+        {
+            var result = new List<string>();
+            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                result = _info.PartialDatabaseNames;
+            }
+
+            return result;
+        }
+
         public void GetDatabaseInfo(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
@@ -279,11 +316,10 @@ namespace FrostDbClient
         {
             Stopwatch watch = new Stopwatch();
             bool responseRecieved = false;
-            double timeOut = 30.0;
 
             watch.Start();
 
-            while (watch.Elapsed.TotalSeconds < timeOut)
+            while (watch.Elapsed.TotalSeconds < _queueTimeout)
             {
                 if (!_info.HasMessageId(id))
                 {
@@ -310,9 +346,8 @@ namespace FrostDbClient
         {
             Guid? id = message.Id;
             // this timeout should be part of a configuration or a param passed in
-            Client.Send(message, 5000);
             _info.AddToQueue(id);
-
+            _client.Send(message, ClientConstants.TimeOut);
             return id;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)

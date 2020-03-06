@@ -1,6 +1,7 @@
-﻿using System;
-using FrostCommon;
-using Newtonsoft.Json;
+﻿using FrostCommon;
+using FrostCommon.ConsoleMessages;
+using System;
+using FrostLocation = FrostCommon.ConsoleMessages.LocationInfo;
 
 namespace FrostDB.Extensions
 {
@@ -37,6 +38,41 @@ namespace FrostDB.Extensions
             {
                 return false;
             }
+        }
+
+        public static FrostLocation Convert(this Location location)
+        {
+            var info = new FrostLocation();
+            info.IpAddress = location.IpAddress;
+            info.PortNumber = location.PortNumber;
+
+            return info;
+        }
+
+        public static Location Convert(this FrostLocation location)
+        {
+            return new Location(Guid.NewGuid(), location.IpAddress, location.PortNumber, string.Empty);
+        }
+
+        public static ContractInfo Convert(this Contract contract)
+        {
+            var info = new ContractInfo();
+
+            info.ContractDescription = contract.ContractDescription;
+            info.DatabaseName = contract.DatabaseName;
+            info.ContractVersion = contract.ContractVersion;
+            info.ContractId = contract.ContractId;
+            info.Location = contract.DatabaseLocation.Convert();
+            info.DatabaseId = contract.DatabaseId;
+
+            return info;
+        }
+
+        public static Contract Convert(this ContractInfo info, Process process)
+        {
+            var contract = new Contract(process);
+            throw new NotImplementedException();
+            return contract;
         }
 
     }

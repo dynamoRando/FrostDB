@@ -13,6 +13,7 @@ namespace FrostDB
         Server _dataServer;
         Server _consoleServer;
         Process _process;
+        Client _client;
         #endregion
 
         #region Public Properties
@@ -27,6 +28,7 @@ namespace FrostDB
         #region Constructors
         public Network(Process process)
         {
+            _client = new Client();
             _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
@@ -64,7 +66,7 @@ namespace FrostDB
         public void SendMessage(Message message)
         {
             // this timeout should be part of the Process Configuration
-            Client.Send(message, 5000);
+            _client.Send(message, ClientConstants.TimeOut);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
         }
 
