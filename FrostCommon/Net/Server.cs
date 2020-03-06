@@ -59,8 +59,9 @@ namespace FrostCommon.Net
 
             var state = new StateObject();
             state.workSocket = handler;
-            
-            Task.Run(() => GetDataFromSocket(state));
+
+            //Task.Run(() => GetDataFromSocket(state));
+            GetDataFromSocket(state);
 
             // Create the state object.  
             //StateObject state = new StateObject();

@@ -56,7 +56,7 @@ namespace FrostDbClient
         }
         public void RemoveFromQueue(Guid? id)
         {
-            Task.Run(() => _messageIds.TryTake(out id));
+            _messageIds.TryTake(out id);
         }
         public bool HasMessageId(Guid? id)
         {
