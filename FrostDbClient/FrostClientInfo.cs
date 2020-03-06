@@ -60,7 +60,7 @@ namespace FrostDbClient
         }
         public bool HasMessageId(Guid? id)
         {
-            return _messageIds.Any(m => m == id);
+            return _messageIds.TryPeek(out id);
         }
         #endregion
 

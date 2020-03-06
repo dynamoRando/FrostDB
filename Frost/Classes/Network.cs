@@ -66,7 +66,7 @@ namespace FrostDB
         public void SendMessage(Message message)
         {
             // this timeout should be part of the Process Configuration
-            _client.Send(message, 10000);
+            _client.Send(message, ClientConstants.TimeOut);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
         }
 

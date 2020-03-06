@@ -13,6 +13,7 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
+        double _queueTimeout = 30.0;
         string _localIpAddress;
         string _remoteIpAddress;
         int _remotePortNumber;
@@ -259,7 +260,7 @@ namespace FrostDbClient
 
             if (gotData)
             {
-                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value; ;
+                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
             }
 
             return result;
@@ -315,11 +316,10 @@ namespace FrostDbClient
         {
             Stopwatch watch = new Stopwatch();
             bool responseRecieved = false;
-            double timeOut = 30.0;
 
             watch.Start();
 
-            while (watch.Elapsed.TotalSeconds < timeOut)
+            while (watch.Elapsed.TotalSeconds < _queueTimeout)
             {
                 if (!_info.HasMessageId(id))
                 {
@@ -346,9 +346,8 @@ namespace FrostDbClient
         {
             Guid? id = message.Id;
             // this timeout should be part of a configuration or a param passed in
-            _client.Send(message, 10000);
             _info.AddToQueue(id);
-
+            _client.Send(message, ClientConstants.TimeOut);
             return id;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)

@@ -5,20 +5,21 @@ using System.Threading;
 using System.Text;
 using FrostCommon;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Collections.Concurrent;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostCommon.Net
 {
     public class Client
     {
         #region Private Fields
-        private ManualResetEvent connectDone =
-        new ManualResetEvent(false);
-        private ManualResetEvent sendDone =
-            new ManualResetEvent(false);
-        private int _timeout;
-        private ManualResetEvent receiveDone = new ManualResetEvent(false);
         private String response = String.Empty;
-        private Socket _client;
+
+        private ConcurrentDictionary<LocationInfo, SocketHelper> connections;
         #endregion
 
         #region Public Properties
@@ -31,47 +32,48 @@ namespace FrostCommon.Net
         #endregion
 
         #region Constructors
+        public Client()
+        {
+            connections = new ConcurrentDictionary<LocationInfo, SocketHelper>();
+        }
         #endregion
 
         #region Public Methods
         public void Send(Message message, int timeout)
         {
-            _timeout = timeout;
-            Send(message.Destination, message);
+            Send(message.Destination, message, timeout);
         }
-        public void Send(Location location, Message message)
+
+        public void Send(Location location, Message message, int timeOut)
         {
             try
             {
-                connectDone.Reset();
-                sendDone.Reset();
+                
+                DebugSend(location, message);
 
-                // Establish the remote endpoint for the socket.  
-                IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
+                SocketHelper connection;
 
-                using (var _client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
+                if (HasConnection(location))
                 {
-                    // Connect to the remote endpoint.  
-                    _client.BeginConnect(remoteEP,
-                        new AsyncCallback(ConnectCallback), _client);
-                    connectDone.WaitOne(_timeout);
-
-                    // Send test data to the remote device.  
-                    if (_client.Connected)
-                    {
-                        Send(_client, message);
-                        sendDone.WaitOne(_timeout);
-
-                        // Receive the response from the remote device.  
-                        //Receive(client);
-                        //receiveDone.WaitOne();
-
-                        // Release the socket.  
-                        _client.Shutdown(SocketShutdown.Both);
-                        _client.Close();
-                    }
+                    connection = GetConnection(location);
                 }
+                else
+                {
+                    connection = GetNewSocketHelper(location, GetNewSocket(location), timeOut);
+                    connections.TryAdd(location.Convert(), connection);
+                }
+
+                if (!connection.Socket.IsConnected())
+                {
+                    ConnectSocket(connection);
+                    //connection.ConnectDone.WaitOne(connection.TimeOut);
+                }
+
+                SendData(connection, message);
+               //connection.SendDone.WaitOne(connection.TimeOut);
+
+                DisconnectSocket(connection);
+                //connection.DisconnectDone.WaitOne(connection.TimeOut);
             }
             catch (Exception e)
             {
@@ -79,99 +81,147 @@ namespace FrostCommon.Net
                 Debug.Write(e.ToString());
             }
         }
-        //public  void Send(Participant participant, Message message)
-        //{
-        //    Send(participant.Location, message);
-        //}
         #endregion
 
 
         #region Private Methods
-        private void Receive(Socket client)
+        private void DebugSend(Location location, Message message)
         {
-            try
-            {
-                // Create the state object.  
-                StateObject state = new StateObject();
-                state.workSocket = client;
-
-                // Begin receiving the data from the remote device.  
-                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReceiveCallback), state);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            Debug.WriteLine($"Client: Destination: {location.IpAddress}:{location.PortNumber.ToString()}");
+            Debug.WriteLine($"Client: Message Action {message.Action}");
         }
 
-        private void ReceiveCallback(IAsyncResult ar)
+        private void ConnectSocket(SocketHelper item)
         {
+            Debug.WriteLine($"Client: ConnectSocket: {item.Location.IpAddress}:{item.Location.PortNumber.ToString()}");
             try
             {
-                // Retrieve the state object and the client socket   
-                // from the asynchronous state object.  
-                StateObject state = (StateObject)ar.AsyncState;
-                Socket client = state.workSocket;
-
-                // Read data from the remote device.  
-                int bytesRead = client.EndReceive(ar);
-
-                if (bytesRead > 0)
-                {
-                    // There might be more data, so store the data received so far.  
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-
-                    // Get the rest of the data.  
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                        new AsyncCallback(ReceiveCallback), state);
-                }
-                else
-                {
-                    // All the data has arrived; put it in response.  
-                    if (state.sb.Length > 1)
-                    {
-                        response = state.sb.ToString();
-                    }
-                    // Signal that all bytes have been received.  
-                    receiveDone.Set();
-                }
+                item.Socket.BeginConnect(GetEndPoint(item.Location),
+                               new AsyncCallback(ConnectCallback), item);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Debug.WriteLine($"Client: ConnectSocket Error: {e.ToString()}");
             }
+     
+            item.ConnectDone.WaitOne(item.TimeOut);
         }
 
-        private void Send(Socket client, Message message)
+        private void SendData(SocketHelper item, Message message)
         {
+            Debug.WriteLine("Client: -- Send Data To: --");
+            DebugSend(item.Location, message);
+            Send(item, message);
+            item.SendDone.WaitOne(item.TimeOut);
+        }
+
+        private void Send(SocketHelper item, Message message)
+        {
+
+            Debug.WriteLine($"Client: Sending bytes to {item.Location.IpAddress}:{item.Location.PortNumber.ToString()}");
+
             var data = Json.SeralizeMessage(message);
 
             // Convert the string data to byte data using ASCII encoding.  
             byte[] byteData = Encoding.ASCII.GetBytes(data);
 
             // Begin sending the data to the remote device.  
-            client.BeginSend(byteData, 0, byteData.Length, 0,
-                new AsyncCallback(SendCallback), client);
+            if (item.Socket.IsConnected())
+            {
+                item.Socket.BeginSend(byteData, 0, byteData.Length, 0,
+                          new AsyncCallback(SendCallback), item);
+            }
+            else
+            {
+                Debug.WriteLine($"Client: Send: Socket Disconnected! {item.Location.IpAddress}:{item.Location.PortNumber.ToString()}");
+            }
+        }
+
+        private void DisconnectSocket(SocketHelper item)
+        {
+            var client = item.Socket;
+           
+            if (client.IsConnected())
+            {
+                client.Shutdown(SocketShutdown.Both);
+                client.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), item);
+                item.DisconnectDone.WaitOne(item.TimeOut);
+            }
+            else
+            {
+                Debug.WriteLine($"Client: DisconnectSocket: Socket Already Disconnected! {item.Location.IpAddress}:{item.Location.PortNumber.ToString()}");
+            }
+        }
+
+        private static void DisconnectCallback(IAsyncResult ar)
+        {
+            SocketHelper item = (SocketHelper)ar.AsyncState;
+            Socket client = item.Socket;
+
+            client.EndDisconnect(ar);
+
+            // Signal that the disconnect is complete.
+            item.DisconnectDone.Set();
+            Debug.WriteLine($"Client: DisconnectCallback done.");
+        }
+
+        private IPEndPoint GetEndPoint(Location location)
+        {
+            IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
+            return new IPEndPoint(ipAddress, location.PortNumber);
+        }
+
+        private Socket GetNewSocket(Location location)
+        {
+            IPAddress ipAddress = IPAddress.Parse(location.IpAddress);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, location.PortNumber);
+            var socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+            Debug.WriteLine($"Client: --> Making Socket Address: {location.IpAddress} : {location.PortNumber.ToString()}");
+
+            return socket;
+        }
+
+        private SocketHelper GetNewSocketHelper(Location location, Socket socket, int timeout)
+        {
+            var item = new SocketHelper(socket, location, timeout);
+            item.ConnectDone.Reset();
+            item.SendDone.Reset();
+            item.DisconnectDone.Reset();
+            return item;
+        }
+
+        private bool HasConnection(Location location)
+        {
+            return connections.ContainsKey(location.Convert());
+        }
+
+        private SocketHelper GetConnection(Location location)
+        {
+            SocketHelper item;
+            connections.TryRemove(location.Convert(), out item);
+            return item;
         }
 
         private void SendCallback(IAsyncResult ar)
         {
             try
             {
-                // Retrieve the socket from the state object.  
-                Socket client = (Socket)ar.AsyncState;
+                SocketHelper item = (SocketHelper)ar.AsyncState;
+                Socket client = item.Socket;
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = client.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
+                Console.WriteLine("Client: Sent {0} bytes to server.", bytesSent);
 
                 // Signal that all bytes have been sent.  
-                sendDone.Set();
+                item.SendDone.Set();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Debug.WriteLine(e.ToString());
             }
         }
 
@@ -180,20 +230,24 @@ namespace FrostCommon.Net
             try
             {
                 // Retrieve the socket from the state object.  
-                Socket client = (Socket)ar.AsyncState;
+                SocketHelper item = (SocketHelper)ar.AsyncState;
+                Socket client = (Socket)item.Socket;
 
                 // Complete the connection.  
                 client.EndConnect(ar);
 
-                Console.WriteLine("Socket connected to {0}",
-                    client.RemoteEndPoint.ToString());
+                string debug = $"Client: Socket connected to {client.RemoteEndPoint.ToString()}";
+
+                Console.WriteLine(debug);
+                Debug.WriteLine(debug);
 
                 // Signal that the connection has been made.  
-                connectDone.Set();
+                item.ConnectDone.Set();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Debug.WriteLine($"Client: ConnectCallback Error: {e.ToString()}");
             }
         }
         #endregion
