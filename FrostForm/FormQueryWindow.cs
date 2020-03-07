@@ -60,6 +60,8 @@ namespace FrostForm
                     {
                         comboTables.Items.Add(t.Item2);
                     }
+
+                    LoadParticipants();
                 }
             }
         }
@@ -97,6 +99,19 @@ namespace FrostForm
                     {
                         listColumns.Items.Add($"{c.Item1} [{c.Item2.ToString()}]");
                     }
+                }
+            }
+        }
+
+        private async void LoadParticipants()
+        {
+            AcceptedContractInfo item;
+            if (_app.Client.Info.AcceptedContractInfos.TryGetValue(_currentSelectedDb, out item))
+            {
+                listParticipants.Items.Clear();
+                foreach(var p in item.AcceptedContracts)
+                {
+                    listParticipants.Items.Add(p);
                 }
             }
         }

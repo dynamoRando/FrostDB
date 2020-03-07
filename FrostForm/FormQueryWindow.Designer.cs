@@ -43,6 +43,8 @@
             this.buttonLoadDatabases = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.listColumns = new System.Windows.Forms.ListBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.listParticipants = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -190,14 +192,34 @@
             this.listColumns.ItemHeight = 15;
             this.listColumns.Location = new System.Drawing.Point(806, 73);
             this.listColumns.Name = "listColumns";
-            this.listColumns.Size = new System.Drawing.Size(203, 469);
+            this.listColumns.Size = new System.Drawing.Size(163, 469);
             this.listColumns.TabIndex = 3;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(972, 55);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 15);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Participant";
+            // 
+            // listParticipants
+            // 
+            this.listParticipants.FormattingEnabled = true;
+            this.listParticipants.ItemHeight = 15;
+            this.listParticipants.Location = new System.Drawing.Point(972, 73);
+            this.listParticipants.Name = "listParticipants";
+            this.listParticipants.Size = new System.Drawing.Size(156, 469);
+            this.listParticipants.TabIndex = 5;
             // 
             // FormQueryWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1031, 559);
+            this.ClientSize = new System.Drawing.Size(1140, 559);
+            this.Controls.Add(this.listParticipants);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.listColumns);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.buttonLoadDatabases);
@@ -228,5 +250,7 @@
         private System.Windows.Forms.Button buttonLoadDatabases;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ListBox listColumns;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ListBox listParticipants;
     }
 }
