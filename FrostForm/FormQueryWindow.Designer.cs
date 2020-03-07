@@ -41,6 +41,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboDatabase = new System.Windows.Forms.ComboBox();
             this.buttonLoadDatabases = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.listColumns = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,6 +145,7 @@
             this.comboTables.Name = "comboTables";
             this.comboTables.Size = new System.Drawing.Size(679, 23);
             this.comboTables.TabIndex = 3;
+            this.comboTables.SelectedIndexChanged += new System.EventHandler(this.comboTables_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -172,11 +175,31 @@
             this.buttonLoadDatabases.UseVisualStyleBackColor = true;
             this.buttonLoadDatabases.Click += new System.EventHandler(this.buttonLoadDatabases_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(806, 55);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(55, 15);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Columns";
+            // 
+            // listColumns
+            // 
+            this.listColumns.FormattingEnabled = true;
+            this.listColumns.ItemHeight = 15;
+            this.listColumns.Location = new System.Drawing.Point(806, 73);
+            this.listColumns.Name = "listColumns";
+            this.listColumns.Size = new System.Drawing.Size(203, 469);
+            this.listColumns.TabIndex = 3;
+            // 
             // FormQueryWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 559);
+            this.ClientSize = new System.Drawing.Size(1031, 559);
+            this.Controls.Add(this.listColumns);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.buttonLoadDatabases);
             this.Controls.Add(this.groupBox1);
             this.Name = "FormQueryWindow";
@@ -184,6 +207,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -202,5 +226,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textResults;
         private System.Windows.Forms.Button buttonLoadDatabases;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ListBox listColumns;
     }
 }

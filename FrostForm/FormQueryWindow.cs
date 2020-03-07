@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrostCommon.ConsoleMessages;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,9 @@ namespace FrostForm
     {
         App _app;
         List<string> _databases;
+        string _currentSelectedDb;
+        string _currentSelectedTable;
+
         public FormQueryWindow(App app)
         {
             _app = app;
@@ -34,7 +38,7 @@ namespace FrostForm
             comboDatabase.Items.Clear();
 
             _databases = await GetDatabasesAsync();
-            foreach(var db in _databases)
+            foreach (var db in _databases)
             {
                 comboDatabase.Items.Add(db);
             }
@@ -47,11 +51,12 @@ namespace FrostForm
                 var selectedDb = comboDatabase.SelectedItem.ToString();
                 if (!string.IsNullOrEmpty(selectedDb))
                 {
+                    _currentSelectedDb = selectedDb;
                     var result = await _app.Client.GetDatabaseInfoAsync(selectedDb);
 
                     comboTables.Items.Clear();
 
-                    foreach(var t in result.Tables)
+                    foreach (var t in result.Tables)
                     {
                         comboTables.Items.Add(t.Item2);
                     }
@@ -63,6 +68,37 @@ namespace FrostForm
         {
             comboDatabase.Items.Clear();
             LoadDatabases();
+        }
+
+        private async void comboTables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboTables.SelectedItem != null)
+            {
+                var selectedTable = comboTables.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(selectedTable))
+                {
+                    _currentSelectedTable = comboTables.SelectedItem.ToString();
+                    LoadColumnInformation();
+                }
+            }
+        }
+
+        private async void LoadColumnInformation()
+        {
+            DatabaseInfo db;
+            TableInfo table;
+            if (_app.Client.Info.DatabaseInfos.TryGetValue(_currentSelectedDb, out db))
+            {
+                if (_app.Client.Info.TableInfos.TryGetValue(_currentSelectedTable, out table))
+                {
+                    var info = await _app.Client.GetTableInfoAsync(db.Id, table.TableId, _currentSelectedTable);
+                    listColumns.Items.Clear();
+                    foreach (var c in info.Columns)
+                    {
+                        listColumns.Items.Add($"{c.Item1} [{c.Item2.ToString()}]");
+                    }
+                }
+            }
         }
     }
 }

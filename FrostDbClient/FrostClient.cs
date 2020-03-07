@@ -280,6 +280,25 @@ namespace FrostDbClient
             return result;
         }
 
+        public async Task<TableInfo> GetTableInfoAsync(Guid? databaseId, Guid? tableId, string tableName)
+        {
+            var requestInfo = (database: databaseId, table: tableId);
+            var id = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+
+            var result = new TableInfo();
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                if (_info.TableInfos.ContainsKey(tableName))
+                {
+                    _info.TableInfos.TryRemove(tableName, out result);
+                }
+            }
+
+            return result;
+        }
+
         public void GetDatabaseInfo(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
@@ -307,6 +326,7 @@ namespace FrostDbClient
             var requestInfo = (database: databaseId, table: tableId);
             SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
         }
+
         private async Task<bool> WaitForMessageAsync(Guid? id)
         {
             return await Task.Run(() => WaitForMessage(id));
