@@ -137,5 +137,11 @@ namespace FrostForm
                 }
             }
         }
+
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            textResults.Text = string.Empty;
+            textQuery.Text = string.Empty;
+        }
     }
 }
