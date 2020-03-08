@@ -58,8 +58,14 @@ namespace FrostDB
 
         static public bool IsValidCommand(string command)
         {
-            throw new NotImplementedException();
-
+            if (command.Equals("TEST"))
+            {
+                return true;    
+            }
+            else
+            {
+                return false;
+            }
         }
 
         //static public bool IsValidQuery(string condition, Table table)

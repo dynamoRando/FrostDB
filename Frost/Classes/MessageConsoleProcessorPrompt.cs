@@ -50,13 +50,11 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             FrostPromptResponse response = new FrostPromptResponse();
-            _process.ExecuteCommand(message.Content);
+            response = _process.ExecuteCommand(message.Content);
             Type type = response.GetType();
             messageContent = JsonConvert.SerializeObject(response);
 
             _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Prompt.Eecute_Command_Response, type, MessageActionType.Prompt);
-
-            throw new NotImplementedException();
         }
         #endregion
 
