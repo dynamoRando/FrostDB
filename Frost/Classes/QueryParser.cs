@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Threading.Tasks;
+using FrostCommon.Net;
 
 namespace FrostDB
 {
@@ -53,6 +54,12 @@ namespace FrostDB
             );
 
             return isValid;
+        }
+
+        static public bool IsValidCommand(string command)
+        {
+            throw new NotImplementedException();
+
         }
 
         //static public bool IsValidQuery(string condition, Table table)

@@ -6,6 +6,12 @@ namespace FrostCommon
 {
     public static class MessageConsoleAction
     {
+        public static class Prompt
+        {
+            public const string Execute_Command = "Execute_Command";
+            public const string Eecute_Command_Response = "Execute_Command_Response";
+        }
+
         public static class Process
         {
             public const string Get_Databases = "Get_Databases";

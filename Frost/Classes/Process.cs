@@ -200,6 +200,23 @@ namespace FrostDB
             return db;
         }
 
+        public FrostPromptResponse ExecuteCommand(string command)
+        {
+            FrostPromptResponse response = new FrostPromptResponse();
+
+            if (QueryParser.IsValidCommand(command))
+            {
+                response = new QueryRunner().Execute(command);
+            }
+            else
+            {
+                response.IsSuccessful = false;
+                response.Message = "Syntax incorrect";
+            }
+
+            return response;
+        }
+
         public void AddPendingContract(Contract contract)
         {
             _contractManager.AddPendingContract(contract);

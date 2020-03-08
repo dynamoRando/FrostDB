@@ -30,6 +30,11 @@ namespace FrostDbClient
         #region Public Properties
         public FrostClientInfo Info => _info;
         public EventManager EventManager => _eventManager;
+        public string RemoteIpAddress => _remoteIpAddress;
+        public string LocalIpAddress => _localIpAddress;
+        public int RemotePortNumber => _remotePortNumber;
+        public int LocalPortNumber => _localPortNumber;
+        public Client Client => _client;
         #endregion
 
         #region Protected Methods
@@ -59,7 +64,22 @@ namespace FrostDbClient
         #endregion
 
         #region Public Methods
+        public async Task<FrostPromptResponse> ExecuteCommandAsync(string command)
+        {
+            var result = new FrostPromptResponse();
+            var id = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
+            bool gotData = await WaitForMessageAsync(id);
 
+            if (gotData)
+            {
+                if (_info.Responses.ContainsKey(id))
+                {
+                    _info.Responses.TryRemove(id, out result);
+                }
+            }
+
+            return result;
+        }
         public void AcceptContract(ContractInfo contract)
         {
             SendMessage(BuildMessage(Json.SeralizeObject(contract), MessageConsoleAction.Process.Accept_Pending_Contract, MessageActionType.Process));

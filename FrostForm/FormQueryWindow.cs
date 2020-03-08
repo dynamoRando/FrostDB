@@ -115,5 +115,27 @@ namespace FrostForm
                 }
             }
         }
+
+        private async void buttonExecute_Click(object sender, EventArgs e)
+        {
+            var queryText = textQuery.Text;
+            if (!string.IsNullOrEmpty(queryText))
+            {
+                var result = await _app.Client.ExecuteCommandAsync(queryText);
+                if (result.IsSuccessful)
+                {
+                    textResults.Text = $"Message: {result.Message} {Environment.NewLine}  Rows Affected:  {result.NumberOfRowsAffected.ToString()}";
+
+                    if (result.JsonData.Length > 0)
+                    {
+                        textResults.Text += Environment.NewLine + result.JsonData;
+                    }
+                }
+                else
+                {
+                    textResults.Text = result.Message;
+                }
+            }
+        }
     }
 }

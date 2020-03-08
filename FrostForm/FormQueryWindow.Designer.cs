@@ -85,6 +85,7 @@
             this.buttonExecute.TabIndex = 4;
             this.buttonExecute.Text = "Execute";
             this.buttonExecute.UseVisualStyleBackColor = true;
+            this.buttonExecute.Click += new System.EventHandler(this.buttonExecute_Click);
             // 
             // textResults
             // 

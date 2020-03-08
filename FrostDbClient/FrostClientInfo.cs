@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using FrostCommon.ConsoleMessages;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using FrostCommon.Net;
 
 namespace FrostDbClient
 {
@@ -25,6 +26,7 @@ namespace FrostDbClient
         public ConcurrentDictionary<string, AcceptedContractInfo> AcceptedContractInfos { get; set; }
         public ConcurrentDictionary<string, List<ContractInfo>> ProcessPendingContracts { get; set; }
         public ContractInfo ContractInfo { get; set; }
+        public ConcurrentDictionary<Guid?, FrostPromptResponse> Responses { get; set; }
         #endregion
 
         #region Protected Methods
@@ -46,6 +48,7 @@ namespace FrostDbClient
             PendingContractInfos = new ConcurrentDictionary<string, PendingContractInfo>();
             ProcessPendingContracts = new ConcurrentDictionary<string, List<ContractInfo>>();
             AcceptedContractInfos = new ConcurrentDictionary<string, AcceptedContractInfo>();
+            Responses = new ConcurrentDictionary<Guid?, FrostPromptResponse>();
         }
         #endregion
 

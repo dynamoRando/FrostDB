@@ -8,6 +8,7 @@ namespace FrostCommon
     {
         Process,
         Database,
-        Table
+        Table,
+        Prompt
     }
 }
