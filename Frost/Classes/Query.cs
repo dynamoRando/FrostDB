@@ -33,11 +33,21 @@ namespace FrostDB
         #region Public Methods
         public bool TryParseSelect(string selectStatement)
         {
+            /*
+             * SELECT [ cols ] FROM TABLE
+             * WHERE condition
+             */
+
             throw new NotImplementedException();
         }
 
         public bool TryParseInsert(string insertStatement)
         {
+            /*
+             * INSERT INTO { table } 
+             * VALUES { vals } 
+             * FOR PARTICIPANT { participant }
+             */
             throw new NotImplementedException();
         }
 

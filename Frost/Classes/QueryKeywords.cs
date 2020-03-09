@@ -12,5 +12,7 @@ namespace FrostDB
         public const string Update = "UPDATE";
         public const string For = "FOR";
         public const string Delete = "DELETE";
+        public const string Where = "WHERE";
+        public const string Participant = "PARTICIPANT";
     }
 }
