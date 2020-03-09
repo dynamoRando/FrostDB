@@ -78,16 +78,16 @@ namespace FrostDB
             switch (query.QueryType)
             {
                 case Enum.QueryType.Select:
-                    parseStatement = query.TryParseSelect(statement);
+                    parseStatement = query.TryParseSelect(statement, query);
                     break;
                 case Enum.QueryType.Insert:
-                    parseStatement = query.TryParseInsert(statement);
+                    parseStatement = query.TryParseInsert(statement, query);
                     break;
                 case Enum.QueryType.Update:
-                    parseStatement = query.TryParseUpdate(statement);
+                    parseStatement = query.TryParseUpdate(statement, query);
                     break;
                 case Enum.QueryType.Delete:
-                    parseStatement = query.TryParseDelete(statement);
+                    parseStatement = query.TryParseDelete(statement, query);
                     break;
             }
 

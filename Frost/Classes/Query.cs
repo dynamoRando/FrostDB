@@ -6,7 +6,7 @@ using FrostDB.Enum;
 namespace FrostDB
 {
     public class Query
-	{
+    {
         #region Private Fields
         private Process _process;
         #endregion
@@ -24,14 +24,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Query(Process process) 
+        public Query(Process process)
         {
             _process = process;
         }
         #endregion
 
         #region Public Methods
-        public bool TryParseSelect(string selectStatement)
+        public bool TryParseSelect(string selectStatement, Query query)
         {
             /*
              * SELECT [ cols ] FROM TABLE
@@ -41,8 +41,26 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public bool TryParseInsert(string insertStatement)
+        public bool TryParseInsert(string insertStatement, Query query)
         {
+            bool isSuccessful = false;
+            bool hasTable = false;
+
+            var tableName = insertStatement.Split('{', '}')[0];
+            var particpant = insertStatement.Split('{', '}')[1];
+            var items = insertStatement.Split('(', ')');
+
+            var columns = items[0];
+            var values = items[1];
+
+            if (_process.HasDatabase(query.DatabaseName))
+            {
+                var db = _process.GetDatabase(query.DatabaseName);
+                hasTable = db.HasTable(tableName);
+            }
+
+
+
             /*
              * INSERT INTO { table } 
              * VALUES { vals } 
@@ -51,12 +69,12 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public bool TryParseUpdate(string updateStatement)
+        public bool TryParseUpdate(string updateStatement, Query query)
         {
             throw new NotImplementedException();
         }
 
-        public bool TryParseDelete(string deleteStatement)
+        public bool TryParseDelete(string deleteStatement, Query query)
         {
             throw new NotImplementedException();
         }
@@ -83,7 +101,7 @@ namespace FrostDB
             {
                 this.QueryType = QueryType.Select;
             }
-            
+
             if (statement.Contains(QueryKeywords.Insert))
             {
                 this.QueryType = QueryType.Insert;
