@@ -204,9 +204,10 @@ namespace FrostDB
         {
             FrostPromptResponse response = new FrostPromptResponse();
 
-            if (QueryParser.IsValidCommand(command))
+            Query query;
+            if (QueryParser.IsValidCommand(command, this, out query))
             {
-                response = new QueryRunner().Execute(command);
+                response = new QueryRunner().Execute(query);
             }
             else
             {

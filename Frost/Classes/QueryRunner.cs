@@ -11,7 +11,7 @@ namespace FrostDB
     public class QueryRunner : IQueryRunner
     {
         #region Public Functions
-        public FrostPromptResponse Execute(string command)
+        public FrostPromptResponse Execute(Query query)
         {
             var response = new FrostPromptResponse();
             response.IsSuccessful = true;
@@ -20,6 +20,7 @@ namespace FrostDB
 
             return response;
         }
+
         public List<Row> Execute(List<RowValueQueryParam> parameters, List<Row> rows)
         {
             // how do we handle AND versus OR?

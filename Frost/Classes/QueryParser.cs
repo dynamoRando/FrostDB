@@ -56,34 +56,60 @@ namespace FrostDB
             return isValid;
         }
 
-        static public bool IsValidCommand(string command)
+        static public bool IsValidCommand(string command, Process process, out Query query)
         {
-            if (command.Equals("TEST"))
+            query = new Query(process);
+
+            var commands = GetCommands(command);
+
+            string database = commands[0];
+            string statement = commands[1];
+
+            bool hasDatabase = false;
+            bool parseStatement = false;
+
+            if (database.Contains(QueryKeywords.Use))
             {
-                return true;    
+                hasDatabase = query.TryParseDatabase(commands[0]);
+            }
+
+            query.SetQueryType(statement);
+
+            switch (query.QueryType)
+            {
+                case Enum.QueryType.Select:
+                    parseStatement = query.TryParseSelect(statement);
+                    break;
+                case Enum.QueryType.Insert:
+                    parseStatement = query.TryParseInsert(statement);
+                    break;
+                case Enum.QueryType.Update:
+                    parseStatement = query.TryParseUpdate(statement);
+                    break;
+                case Enum.QueryType.Delete:
+                    parseStatement = query.TryParseDelete(statement);
+                    break;
+            }
+
+            if (hasDatabase && parseStatement)
+            {
+                return true;
             }
             else
             {
+                query = null;
                 return false;
             }
         }
 
-        //static public bool IsValidQuery(string condition, Table table)
-        //{
-        //    bool isValid = false;
-
-        //    var terms = GetTerms(condition);
-
-        //    isValid = terms.All(term =>
-        //         table.Columns.Any(column => term.Contains(column.Name,
-        //            StringComparison.InvariantCultureIgnoreCase))
-        //    );
-
-        //    return isValid;
-        //}
         #endregion
 
         #region Private Methods
+        private static string[] GetCommands(string command)
+        {
+            return command.Split(';');
+        }
+
         private static List<RowValueQueryParam> EvaluateTerms(List<string> terms,
             List<RowValueQueryParam> values)
         {
