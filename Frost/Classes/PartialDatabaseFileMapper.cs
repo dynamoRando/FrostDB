@@ -9,6 +9,11 @@ namespace FrostDB
     {
         public PartialDatabase Map(DataFile file, Process process)
         {
+            foreach (var t in file.Tables)
+            {
+                t.SetProcess(process);
+            }
+
             var database = new PartialDatabase(
             file.Name,
             file.Id.Value,

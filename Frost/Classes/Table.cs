@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using FrostDB.Enum;
 using FrostDB.Extensions;
+using System.ComponentModel;
 
 namespace FrostDB
 {
@@ -49,7 +50,7 @@ namespace FrostDB
             _rows = new List<RowReference>();
 
             _process = process;
-            
+
             if (DatabaseId != null)
             {
                 _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
@@ -82,12 +83,15 @@ namespace FrostDB
                 ("TableStore", typeof(Store));
             _schema = (TableSchema)serializationInfo.GetValue
                 ("TableSchema", typeof(TableSchema));
-
             _parser = new QueryParser(_process);
         }
         #endregion
 
         #region Public Methods
+        public void SetProcess(Process process)
+        {
+            _process = process;
+        }
         public bool HasRow(Guid? rowId)
         {
             return _rows.Any(r => r.RowId == rowId);
@@ -191,6 +195,11 @@ namespace FrostDB
             // we do a schema check
             if (RowMatchesTableColumns(form.Row))
             {
+                if (DatabaseId != null && _contractValidator is null)
+                {
+                    _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
+                }
+
                 // we make sure this action is okay with the defined contract
                 if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
                 {
@@ -223,6 +232,19 @@ namespace FrostDB
             return form;
         }
 
+        public RowForm GetNewRowForLocal()
+        {
+            RowForm form = null;
+
+            var db = _process.GetDatabase(DatabaseId);
+            if (db.HasParticipant(db.Id))
+            {
+                form = new RowForm(GetNewRow(), db.GetParticipant(db.Id));
+            }
+
+            return form;
+        }
+
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -240,7 +262,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        
+
         private Row GetNewRow()
         {
             List<Guid?> ids = new List<Guid?>();
@@ -352,7 +374,7 @@ namespace FrostDB
                 ColumnName = column.Name
             };
         }
-        
+
         #endregion
     }
 }

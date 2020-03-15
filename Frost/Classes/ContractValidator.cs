@@ -16,7 +16,8 @@ namespace FrostDB
         #region Public Properties
         public bool ActionIsValidForParticipant(TableAction type, Participant participant)
         {
-            throw new NotImplementedException();
+            // TO DO:  fix this
+            return true;
         }
         #endregion
 

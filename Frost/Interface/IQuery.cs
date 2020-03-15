@@ -10,7 +10,7 @@ namespace FrostDB.Interface
         public string DatabaseName { get; set; }
         public string TableName { get; set; }
         public Process Process { get; set; }
-        public bool TryParse(string statement);
+        public bool IsValid(string statement);
         public void Execute();
     }
 }

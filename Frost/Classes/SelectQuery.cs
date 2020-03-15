@@ -36,7 +36,7 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public bool TryParse(string statement)
+        public bool IsValid(string statement)
         {
             throw new NotImplementedException();
         }

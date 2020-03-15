@@ -13,6 +13,8 @@ namespace FrostDB
         #region Public Functions
         public FrostPromptResponse Execute(IQuery query)
         {
+            query.Execute();
+
             var response = new FrostPromptResponse();
             response.IsSuccessful = true;
             response.Message = "Message parsed.";

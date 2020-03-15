@@ -13,7 +13,18 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
-        public Row Row => _row;
+        public Row Row
+        {
+            get
+            {
+                return _row;
+            }
+            set
+            {
+                _row = value;
+            }
+        }
+
         public Participant Participant => _participant;
         #endregion
 

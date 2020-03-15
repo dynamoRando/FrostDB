@@ -85,16 +85,16 @@ namespace FrostDB
             switch (item)
             {
                 case SelectQuery s:
-                    parseStatement = s.TryParse(statement);
+                    parseStatement = s.IsValid(statement);
                     break;
                 case InsertQuery i:
-                    parseStatement = i.TryParse(statement);
+                    parseStatement = i.IsValid(statement);
                     break;
                 case UpdateQuery u:
-                    parseStatement = u.TryParse(statement);
+                    parseStatement = u.IsValid(statement);
                     break;
                 case DeleteQuery d:
-                    parseStatement = d.TryParse(statement);
+                    parseStatement = d.IsValid(statement);
                     break;
             }
 

@@ -29,6 +29,12 @@ namespace FrostDB
 
         public Database Map(DataFile file, Process process)
         {
+
+            foreach(var t in file.Tables)
+            {
+                t.SetProcess(process);
+            }
+
             var database = new Database(
               file.Name,
               file.Id.Value,
