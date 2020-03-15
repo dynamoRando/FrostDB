@@ -4,12 +4,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using FrostCommon.Net;
 
 namespace FrostDB
 {
     public class QueryRunner : IQueryRunner
     {
         #region Public Functions
+        public FrostPromptResponse Execute(IQuery query)
+        {
+            query.Execute();
+
+            var response = new FrostPromptResponse();
+            response.IsSuccessful = true;
+            response.Message = "Message parsed.";
+            response.NumberOfRowsAffected = 0;
+
+            return response;
+        }
+
         public List<Row> Execute(List<RowValueQueryParam> parameters, List<Row> rows)
         {
             // how do we handle AND versus OR?

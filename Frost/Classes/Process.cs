@@ -20,6 +20,7 @@ namespace FrostDB
         private PartialDatabaseManager _pdbManager;
         private EventManager _eventManager;
         private ProcessLogger _log;
+        private QueryParser _parser;
         #endregion
 
         #region Public Properties
@@ -200,6 +201,24 @@ namespace FrostDB
             return db;
         }
 
+        public FrostPromptResponse ExecuteCommand(string command)
+        {
+            FrostPromptResponse response = new FrostPromptResponse();
+
+            IQuery query;
+            if (_parser.IsValidCommand(command, this, out query))
+            {
+                response = new QueryRunner().Execute(query);
+            }
+            else
+            {
+                response.IsSuccessful = false;
+                response.Message = "Syntax incorrect";
+            }
+
+            return response;
+        }
+
         public void AddPendingContract(Contract contract)
         {
             _contractManager.AddPendingContract(contract);
@@ -347,6 +366,8 @@ namespace FrostDB
 
             partialDbManager.Manager = PartialDatabaseManager;
             partialDbManager.RegisterEvents();
+
+            _parser = new QueryParser(this);
         }
         private void SetConfiguration()
         {

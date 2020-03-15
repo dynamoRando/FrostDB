@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using FrostDB.Enum;
 using FrostDB.Extensions;
+using System.ComponentModel;
 
 namespace FrostDB
 {
@@ -23,6 +24,7 @@ namespace FrostDB
         private TableSchema _schema;
         private ContractValidator _contractValidator;
         private Process _process;
+        private QueryParser _parser;
         #endregion
 
         #region Public Properties
@@ -48,11 +50,14 @@ namespace FrostDB
             _rows = new List<RowReference>();
 
             _process = process;
-            
+
             if (DatabaseId != null)
             {
                 _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
             }
+
+            _parser = new QueryParser(_process);
+
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId, Process process) : this(process)
@@ -61,6 +66,7 @@ namespace FrostDB
             _columns = columns;
             DatabaseId = databaseId;
             _schema = new TableSchema(this);
+            _parser = new QueryParser(_process);
         }
 
         protected Table(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -77,10 +83,15 @@ namespace FrostDB
                 ("TableStore", typeof(Store));
             _schema = (TableSchema)serializationInfo.GetValue
                 ("TableSchema", typeof(TableSchema));
+            _parser = new QueryParser(_process);
         }
         #endregion
 
         #region Public Methods
+        public void SetProcess(Process process)
+        {
+            _process = process;
+        }
         public bool HasRow(Guid? rowId)
         {
             return _rows.Any(r => r.RowId == rowId);
@@ -130,9 +141,9 @@ namespace FrostDB
 
             var parameters = new List<RowValueQueryParam>();
 
-            if (QueryParser.IsValidQuery(queryString, this))
+            if (_parser.IsValidQuery(queryString, this))
             {
-                parameters = QueryParser.GetParameters(queryString, this);
+                parameters = _parser.GetParameters(queryString, this);
             }
 
             return new QueryRunner().Execute(parameters, rows);
@@ -184,6 +195,11 @@ namespace FrostDB
             // we do a schema check
             if (RowMatchesTableColumns(form.Row))
             {
+                if (DatabaseId != null && _contractValidator is null)
+                {
+                    _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
+                }
+
                 // we make sure this action is okay with the defined contract
                 if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
                 {
@@ -216,6 +232,19 @@ namespace FrostDB
             return form;
         }
 
+        public RowForm GetNewRowForLocal()
+        {
+            RowForm form = null;
+
+            var db = _process.GetDatabase(DatabaseId);
+            if (db.HasParticipant(db.Id))
+            {
+                form = new RowForm(GetNewRow(), db.GetParticipant(db.Id));
+            }
+
+            return form;
+        }
+
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -233,7 +262,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        
+
         private Row GetNewRow()
         {
             List<Guid?> ids = new List<Guid?>();
@@ -345,7 +374,7 @@ namespace FrostDB
                 ColumnName = column.Name
             };
         }
-        
+
         #endregion
     }
 }

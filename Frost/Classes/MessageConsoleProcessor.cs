@@ -15,6 +15,7 @@ namespace FrostDB
         IMessageConsoleProcessorObject _processProcess;
         IMessageConsoleProcessorObject _processDatabase;
         IMessageConsoleProcessorObject _processTable;
+        IMessageConsoleProcessorObject _processPrompt;
         Process _process;
         #endregion
 
@@ -35,6 +36,8 @@ namespace FrostDB
             _processProcess = new MessageConsoleProcessorProcess(_process);
             _processDatabase = new MessageConsoleProcessorDatabase(_process);
             _processTable = new MessageConsoleProcessorTable(_process);
+            _processPrompt = new MessageConsoleProcessorPrompt(_process);
+            
         }
         #endregion
 
@@ -60,6 +63,9 @@ namespace FrostDB
                             break;
                         case MessageActionType.Table:
                             _processTable.Process(m);
+                            break;
+                        case MessageActionType.Prompt:
+                            _processPrompt.Process(m);
                             break;
                     }
                     //m.SendResponse();

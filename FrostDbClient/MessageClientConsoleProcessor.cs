@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FrostCommon;
 using Newtonsoft.Json;
 using FrostCommon.ConsoleMessages;
+using FrostCommon.Net;
 
 namespace FrostDbClient
 {
@@ -49,6 +50,9 @@ namespace FrostDbClient
                 case MessageActionType.Table:
                     HandleTableMessage(m);
                     break;
+                case MessageActionType.Prompt:
+                    HandlePromptMessage(m);
+                    break;
             }
 
             HandleInfoQueue(m.ReferenceMessageId);
@@ -58,6 +62,18 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
+        private void HandlePromptMessage(Message message)
+        {
+            FrostPromptResponse data = JsonConvert.DeserializeObject<FrostPromptResponse>(message.Content);
+
+            if (_info.Responses.ContainsKey(message.ReferenceMessageId))
+            {
+                FrostPromptResponse removed = null;
+                _info.Responses.TryRemove(message.ReferenceMessageId, out removed);
+            }
+
+            _info.Responses.TryAdd(message.ReferenceMessageId, data);
+        }
         private void HandleTableMessage(Message message)
         {
             switch(message.Action)

@@ -5,27 +5,16 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class RowForm : IRowForm
+    public class UpdateQuery : IQuery
     {
         #region Private Fields
-        private Row _row;
-        private Participant _participant;
+        private Process _process;
         #endregion
 
         #region Public Properties
-        public Row Row
-        {
-            get
-            {
-                return _row;
-            }
-            set
-            {
-                _row = value;
-            }
-        }
-
-        public Participant Participant => _participant;
+        public string DatabaseName { get; set; }
+        public string TableName { get; set; }
+        public Process Process { get; set; }
         #endregion
 
         #region Protected Methods
@@ -35,18 +24,25 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public RowForm(Row row, Participant participant)
+        public UpdateQuery(Process process)
         {
-            _row = row;
-            _participant = participant;
+            _process = process;
         }
         #endregion
 
         #region Public Methods
+        public void Execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsValid(string statement)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
         #endregion
-
     }
 }

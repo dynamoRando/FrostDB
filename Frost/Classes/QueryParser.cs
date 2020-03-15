@@ -5,11 +5,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Threading.Tasks;
+using FrostCommon.Net;
+using FrostDB;
 
 namespace FrostDB
 {
     public class QueryParser : IQueryParser
     {
+        private Process _process;
         // will work
         // (FirstName = "Randy"), (Age = "34")
         // won't work
@@ -22,6 +25,13 @@ namespace FrostDB
         // won't work
         // (((FirstName = "Randy") AND (Age = "34")) OR (FirstName = "Megan"))
 
+        #region Constructors
+        public QueryParser(Process process)
+        {
+            _process = process;
+        }
+        #endregion
+
         #region Public Methods
         //static public List<RowValueQueryParam> GetParameters(string condition, Table table)
         //{
@@ -32,7 +42,7 @@ namespace FrostDB
         //    return values;
         //}
 
-        static public List<RowValueQueryParam> GetParameters(string condition, Table table)
+        public List<RowValueQueryParam> GetParameters(string condition, Table table)
         {
             var terms = GetTerms(condition);
             var results = GetColumnsForTerms(table, terms);
@@ -41,7 +51,7 @@ namespace FrostDB
             return values;
         }
 
-        static public bool IsValidQuery(string condition, Table table)
+        public bool IsValidQuery(string condition, Table table)
         {
             bool isValid = false;
 
@@ -55,23 +65,102 @@ namespace FrostDB
             return isValid;
         }
 
-        //static public bool IsValidQuery(string condition, Table table)
-        //{
-        //    bool isValid = false;
+        public bool IsValidCommand(string command, Process process, out IQuery query)
+        {
+            var commands = GetCommands(command);
 
-        //    var terms = GetTerms(condition);
+            string database = commands[0];
+            string statement = commands[1];
 
-        //    isValid = terms.All(term =>
-        //         table.Columns.Any(column => term.Contains(column.Name,
-        //            StringComparison.InvariantCultureIgnoreCase))
-        //    );
+            bool hasDatabase = false;
+            bool parseStatement = false;
 
-        //    return isValid;
-        //}
+            var item = SetQueryType(statement);
+
+            if (database.Contains(QueryKeywords.Use))
+            {
+                hasDatabase = TryParseDatabase(commands[0], item);
+            }
+
+            switch (item)
+            {
+                case SelectQuery s:
+                    parseStatement = s.IsValid(statement);
+                    break;
+                case InsertQuery i:
+                    parseStatement = i.IsValid(statement);
+                    break;
+                case UpdateQuery u:
+                    parseStatement = u.IsValid(statement);
+                    break;
+                case DeleteQuery d:
+                    parseStatement = d.IsValid(statement);
+                    break;
+            }
+
+           
+
+            if (hasDatabase && parseStatement)
+            {
+                query = item;
+                return true;
+            }
+            else
+            {
+                query = null;
+                return false;
+            }
+        }
+
         #endregion
 
         #region Private Methods
-        private static List<RowValueQueryParam> EvaluateTerms(List<string> terms,
+        private IQuery SetQueryType(string statement)
+        {
+            if (statement.Contains(QueryKeywords.Select, StringComparison.OrdinalIgnoreCase))
+            {
+                return new SelectQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Insert, StringComparison.OrdinalIgnoreCase))
+            {
+                return new InsertQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Update, StringComparison.OrdinalIgnoreCase))
+            {
+                return new UpdateQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Delete, StringComparison.OrdinalIgnoreCase))
+            {
+                return new DeleteQuery(_process);
+            }
+
+            return null;
+
+        }
+        private bool TryParseDatabase(string useStatement, IQuery query)
+        {
+            var items = useStatement.Split(" ");
+            var dbName = items[1];
+
+            if (_process.HasDatabase(dbName))
+            {
+                query.DatabaseName = dbName;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private string[] GetCommands(string command)
+        {
+            return command.Split(';');
+        }
+
+        private List<RowValueQueryParam> EvaluateTerms(List<string> terms,
             List<RowValueQueryParam> values)
         {
             var items = new List<RowValueQueryParam>();
@@ -124,7 +213,7 @@ namespace FrostDB
             return items;
         }
 
-        private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
+        private List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
         {
             var results = new List<RowValueQueryParam>();
 
@@ -160,7 +249,7 @@ namespace FrostDB
         //    return results;
         //}
 
-        static private List<string> GetTerms(string query)
+        private List<string> GetTerms(string query)
         {
             var stringValues = new List<string>();
 
@@ -170,7 +259,7 @@ namespace FrostDB
             return stringValues;
         }
 
-        static private List<string> GetQueryValues(string query)
+        private List<string> GetQueryValues(string query)
         {
             var stringValues = new List<string>();
             var returnStrings = new List<string>();
@@ -178,7 +267,7 @@ namespace FrostDB
             var reg = new Regex("\".*?\"");
             reg.Matches(query).ToList().ForEach(m => { stringValues.Add(m.ToString().Trim()); });
 
-            stringValues.ForEach(v => 
+            stringValues.ForEach(v =>
             {
                 returnStrings.Add(v.Replace("\"", ""));
             });

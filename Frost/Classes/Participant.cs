@@ -65,7 +65,8 @@ namespace FrostDB
         // this logic should probably live in a different class
         public bool AcceptsAction(TableAction action)
         {
-            throw new NotImplementedException();
+            // TO DO: fix this
+            return true;
         }
 
         public bool HasAcceptedContract(Guid? databaseId, Process process)
