@@ -6,11 +6,13 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Threading.Tasks;
 using FrostCommon.Net;
+using FrostDB;
 
 namespace FrostDB
 {
     public class QueryParser : IQueryParser
     {
+        private Process _process;
         // will work
         // (FirstName = "Randy"), (Age = "34")
         // won't work
@@ -23,6 +25,13 @@ namespace FrostDB
         // won't work
         // (((FirstName = "Randy") AND (Age = "34")) OR (FirstName = "Megan"))
 
+        #region Constructors
+        public QueryParser(Process process)
+        {
+            _process = process;
+        }
+        #endregion
+
         #region Public Methods
         //static public List<RowValueQueryParam> GetParameters(string condition, Table table)
         //{
@@ -33,7 +42,7 @@ namespace FrostDB
         //    return values;
         //}
 
-        static public List<RowValueQueryParam> GetParameters(string condition, Table table)
+        public List<RowValueQueryParam> GetParameters(string condition, Table table)
         {
             var terms = GetTerms(condition);
             var results = GetColumnsForTerms(table, terms);
@@ -42,7 +51,7 @@ namespace FrostDB
             return values;
         }
 
-        static public bool IsValidQuery(string condition, Table table)
+        public bool IsValidQuery(string condition, Table table)
         {
             bool isValid = false;
 
@@ -56,10 +65,8 @@ namespace FrostDB
             return isValid;
         }
 
-        static public bool IsValidCommand(string command, Process process, out Query query)
+        public bool IsValidCommand(string command, Process process, out IQuery query)
         {
-            query = new Query(process);
-
             var commands = GetCommands(command);
 
             string database = commands[0];
@@ -68,31 +75,34 @@ namespace FrostDB
             bool hasDatabase = false;
             bool parseStatement = false;
 
+            var item = SetQueryType(statement);
+
             if (database.Contains(QueryKeywords.Use))
             {
-                hasDatabase = query.TryParseDatabase(commands[0]);
+                hasDatabase = TryParseDatabase(commands[0], item);
             }
 
-            query.SetQueryType(statement);
-
-            switch (query.QueryType)
+            switch (item)
             {
-                case Enum.QueryType.Select:
-                    parseStatement = query.TryParseSelect(statement, query);
+                case SelectQuery s:
+                    parseStatement = s.TryParse(statement);
                     break;
-                case Enum.QueryType.Insert:
-                    parseStatement = query.TryParseInsert(statement, query);
+                case InsertQuery i:
+                    parseStatement = i.TryParse(statement);
                     break;
-                case Enum.QueryType.Update:
-                    parseStatement = query.TryParseUpdate(statement, query);
+                case UpdateQuery u:
+                    parseStatement = u.TryParse(statement);
                     break;
-                case Enum.QueryType.Delete:
-                    parseStatement = query.TryParseDelete(statement, query);
+                case DeleteQuery d:
+                    parseStatement = d.TryParse(statement);
                     break;
             }
+
+           
 
             if (hasDatabase && parseStatement)
             {
+                query = item;
                 return true;
             }
             else
@@ -105,12 +115,52 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private static string[] GetCommands(string command)
+        private IQuery SetQueryType(string statement)
+        {
+            if (statement.Contains(QueryKeywords.Select, StringComparison.OrdinalIgnoreCase))
+            {
+                return new SelectQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Insert, StringComparison.OrdinalIgnoreCase))
+            {
+                return new InsertQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Update, StringComparison.OrdinalIgnoreCase))
+            {
+                return new UpdateQuery(_process);
+            }
+
+            if (statement.Contains(QueryKeywords.Delete, StringComparison.OrdinalIgnoreCase))
+            {
+                return new DeleteQuery(_process);
+            }
+
+            return null;
+
+        }
+        private bool TryParseDatabase(string useStatement, IQuery query)
+        {
+            var items = useStatement.Split(" ");
+            var dbName = items[1];
+
+            if (_process.HasDatabase(dbName))
+            {
+                query.DatabaseName = dbName;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private string[] GetCommands(string command)
         {
             return command.Split(';');
         }
 
-        private static List<RowValueQueryParam> EvaluateTerms(List<string> terms,
+        private List<RowValueQueryParam> EvaluateTerms(List<string> terms,
             List<RowValueQueryParam> values)
         {
             var items = new List<RowValueQueryParam>();
@@ -163,7 +213,7 @@ namespace FrostDB
             return items;
         }
 
-        private static List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
+        private List<RowValueQueryParam> GetColumnsForTerms(Table table, List<string> terms)
         {
             var results = new List<RowValueQueryParam>();
 
@@ -199,7 +249,7 @@ namespace FrostDB
         //    return results;
         //}
 
-        static private List<string> GetTerms(string query)
+        private List<string> GetTerms(string query)
         {
             var stringValues = new List<string>();
 
@@ -209,7 +259,7 @@ namespace FrostDB
             return stringValues;
         }
 
-        static private List<string> GetQueryValues(string query)
+        private List<string> GetQueryValues(string query)
         {
             var stringValues = new List<string>();
             var returnStrings = new List<string>();
@@ -217,7 +267,7 @@ namespace FrostDB
             var reg = new Regex("\".*?\"");
             reg.Matches(query).ToList().ForEach(m => { stringValues.Add(m.ToString().Trim()); });
 
-            stringValues.ForEach(v => 
+            stringValues.ForEach(v =>
             {
                 returnStrings.Add(v.Replace("\"", ""));
             });

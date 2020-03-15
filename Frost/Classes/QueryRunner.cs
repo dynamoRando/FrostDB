@@ -11,7 +11,7 @@ namespace FrostDB
     public class QueryRunner : IQueryRunner
     {
         #region Public Functions
-        public FrostPromptResponse Execute(Query query)
+        public FrostPromptResponse Execute(IQuery query)
         {
             var response = new FrostPromptResponse();
             response.IsSuccessful = true;

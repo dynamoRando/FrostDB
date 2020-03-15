@@ -13,7 +13,6 @@ namespace FrostDB
 
         #region Public Properties
         public string DatabaseName { get; set; }
-        public QueryType QueryType { get; set; }
         public string TableName { get; set; }
         #endregion
 
@@ -43,29 +42,7 @@ namespace FrostDB
 
         public bool TryParseInsert(string insertStatement, Query query)
         {
-            bool isSuccessful = false;
-            bool hasTable = false;
-
-            var tableName = insertStatement.Split('{', '}')[0];
-            var particpant = insertStatement.Split('{', '}')[1];
-            var items = insertStatement.Split('(', ')');
-
-            var columns = items[0];
-            var values = items[1];
-
-            if (_process.HasDatabase(query.DatabaseName))
-            {
-                var db = _process.GetDatabase(query.DatabaseName);
-                hasTable = db.HasTable(tableName);
-            }
-
-
-
-            /*
-             * INSERT INTO { table } 
-             * VALUES { vals } 
-             * FOR PARTICIPANT { participant }
-             */
+           
             throw new NotImplementedException();
         }
 
@@ -95,28 +72,6 @@ namespace FrostDB
             }
         }
 
-        public void SetQueryType(string statement)
-        {
-            if (statement.Contains(QueryKeywords.Select))
-            {
-                this.QueryType = QueryType.Select;
-            }
-
-            if (statement.Contains(QueryKeywords.Insert))
-            {
-                this.QueryType = QueryType.Insert;
-            }
-
-            if (statement.Contains(QueryKeywords.Update))
-            {
-                this.QueryType = QueryType.Update;
-            }
-
-            if (statement.Contains(QueryKeywords.Delete))
-            {
-                this.QueryType = QueryType.Delete;
-            }
-        }
         #endregion
 
         #region Private Methods

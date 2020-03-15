@@ -118,7 +118,7 @@ namespace FrostForm
 
         private async void buttonExecute_Click(object sender, EventArgs e)
         {
-            var queryText = textQuery.Text;
+            var queryText = "USE " + _currentSelectedDb + ";" + textQuery.Text;
             if (!string.IsNullOrEmpty(queryText))
             {
                 var result = await _app.Client.ExecuteCommandAsync(queryText);

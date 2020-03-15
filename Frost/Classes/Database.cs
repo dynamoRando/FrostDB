@@ -236,7 +236,7 @@ namespace FrostDB
 
         public bool HasTable(string tableName)
         {
-            return _tables.Any(t => t.Name == tableName);
+            return  _tables.Any(t => t.Name.Equals(tableName));
         }
 
         public bool IsCooperative()

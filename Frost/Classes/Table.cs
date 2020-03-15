@@ -23,6 +23,7 @@ namespace FrostDB
         private TableSchema _schema;
         private ContractValidator _contractValidator;
         private Process _process;
+        private QueryParser _parser;
         #endregion
 
         #region Public Properties
@@ -53,6 +54,9 @@ namespace FrostDB
             {
                 _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
             }
+
+            _parser = new QueryParser(_process);
+
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId, Process process) : this(process)
@@ -61,6 +65,7 @@ namespace FrostDB
             _columns = columns;
             DatabaseId = databaseId;
             _schema = new TableSchema(this);
+            _parser = new QueryParser(_process);
         }
 
         protected Table(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -77,6 +82,8 @@ namespace FrostDB
                 ("TableStore", typeof(Store));
             _schema = (TableSchema)serializationInfo.GetValue
                 ("TableSchema", typeof(TableSchema));
+
+            _parser = new QueryParser(_process);
         }
         #endregion
 
@@ -130,9 +137,9 @@ namespace FrostDB
 
             var parameters = new List<RowValueQueryParam>();
 
-            if (QueryParser.IsValidQuery(queryString, this))
+            if (_parser.IsValidQuery(queryString, this))
             {
-                parameters = QueryParser.GetParameters(queryString, this);
+                parameters = _parser.GetParameters(queryString, this);
             }
 
             return new QueryRunner().Execute(parameters, rows);

@@ -20,6 +20,7 @@ namespace FrostDB
         private PartialDatabaseManager _pdbManager;
         private EventManager _eventManager;
         private ProcessLogger _log;
+        private QueryParser _parser;
         #endregion
 
         #region Public Properties
@@ -204,8 +205,8 @@ namespace FrostDB
         {
             FrostPromptResponse response = new FrostPromptResponse();
 
-            Query query;
-            if (QueryParser.IsValidCommand(command, this, out query))
+            IQuery query;
+            if (_parser.IsValidCommand(command, this, out query))
             {
                 response = new QueryRunner().Execute(query);
             }
@@ -365,6 +366,8 @@ namespace FrostDB
 
             partialDbManager.Manager = PartialDatabaseManager;
             partialDbManager.RegisterEvents();
+
+            _parser = new QueryParser(this);
         }
         private void SetConfiguration()
         {
