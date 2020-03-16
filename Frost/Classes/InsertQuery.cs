@@ -1,4 +1,5 @@
-﻿using FrostDB.Interface;
+﻿using FrostCommon.Net;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,16 +39,24 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Execute()
+        public FrostPromptResponse Execute()
         {
             var form = _table.GetNewRowForLocal();
-            
-            foreach(var p in _params)
+
+            foreach (var p in _params)
             {
                 form.Row.AddValue(p.Column.Id, p.Value, p.ColumnName, p.Column.DataType);
             }
 
             _table.AddRow(form);
+
+            var result = new FrostPromptResponse();
+            result.IsSuccessful = true;
+            result.Message = "Insert succeeded";
+            result.NumberOfRowsAffected = 1;
+            result.JsonData = string.Empty;
+
+            return result;
         }
 
         public bool IsValid(string statement)
@@ -66,30 +75,25 @@ namespace FrostDB
 
             if (lines.Count() >= 5)
             {
-                var tableName = lines[1].Trim();
-                var items = lines[3].Trim();
-                var particpant = lines[5].Trim();
 
+                string tableName = string.Empty;
+                string items = string.Empty;
+                string participant = string.Empty;
 
-                var columns = items[0];
-                var values = items[1];
+                ParseStatement(lines, out tableName, out items, out participant);
 
-                if (_process.HasDatabase(DatabaseName))
-                {
-                    _database = (Database)_process.GetDatabase(DatabaseName);
-                    hasTable = _database.HasTable(tableName);
-                }
+                hasTable = CheckHasTable(tableName);
 
                 if (hasTable)
                 {
                     TableName = tableName;
                     _table = _database.GetTable(tableName);
-                    syntaxCorrect = ColumnInsertCorrect(items);
+                    syntaxCorrect = CheckColumnInsertCorrect(items);
                 }
 
                 if (syntaxCorrect)
                 {
-                    hasParticipant = HasPartcipant(particpant);
+                    hasParticipant = CheckHasPartcipant(participant);
                 }
 
             }
@@ -100,10 +104,30 @@ namespace FrostDB
 
             return hasParticipant && syntaxCorrect && hasTable;
         }
+
+
         #endregion
 
         #region Private Methods
-        private bool HasPartcipant(string participantString)
+        private void ParseStatement(string[] lines, out string tableName, out string items, out string participant)
+        {
+            tableName = lines[1].Trim();
+            items = lines[3].Trim();
+            participant = lines[5].Trim();
+        }
+
+        private bool CheckHasTable(string tableName)
+        {
+            var result = false;
+            if (_process.HasDatabase(DatabaseName))
+            {
+                _database = (Database)_process.GetDatabase(DatabaseName);
+                result = _database.HasTable(tableName);
+            }
+
+            return result;
+        }
+        private bool CheckHasPartcipant(string participantString)
         {
             var value = participantString.Trim();
 
@@ -115,7 +139,7 @@ namespace FrostDB
 
             return false;
         }
-        private bool HasColumns(string columnList)
+        private bool CheckHasColumns(string columnList)
         {
             var columns = columnList.Split(',').ToList();
 
@@ -129,7 +153,7 @@ namespace FrostDB
 
             return true;
         }
-        private bool ColumnInsertCorrect(string statement)
+        private bool CheckColumnInsertCorrect(string statement)
         {
             bool hasColumns = false;
             bool valuesCorrect = false;
@@ -142,7 +166,7 @@ namespace FrostDB
             if (items.Count() >= 5)
             {
                 columns = items[1].Trim();
-                hasColumns = HasColumns(columns);
+                hasColumns = CheckHasColumns(columns);
                 if (hasColumns)
                 {
                     ParseColumns(columns);

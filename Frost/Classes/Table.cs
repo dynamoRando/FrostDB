@@ -99,8 +99,11 @@ namespace FrostDB
 
         public Row GetRow(Guid? rowId)
         {
+            var result = new Row();
             var row = _rows.Where(r => r.RowId == rowId).First();
-            return row.Get();
+            result = _store.Rows.Where(r => r.Id == rowId).First();
+
+            return result;
         }
 
         public bool HasCooperativeData()
@@ -129,15 +132,24 @@ namespace FrostDB
             }
             else
             {
-                row = reference.Get();
+                row = reference.Get(_process);
             }
 
             return row;
         }
+
+        public List<Row> GetAllRows()
+        {
+            var result = new List<Row>();
+
+            _rows.ForEach(r => result.Add(r.Get(_process)));
+
+            return result;
+        }
         public List<Row> GetRows(string queryString)
         {
             var rows = new List<Row>();
-            _rows.ForEach(row => { rows.Add(row.Get()); });
+            _rows.ForEach(row => { rows.Add(row.Get(_process)); });
 
             var parameters = new List<RowValueQueryParam>();
 
@@ -192,6 +204,7 @@ namespace FrostDB
 
         public void AddRow(RowForm form)
         {
+            // TO DO: Need to fix some of these items
             // we do a schema check
             if (RowMatchesTableColumns(form.Row))
             {
