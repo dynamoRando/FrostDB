@@ -73,8 +73,13 @@ namespace FrostDB
             info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
-        public Row Get()
+        public Row Get(Process process)
         {
+            if (_process is null)
+            {
+                _process = process;
+            }
+
             var row = new Row();
 
             if (Participant.Location.IsLocal(_process) || Participant.IsDatabase(_databaseId))

@@ -13,14 +13,7 @@ namespace FrostDB
         #region Public Functions
         public FrostPromptResponse Execute(IQuery query)
         {
-            query.Execute();
-
-            var response = new FrostPromptResponse();
-            response.IsSuccessful = true;
-            response.Message = "Message parsed.";
-            response.NumberOfRowsAffected = 0;
-
-            return response;
+            return query.Execute();
         }
 
         public List<Row> Execute(List<RowValueQueryParam> parameters, List<Row> rows)

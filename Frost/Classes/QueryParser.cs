@@ -98,8 +98,6 @@ namespace FrostDB
                     break;
             }
 
-           
-
             if (hasDatabase && parseStatement)
             {
                 query = item;

@@ -135,6 +135,8 @@ namespace FrostForm
                 {
                     textResults.Text = result.Message;
                 }
+
+                textResults.Text += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
             }
         }
 

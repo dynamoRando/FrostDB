@@ -1,4 +1,5 @@
-﻿using FrostDB.Interface;
+﻿using FrostCommon.Net;
+using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,7 +32,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Execute()
+        public FrostPromptResponse Execute()
         {
             throw new NotImplementedException();
         }

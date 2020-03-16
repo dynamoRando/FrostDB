@@ -208,7 +208,8 @@ namespace FrostDB
             IQuery query;
             if (_parser.IsValidCommand(command, this, out query))
             {
-                response = new QueryRunner().Execute(query);
+                var runner = new QueryRunner();
+                response = runner.Execute(query);
             }
             else
             {
