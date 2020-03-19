@@ -16,6 +16,7 @@ namespace FrostDB
          * WHERE { ( condition 1 ) ... }
          */
         #region Private Fields
+        private const int MINIMUM_LINE_COUNT = 4;
         private Process _process;
         private Database _database;
         private Table _table;
@@ -89,7 +90,7 @@ namespace FrostDB
             string columns = string.Empty;
             string tableName = string.Empty;
 
-            if (lines.Count() >= 4)
+            if (lines.Count() >= MINIMUM_LINE_COUNT)
             {
                 ParseLines(lines, out columns, out tableName);
 

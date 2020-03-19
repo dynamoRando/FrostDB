@@ -11,6 +11,7 @@ namespace FrostDB
     public class InsertQuery : IQuery
     {
         #region Private Fields
+        private const int MINIMUM_LINE_COUNT = 5;
         private Process _process;
         private Database _database;
         private Table _table;
@@ -73,7 +74,7 @@ namespace FrostDB
 
             var lines = statement.Split('{', '}');
 
-            if (lines.Count() >= 5)
+            if (lines.Count() >= MINIMUM_LINE_COUNT)
             {
 
                 string tableName = string.Empty;
