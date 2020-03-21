@@ -94,7 +94,7 @@ namespace FrostDB
 
                 if (syntaxCorrect)
                 {
-                    hasParticipant = CheckHasPartcipant(participant);
+                    hasParticipant = CheckHasParticipant(participant);
                 }
 
             }
@@ -128,7 +128,7 @@ namespace FrostDB
 
             return result;
         }
-        private bool CheckHasPartcipant(string participantString)
+        private bool CheckHasParticipant(string participantString)
         {
             var value = participantString.Trim();
 
