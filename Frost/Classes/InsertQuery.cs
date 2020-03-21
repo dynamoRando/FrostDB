@@ -17,6 +17,7 @@ namespace FrostDB
         private Table _table;
         private List<InsertQueryParam> _params;
         private string _participant;
+        private bool _isLocalQuery = false;
         #endregion
 
         #region Public Properties
@@ -42,20 +43,23 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
-            var form = _table.GetNewRowForLocal();
+            FrostPromptResponse result = new FrostPromptResponse();
 
-            foreach (var p in _params)
+            if (_isLocalQuery)
             {
-                form.Row.AddValue(p.Column.Id, p.Value, p.ColumnName, p.Column.DataType);
+                InsertRowLocally();
+
+                result = CreateSuccessResponse();
             }
-
-            _table.AddRow(form);
-
-            var result = new FrostPromptResponse();
-            result.IsSuccessful = true;
-            result.Message = "Insert succeeded";
-            result.NumberOfRowsAffected = 1;
-            result.JsonData = string.Empty;
+            else
+            {
+                // TO DO: Need to write this logic
+                result = new FrostPromptResponse();
+                result.IsSuccessful = false;
+                result.Message = "Cannot insert for remote participant at this time";
+                result.NumberOfRowsAffected = 0;
+                result.JsonData = string.Empty;
+            }
 
             return result;
         }
@@ -94,7 +98,7 @@ namespace FrostDB
 
                 if (syntaxCorrect)
                 {
-                    hasParticipant = CheckHasPartcipant(participant);
+                    hasParticipant = CheckHasParticipant(participant);
                 }
 
             }
@@ -110,6 +114,28 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private static FrostPromptResponse CreateSuccessResponse()
+        {
+            FrostPromptResponse result = new FrostPromptResponse();
+            result.IsSuccessful = true;
+            result.Message = "Insert succeeded";
+            result.NumberOfRowsAffected = 1;
+            result.JsonData = string.Empty;
+            return result;
+        }
+
+        private void InsertRowLocally()
+        {
+            var form = _table.GetNewRowForLocal();
+
+            foreach (var p in _params)
+            {
+                form.Row.AddValue(p.Column.Id, p.Value, p.ColumnName, p.Column.DataType);
+            }
+
+            _table.AddRow(form);
+        }
+
         private void ParseStatement(string[] lines, out string tableName, out string items, out string participant)
         {
             tableName = lines[1].Trim();
@@ -128,14 +154,29 @@ namespace FrostDB
 
             return result;
         }
-        private bool CheckHasPartcipant(string participantString)
+        private bool CheckHasParticipant(string participantString)
         {
             var value = participantString.Trim();
 
-            if (string.Equals(participantString, "local", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(value, "local", StringComparison.OrdinalIgnoreCase))
             {
                 _participant = value;
+                _isLocalQuery = true;
                 return true;
+            }
+            else
+            {
+                var items = value.Split(":");
+                if (items.Count() >= 2)
+                {
+                    var ipAddress = value[0].ToString();
+                    var portNumber = value[1].ToString();
+                    if (_database.AcceptedParticipants.Any(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber))) 
+                    {
+                        _isLocalQuery = false;
+                        return true;
+                    }
+                }
             }
 
             return false;

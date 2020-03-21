@@ -72,33 +72,33 @@ namespace FrostDB
             string database = commands[0];
             string statement = commands[1];
 
-            bool hasDatabase = false;
-            bool parseStatement = false;
+            bool processHasDatabase = false;
+            bool canParseStatement = false;
 
             var item = SetQueryType(statement);
 
             if (database.Contains(QueryKeywords.Use))
             {
-                hasDatabase = TryParseDatabase(commands[0], item);
+                processHasDatabase = TryParseDatabase(commands[0], item);
             }
 
             switch (item)
             {
                 case SelectQuery s:
-                    parseStatement = s.IsValid(statement);
+                    canParseStatement = s.IsValid(statement);
                     break;
                 case InsertQuery i:
-                    parseStatement = i.IsValid(statement);
+                    canParseStatement = i.IsValid(statement);
                     break;
                 case UpdateQuery u:
-                    parseStatement = u.IsValid(statement);
+                    canParseStatement = u.IsValid(statement);
                     break;
                 case DeleteQuery d:
-                    parseStatement = d.IsValid(statement);
+                    canParseStatement = d.IsValid(statement);
                     break;
             }
 
-            if (hasDatabase && parseStatement)
+            if (processHasDatabase && canParseStatement)
             {
                 query = item;
                 return true;

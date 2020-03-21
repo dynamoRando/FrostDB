@@ -12,6 +12,7 @@ using FrostForm;
 using System.Diagnostics;
 using System.IO;
 using static TestHarnessForm.Reader;
+using System.Net;
 
 namespace TestHarnessForm
 {
@@ -42,13 +43,13 @@ namespace TestHarnessForm
             if (!string.IsNullOrEmpty(formConsolePort))
             {
                 var process = new FrostProcess
-            (this.textProcessAddress.Text, Convert.ToInt32(textDataPort.Text),
+            (this.comboProcessAddress.Text, Convert.ToInt32(textDataPort.Text),
             Convert.ToInt32(textConsolePort.Text), textRootDirectory.Text);
 
                 SetupProcess(process);
 
                 (string, int, int, int, string) item;
-                item.Item1 = textProcessAddress.Text;
+                item.Item1 = comboProcessAddress.Text;
                 item.Item2 = Convert.ToInt32(textDataPort.Text);
                 item.Item3 = Convert.ToInt32(textConsolePort.Text);
                 item.Item4 = Convert.ToInt32(textFormConsolePort.Text);
@@ -225,6 +226,27 @@ NotifyFilters.Security;
             textLogFile.InvokeIfRequired(() =>
             {
                 textLogFile.Text = text + Environment.NewLine + textLogFile.Text;
+            });
+        }
+
+        private void TestHarnessForm_Load(object sender, EventArgs e)
+        {
+            GetIPAddresses();
+        }
+
+        private void GetIPAddresses()
+        {
+            comboProcessAddress.InvokeIfRequired(() =>
+            {
+                comboProcessAddress.Items.Clear();
+
+                var addresses = Dns.GetHostByName(Dns.GetHostName()).AddressList.ToList();
+                addresses.ForEach(a => comboProcessAddress.Items.Add(a));
+
+                if (!comboProcessAddress.Items.Contains("127.0.0.1"))
+                {
+                    comboProcessAddress.Items.Add("127.0.0.1");
+                }
             });
         }
     }

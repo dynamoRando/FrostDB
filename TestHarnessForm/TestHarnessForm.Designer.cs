@@ -49,19 +49,20 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textDataPort = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textProcessAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textLogFileLocation = new System.Windows.Forms.TextBox();
-            this.buttonLoadLogFile = new System.Windows.Forms.Button();
-            this.buttonWatchLogFile = new System.Windows.Forms.Button();
             this.textLogFile = new System.Windows.Forms.TextBox();
+            this.buttonWatchLogFile = new System.Windows.Forms.Button();
+            this.buttonLoadLogFile = new System.Windows.Forms.Button();
+            this.textLogFileLocation = new System.Windows.Forms.TextBox();
+            this.comboProcessAddress = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboProcessAddress);
             this.groupBox1.Controls.Add(this.buttonLoadTestSetup);
             this.groupBox1.Controls.Add(this.textLoadTestSetup);
             this.groupBox1.Controls.Add(this.label8);
@@ -82,7 +83,6 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.textDataPort);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textProcessAddress);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(22, 24);
             this.groupBox1.Name = "groupBox1";
@@ -266,14 +266,6 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Data Port";
             // 
-            // textProcessAddress
-            // 
-            this.textProcessAddress.Location = new System.Drawing.Point(75, 27);
-            this.textProcessAddress.Name = "textProcessAddress";
-            this.textProcessAddress.Size = new System.Drawing.Size(146, 23);
-            this.textProcessAddress.TabIndex = 1;
-            this.textProcessAddress.Text = "127.0.0.1";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -296,21 +288,14 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
             // 
-            // textLogFileLocation
+            // textLogFile
             // 
-            this.textLogFileLocation.Location = new System.Drawing.Point(6, 27);
-            this.textLogFileLocation.Name = "textLogFileLocation";
-            this.textLogFileLocation.Size = new System.Drawing.Size(481, 23);
-            this.textLogFileLocation.TabIndex = 0;
-            // 
-            // buttonLoadLogFile
-            // 
-            this.buttonLoadLogFile.Location = new System.Drawing.Point(412, 56);
-            this.buttonLoadLogFile.Name = "buttonLoadLogFile";
-            this.buttonLoadLogFile.Size = new System.Drawing.Size(75, 23);
-            this.buttonLoadLogFile.TabIndex = 1;
-            this.buttonLoadLogFile.Text = "Load";
-            this.buttonLoadLogFile.UseVisualStyleBackColor = true;
+            this.textLogFile.Location = new System.Drawing.Point(6, 85);
+            this.textLogFile.Multiline = true;
+            this.textLogFile.Name = "textLogFile";
+            this.textLogFile.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textLogFile.Size = new System.Drawing.Size(481, 293);
+            this.textLogFile.TabIndex = 3;
             // 
             // buttonWatchLogFile
             // 
@@ -322,14 +307,29 @@
             this.buttonWatchLogFile.UseVisualStyleBackColor = true;
             this.buttonWatchLogFile.Click += new System.EventHandler(this.buttonWatchLogFile_Click);
             // 
-            // textLogFile
+            // buttonLoadLogFile
             // 
-            this.textLogFile.Location = new System.Drawing.Point(6, 85);
-            this.textLogFile.Multiline = true;
-            this.textLogFile.Name = "textLogFile";
-            this.textLogFile.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textLogFile.Size = new System.Drawing.Size(481, 293);
-            this.textLogFile.TabIndex = 3;
+            this.buttonLoadLogFile.Location = new System.Drawing.Point(412, 56);
+            this.buttonLoadLogFile.Name = "buttonLoadLogFile";
+            this.buttonLoadLogFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadLogFile.TabIndex = 1;
+            this.buttonLoadLogFile.Text = "Load";
+            this.buttonLoadLogFile.UseVisualStyleBackColor = true;
+            // 
+            // textLogFileLocation
+            // 
+            this.textLogFileLocation.Location = new System.Drawing.Point(6, 27);
+            this.textLogFileLocation.Name = "textLogFileLocation";
+            this.textLogFileLocation.Size = new System.Drawing.Size(481, 23);
+            this.textLogFileLocation.TabIndex = 0;
+            // 
+            // comboProcessAddress
+            // 
+            this.comboProcessAddress.FormattingEnabled = true;
+            this.comboProcessAddress.Location = new System.Drawing.Point(78, 27);
+            this.comboProcessAddress.Name = "comboProcessAddress";
+            this.comboProcessAddress.Size = new System.Drawing.Size(143, 23);
+            this.comboProcessAddress.TabIndex = 22;
             // 
             // TestHarnessForm
             // 
@@ -340,6 +340,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "TestHarnessForm";
             this.Text = "Test Harness";
+            this.Load += new System.EventHandler(this.TestHarnessForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -364,7 +365,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textDataPort;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textProcessAddress;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textFormConsolePort;
         private System.Windows.Forms.Button buttonLoadTestSetup;
@@ -378,6 +378,7 @@
         private System.Windows.Forms.Button buttonWatchLogFile;
         private System.Windows.Forms.Button buttonLoadLogFile;
         private System.Windows.Forms.TextBox textLogFileLocation;
+        private System.Windows.Forms.ComboBox comboProcessAddress;
     }
 }
 
