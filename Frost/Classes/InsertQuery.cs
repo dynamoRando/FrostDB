@@ -132,7 +132,7 @@ namespace FrostDB
         {
             var value = participantString.Trim();
 
-            if (string.Equals(participantString, "local", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(value, "local", StringComparison.OrdinalIgnoreCase))
             {
                 _participant = value;
                 return true;
