@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using FrostDB.Enum;
 using FrostDB.Extensions;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace FrostDB
 {
@@ -306,6 +307,11 @@ namespace FrostDB
 
         private void AddRowRemotely(RowForm form)
         {
+            var info = JsonConvert.SerializeObject(form);
+
+            var addNewRowMessage = new Message(form.Participant.Location, _process.GetLocation(), info, MessageDataAction.Row.Save_Row, MessageType.Data);
+            _process.Network.SendMessage(addNewRowMessage);
+
             //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
             _rows.Add(GetNewRowReference(form.Row, form.Participant.Location));
 

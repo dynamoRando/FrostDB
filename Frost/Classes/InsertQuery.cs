@@ -133,9 +133,14 @@ namespace FrostDB
 
             if (isOnline)
             {
-
+                var form = _table.GetNewRow(_participant.Id);
+                foreach (var p in _params)
+                {
+                    form.Row.AddValue(p.Column.Id, p.Value, p.ColumnName, p.Column.DataType);
+                }
+                _table.AddRow(form);
+                insertResult = true;
             }
-
 
             return insertResult;
         }
