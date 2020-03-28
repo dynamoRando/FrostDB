@@ -22,5 +22,11 @@ namespace FrostDB
             public const string Update_Row = "Row.Update";
         }
 
+        public class Status
+        {
+            public const string Is_Online = "Status.Is_Online";
+            public const string Is_Online_Response = "Status.Is_Online_Status";
+        }
+
     }
 }

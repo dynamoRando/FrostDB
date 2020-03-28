@@ -37,6 +37,11 @@ namespace FrostDB
         {
             HandleProcessMessage(message);
 
+            if (_process.Network.HasMessageId(message.ReferenceMessageId))
+            {
+                _process.Network.RemoveFromQueue(message.ReferenceMessageId);
+            }
+
             // process data messages
 
             var m = (message as Message);

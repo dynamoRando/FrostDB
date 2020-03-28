@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using FrostCommon;
 using FrostCommon.Net;
 using FrostDB.EventArgs;
@@ -8,6 +9,7 @@ namespace FrostDB
     public class Network
     {
         #region Private Fields
+        private ConcurrentBag<Guid?> _messageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         Server _dataServer;
@@ -17,6 +19,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public const double QUEUE_TIMEOUT = 30.0;
         #endregion
 
         #region Protected Methods
@@ -28,6 +31,7 @@ namespace FrostDB
         #region Constructors
         public Network(Process process)
         {
+            _messageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
             _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
@@ -63,16 +67,31 @@ namespace FrostDB
         {
             _consoleServer.Stop();
         }
-        public void SendMessage(Message message)
+     
+        public Guid? SendMessage(Message message)
         {
-            // this timeout should be part of the Process Configuration
+            Guid? id = message.Id;
+            AddToQueue(id);
             _client.Send(message, ClientConstants.TimeOut);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
+            return id;
         }
-
+        public void AddToQueue(Guid? id)
+        {
+            _messageIds.Add(id);
+        }
+        public void RemoveFromQueue(Guid? id)
+        {
+            _messageIds.TryTake(out id);
+        }
+        public bool HasMessageId(Guid? id)
+        {
+            return _messageIds.TryPeek(out id);
+        }
         #endregion
 
         #region Private Methods
+
         private static MessageSentEventArgs CreateMessageSentEventArgs(Message message)
         {
             string data = Json.SeralizeMessage(message);

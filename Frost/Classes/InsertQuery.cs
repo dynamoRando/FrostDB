@@ -16,7 +16,8 @@ namespace FrostDB
         private Database _database;
         private Table _table;
         private List<InsertQueryParam> _params;
-        private string _participant;
+        private string _participantString;
+        private Participant _participant;
         private bool _isLocalQuery = false;
         #endregion
 
@@ -124,6 +125,21 @@ namespace FrostDB
             return result;
         }
 
+        private bool InsertRowRemote()
+        {
+            bool insertResult = false;
+
+            var isOnline = _participant.IsOnlineAsync().Result;
+
+            if (isOnline)
+            {
+
+            }
+
+
+            return insertResult;
+        }
+
         private void InsertRowLocally()
         {
             var form = _table.GetNewRowForLocal();
@@ -160,7 +176,7 @@ namespace FrostDB
 
             if (string.Equals(value, "local", StringComparison.OrdinalIgnoreCase))
             {
-                _participant = value;
+                _participantString = value;
                 _isLocalQuery = true;
                 return true;
             }
@@ -174,6 +190,7 @@ namespace FrostDB
                     if (_database.AcceptedParticipants.Any(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber))) 
                     {
                         _isLocalQuery = false;
+                        _participant = _database.AcceptedParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber)).First();
                         return true;
                     }
                 }
@@ -286,7 +303,6 @@ namespace FrostDB
                 param.Index = index;
                 _params.Add(param);
             }
-
         }
         #endregion
     }
