@@ -70,6 +70,11 @@ namespace FrostDB
 
                 var db = new PartialDatabase(dbName, process, reference);
 
+                foreach(var table in info.Schema.Tables)
+                {
+                    db.AddTable(table);
+                }
+
                 _databases.Add(db);
                 SaveToDisk(db);
             }

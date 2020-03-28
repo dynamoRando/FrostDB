@@ -30,7 +30,7 @@ namespace FrostDB.Extensions
 
         public static bool IsLocal(this Location location, Process process)
         {
-            if (location.IpAddress.Contains("127.0.0.1") || (location.IpAddress == process.GetLocation().IpAddress && location.PortNumber == process.GetLocation().PortNumber))
+            if (location.IpAddress == process.GetLocation().IpAddress && location.PortNumber == process.GetLocation().PortNumber)
             {
                 return true;
             }
@@ -64,6 +64,7 @@ namespace FrostDB.Extensions
             info.ContractId = contract.ContractId;
             info.Location = contract.DatabaseLocation.Convert();
             info.DatabaseId = contract.DatabaseId;
+            info.Schema = DbSchemaMapper.Map(contract.DatabaseSchema);
 
             return info;
         }

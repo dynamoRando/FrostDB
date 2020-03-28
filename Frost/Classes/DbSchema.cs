@@ -85,7 +85,7 @@ namespace FrostDB
         {
             DatabaseName = database.Name;
             DatabaseId = database.Id;
-            database.Tables.ForEach(table => Tables.Add(table.Schema));
+            database.Tables.ForEach(table => Tables.Add(table.GetSchema()));
             Location = (Location)_process.GetLocation();
         }
         #endregion

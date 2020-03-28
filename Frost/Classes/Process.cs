@@ -163,6 +163,11 @@ namespace FrostDB
             return PartialDatabases.Any(d => d.Name == databaseName);
         }
 
+        public bool HasPartialDatabase(Guid? databaseId)
+        {
+            return PartialDatabases.Any(d => d.Id == databaseId);
+        }
+
         public virtual string GetTableName(string databaseName, Guid? tableId)
         {
             return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
@@ -186,24 +191,27 @@ namespace FrostDB
             return GetDatabase(databaseId).GetTable(tableId).GetRow(rowId);
         }
 
+        public bool IsPartialDatabase(Guid? databaseId)
+        {
+            return PartialDatabases.Any(d => d.Id == databaseId);
+        }
+
+        public bool IsPartialDatabase(string databaseName)
+        {
+            return PartialDatabases.Any(d => d.Name == databaseName);
+        }
+
         public bool HasDatabase(Guid? databaseId)
         {
             return Databases.Any(d => d.Id == databaseId);
         }
-
+        public virtual PartialDatabase GetPartialDatabase(Guid? databaseId)
+        {
+            return PartialDatabases.Where(d => d.Id == databaseId).FirstOrDefault();
+        }
         public virtual PartialDatabase GetPartialDatabase(string databaseName)
         {
-            PartialDatabase db = null;
-
-            PartialDatabases.ForEach(database =>
-            {
-                if (database is PartialDatabase && database.Name == databaseName)
-                {
-                    db = database as PartialDatabase;
-                }
-            });
-
-            return db;
+            return PartialDatabases.Where(d => d.Name == databaseName).FirstOrDefault();
         }
 
         public FrostPromptResponse ExecuteCommand(string command)
@@ -318,7 +326,7 @@ namespace FrostDB
 
         public IDatabase GetDatabase(Guid? databaseId)
         {
-            return Databases.Where(d => d.Id == databaseId).First();
+            return Databases.Where(d => d.Id == databaseId).FirstOrDefault();
         }
 
         public void StartRemoteServer()

@@ -11,7 +11,7 @@ using FrostDB.Extensions;
 namespace FrostDB
 {
     [Serializable]
-    public class Database : 
+    public class Database :
         IDatabase, ISerializable, IFrostObjectGet, IDBObject
     {
         #region Private Fields
@@ -22,7 +22,7 @@ namespace FrostDB
         private ParticipantManager _participantManager;
         private Contract _contract;
         private Process _process;
-        
+
         #endregion
 
         #region Public Properties
@@ -71,7 +71,7 @@ namespace FrostDB
         }
 
         public Database(string name, Guid id,
-            List<Table> tables, DbSchema schema, Process process) : this(name,process)
+            List<Table> tables, DbSchema schema, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
@@ -104,7 +104,7 @@ namespace FrostDB
             {
                 acceptedParticipants = new List<Participant>();
             }
-            
+
             if (pendingParticipants is null)
             {
                 pendingParticipants = new List<Participant>();
@@ -113,7 +113,7 @@ namespace FrostDB
             if (contract is null)
             {
                 contract = new Contract(_process, this);
-            } 
+            }
 
             _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants, _process);
             _contract = contract;
@@ -183,20 +183,17 @@ namespace FrostDB
 
         public void AddPendingParticipant(Participant participant)
         {
-            if (string.IsNullOrEmpty(this.Contract.DatabaseName))
-            {
-                this.UpdateSchema();
+            this.UpdateSchema();
 
-                this.Contract.DatabaseName = this.Name;
-                this.Contract.DatabaseId = this.Id;
-                this.Contract.DatabaseLocation = _process.GetLocation();
-                this.Contract.DatabaseSchema = this.Schema;
-            }
+            this.Contract.DatabaseName = this.Name;
+            this.Contract.DatabaseId = this.Id;
+            this.Contract.DatabaseLocation = _process.GetLocation();
+            this.Contract.DatabaseSchema = this.Schema;
 
             var contractMessage = new Message(
-                destination: participant.Location, 
-                origin: _process.GetLocation(), 
-                messageContent: JsonExt.SeralizeContract(this.Contract), 
+                destination: participant.Location,
+                origin: _process.GetLocation(),
+                messageContent: JsonExt.SeralizeContract(this.Contract),
                 messageAction: MessageDataAction.Contract.Save_Pending_Contract,
                 messageType: MessageType.Data
                 );
@@ -242,7 +239,7 @@ namespace FrostDB
 
         public bool HasTable(string tableName)
         {
-            return  _tables.Any(t => t.Name.Equals(tableName));
+            return _tables.Any(t => t.Name.Equals(tableName));
         }
 
         public bool IsCooperative()
@@ -266,7 +263,7 @@ namespace FrostDB
         #region Private Methods
         private void SetProcessForParticipants()
         {
-            foreach(var p in AcceptedParticipants)
+            foreach (var p in AcceptedParticipants)
             {
                 p.SetProcess(_process);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using FrostDB.EventArgs;
 using FrostDB.Interface;
@@ -34,7 +35,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DataManagerEventManagerDatabase(Process process) 
+        public DataManagerEventManagerDatabase(Process process)
         {
             _process = process;
         }
@@ -180,7 +181,7 @@ namespace FrostDB
             {
                 var args = (MessageRecievedEventArgs)e;
                 string debugMessage = $"Read {args.MessageLength.ToString()} bytes from socket. \n Data : {args.StringMessage}";
-               
+
                 Console.WriteLine(debugMessage);
                 _process.Log.Debug(debugMessage);
 
@@ -298,13 +299,33 @@ namespace FrostDB
             if (e is RowAddedEventArgs)
             {
                 var args = (RowAddedEventArgs)e;
+                IDatabase db;
 
-                IDatabase db = _dataManager.GetDatabase(args.DatabaseId);
-
-                if (db is Database)
+                db = _process.GetPartialDatabase(args.DatabaseId);
+                if (db != null)
                 {
-                    _dataManager.SaveToDisk((Database)db);
+                    string debug = $"Saving partial database to disk on process {_process.GetLocation().IpAddress}: " +
+                     $"{_process.GetLocation().PortNumber.ToString()}";
+
+                    Console.WriteLine(debug);
+                    _process.Log.Debug(debug);
+
+                    _process.PartialDatabaseManager.SaveToDisk((PartialDatabase)db);
                 }
+
+                db = _process.GetDatabase(args.DatabaseId);
+                if (db != null)
+                {
+                    string debug = $"Saving full database to disk on process {_process.GetLocation().IpAddress}: " +
+                        $"{_process.GetLocation().PortNumber.ToString()}";
+
+                    Console.WriteLine(debug);
+                    _process.Log.Debug(debug);
+
+                    _process.DatabaseManager.SaveToDisk((Database)db);
+                }
+
+
             }
         }
 
