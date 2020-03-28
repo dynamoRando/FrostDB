@@ -59,6 +59,7 @@ namespace FrostDB
                 _contract = new Contract(_process);
             }
 
+            SetProcessForParticipants();
         }
         public Database(string name, Guid id,
             List<Table> tables, Process process) : this(name, process)
@@ -66,6 +67,7 @@ namespace FrostDB
             _id = id;
             _tables = tables;
             _schema = new DbSchema(this, _process);
+            SetProcessForParticipants();
         }
 
         public Database(string name, Guid id,
@@ -74,6 +76,7 @@ namespace FrostDB
             _id = id;
             _tables = tables;
             _schema = schema;
+            SetProcessForParticipants();
         }
 
         public Database(string name, Guid id,
@@ -84,6 +87,7 @@ namespace FrostDB
             _tables = tables;
             _schema = schema;
             _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>(), _process);
+            SetProcessForParticipants();
         }
 
         public Database(string name, Guid id,
@@ -115,12 +119,14 @@ namespace FrostDB
             _contract = contract;
 
             _process = process;
+            SetProcessForParticipants();
         }
 
         public Database(string name, Process process) : this(process)
         {
             _name = name;
             _contract = new Contract(_process, this);
+            SetProcessForParticipants();
         }
 
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -258,6 +264,13 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SetProcessForParticipants()
+        {
+            foreach(var p in AcceptedParticipants)
+            {
+                p.SetProcess(_process);
+            }
+        }
         private TableCreatedEventArgs CreateTableCreatedEventArgs(Table table)
         {
             var eventargs = new TableCreatedEventArgs();

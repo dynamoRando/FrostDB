@@ -54,12 +54,19 @@ namespace FrostDB
             }
             else
             {
-                // TO DO: Need to write this logic
-                result = new FrostPromptResponse();
-                result.IsSuccessful = false;
-                result.Message = "Cannot insert for remote participant at this time";
-                result.NumberOfRowsAffected = 0;
-                result.JsonData = string.Empty;
+
+                if (InsertRowRemote())
+                {
+                    result = CreateSuccessResponse();
+                }
+                else
+                {
+                    result = new FrostPromptResponse();
+                    result.IsSuccessful = false;
+                    result.Message = "Remote Insert Failed";
+                    result.NumberOfRowsAffected = 0;
+                    result.JsonData = string.Empty;
+                }
             }
 
             return result;
@@ -190,8 +197,8 @@ namespace FrostDB
                 var items = value.Split(":");
                 if (items.Count() >= 2)
                 {
-                    var ipAddress = value[0].ToString();
-                    var portNumber = value[1].ToString();
+                    var ipAddress = items[0].ToString();
+                    var portNumber = items[1].ToString();
                     if (_database.AcceptedParticipants.Any(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber))) 
                     {
                         _isLocalQuery = false;
