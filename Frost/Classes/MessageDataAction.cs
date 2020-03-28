@@ -19,7 +19,9 @@ namespace FrostDB
         public class Row
         {
             public const string Save_Row = "Row.Save";
+            public const string Save_Row_Response = "Row.Save_Reponse";
             public const string Update_Row = "Row.Update";
+            public const string Update_Row_Response = "Row.Update_Response";
         }
 
         public class Status
