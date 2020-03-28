@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using FrostCommon;
 using FrostDB.Extensions;
+using FrostDB.Classes;
 
 namespace FrostDB
 {
@@ -12,6 +13,7 @@ namespace FrostDB
         #region Private Fields
         private DataMessageProcessor _dataProcessor;
         private ContractMessageProcessor _contractProcessor;
+        private MessageDataRowProcessor _datarowProcesor;
         private Process _process;
         #endregion
 
@@ -28,6 +30,7 @@ namespace FrostDB
             _process = process;
             _dataProcessor = new DataMessageProcessor();
             _contractProcessor = new ContractMessageProcessor(_process);
+            _datarowProcesor = new MessageDataRowProcessor(_process);
         }
         #endregion
 
@@ -36,6 +39,11 @@ namespace FrostDB
         public override void Process(IMessage message)
         {
             HandleProcessMessage(message);
+
+            if (_process.Network.HasMessageId(message.ReferenceMessageId))
+            {
+                _process.Network.RemoveFromQueue(message.ReferenceMessageId);
+            }
 
             // process data messages
 
@@ -47,7 +55,7 @@ namespace FrostDB
                 {
                     if (message.Action.Contains("Row"))
                     {
-                        // call RowProcessor, or whatever
+                        _datarowProcesor.Process(m);
                     }
 
                     if (message.Action.Contains("Contract"))

@@ -32,12 +32,10 @@ namespace FrostForm
 
             _contractInfo = await _app.GetContractInformationAsync(_databaseName);
 
-            if (_contractInfo is null)
+            if (_contractInfo != null)
             {
-                _contractInfo = new ContractInfo();
+                PopulateContractInfo(_contractInfo);
             }
-
-            PopulateContractInfo(_contractInfo);
         }
 
         private void buttonSaveContract_Click(object sender, EventArgs e)

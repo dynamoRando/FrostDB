@@ -7,6 +7,7 @@ using System.Linq;
 using FrostCommon;
 using FrostDB.EventArgs;
 using FrostDB.Extensions;
+using FrostCommon.ConsoleMessages;
 
 namespace FrostDB
 {
@@ -73,10 +74,22 @@ namespace FrostDB
             _name = name;
             _process = process;
             _tables = tables;
+            _id = id;
         }
         #endregion
 
         #region Public Methods
+        public void AddTable(TableSchemaInfo schema)
+        {
+            if (!HasTable(schema.TableName))
+            {
+                var columns = new List<Column>();
+                schema.Columns.ForEach(c => columns.Add(new Column(c.ColumnName, Type.GetType(c.DataType))));
+
+                var table = new Table(schema.TableName, columns, _id, _process);
+                Tables.Add(table);
+            }
+        }
         public string GetTableName(Guid? tableId)
         {
             return Tables.Where(t => t.Id == tableId).First().Name;

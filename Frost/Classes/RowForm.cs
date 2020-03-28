@@ -26,6 +26,9 @@ namespace FrostDB
         }
 
         public Participant Participant => _participant;
+        public string TableName { get; set; }
+        public string DatabaseName { get; set; }
+        public Guid? DatabaseId { get; set; }
         #endregion
 
         #region Protected Methods

@@ -10,6 +10,7 @@ namespace FrostCommon.ConsoleMessages
         #endregion
 
         #region Public Properties
+        public DbSchemaInfo Schema { get; set; }
         public string DatabaseName { get; set; }
         public Guid? ContractId { get; set; }
         public Guid? ContractVersion { get; set; }
@@ -35,6 +36,7 @@ namespace FrostCommon.ConsoleMessages
             TableNames = new List<string>();
             SchemaData = new List<(string, string, List<string>)>();
             Location = new LocationInfo();
+            Schema = new DbSchemaInfo();
         }
 
         public ContractInfo(string databaseName, Guid? databaseId, LocationInfo location) : this()

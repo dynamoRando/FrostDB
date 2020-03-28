@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -16,7 +17,8 @@ namespace FrostDB
         private Database _database;
         private Table _table;
         private List<InsertQueryParam> _params;
-        private string _participant;
+        private string _participantString;
+        private Participant _participant;
         private bool _isLocalQuery = false;
         #endregion
 
@@ -43,6 +45,10 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+            return ExecuteAsync().Result;
+        }
+        public async Task<FrostPromptResponse> ExecuteAsync()
+        {
             FrostPromptResponse result = new FrostPromptResponse();
 
             if (_isLocalQuery)
@@ -53,12 +59,20 @@ namespace FrostDB
             }
             else
             {
-                // TO DO: Need to write this logic
-                result = new FrostPromptResponse();
-                result.IsSuccessful = false;
-                result.Message = "Cannot insert for remote participant at this time";
-                result.NumberOfRowsAffected = 0;
-                result.JsonData = string.Empty;
+                bool remoteInsert = await InsertRowRemote();
+
+                if (remoteInsert)
+                {
+                    result = CreateSuccessResponse();
+                }
+                else
+                {
+                    result = new FrostPromptResponse();
+                    result.IsSuccessful = false;
+                    result.Message = "Remote Insert Failed";
+                    result.NumberOfRowsAffected = 0;
+                    result.JsonData = string.Empty;
+                }
             }
 
             return result;
@@ -124,6 +138,27 @@ namespace FrostDB
             return result;
         }
 
+        private async Task<bool> InsertRowRemote()
+        {
+            bool insertResult = false;
+
+            //var isOnline =  await _participant.IsOnlineAsync();
+            var isOnline = true;
+
+            if (isOnline)
+            {
+                var form = _table.GetNewRow(_participant.Id);
+                foreach (var p in _params)
+                {
+                    form.Row.AddValue(p.Column.Id, p.Value, p.ColumnName, p.Column.DataType);
+                }
+                _table.AddRow(form);
+                insertResult = true;
+            }
+
+            return insertResult;
+        }
+
         private void InsertRowLocally()
         {
             var form = _table.GetNewRowForLocal();
@@ -160,7 +195,7 @@ namespace FrostDB
 
             if (string.Equals(value, "local", StringComparison.OrdinalIgnoreCase))
             {
-                _participant = value;
+                _participantString = value;
                 _isLocalQuery = true;
                 return true;
             }
@@ -169,11 +204,12 @@ namespace FrostDB
                 var items = value.Split(":");
                 if (items.Count() >= 2)
                 {
-                    var ipAddress = value[0].ToString();
-                    var portNumber = value[1].ToString();
+                    var ipAddress = items[0].ToString();
+                    var portNumber = items[1].ToString();
                     if (_database.AcceptedParticipants.Any(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber))) 
                     {
                         _isLocalQuery = false;
+                        _participant = _database.AcceptedParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == Convert.ToInt32(portNumber)).First();
                         return true;
                     }
                 }
@@ -286,7 +322,6 @@ namespace FrostDB
                 param.Index = index;
                 _params.Add(param);
             }
-
         }
         #endregion
     }

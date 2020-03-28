@@ -8,6 +8,8 @@ using System.Runtime.Serialization;
 using FrostDB.Enum;
 using FrostDB.Extensions;
 using System.ComponentModel;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace FrostDB
 {
@@ -88,6 +90,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public TableSchema GetSchema()
+        {
+            var schema = new TableSchema();
+            schema.TableName = this.Name;
+            schema.TableId = this.Id;
+            schema.Columns = this.Columns;
+
+            return schema;
+        }
         public void SetProcess(Process process)
         {
             _process = process;
@@ -204,32 +215,19 @@ namespace FrostDB
 
         public void AddRow(RowForm form)
         {
-            // TO DO: Need to fix some of these items
-            // we do a schema check
-            if (RowMatchesTableColumns(form.Row))
+            if (CheckInsertRules(form))
             {
-                if (DatabaseId != null && _contractValidator is null)
+                if (form.Participant.Location.IsLocal(_process) || form.Participant.IsDatabase(DatabaseId))
                 {
-                    _contractValidator = new ContractValidator(_process.GetDatabase(DatabaseId).Contract, DatabaseId);
+                    AddRowLocally(form.Row);
                 }
-
-                // we make sure this action is okay with the defined contract
-                if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
+                else
                 {
-                    // we make sure the participant accepts this action if they're remote
-                    if (form.Participant.AcceptsAction(TableAction.AddRow))
-                    {
-                        if (form.Participant.Location.IsLocal(_process) || form.Participant.IsDatabase(DatabaseId))
-                        {
-                            AddRowLocally(form.Row);
-                        }
-                        else
-                        {
-                            AddRowRemotely(form);
-                        }
-                    }
+                    AddRowRemotely(form);
                 }
             }
+
+            _process.EventManager.TriggerEvent(EventName.Row.Added, CreateRowAddedEventArgs(form.Row));
         }
 
         public RowForm GetNewRow(Guid? participantId)
@@ -240,6 +238,8 @@ namespace FrostDB
             if (db.HasParticipant(participantId))
             {
                 form = new RowForm(GetNewRow(), db.GetParticipant(participantId));
+                form.DatabaseName = db.Name;
+                form.TableName = this.Name;
             }
 
             return form;
@@ -275,6 +275,50 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private bool CheckInsertRules(RowForm form)
+        {
+            return true;
+
+            // TO DO: FIX THIS
+            bool insertAllowed = false;
+
+            bool isLocalInsert = form.Participant.Location.IsLocal(_process);
+
+            if (isLocalInsert)
+            {
+                if (RowMatchesTableColumns(form.Row))
+                {
+                    if (DatabaseId != null && _contractValidator is null)
+                    {
+                        if (_process.HasDatabase(form.DatabaseName))
+                        {
+                            _contractValidator = new ContractValidator(_process.GetDatabase(form.DatabaseName).Contract, DatabaseId);
+                        }
+
+                        if (_process.HasPartialDatabase(form.DatabaseName))
+                        {
+                            _contractValidator = new ContractValidator(_process.GetPartialDatabase(form.DatabaseName).Contract, DatabaseId);
+                        }
+                    }
+
+                    // we make sure this action is okay with the defined contract
+                    if (_contractValidator.ActionIsValidForParticipant(TableAction.AddRow, form.Participant))
+                    {
+                        // we make sure the participant accepts this action if they're remote
+                        if (form.Participant.AcceptsAction(TableAction.AddRow))
+                        {
+                            insertAllowed = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                insertAllowed = true;
+            }
+
+            return insertAllowed;
+        }
 
         private Row GetNewRow()
         {
@@ -292,8 +336,10 @@ namespace FrostDB
             {
                 var x = GetColumn(c);
 
-                isMatch = this.Columns.Any(tc => tc.Name == x.Name &&
-                tc.DataType == x.DataType);
+                if (x != null)
+                {
+                    isMatch = this.Columns.Any(tc => tc.Name == x.Name && tc.DataType == x.DataType);
+                }
             });
 
             if (!(row.ColumnIds.Count == this.Columns.Count))
@@ -306,6 +352,11 @@ namespace FrostDB
 
         private void AddRowRemotely(RowForm form)
         {
+            var info = JsonConvert.SerializeObject(form);
+
+            var addNewRowMessage = new Message(form.Participant.Location, _process.GetLocation(), info, MessageDataAction.Row.Save_Row, MessageType.Data);
+            _process.Network.SendMessage(addNewRowMessage);
+
             //Client.SaveRow(participant.Location, DatabaseId, row.TableId, row);
             _rows.Add(GetNewRowReference(form.Row, form.Participant.Location));
 
@@ -315,6 +366,11 @@ namespace FrostDB
 
         private void AddRowLocally(Row row)
         {
+            string debug = $"Adding row to process {_process.GetLocation().IpAddress} : {_process.GetLocation().PortNumber.ToString()}";
+
+            Debug.WriteLine(debug);
+            _process.Log.Debug(debug);
+
             _store.AddRow(row);
             _rows.Add(GetNewRowReference(row));
 

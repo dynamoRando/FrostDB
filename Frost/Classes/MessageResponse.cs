@@ -29,13 +29,19 @@ namespace FrostDB
         {
             Message response = null;
 
-            switch(message.Action)
+            switch (message.Action)
             {
                 case MessageDataAction.Contract.Save_Pending_Contract:
                     response = BuildSaveContractMessageReceived(message);
                     break;
                 case MessageDataAction.Contract.Accept_Pending_Contract:
                     response = BuildContractAcceptPendingRecieved(message);
+                    break;
+                case MessageDataAction.Status.Is_Online:
+                    response = BuildIsOnlineResponse(message);
+                    break;
+                case MessageDataAction.Row.Save_Row:
+                    response = BuildRowSaveResponse(message);
                     break;
                 default:
                     throw new InvalidOperationException("Unknown Message");
@@ -46,6 +52,32 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private Message BuildRowSaveResponse(Message message)
+        {
+            Message response = new Message(
+         destination: message.Origin,
+         origin: _process.GetLocation(),
+         messageContent: string.Empty,
+         messageAction: MessageDataAction.Row.Save_Row_Response,
+         referenceMessageId: message.Id,
+         messageType: message.MessageType
+         );
+
+            return response;
+        }
+        private Message BuildIsOnlineResponse(Message message)
+        {
+            Message response = new Message(
+         destination: message.Origin,
+         origin: _process.GetLocation(),
+         messageContent: string.Empty,
+         messageAction: MessageDataAction.Status.Is_Online_Response,
+         referenceMessageId: message.Id,
+         messageType: message.MessageType
+         );
+
+            return response;
+        }
         private Message BuildContractAcceptPendingRecieved(Message message)
         {
             Message response = new Message(

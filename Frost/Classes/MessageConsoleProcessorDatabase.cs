@@ -148,6 +148,7 @@ namespace FrostDB
             info.DatabaseName = db.Name;
             info.DatabaseId = db.Id;
             db.Tables.ForEach(t => info.TableNames.Add(t.Name));
+            info.Schema = DbSchemaMapper.Map(db.Schema);
 
             foreach (var p in db.Contract.ContractPermissions)
             {

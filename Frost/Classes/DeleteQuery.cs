@@ -3,6 +3,7 @@ using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -38,6 +39,11 @@ namespace FrostDB
         }
 
         public bool IsValid(string statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FrostPromptResponse> ExecuteAsync()
         {
             throw new NotImplementedException();
         }

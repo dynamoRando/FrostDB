@@ -3,6 +3,7 @@ using FrostDB.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB.Interface
 {
@@ -13,5 +14,6 @@ namespace FrostDB.Interface
         public Process Process { get; set; }
         public bool IsValid(string statement);
         public FrostPromptResponse Execute();
+        public Task<FrostPromptResponse> ExecuteAsync();
     }
 }

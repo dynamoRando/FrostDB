@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -177,6 +178,11 @@ namespace FrostDB
         private void SetDatabase()
         {
             _database = (Database)_process.GetDatabase(DatabaseName);
+        }
+
+        public Task<FrostPromptResponse> ExecuteAsync()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
