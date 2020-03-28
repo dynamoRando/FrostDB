@@ -231,6 +231,8 @@ namespace FrostDB
                     }
                 }
             }
+
+            _process.EventManager.TriggerEvent(EventName.Row.Added, CreateRowAddedEventArgs(form.Row));
         }
 
         public RowForm GetNewRow(Guid? participantId)
@@ -241,6 +243,8 @@ namespace FrostDB
             if (db.HasParticipant(participantId))
             {
                 form = new RowForm(GetNewRow(), db.GetParticipant(participantId));
+                form.DatabaseName = db.Name;
+                form.TableName = this.Name;
             }
 
             return form;

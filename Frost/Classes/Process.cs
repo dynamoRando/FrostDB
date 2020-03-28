@@ -158,6 +158,11 @@ namespace FrostDB
             return Databases.Any(d => d.Name == databaseName);
         }
 
+        public bool HasPartialDatabase(string databaseName)
+        {
+            return PartialDatabases.Any(d => d.Name == databaseName);
+        }
+
         public virtual string GetTableName(string databaseName, Guid? tableId)
         {
             return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
