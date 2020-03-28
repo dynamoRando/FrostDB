@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FrostDB
 {
@@ -44,6 +45,10 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+            return ExecuteAsync().Result;
+        }
+        public async Task<FrostPromptResponse> ExecuteAsync()
+        {
             FrostPromptResponse result = new FrostPromptResponse();
 
             if (_isLocalQuery)
@@ -54,8 +59,9 @@ namespace FrostDB
             }
             else
             {
+                bool remoteInsert = await InsertRowRemote();
 
-                if (InsertRowRemote())
+                if (remoteInsert)
                 {
                     result = CreateSuccessResponse();
                 }
@@ -132,11 +138,12 @@ namespace FrostDB
             return result;
         }
 
-        private bool InsertRowRemote()
+        private async Task<bool> InsertRowRemote()
         {
             bool insertResult = false;
 
-            var isOnline = _participant.IsOnlineAsync().Result;
+            //var isOnline =  await _participant.IsOnlineAsync();
+            var isOnline = true;
 
             if (isOnline)
             {
