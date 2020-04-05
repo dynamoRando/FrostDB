@@ -48,7 +48,7 @@ There are various other test projects I've included in the solution as well as g
 This was an experimental look at Microsoft's Blazor applications in an attempt to make the FrostForm component web-based and cross platform.
 
 ### FrostCommon
-A library meant to hold common objects that a Frost instance and affliated components will use for communication purposes
+A library meant to hold common objects that a Frost instance and affliated components will use for communication purposes.
 
 ### FrostDB
 The root libary that is Frost.
