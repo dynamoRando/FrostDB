@@ -5,20 +5,23 @@ using System.Text;
 using FrostCommon;
 using FrostDB.Extensions;
 using FrostDB.Classes;
+using System.Collections.Concurrent;
 
 namespace FrostDB
 {
     public class MessageDataProcessor : BaseMessageProcessor
     {
         #region Private Fields
-        private DataMessageProcessor _dataProcessor;
-        private ContractMessageProcessor _contractProcessor;
-        private MessageDataRowProcessor _datarowProcesor;
+        private MessageDataProcessorData _dataProcessor;
+        private MessageDataProcessorContract _contractProcessor;
+        private MessageDataProcessorRow _datarowProcesor;
+        private MessageDataProcessorProcess _processProcessor;
         private Process _process;
         #endregion
 
         #region Public Properties
         public int PortNumber { get; set; }
+        public ConcurrentDictionary<Guid?, Message> IncomingMessages { get; set; }
         #endregion
 
         #region Events
@@ -28,9 +31,11 @@ namespace FrostDB
         public MessageDataProcessor(Process process) : base(process)
         {
             _process = process;
-            _dataProcessor = new DataMessageProcessor();
-            _contractProcessor = new ContractMessageProcessor(_process);
-            _datarowProcesor = new MessageDataRowProcessor(_process);
+            _dataProcessor = new MessageDataProcessorData();
+            _contractProcessor = new MessageDataProcessorContract(_process);
+            _datarowProcesor = new MessageDataProcessorRow(_process);
+            _processProcessor = new MessageDataProcessorProcess(_process);
+            IncomingMessages = new ConcurrentDictionary<Guid?, Message>();
         }
         #endregion
 
@@ -40,27 +45,34 @@ namespace FrostDB
         {
             HandleProcessMessage(message);
 
-            if (_process.Network.HasMessageId(message.ReferenceMessageId))
+            var m = (message as Message);
+
+            if (HandleMessageQueue(message))
             {
-                _process.Network.RemoveFromQueue(message.ReferenceMessageId);
+                m.HasProcessRequestor = true;
             }
 
             // process data messages
-
-            var m = (message as Message);
-
             if (m.MessageType == MessageType.Data)
             {
                 if (message.ReferenceMessageId.Value == Guid.Empty)
                 {
-                    if (message.Action.Contains("Row"))
+                    var items = message.Action.Split('.');
+                    var actionType = items[0];
+
+                    if (actionType.Contains("Row"))
                     {
                         _datarowProcesor.Process(m);
                     }
 
-                    if (message.Action.Contains("Contract"))
+                    if (actionType.Contains("Contract"))
                     {
                         _contractProcessor.Process(m);
+                    }
+
+                    if (actionType.Contains("Process"))
+                    {
+                        _processProcessor.Process(m);
                     }
 
                     m.SendResponse(new MessageResponse(_process), _process);
@@ -80,7 +92,22 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        
+        private bool HandleMessageQueue(IMessage message)
+        {
+            if (_process.Network.HasMessageId(message.ReferenceMessageId))
+            {
+                _process.Network.RemoveFromQueue(message.ReferenceMessageId);
+                return true;
+            }
+
+            if (_process.Network.HasMessageId(message.RequestInformationId))
+            {
+                _process.Network.RemoveFromQueueToken(message.RequestInformationId);
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
     }

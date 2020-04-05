@@ -111,8 +111,10 @@ namespace FrostDB
         public Row GetRow(Guid? rowId)
         {
             var result = new Row();
-            var row = _rows.Where(r => r.RowId == rowId).First();
-            result = _store.Rows.Where(r => r.Id == rowId).First();
+            var row = new RowReference();
+
+            row = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
+            result = _store.Rows.Where(r => r.Id == rowId).FirstOrDefault();
 
             return result;
         }
@@ -219,10 +221,11 @@ namespace FrostDB
             {
                 if (form.Participant.Location.IsLocal(_process) || form.Participant.IsDatabase(DatabaseId))
                 {
-                    AddRowLocally(form.Row);
+                    AddRowLocally(form);
                 }
                 else
                 {
+                    form.IsRemoteInsert = true;
                     AddRowRemotely(form);
                 }
             }
@@ -328,6 +331,14 @@ namespace FrostDB
             return new Row(ids, this.Id);
         }
 
+        private Row GetNewRowWithId(Guid? rowId)
+        {
+            List<Guid?> ids = new List<Guid?>();
+            this.Columns.ForEach(c => ids.Add(c.Id));
+
+            return new Row(ids, this.Id, rowId);
+        }
+
         private bool RowMatchesTableColumns(Row row)
         {
             bool isMatch = true;
@@ -364,8 +375,10 @@ namespace FrostDB
                    CreateRowAddedEventArgs(form.Row));
         }
 
-        private void AddRowLocally(Row row)
+        private void AddRowLocally(RowForm form)
         {
+            var row = form.Row;
+
             string debug = $"Adding row to process {_process.GetLocation().IpAddress} : {_process.GetLocation().PortNumber.ToString()}";
 
             Debug.WriteLine(debug);

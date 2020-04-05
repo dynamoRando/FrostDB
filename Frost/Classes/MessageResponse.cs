@@ -43,8 +43,14 @@ namespace FrostDB
                 case MessageDataAction.Row.Save_Row:
                     response = BuildRowSaveResponse(message);
                     break;
+                case MessageDataAction.Process.Get_Remote_Row:
+                    response = BuildGetRemoteRowResponse(message);
+                    break;
+                case MessageDataAction.Process.Remote_Row_Information:
+                    response = BuildRemoteRowInfoResponse(message);
+                    break;
                 default:
-                    throw new InvalidOperationException("Unknown Message");
+                    throw new InvalidOperationException("Unknown Message To Respond To");
             }
 
             return response;
@@ -52,6 +58,32 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private Message BuildRemoteRowInfoResponse(Message message)
+        {
+            Message response = new Message(
+     destination: message.Origin,
+     origin: _process.GetLocation(),
+     messageContent: string.Empty,
+     messageAction: MessageDataAction.Process.Remote_Row_Information_Response,
+     referenceMessageId: message.Id,
+     messageType: message.MessageType
+     );
+
+            return response;
+        }
+        private Message BuildGetRemoteRowResponse(Message message)
+        {
+            Message response = new Message(
+       destination: message.Origin,
+       origin: _process.GetLocation(),
+       messageContent: string.Empty,
+       messageAction: MessageDataAction.Process.Get_Remote_Row_Response,
+       referenceMessageId: message.Id,
+       messageType: message.MessageType
+       );
+
+            return response;
+        }
         private Message BuildRowSaveResponse(Message message)
         {
             Message response = new Message(

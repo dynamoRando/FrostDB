@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using FrostCommon;
 using FrostCommon.Net;
 using FrostDB.EventArgs;
@@ -10,6 +12,7 @@ namespace FrostDB
     {
         #region Private Fields
         private ConcurrentBag<Guid?> _messageIds;
+        private ConcurrentBag<Guid?> _requestMessageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         Server _dataServer;
@@ -20,6 +23,8 @@ namespace FrostDB
 
         #region Public Properties
         public const double QUEUE_TIMEOUT = 30.0;
+        public MessageDataProcessor DataProcessor => _messageDataProcessor;
+        public MessageConsoleProcessor ConsoleProcessor => _messageConsoleProcessor;
         #endregion
 
         #region Protected Methods
@@ -32,6 +37,7 @@ namespace FrostDB
         public Network(Process process)
         {
             _messageIds = new ConcurrentBag<Guid?>();
+            _requestMessageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
             _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
@@ -76,6 +82,12 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return id;
         }
+        public void SendMessageRequestId(Message message, Guid? requestId)
+        {
+            _requestMessageIds.Add(requestId);
+            _client.Send(message, ClientConstants.TimeOut);
+            _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
+        }
         public void AddToQueue(Guid? id)
         {
             _messageIds.Add(id);
@@ -84,14 +96,92 @@ namespace FrostDB
         {
             _messageIds.TryTake(out id);
         }
+
+        public void RemoveFromQueueToken(Guid? id)
+        {
+            _requestMessageIds.TryTake(out id);
+        }
         public bool HasMessageId(Guid? id)
         {
             return _messageIds.TryPeek(out id);
         }
+
+        public bool HasMessageRequest(Guid? id)
+        {
+            return _requestMessageIds.TryPeek(out id);
+        }
+
+        public async Task<bool> WaitForMessageTokenAsync(Guid? token)
+        {
+            return await Task.Run(() => WaitForMessageToken(token));
+        }
+
+        public async Task<bool> WaitForMessageAsync(Guid? id)
+        {
+            return await Task.Run(() => WaitForMessage(id));
+        }
+
         #endregion
 
         #region Private Methods
+        private bool WaitForMessageToken(Guid? id)
+        {
+            Stopwatch watch = new Stopwatch();
+            bool responseRecieved = false;
 
+            watch.Start();
+
+            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
+            {
+                if (!_requestMessageIds.TryPeek(out id))
+                {
+                    responseRecieved = true;
+
+                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+
+                    break;
+
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            watch.Stop();
+
+            return responseRecieved;
+        }
+        private bool WaitForMessage(Guid? id)
+        {
+            Stopwatch watch = new Stopwatch();
+            bool responseRecieved = false;
+
+            watch.Start();
+
+            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
+            {
+                if (!HasMessageId(id))
+                {
+                    responseRecieved = true;
+
+                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+
+                    break;
+
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            watch.Stop();
+
+            return responseRecieved;
+        }
         private static MessageSentEventArgs CreateMessageSentEventArgs(Message message)
         {
             string data = Json.SeralizeMessage(message);

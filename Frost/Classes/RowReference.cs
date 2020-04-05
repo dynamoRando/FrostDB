@@ -3,6 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FrostDB.Extensions;
+using FrostCommon;
+using FrostCommon.DataMessages;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using log4net.Util;
 
 namespace FrostDB
 {
@@ -88,7 +94,8 @@ namespace FrostDB
             }
             else
             {
-                //row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
+                row = GetRowAsync().Result;
+                
             }
 
             return row;
@@ -96,6 +103,44 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<Row> GetRowAsync() 
+        {
+            Row row = new Row();
+            
+            RemoteRowInfo request = new RemoteRowInfo();
+            request.DatabaseId = this.DatabaseId;
+            var db = _process.GetDatabase(this.DatabaseId);
+            request.DatabaseName = db.Name;
+            request.TableId = this.TableId;
+            request.TableName = db.GetTableName(this.TableId);
+            request.RowId = this.RowId;
+
+            string content = JsonConvert.SerializeObject(request);
+
+            Guid? requestId = Guid.NewGuid();
+            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            _process.Network.SendMessageRequestId(getRowMessage, requestId);
+            bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.IncomingMessages.ContainsKey(requestId))
+                {
+                    Message rowMessage;
+                    _process.Network.DataProcessor.IncomingMessages.TryRemove(requestId, out rowMessage);
+
+                    if (rowMessage != null)
+                    {
+                        row = rowMessage.GetContentAs<Row>();
+                    }
+
+                }
+            }
+
+            return row;
+        }
+
+       
         #endregion
 
     }

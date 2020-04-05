@@ -15,5 +15,7 @@ namespace FrostCommon
         string Content { get; }
         string Action { get; set; }
         string ContentType { get; set; }
+        bool HasProcessRequestor { get; set; }
+        Guid? RequestInformationId { get; set; }
     }
 }

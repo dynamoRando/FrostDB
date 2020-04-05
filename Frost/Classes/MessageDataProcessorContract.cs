@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FrostDB
 {
-    public class ContractMessageProcessor 
+    public class MessageDataProcessorContract 
     {
         #region Private Fields
         Process _process;
@@ -23,7 +23,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ContractMessageProcessor(Process process)
+        public MessageDataProcessorContract(Process process)
         {
             _process = process;
         }
