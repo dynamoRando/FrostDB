@@ -76,6 +76,6 @@ This project is being constructed in Visual Studio Commmunity 2019 Preview. It i
 
 I would love for this project to be cross platform. It is currently being written in .NET Core 3.1, where applicable. It is in C#, though I had debated awhile back rebooting the project in Rust. Feel free to do so if you want!
 
-This project is being written by a SQL Server developer, and as such, is very SQL-centric. In the future I may either add on or reboot this project to be more No-SQL like.
+This project is being written by a SQL Server developer, and as such, is very SQL-centric. In the future I may either add on or reboot this project to be more NoSQL-like.
 
 Originally this project was named "Whiskey Tango Foxtrot" because I didn't know what I was doing. It was then shortened to "Foxtrot" but to avoid confusion with the Firefox browser I randomly chose "Frost" as a replacement name.
