@@ -65,6 +65,18 @@ The client library meant to be used for developers to connect to Frost and perfo
 ### TestHarnessForm
 A WinForm I created to facilitate testing of various Frost components.
 
+# Random Thoughts
+There are various projects that are working on trying to solve ownership of user data, or at least tangentially. Off the top of my head I am aware of -
+
+* [SOLID](https://solidproject.org/)
+* [Ocean Protocol](https://oceanprotocol.com/)
+* [Blockstack](https://blockstack.org/)
+* [IndieWeb](https://indieweb.org/)
+
+I think this is great, and I make no bones that others may eventually have the right idea. For me, this is my personal take on trying to solve the problem.
+
+I personally try to avoid leveraging blockchain based solutions. I am not anti-blockchain, I just believe there are only certain use cases for it. Some thoughts [here](https://www.youtube.com/watch?v=15RTC22Z2xI) and [here](https://www.linkedin.com/pulse/blockchain-emperor-has-clothes-dr-stephen-norman/).
+
 # Disclaimers
 This project is a proof of concept project and is very much still under development. Nothing will likely work right completely if you use it. **Don't** use this in any production environment what so ever. This project is a **proof of concept.** It's meant to illustrate the idea about giving users ownership of their data; but has not been engineered at all with security in mind.
 
