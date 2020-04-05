@@ -60,7 +60,7 @@ namespace FrostDB
                 // singal that we got the data
                 _process.Network.RemoveFromQueueToken(message.RequestInformationId);
                 // add it to the dictionary so that the caller can parse it
-                _process.Network.DataProcessor.IncomingMessages.TryAdd(message.RequestInformationId,message);
+                _process.Network.DataProcessor.IncomingMessages.TryAdd(message.RequestInformationId, message);
 
             }
 

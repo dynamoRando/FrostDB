@@ -29,6 +29,7 @@ namespace FrostDB
         public string TableName { get; set; }
         public string DatabaseName { get; set; }
         public Guid? DatabaseId { get; set; }
+        public bool IsRemoteInsert { get; set; }
         #endregion
 
         #region Protected Methods

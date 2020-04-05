@@ -100,6 +100,12 @@ namespace FrostDB
                 return true;
             }
 
+            if (_process.Network.HasMessageId(message.RequestInformationId))
+            {
+                _process.Network.RemoveFromQueueToken(message.RequestInformationId);
+                return true;
+            }
+
             return false;
         }
         #endregion

@@ -12,6 +12,7 @@ namespace FrostDB
     {
         #region Private Fields
         private ConcurrentBag<Guid?> _messageIds;
+        private ConcurrentBag<Guid?> _requestMessageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         Server _dataServer;
@@ -36,6 +37,7 @@ namespace FrostDB
         public Network(Process process)
         {
             _messageIds = new ConcurrentBag<Guid?>();
+            _requestMessageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
             _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
@@ -82,7 +84,7 @@ namespace FrostDB
         }
         public void SendMessageRequestId(Message message, Guid? requestId)
         {
-            AddToQueue(requestId);
+            _requestMessageIds.Add(requestId);
             _client.Send(message, ClientConstants.TimeOut);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
         }
@@ -97,11 +99,16 @@ namespace FrostDB
 
         public void RemoveFromQueueToken(Guid? id)
         {
-            _messageIds.TryTake(out id);
+            _requestMessageIds.TryTake(out id);
         }
         public bool HasMessageId(Guid? id)
         {
             return _messageIds.TryPeek(out id);
+        }
+
+        public bool HasMessageRequest(Guid? id)
+        {
+            return _requestMessageIds.TryPeek(out id);
         }
 
         public async Task<bool> WaitForMessageTokenAsync(Guid? token)
@@ -126,7 +133,7 @@ namespace FrostDB
 
             while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
             {
-                if (!HasMessageId(id))
+                if (!_requestMessageIds.TryPeek(out id))
                 {
                     responseRecieved = true;
 
