@@ -10,7 +10,7 @@ FrostDB is meant to be a friction-less as possible drop-in replacement for appli
 For application developers, they will still need to define their database schema, and they will need to define a **data contract** which is an agreement between them and their users on what data will be stored, and where. The data contract is a public document that is sent to all users that contains the entire database schema and the permissions for all parts of the schema.
 
 # How Frost Works (Or At Least, How I Imagine It To)
-When you create a database, you define the tables and columns in it. In Frost, you also define a "data contract" between you and your users. A data contract contains the entire schema of your database system, the permissions for every object, and more imporantly, where the data in your database will be stored (either locally on your Frost copy, or on your users copy of the Frost database.)
+When you create a database, you define the tables and columns in it. In Frost, you also define a "data contract" between you and your users. A data contract contains the entire schema of your database system, the permissions for every object, and more importantly, where the data in your database will be stored (either locally on your Frost copy, or on your users copy of the Frost database.)
 
 You also define "participants" or users for your database. When you add a participant, you add an IP Address and Port Number of a user who is also hosting FrostDB.
 
