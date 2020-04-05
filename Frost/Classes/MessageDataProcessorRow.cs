@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FrostDB.Classes
 {
-    public class MessageDataRowProcessor
+    public class MessageDataProcessorRow
     {
 
 		#region Private Fields
@@ -23,7 +23,7 @@ namespace FrostDB.Classes
 		#endregion
 
 		#region Constructors
-		public MessageDataRowProcessor(Process process)
+		public MessageDataProcessorRow(Process process)
 		{
 			_process = process;
 		}

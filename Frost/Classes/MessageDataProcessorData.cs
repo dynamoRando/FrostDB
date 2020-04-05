@@ -4,7 +4,7 @@ using FrostCommon;
 
 namespace FrostDB
 {
-    public class DataMessageProcessor : IMessageProcessor
+    public class MessageDataProcessorData : IMessageProcessor
     {
         #region Private Fields
         private DatabaseManager _dbManager;
@@ -18,7 +18,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DataMessageProcessor()
+        public MessageDataProcessorData()
         {
             //_dbManager = new DatabaseManager();
         }

@@ -12,10 +12,10 @@ namespace FrostDB
     public class MessageDataProcessor : BaseMessageProcessor
     {
         #region Private Fields
-        private DataMessageProcessor _dataProcessor;
-        private ContractMessageProcessor _contractProcessor;
-        private MessageDataRowProcessor _datarowProcesor;
-        private ProcessMessageProcessor _processProcessor;
+        private MessageDataProcessorData _dataProcessor;
+        private MessageDataProcessorContract _contractProcessor;
+        private MessageDataProcessorRow _datarowProcesor;
+        private MessageDataProcessorProcess _processProcessor;
         private Process _process;
         #endregion
 
@@ -31,10 +31,10 @@ namespace FrostDB
         public MessageDataProcessor(Process process) : base(process)
         {
             _process = process;
-            _dataProcessor = new DataMessageProcessor();
-            _contractProcessor = new ContractMessageProcessor(_process);
-            _datarowProcesor = new MessageDataRowProcessor(_process);
-            _processProcessor = new ProcessMessageProcessor(_process);
+            _dataProcessor = new MessageDataProcessorData();
+            _contractProcessor = new MessageDataProcessorContract(_process);
+            _datarowProcesor = new MessageDataProcessorRow(_process);
+            _processProcessor = new MessageDataProcessorProcess(_process);
             IncomingMessages = new ConcurrentDictionary<Guid?, Message>();
         }
         #endregion

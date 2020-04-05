@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class ProcessMessageProcessor 
+    public class MessageDataProcessorProcess 
     {
 
         #region Private Fields
@@ -26,7 +26,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ProcessMessageProcessor(Process process)
+        public MessageDataProcessorProcess(Process process)
         {
             _process = process;
         }
