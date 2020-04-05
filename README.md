@@ -26,6 +26,8 @@ In the future, I may reboot this project to be more NoSQL-like.
 
 For some illustrations around the concepts, see the paper at the start of this README.
 
+For participants in a database, they should have full authority over their data that is hosted locally on their Frost instance; including later denying the database author access to the data, or even deleting it, leading to orphaned references in the main database.
+
 # The Components
 ## FrostConsole
 A Frost instance can be run from FrostConsole.exe. In the application startup path, it expect two folders: "dbs" for where it will store Frost databases and partial databases, and "contracts" where it will store a copy of all contracts that have been accepted.
