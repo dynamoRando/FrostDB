@@ -74,7 +74,7 @@ I'm writing this software in my spare time. I'll welcome any feedback.
 
 This project is being constructed in Visual Studio Commmunity 2019 Preview. It is Windows centric, but not meant to be only Windows software; it's just what I was familiar with at the time. For the desktop portions, I am looking at re-writing them in something like [Kivy](https://kivy.org/#home). 
 
-I would love for this project to be cross platform. It is currently being written in .NET Core 3.1, where applicable.
+I would love for this project to be cross platform. It is currently being written in .NET Core 3.1, where applicable. It is in C#, though I had debated awhile back rebooting the project in Rust. Feel free to do so if you want!
 
 This project is being written by a SQL Server developer, and as such, is very SQL-centric. In the future I may either add on or reboot this project to be more No-SQL like.
 
