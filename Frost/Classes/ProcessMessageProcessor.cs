@@ -71,7 +71,7 @@ namespace FrostDB
             // when we send it back, we send it as Remote_Row_Information = "Process.Remote_Row_Information" as the action
             // when we NEW up a message, we need to set the RequestInfoId to the message we got from the GetRmote_RowInformation
 
-            Guid? rowId = message.GetContentAs<Guid?>();
+            Guid? rowId = Guid.Parse(message.Content);
 
             Row row = null; // TO DO: need to actually find the row
             var content = JsonConvert.SerializeObject(row);
