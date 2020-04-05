@@ -92,13 +92,6 @@ namespace FrostDB
             }
             else
             {
-                //row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
-
-                /*
-                 * Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
-                _process.Network.SendMessage(acceptContract);
-                 */
-
                 row = GetRowAsync().Result;
                 
             }
@@ -110,6 +103,7 @@ namespace FrostDB
         #region Private Methods
         private async Task<Row> GetRowAsync() 
         {
+            Row row = new Row();
             Guid? requestId = Guid.NewGuid();
             var getRowMessage = new Message(Participant.Location, _process.GetLocation(), RowId.ToString(), MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
             _process.Network.SendMessageRequestId(getRowMessage, requestId);
@@ -124,13 +118,13 @@ namespace FrostDB
 
                     if (rowMessage != null)
                     {
-                        // actually parse out the row information from the message and send it back to the caller
+                        row = rowMessage.GetContentAs<Row>();
                     }
 
                 }
             }
 
-            throw new NotImplementedException();
+            return row;
         }
 
        
