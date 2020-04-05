@@ -72,6 +72,7 @@ There are various projects that are working on trying to solve ownership of user
 * [Ocean Protocol](https://oceanprotocol.com/)
 * [Blockstack](https://blockstack.org/)
 * [IndieWeb](https://indieweb.org/)
+* [Data Transfer Project] (https://datatransferproject.dev/)
 
 I think this is great, and I make no bones that others may eventually have the right idea. For me, this is my personal take on trying to solve the problem.
 
