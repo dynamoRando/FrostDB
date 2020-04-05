@@ -1,7 +1,9 @@
 ﻿using FrostCommon;
+using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace FrostDB
@@ -62,7 +64,8 @@ namespace FrostDB
 
             }
 
-            throw new NotImplementedException();
+            string debug = $"ProcessRemoteRowInformation";
+            Debug.WriteLine(debug);
         }
         private void ProcessGetRemoteRow(Message message)
         {
@@ -71,14 +74,30 @@ namespace FrostDB
             // when we send it back, we send it as Remote_Row_Information = "Process.Remote_Row_Information" as the action
             // when we NEW up a message, we need to set the RequestInfoId to the message we got from the GetRmote_RowInformation
 
-            Guid? rowId = Guid.Parse(message.Content);
+            RemoteRowInfo info = message.GetContentAs<RemoteRowInfo>();
 
-            Row row = null; // TO DO: need to actually find the row
+            Row row = new Row(); // TO DO: need to actually find the row
+
+            row = GetRow(info, row);
+
             var content = JsonConvert.SerializeObject(row);
             var rowDataMessage = new Message(message.Origin, _process.GetLocation(), content, MessageDataAction.Process.Remote_Row_Information, MessageType.Data, message.RequestInformationId);
             _process.Network.SendMessage(rowDataMessage);
-          
-            throw new NotImplementedException();
+        }
+
+        private Row GetRow(RemoteRowInfo info, Row row)
+        {
+            if (_process.HasDatabase(info.DatabaseName))
+            {
+                var db = _process.GetDatabase(info.DatabaseName);
+                if (db.HasTable(info.TableName))
+                {
+                    var table = db.GetTable(info.TableName);
+                    row = table.GetRow(info.RowId);
+                }
+            }
+
+            return row;
         }
         #endregion
 

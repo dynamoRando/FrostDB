@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FrostDB.Extensions;
 using FrostCommon;
+using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using log4net.Util;
 
 namespace FrostDB
 {
@@ -104,8 +106,19 @@ namespace FrostDB
         private async Task<Row> GetRowAsync() 
         {
             Row row = new Row();
+            
+            RemoteRowInfo request = new RemoteRowInfo();
+            request.DatabaseId = this.DatabaseId;
+            var db = _process.GetDatabase(this.DatabaseId);
+            request.DatabaseName = db.Name;
+            request.TableId = this.TableId;
+            request.TableName = db.GetTableName(this.TableId);
+            request.RowId = this.RowId;
+
+            string content = JsonConvert.SerializeObject(request);
+
             Guid? requestId = Guid.NewGuid();
-            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), RowId.ToString(), MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
             _process.Network.SendMessageRequestId(getRowMessage, requestId);
             bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
 
