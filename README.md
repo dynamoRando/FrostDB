@@ -26,7 +26,9 @@ In the future, I may reboot this project to be more NoSQL-like.
 
 # The Components
 ## FrostConsole
-A Frost instance can be run from FrostConsole.exe. In the application startup path, it expect two folders: "dbs" for where it will store Frost databases, and "contracts" where it will store a copy of all contracts that have been accepted.
+A Frost instance can be run from FrostConsole.exe. In the application startup path, it expect two folders: "dbs" for where it will store Frost databases and partial databases, and "contracts" where it will store a copy of all contracts that have been accepted.
+
+Files that end in ".frost" are the instance's authored copy of the database. Files that end in ".frostPart" are partial copies of a database that instance has agreed to participate in.
 
 When starting up it will ask if you wish to start an instance, or if you'd like to configure your Frost instance. In the application startup path there will be a "frost.config" created that saves this information. It will prompt for an IP Address to host Frost on as well as a Data Port Number and a Console Port Number.
 
