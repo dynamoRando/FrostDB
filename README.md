@@ -5,7 +5,7 @@ A proof of concept implementation of an idea I had called a [Cooperative Databas
 This project has been created with a GNU General Public License v3.0. See [file](https://github.com/dynamoRando/FrostDB/blob/master/LICENSE) for details.
 
 # What Is This About
-FrostDB is meant to be a friction-less as possible drop-in replacement for application developers to enable users of their applications to own their data. It takes the same approach as the SOLID project (https://solidproject.org/) but instead of leveraging open protocol standards, it is more database centric.
+FrostDB is meant to be a friction-less as possible drop-in replacement for application developers to enable users of their applications to own their data. It takes a similiar approach as the SOLID project (https://solidproject.org/) but instead of leveraging open protocol standards, it is more database centric.
 
 For application developers, they will still need to define their database schema, and they will need to define a **data contract** which is an agreement between them and their users on what data will be stored, and where. The data contract is a public document that is sent to all users that contains the entire database schema and the permissions for all parts of the schema.
 
