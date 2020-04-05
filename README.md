@@ -80,7 +80,7 @@ I personally try to avoid leveraging blockchain based solutions. I am not anti-b
 # Disclaimers
 This project is a proof of concept project and is very much still under development. Nothing will likely work right completely if you use it. **Don't** use this in any production environment what so ever. This project is a **proof of concept.** It's meant to illustrate the idea about giving users ownership of their data; but has not been engineered at all with security in mind.
 
-I'm not really a software developer. I'm learning this as I go along with this project. The "databases" in this project are really just large JSON files. The TCP/IP code in this project I stole from [MSDN](https://docs.microsoft.com/en-us/dotnet/framework/network-programming/asynchronous-server-socket-example) because I didn't know what I was doing.
+I'm not really a software developer. I'm learning this as I go along with this project. The "databases" in this project are really just large JSON files. The TCP/IP code in this project I stole from [MSDN](https://docs.microsoft.com/en-us/dotnet/framework/network-programming/asynchronous-server-socket-example) because I didn't know what I was doing. I should probably scrutinize more the layout of my project, but it's hard when you're only dedicating 4 hours a week (or so) and you just want to get the concepts implemented. I'm trying to learn to apply SOLID programming principles as I go.
 
 I'm writing this software in my spare time. I'll welcome any feedback.
 
