@@ -1,5 +1,5 @@
 # FrostDB
-A proof of concept implementation of an idea I had called a [Cooperative Database System](https://github.com/dynamoRando/CooperativeDatabaseSystems) or CDBS. This is an older paper I had with some of the inital concepts. I've worked to try and simplify these concepts for a minimum viable product in Frost.
+A **proof of concept** implementation of an idea I had called a [Cooperative Database System](https://github.com/dynamoRando/CooperativeDatabaseSystems) or CDBS. This is an older paper I had with some of the inital concepts. I've worked to try and simplify these concepts for a minimum viable product in Frost.
 
 # License
 This project has been created with a GNU General Public License v3.0. See [file](https://github.com/dynamoRando/FrostDB/blob/master/LICENSE) for details.
