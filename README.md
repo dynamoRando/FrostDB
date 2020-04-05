@@ -24,6 +24,8 @@ Frost was built with a SQL-centric view in mind, and I wanted to keep most of th
 
 In the future, I may reboot this project to be more NoSQL-like.
 
+For some illustrations around the concepts, see the paper at the start of this README.
+
 # The Components
 ## FrostConsole
 A Frost instance can be run from FrostConsole.exe. In the application startup path, it expect two folders: "dbs" for where it will store Frost databases and partial databases, and "contracts" where it will store a copy of all contracts that have been accepted.
