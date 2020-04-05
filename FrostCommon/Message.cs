@@ -27,6 +27,8 @@ namespace FrostCommon
         public string JsonData { get; set; }
         public string ContentType { get; set; }
         public MessageActionType ActionType { get; set;}
+        public bool HasProcessRequestor { get; set; }
+        public Guid? RequestInformationId { get; set; }
         #endregion
 
         #region Events
@@ -72,6 +74,16 @@ namespace FrostCommon
             Content = messageContent;
             Action = messageAction;
             MessageType = messageType;
+        }
+        public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, Guid? requestorId) : this()
+        {
+            CreatedDateTime = DateTime.Now;
+            Destination = destination;
+            Origin = origin;
+            Content = messageContent;
+            Action = messageAction;
+            MessageType = messageType;
+            RequestInformationId = requestorId;
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, MessageActionType messageActionType) : this()
         {

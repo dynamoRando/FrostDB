@@ -30,5 +30,14 @@ namespace FrostDB
             public const string Is_Online_Response = "Status.Is_Online_Status";
         }
 
+        public class Process
+        {
+            public const string Get_Remote_Row = "Process.Get_Remote_Row";
+            public const string Get_Remote_Row_Response = "Process.Get_Remote_Row_Response";
+
+            public const string Remote_Row_Information = "Process.Remote_Row_Information";
+            public const string Remote_Row_Information_Response = "Process.Remote_Row_Information_Response";
+        }
+
     }
 }

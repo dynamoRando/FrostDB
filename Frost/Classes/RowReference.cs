@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FrostDB.Extensions;
+using FrostCommon;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace FrostDB
 {
@@ -89,6 +93,14 @@ namespace FrostDB
             else
             {
                 //row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
+
+                /*
+                 * Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
+                _process.Network.SendMessage(acceptContract);
+                 */
+
+                row = GetRowAsync().Result;
+                
             }
 
             return row;
@@ -96,6 +108,32 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<Row> GetRowAsync() 
+        {
+            Guid? requestId = Guid.NewGuid();
+            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), RowId.ToString(), MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            _process.Network.SendMessageRequestId(getRowMessage, requestId);
+            bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.IncomingMessages.ContainsKey(requestId))
+                {
+                    Message rowMessage;
+                    _process.Network.DataProcessor.IncomingMessages.TryRemove(requestId, out rowMessage);
+
+                    if (rowMessage != null)
+                    {
+                        // actually parse out the row information from the message and send it back to the caller
+                    }
+
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+       
         #endregion
 
     }
