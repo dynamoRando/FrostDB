@@ -87,9 +87,9 @@ namespace FrostDB
 
         private Row GetRow(RemoteRowInfo info, Row row)
         {
-            if (_process.HasDatabase(info.DatabaseName))
+            if (_process.HasPartialDatabase(info.DatabaseName))
             {
-                var db = _process.GetDatabase(info.DatabaseName);
+                var db = _process.GetPartialDatabase(info.DatabaseName);
                 if (db.HasTable(info.TableName))
                 {
                     var table = db.GetTable(info.TableName);
