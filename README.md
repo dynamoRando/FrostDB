@@ -78,6 +78,8 @@ I think this is great, and I make no bones that others may eventually have the r
 
 I personally try to avoid leveraging blockchain based solutions. I am not anti-blockchain, I just believe there are only certain use cases for it. Some thoughts [here](https://www.youtube.com/watch?v=15RTC22Z2xI) and [here](https://www.linkedin.com/pulse/blockchain-emperor-has-clothes-dr-stephen-norman/).
 
+I do think that data portability and data commonality are important concepts that, if I have enough time, will also get around to implementing in Frost. Commonaility is an idea that is that Microsoft is looking at with their "[Common Data Model](https://docs.microsoft.com/en-us/common-data-model/)." Data portability and owning your data are both ideas are are rolled into the solutions being discussed by IndieWeb, SOLID, and the Data Transfer Project, mentioned previously.
+
 # Disclaimers
 Once someone has read access to your data, even once, all bets are off on what they've done with that data. I acknowledge this in the paper mentioned at the start of this README along with some other architecture disclaimers. Other projects like the SOLID project also agree that there is little control over this fact, short of **re-engineering the entire app and data chain**. (See the [FAQ](https://solidproject.org/faqs#pod) from SOLID). You could probably build an ecosystem to account for this, but that would be a rather large project. For me personally, this project is just my "programmer voice" contribution to other solutions to try and steer IT into really thinking about these problems and driving towards solutions. I'd love to work on that bigger problem later on, if ever.
 
