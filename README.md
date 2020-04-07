@@ -73,6 +73,7 @@ There are various projects that are working on trying to solve ownership of user
 * [Blockstack](https://blockstack.org/)
 * [IndieWeb](https://indieweb.org/)
 * [Data Transfer Project](https://datatransferproject.dev/)
+* [GUNDB](https://github.com/amark/gun/blob/master/README.md#what-is-gun)
 
 I think this is great, and I make no bones that others may eventually have the right idea. For me, this is my personal take on trying to solve the problem.
 
