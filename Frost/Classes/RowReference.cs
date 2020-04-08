@@ -116,10 +116,10 @@ namespace FrostDB
 
             if (gotData)
             {
-                if (_process.Network.DataProcessor.IncomingMessages.ContainsKey(requestId))
+                if (_process.Network.DataProcessor.HasMessageId(requestId))
                 {
                     Message rowMessage;
-                    _process.Network.DataProcessor.IncomingMessages.TryRemove(requestId, out rowMessage);
+                    _process.Network.DataProcessor.TryGetMessage(requestId, out rowMessage);
 
                     if (rowMessage != null)
                     {

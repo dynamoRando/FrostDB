@@ -40,6 +40,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool HasMessageId(Guid? id)
+        {
+            return IncomingMessages.ContainsKey(id);
+        }
+
+        public Message TryGetMessage(Guid? id, out Message message)
+        {
+            IncomingMessages.TryRemove(id, out message);
+        }
 
         public override void Process(IMessage message)
         {
