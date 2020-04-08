@@ -103,22 +103,14 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private async Task<Row> GetRowAsync() 
+        private async Task<Row> GetRowAsync()
         {
             Row row = new Row();
-            
-            RemoteRowInfo request = new RemoteRowInfo();
-            request.DatabaseId = this.DatabaseId;
-            var db = _process.GetDatabase(this.DatabaseId);
-            request.DatabaseName = db.Name;
-            request.TableId = this.TableId;
-            request.TableName = db.GetTableName(this.TableId);
-            request.RowId = this.RowId;
-
+            RemoteRowInfo request = BuildRemoteRowInfo();
             string content = JsonConvert.SerializeObject(request);
-
             Guid? requestId = Guid.NewGuid();
-            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+
+            var getRowMessage = _process.Network.MakeMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
             _process.Network.SendMessageRequestId(getRowMessage, requestId);
             bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
 
@@ -140,7 +132,19 @@ namespace FrostDB
             return row;
         }
 
-       
+        private RemoteRowInfo BuildRemoteRowInfo()
+        {
+            RemoteRowInfo request = new RemoteRowInfo();
+            request.DatabaseId = this.DatabaseId;
+            var db = _process.GetDatabase(this.DatabaseId);
+            request.DatabaseName = db.Name;
+            request.TableId = this.TableId;
+            request.TableName = db.GetTableName(this.TableId);
+            request.RowId = this.RowId;
+            return request;
+        }
+
+
         #endregion
 
     }
