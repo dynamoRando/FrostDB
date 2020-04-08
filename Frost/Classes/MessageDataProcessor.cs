@@ -45,7 +45,7 @@ namespace FrostDB
             return IncomingMessages.ContainsKey(id);
         }
 
-        public Message TryGetMessage(Guid? id, out Message message)
+        public void TryGetMessage(Guid? id, out Message message)
         {
             IncomingMessages.TryRemove(id, out message);
         }
