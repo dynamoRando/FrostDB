@@ -76,7 +76,7 @@ namespace FrostDB
             _consoleServer.Stop();
         }
 
-        public Message MakeMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId)
+        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId)
         {
             return _messageBuilder.BuildMessage(destination, messageContent, messageAction, messageType, requestorId);
         }
