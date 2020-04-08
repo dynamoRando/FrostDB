@@ -15,6 +15,7 @@ namespace FrostDB
         private ConcurrentBag<Guid?> _requestMessageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
+        MessageBuilder _messageBuilder;
         Server _dataServer;
         Server _consoleServer;
         Process _process;
@@ -36,16 +37,17 @@ namespace FrostDB
         #region Constructors
         public Network(Process process)
         {
+            _process = process;
             _messageIds = new ConcurrentBag<Guid?>();
             _requestMessageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
-            _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
             _dataServer = new Server();
             _dataServer.ServerName = "Data";
             _consoleServer = new Server();
             _consoleServer.ServerName = "Console";
+            _messageBuilder = new MessageBuilder(_process);
         }
         #endregion
 
@@ -73,7 +75,12 @@ namespace FrostDB
         {
             _consoleServer.Stop();
         }
-     
+
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
         public Guid? SendMessage(Message message)
         {
             Guid? id = message.Id;
@@ -82,6 +89,12 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return id;
         }
+
+        /// <summary>
+        /// Sends the message and queue's the provided requestId to be acquired elsewhere from a Processor.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="requestId">The request identifier. Use this as a token to get your data back from a Processor.</param>
         public void SendMessageRequestId(Message message, Guid? requestId)
         {
             _requestMessageIds.Add(requestId);
