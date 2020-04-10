@@ -10,6 +10,8 @@ using FrostDB.Extensions;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using FrostCommon.DataMessages;
 
 namespace FrostDB
 {
@@ -245,6 +247,7 @@ namespace FrostDB
                 else
                 {
                     // TO DO: need to construct message to delete row remotely on participant process
+                    DeleteRemoteRow(r);
                     throw new NotImplementedException();
                 }
             });
@@ -304,6 +307,76 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<bool> DeleteRemoteRow(RowReference reference)
+        {
+            /*
+             * 
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            _process.Network.SendMessageRequestId(getRowMessage, requestId);
+            bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.HasMessageId(requestId))
+                {
+                    Message rowMessage;
+                    _process.Network.DataProcessor.TryGetMessage(requestId, out rowMessage);
+
+                    if (rowMessage != null)
+                    {
+                        row = rowMessage.GetContentAs<Row>();
+                    }
+
+                }
+            }
+             */
+
+            if (!reference.IsLocal(_process))
+            {
+                var requestId = Guid.NewGuid();
+
+                var remoteRowInfo = BuildRemoteRowInfo(reference);
+                var content = JsonConvert.SerializeObject(remoteRowInfo);
+
+                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId);
+                _process.Network.SendMessageRequestId(message, requestId);
+                bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+                if (gotData)
+                {
+                    if (_process.Network.DataProcessor.HasMessageId(requestId))
+                    {
+                        // validate that the row has been deleted
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private RemoteRowInfo BuildRemoteRowInfo(RowReference reference)
+        {
+            return new RemoteRowInfo
+            {
+                DatabaseId = this.DatabaseId,
+                DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
+                TableId = this.Id,
+                TableName = this.Name,
+                RowId = reference.RowId
+            };
+        }
+
         private bool CheckInsertRules(RowForm form)
         {
             return true;
