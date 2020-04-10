@@ -47,6 +47,7 @@ namespace FrostDB
         #region Constructors
         public Table(Process process)
         {
+            
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
@@ -59,7 +60,6 @@ namespace FrostDB
             }
 
             _parser = new QueryParser(_process);
-
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId, Process process) : this(process)
@@ -179,7 +179,6 @@ namespace FrostDB
             return this.Columns.Any(c => c.Name == columnName);
         }
 
-
         public Column GetColumn(Guid? id)
         {
             return Columns.Where(c => c.Id == id).FirstOrDefault();
@@ -231,6 +230,33 @@ namespace FrostDB
             }
 
             _process.EventManager.TriggerEvent(EventName.Row.Added, CreateRowAddedEventArgs(form.Row));
+        }
+
+        public void RemoveAllRows()
+        {
+            _rows.ForEach(r => 
+            {
+                if (r.IsLocal(_process))
+                {
+                    var row = _store.GetRow(r.RowId);
+                    _store.RemoveRow(r.RowId);
+                    _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
+                }
+                else
+                {
+                    // TO DO: need to construct message to delete row remotely on participant process
+                    throw new NotImplementedException();
+                }
+            });
+
+            _rows.Clear();
+            _process.EventManager.TriggerEvent(EventName.Table.Truncated, CreateTableTruncatedEventArgs());
+
+        }
+
+        public void RemoveRow(RowForm form)
+        {
+            throw new NotImplementedException();
         }
 
         public RowForm GetNewRow(Guid? participantId)
@@ -394,6 +420,25 @@ namespace FrostDB
         private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
         {
             return new RowAddedEventArgs
+            {
+                DatabaseId = this.DatabaseId,
+                Table = this,
+                Row = row
+            };
+        }
+
+        private TableTruncatedEventArgs CreateTableTruncatedEventArgs()
+        {
+            return new TableTruncatedEventArgs
+            {
+                Database = _process.GetDatabase(this.DatabaseId),
+                Table = this
+            };
+        }
+
+        private RowDeletedEventArgs CreateRowDeletedEventArgs(Row row)
+        {
+            return new RowDeletedEventArgs
             {
                 DatabaseId = this.DatabaseId,
                 Table = this,

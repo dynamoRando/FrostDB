@@ -136,8 +136,6 @@ namespace FrostDB
         }
         #endregion
 
-
-
         #region Private Methods
         private Database GetDatabaseFromDisk(string file)
         {

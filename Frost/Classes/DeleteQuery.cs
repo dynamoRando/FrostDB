@@ -40,6 +40,12 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+
+            if (!_hasWhereClause)
+            {
+                _table.RemoveAllRows();
+            }
+
             throw new NotImplementedException();
         }
 

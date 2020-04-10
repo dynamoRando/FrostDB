@@ -28,6 +28,18 @@ namespace FrostDB.Extensions
             process.Network.SendMessage(m);
         }
 
+        public static bool IsLocal(this RowReference reference, Process process)
+        {
+            if (reference.Participant.Location.IpAddress == process.GetLocation().IpAddress && reference.Participant.Location.PortNumber == process.GetLocation().PortNumber)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool IsLocal(this Location location, Process process)
         {
             if (location.IpAddress == process.GetLocation().IpAddress && location.PortNumber == process.GetLocation().PortNumber)
