@@ -37,6 +37,9 @@ namespace FrostDB.Classes
 				case MessageDataAction.Row.Save_Row:
 					ProcessSaveRow(message);
 					break;
+				case MessageDataAction.Row.Delete_Row:
+					ProcessDeleteRow(message);
+					break;
 				default:
 					throw new InvalidOperationException("Unknown Data Row Message");
 			}
@@ -44,6 +47,10 @@ namespace FrostDB.Classes
 		#endregion
 
 		#region Private Methods
+		private void ProcessDeleteRow(Message message)
+		{
+			throw new NotImplementedException();
+		}
 		private void ProcessSaveRow(Message message)
 		{
 			var info = JsonConvert.DeserializeObject<RowForm>(message.Content);
