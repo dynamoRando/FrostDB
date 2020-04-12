@@ -103,6 +103,16 @@ namespace FrostDB
         #region Private Methods
         private bool HandleMessageQueue(IMessage message)
         {
+            // TO DO: Need to really think about what this is doing and if this is correct
+            // trying to remove from queue the reference to the message to signal elsewhere that our message was recieved
+            // so there is an implicit assumption that we have got data and can carry on
+            // by looking at client info in case of Message Console examples (not Message Data)
+            // so in Console example, when we send the response back we always populate with the reference id to let it know we have our data
+            // in Message Data we've reinvented this idea but with the requestor id to try and figure out where we are at the call site
+            // we should consolidate these methods if possible. Really, the Build Response on the Message Data side should not just be reply only, but also contain the information requested -
+            // this is truly actually the bug. In the Message Console side, the response always contains the actual data to be sent back, which is why it works.
+
+            // this does not at all address why sometimes the app just drops the connection or data is not returned.
             if (_process.Network.HasMessageId(message.ReferenceMessageId))
             {
                 _process.Network.RemoveFromQueue(message.ReferenceMessageId);
