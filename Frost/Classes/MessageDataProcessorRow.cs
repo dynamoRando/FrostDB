@@ -1,4 +1,5 @@
 ﻿using FrostCommon;
+using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,18 @@ namespace FrostDB.Classes
 		#region Private Methods
 		private void ProcessDeleteRow(Message message)
 		{
-			throw new NotImplementedException();
+			// TO DO: We should be checking the contract here if the host is allowed to delete our data;
+
+			var info = message.GetContentAs<RemoteRowInfo>();
+			if (_process.HasPartialDatabase(info.DatabaseName))
+			{
+				var db = _process.GetPartialDatabase(info.DatabaseName);
+				if (db.HasTable(info.TableName))
+				{
+					var table = db.GetTable(info.TableName);
+					table.RemoveRow(info.RowId);
+				}
+			}
 		}
 		private void ProcessSaveRow(Message message)
 		{

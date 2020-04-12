@@ -147,7 +147,7 @@ namespace FrostDB
             }
             else
             {
-                row = reference.Get(_process);
+                row = reference.Get(_process).Result;
             }
 
             return row;
@@ -157,14 +157,14 @@ namespace FrostDB
         {
             var result = new List<Row>();
 
-            _rows.ForEach(r => result.Add(r.Get(_process)));
+            _rows.ForEach(r => result.Add(r.Get(_process).Result));
 
             return result;
         }
         public List<Row> GetRows(string queryString)
         {
             var rows = new List<Row>();
-            _rows.ForEach(row => { rows.Add(row.Get(_process)); });
+            _rows.ForEach(row => { rows.Add(row.Get(_process).Result); });
 
             var parameters = new List<RowValueQueryParam>();
 
@@ -234,8 +234,10 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Row.Added, CreateRowAddedEventArgs(form.Row));
         }
 
-        public void RemoveAllRows()
+        public int RemoveAllRows()
         {
+            int rowsAffected = 0;
+
             _rows.ForEach(r => 
             {
                 if (r.IsLocal(_process))
@@ -243,18 +245,20 @@ namespace FrostDB
                     var row = _store.GetRow(r.RowId);
                     _store.RemoveRow(r.RowId);
                     _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
+                    rowsAffected++;
                 }
                 else
                 {
                     // TO DO: need to construct message to delete row remotely on participant process
                     DeleteRemoteRow(r);
-                    throw new NotImplementedException();
+                    rowsAffected++;
                 }
             });
 
             _rows.Clear();
             _process.EventManager.TriggerEvent(EventName.Table.Truncated, CreateTableTruncatedEventArgs());
 
+            return rowsAffected;
         }
 
         public void RemoveRow(RowForm form)
@@ -290,6 +294,15 @@ namespace FrostDB
             return form;
         }
 
+        public void RemoveRow(Guid? rowId)
+        {
+            _store.RemoveRow(rowId);
+            var reference = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
+            if (reference != null)
+            {
+                _rows.Remove(reference);
+            }
+        }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

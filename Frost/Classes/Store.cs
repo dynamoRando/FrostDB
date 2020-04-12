@@ -59,7 +59,10 @@ namespace FrostDB
         public void RemoveRow(Guid? rowId)
         {
             var r = _rows.Where(r => r.Id == rowId).FirstOrDefault();
-            _rows.Remove(r);
+            if (r != null)
+            {
+                _rows.Remove(r);
+            }
         }
 
         public Row GetRow(Guid? rowId)

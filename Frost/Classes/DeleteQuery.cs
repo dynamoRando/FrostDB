@@ -11,7 +11,7 @@ namespace FrostDB
     public class DeleteQuery : IQuery
     {
         #region Private Fields
-        private const int MINIMUM_LINE_COUNT = 4;
+        private const int MINIMUM_LINE_COUNT = 3;
         private Process _process;
         private bool _hasWhereClause;
         private Database _database;
@@ -40,12 +40,23 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+            FrostPromptResponse response = new FrostPromptResponse();
+            string resultString = string.Empty;
+            int totalRows = 0;
+
             if (!_hasWhereClause)
             {
-                _table.RemoveAllRows();
+                totalRows = _table.RemoveAllRows();
             }
 
-            throw new NotImplementedException();
+            resultString += " ------------ " + Environment.NewLine;
+
+            response.NumberOfRowsAffected = totalRows;
+            response.JsonData = resultString;
+            response.Message = "Delete Succeeded";
+            response.IsSuccessful = true;
+
+            return response;
         }
 
         public bool IsValid(string statement)

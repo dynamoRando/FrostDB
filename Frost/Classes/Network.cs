@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FrostCommon;
 using FrostCommon.Net;
 using FrostDB.EventArgs;
+using log4net.Util;
 
 namespace FrostDB
 {
@@ -127,6 +128,25 @@ namespace FrostDB
         public bool HasMessageRequest(Guid? id)
         {
             return _requestMessageIds.TryPeek(out id);
+        }
+
+        public async Task<Message> SendAndGetDataMessageFromToken(Message messageToSend, Guid? requestToken)
+        {
+            bool gotData = false;
+            Message outMessage = null;
+            SendMessageRequestId(messageToSend, requestToken);
+            gotData = await WaitForMessageTokenAsync(requestToken);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.HasMessageId(requestToken))
+                {
+                    _process.Network.DataProcessor.TryGetMessage(requestToken, out outMessage);
+
+                }
+            }
+
+            return outMessage;
         }
 
         public async Task<bool> WaitForMessageTokenAsync(Guid? token)
