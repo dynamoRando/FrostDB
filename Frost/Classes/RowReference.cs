@@ -79,7 +79,7 @@ namespace FrostDB
             info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
-        public Row Get(Process process)
+        public async Task<Row> Get(Process process)
         {
             if (_process is null)
             {
@@ -94,7 +94,7 @@ namespace FrostDB
             }
             else
             {
-                row = GetRowAsync().Result;
+                row = await GetRowAsync();
                 
             }
 
@@ -103,10 +103,27 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private async Task<Row> GetRowAsync() 
+        private async Task<Row> GetRowAsync()
         {
             Row row = new Row();
-            
+            RemoteRowInfo request = BuildRemoteRowInfo();
+            string content = JsonConvert.SerializeObject(request);
+            Guid? requestId = Guid.NewGuid();
+            Message rowMessage = null;
+
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            rowMessage = await _process.Network.SendAndGetDataMessageFromToken(getRowMessage, requestId);
+
+            if (rowMessage != null)
+            {
+                row = rowMessage.GetContentAs<Row>();
+            }
+
+            return row;
+        }
+
+        private RemoteRowInfo BuildRemoteRowInfo()
+        {
             RemoteRowInfo request = new RemoteRowInfo();
             request.DatabaseId = this.DatabaseId;
             var db = _process.GetDatabase(this.DatabaseId);
@@ -114,33 +131,10 @@ namespace FrostDB
             request.TableId = this.TableId;
             request.TableName = db.GetTableName(this.TableId);
             request.RowId = this.RowId;
-
-            string content = JsonConvert.SerializeObject(request);
-
-            Guid? requestId = Guid.NewGuid();
-            var getRowMessage = new Message(Participant.Location, _process.GetLocation(), content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
-            _process.Network.SendMessageRequestId(getRowMessage, requestId);
-            bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
-
-            if (gotData)
-            {
-                if (_process.Network.DataProcessor.IncomingMessages.ContainsKey(requestId))
-                {
-                    Message rowMessage;
-                    _process.Network.DataProcessor.IncomingMessages.TryRemove(requestId, out rowMessage);
-
-                    if (rowMessage != null)
-                    {
-                        row = rowMessage.GetContentAs<Row>();
-                    }
-
-                }
-            }
-
-            return row;
+            return request;
         }
 
-       
+
         #endregion
 
     }

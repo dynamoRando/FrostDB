@@ -1,4 +1,5 @@
 ﻿using FrostCommon;
+using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,9 @@ namespace FrostDB.Classes
 				case MessageDataAction.Row.Save_Row:
 					ProcessSaveRow(message);
 					break;
+				case MessageDataAction.Row.Delete_Row:
+					ProcessDeleteRow(message);
+					break;
 				default:
 					throw new InvalidOperationException("Unknown Data Row Message");
 			}
@@ -44,6 +48,21 @@ namespace FrostDB.Classes
 		#endregion
 
 		#region Private Methods
+		private void ProcessDeleteRow(Message message)
+		{
+			// TO DO: We should be checking the contract here if the host is allowed to delete our data;
+
+			var info = message.GetContentAs<RemoteRowInfo>();
+			if (_process.HasPartialDatabase(info.DatabaseName))
+			{
+				var db = _process.GetPartialDatabase(info.DatabaseName);
+				if (db.HasTable(info.TableName))
+				{
+					var table = db.GetTable(info.TableName);
+					table.RemoveRow(info.RowId);
+				}
+			}
+		}
 		private void ProcessSaveRow(Message message)
 		{
 			var info = JsonConvert.DeserializeObject<RowForm>(message.Content);

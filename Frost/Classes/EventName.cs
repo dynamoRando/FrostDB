@@ -31,6 +31,8 @@
         {
             public const string Created = "Table_Created";
             public const string Dropped = "Table_Dropped";
+
+            public const string Truncated = "Table_Truncated";
         }
         
         public class Row

@@ -1,6 +1,7 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -53,6 +54,26 @@ namespace FrostDB
         public void AddRow(Row row)
         {
             _rows.Add(row);
+        }
+
+        public void RemoveRow(Guid? rowId)
+        {
+            var r = _rows.Where(r => r.Id == rowId).FirstOrDefault();
+            if (r != null)
+            {
+                _rows.Remove(r);
+            }
+        }
+
+        public Row GetRow(Guid? rowId)
+        {
+            return _rows.Where(r => r.Id == rowId).FirstOrDefault();
+        }
+
+        public void RemoveRow(Row row)
+        {
+            var r = _rows.Where(r => r.Id == row.Id).FirstOrDefault();
+            _rows.Remove(r);
         }
         #endregion
 

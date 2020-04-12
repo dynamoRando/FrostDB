@@ -22,6 +22,10 @@ namespace FrostDB
             public const string Save_Row_Response = "Row.Save_Reponse";
             public const string Update_Row = "Row.Update";
             public const string Update_Row_Response = "Row.Update_Response";
+            public const string Delete_Row = "Row.Delete";
+            public const string Delete_Row_Response = "Row.Delete_Response";
+            public const string Delete_Row_Information = "Row.Delete_Information";
+            public const string Delete_Row_Information_Response = "Row.Delete_Information_Response";
         }
 
         public class Status

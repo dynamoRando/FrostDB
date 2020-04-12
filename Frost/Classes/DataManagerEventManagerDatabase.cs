@@ -61,10 +61,15 @@ namespace FrostDB
             RegisterColumnRemovedEvents();
             RegisterContractUpdatedEvents();
             RegisterParticipantAddedEvents();
+            RegisterTableTruncatedEvents();
         }
         #endregion
 
         #region Private Methods
+        private void RegisterTableTruncatedEvents()
+        {
+            _process.EventManager.StartListening(EventName.Table.Truncated, new Action<IEventArgs>(HandleTableTruncatedEvents));
+        }
         private void RegisterParticipantAddedEvents()
         {
             _process.EventManager.StartListening(EventName.Participant.Added,
@@ -293,6 +298,41 @@ namespace FrostDB
                 }
             }
         }
+
+        private void HandleTableTruncatedEvents(IEventArgs e)
+        {
+            if (e is TableTruncatedEventArgs)
+            {
+                var args = (TableTruncatedEventArgs)e;
+                
+                IDatabase db;
+                db = args.Database;
+
+                if (db != null)
+                {
+                    if (db is Database)
+                    {
+                        string debug = $"Saving database from truncation to disk on process {_process.GetLocation().IpAddress}: " +
+                    $"{_process.GetLocation().PortNumber.ToString()} for database {db.Name} for table {args.Table.Name}";
+
+                        Console.WriteLine(debug);
+                        _process.Log.Debug(debug);
+                        _process.DatabaseManager.SaveToDisk((Database)db);
+                    }
+
+                    if (db is PartialDatabase)
+                    {
+                        string debug = $"Saving partial database from truncation to disk on process {_process.GetLocation().IpAddress}: " +
+                    $"{_process.GetLocation().PortNumber.ToString()} for database {db.Name} for table {args.Table.Name}";
+
+                        Console.WriteLine(debug);
+                        _process.Log.Debug(debug);
+                        _process.PartialDatabaseManager.SaveToDisk((PartialDatabase)db);
+                    }
+                }
+            }
+        }
+
 
         private void HandleRowAddedEvent(IEventArgs e)
         {

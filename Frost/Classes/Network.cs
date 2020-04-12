@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FrostCommon;
 using FrostCommon.Net;
 using FrostDB.EventArgs;
+using log4net.Util;
 
 namespace FrostDB
 {
@@ -15,6 +16,7 @@ namespace FrostDB
         private ConcurrentBag<Guid?> _requestMessageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
+        MessageBuilder _messageBuilder;
         Server _dataServer;
         Server _consoleServer;
         Process _process;
@@ -36,16 +38,17 @@ namespace FrostDB
         #region Constructors
         public Network(Process process)
         {
+            _process = process;
             _messageIds = new ConcurrentBag<Guid?>();
             _requestMessageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
-            _process = process;
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
             _dataServer = new Server();
             _dataServer.ServerName = "Data";
             _consoleServer = new Server();
             _consoleServer.ServerName = "Console";
+            _messageBuilder = new MessageBuilder(_process);
         }
         #endregion
 
@@ -73,7 +76,17 @@ namespace FrostDB
         {
             _consoleServer.Stop();
         }
-     
+
+        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId)
+        {
+            return _messageBuilder.BuildMessage(destination, messageContent, messageAction, messageType, requestorId);
+        }
+
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
         public Guid? SendMessage(Message message)
         {
             Guid? id = message.Id;
@@ -82,6 +95,12 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return id;
         }
+
+        /// <summary>
+        /// Sends the message and queue's the provided requestId to be acquired elsewhere from a Processor.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="requestId">The request identifier. Use this as a token to get your data back from a Processor.</param>
         public void SendMessageRequestId(Message message, Guid? requestId)
         {
             _requestMessageIds.Add(requestId);
@@ -109,6 +128,25 @@ namespace FrostDB
         public bool HasMessageRequest(Guid? id)
         {
             return _requestMessageIds.TryPeek(out id);
+        }
+
+        public async Task<Message> SendAndGetDataMessageFromToken(Message messageToSend, Guid? requestToken)
+        {
+            bool gotData = false;
+            Message outMessage = null;
+            SendMessageRequestId(messageToSend, requestToken);
+            gotData = await WaitForMessageTokenAsync(requestToken);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.HasMessageId(requestToken))
+                {
+                    _process.Network.DataProcessor.TryGetMessage(requestToken, out outMessage);
+
+                }
+            }
+
+            return outMessage;
         }
 
         public async Task<bool> WaitForMessageTokenAsync(Guid? token)

@@ -46,6 +46,8 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>Executes this instance.</summary>
+        /// <returns>FrostPromptResponse</returns>
         public FrostPromptResponse Execute()
         {
             int rowCount = 0;

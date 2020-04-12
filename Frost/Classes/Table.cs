@@ -10,6 +10,8 @@ using FrostDB.Extensions;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using FrostCommon.DataMessages;
 
 namespace FrostDB
 {
@@ -47,6 +49,7 @@ namespace FrostDB
         #region Constructors
         public Table(Process process)
         {
+            
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
@@ -59,7 +62,6 @@ namespace FrostDB
             }
 
             _parser = new QueryParser(_process);
-
         }
 
         public Table(string name, List<Column> columns, Guid? databaseId, Process process) : this(process)
@@ -145,7 +147,7 @@ namespace FrostDB
             }
             else
             {
-                row = reference.Get(_process);
+                row = reference.Get(_process).Result;
             }
 
             return row;
@@ -155,14 +157,14 @@ namespace FrostDB
         {
             var result = new List<Row>();
 
-            _rows.ForEach(r => result.Add(r.Get(_process)));
+            _rows.ForEach(r => result.Add(r.Get(_process).Result));
 
             return result;
         }
         public List<Row> GetRows(string queryString)
         {
             var rows = new List<Row>();
-            _rows.ForEach(row => { rows.Add(row.Get(_process)); });
+            _rows.ForEach(row => { rows.Add(row.Get(_process).Result); });
 
             var parameters = new List<RowValueQueryParam>();
 
@@ -178,7 +180,6 @@ namespace FrostDB
         {
             return this.Columns.Any(c => c.Name == columnName);
         }
-
 
         public Column GetColumn(Guid? id)
         {
@@ -233,6 +234,38 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Row.Added, CreateRowAddedEventArgs(form.Row));
         }
 
+        public int RemoveAllRows()
+        {
+            int rowsAffected = 0;
+
+            _rows.ForEach(r => 
+            {
+                if (r.IsLocal(_process))
+                {
+                    var row = _store.GetRow(r.RowId);
+                    _store.RemoveRow(r.RowId);
+                    _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
+                    rowsAffected++;
+                }
+                else
+                {
+                    // TO DO: need to construct message to delete row remotely on participant process
+                    DeleteRemoteRow(r);
+                    rowsAffected++;
+                }
+            });
+
+            _rows.Clear();
+            _process.EventManager.TriggerEvent(EventName.Table.Truncated, CreateTableTruncatedEventArgs());
+
+            return rowsAffected;
+        }
+
+        public void RemoveRow(RowForm form)
+        {
+            throw new NotImplementedException();
+        }
+
         public RowForm GetNewRow(Guid? participantId)
         {
             RowForm form = null;
@@ -261,6 +294,15 @@ namespace FrostDB
             return form;
         }
 
+        public void RemoveRow(Guid? rowId)
+        {
+            _store.RemoveRow(rowId);
+            var reference = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
+            if (reference != null)
+            {
+                _rows.Remove(reference);
+            }
+        }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -278,6 +320,76 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<bool> DeleteRemoteRow(RowReference reference)
+        {
+            /*
+             * 
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            _process.Network.SendMessageRequestId(getRowMessage, requestId);
+            bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+            if (gotData)
+            {
+                if (_process.Network.DataProcessor.HasMessageId(requestId))
+                {
+                    Message rowMessage;
+                    _process.Network.DataProcessor.TryGetMessage(requestId, out rowMessage);
+
+                    if (rowMessage != null)
+                    {
+                        row = rowMessage.GetContentAs<Row>();
+                    }
+
+                }
+            }
+             */
+
+            if (!reference.IsLocal(_process))
+            {
+                var requestId = Guid.NewGuid();
+
+                var remoteRowInfo = BuildRemoteRowInfo(reference);
+                var content = JsonConvert.SerializeObject(remoteRowInfo);
+
+                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId);
+                _process.Network.SendMessageRequestId(message, requestId);
+                bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
+
+                if (gotData)
+                {
+                    if (_process.Network.DataProcessor.HasMessageId(requestId))
+                    {
+                        // validate that the row has been deleted
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private RemoteRowInfo BuildRemoteRowInfo(RowReference reference)
+        {
+            return new RemoteRowInfo
+            {
+                DatabaseId = this.DatabaseId,
+                DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
+                TableId = this.Id,
+                TableName = this.Name,
+                RowId = reference.RowId
+            };
+        }
+
         private bool CheckInsertRules(RowForm form)
         {
             return true;
@@ -394,6 +506,25 @@ namespace FrostDB
         private RowAddedEventArgs CreateRowAddedEventArgs(Row row)
         {
             return new RowAddedEventArgs
+            {
+                DatabaseId = this.DatabaseId,
+                Table = this,
+                Row = row
+            };
+        }
+
+        private TableTruncatedEventArgs CreateTableTruncatedEventArgs()
+        {
+            return new TableTruncatedEventArgs
+            {
+                Database = _process.GetDatabase(this.DatabaseId),
+                Table = this
+            };
+        }
+
+        private RowDeletedEventArgs CreateRowDeletedEventArgs(Row row)
+        {
+            return new RowDeletedEventArgs
             {
                 DatabaseId = this.DatabaseId,
                 Table = this,
