@@ -4,6 +4,7 @@ using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -203,9 +204,11 @@ namespace FrostDB
             return valuesOk;
         }
 
-        private static void SetUpdateQueryParameter(ref List<UpdateQueryColumnParameters> para, string columnName, string columnValue, Column column, Type dataType)
+        private void SetUpdateQueryParameter(ref List<UpdateQueryColumnParameters> para, string columnName, string columnValue, Column column, Type dataType)
         {
             var j = new UpdateQueryColumnParameters();
+            j.TableName = _table.Name;
+            j.TableId = _table.Id;
             j.ColumnName = columnName;
             j.ColumnType = dataType;
             j.ColumnId = column.Id;
