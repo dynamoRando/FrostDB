@@ -81,8 +81,17 @@ namespace FrostDB
         #region Private Methods
         private void ParseLines(string[] lines, out string columns, out string tableName)
         {
+            columns = string.Empty;
+            tableName = string.Empty;
+
             tableName = lines[1].Trim();
             _hasTable = CheckHasTable(tableName);
+
+            if (!_hasTable)
+            {
+                return;
+            }
+
             var setValues = lines[3].Trim();
             ParseSet(setValues, out columns);
         }
