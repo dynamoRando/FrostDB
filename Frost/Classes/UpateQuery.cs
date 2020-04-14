@@ -1,5 +1,6 @@
 ﻿using FrostCommon.Net;
 using FrostDB.Classes;
+using FrostDB.Extensions;
 using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,17 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+            if (!_hasWhereClause)
+            {
+                var values = new List<RowValue>();
+                _parameters.ForEach(p => values.Add(p.Convert()));
+                
+                foreach(var row in _table.Rows)
+                {
+                    _table.UpdateRow(row, values);
+                }
+            }
+
             throw new NotImplementedException();
         }
 

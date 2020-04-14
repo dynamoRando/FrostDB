@@ -13,7 +13,7 @@ using log4net.Util;
 namespace FrostDB
 {
     [Serializable]
-    public class RowReference : 
+    public class RowReference :
         IBaseRowReference, ISerializable, IDBObject
     {
         #region Private Fields
@@ -95,7 +95,7 @@ namespace FrostDB
             else
             {
                 row = await GetRowAsync();
-                
+
             }
 
             return row;

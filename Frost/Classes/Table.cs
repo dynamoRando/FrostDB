@@ -49,7 +49,7 @@ namespace FrostDB
         #region Constructors
         public Table(Process process)
         {
-            
+
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
@@ -130,6 +130,38 @@ namespace FrostDB
         public void UpdateSchema()
         {
             _schema = new TableSchema(this);
+        }
+
+        public void UpdateRow(RowReference reference, List<RowValue> values)
+        {
+            var row = reference.Get(_process).Result;
+
+            if (row != null)
+            {
+                foreach (var value in values)
+                {
+                    var item = row.Values.Where(v => v.ColumnName == value.ColumnName && v.ColumnType == value.ColumnType).FirstOrDefault();
+                    if (item != null)
+                    {
+                        item.Value = value.Value;
+                    }
+                }
+
+                if (reference.IsLocal(_process))
+                {
+                    // update the row locally and trigger update row event to re-save the database
+
+                    // do we need to do this? or just go ahead and re-save the database since we've modified the row?
+                    //_store.RemoveRow(reference.RowId);
+                    //_store.AddRow(row);
+                }
+                else
+                {
+                    // need to send a message to the remote participant to update the row
+                }
+            }
+
+            throw new NotImplementedException();
         }
 
         public Row GetRow(RowReference reference)
@@ -238,7 +270,7 @@ namespace FrostDB
         {
             int rowsAffected = 0;
 
-            _rows.ForEach(r => 
+            _rows.ForEach(r =>
             {
                 if (r.IsLocal(_process))
                 {
