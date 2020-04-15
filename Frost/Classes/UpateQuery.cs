@@ -50,18 +50,32 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptResponse Execute()
         {
+            int rowCount = 0;
+            string resultString = string.Empty;
+            FrostPromptResponse response = new FrostPromptResponse();
+
+            resultString += " ------------ " + Environment.NewLine;
+
             if (!_hasWhereClause)
             {
                 var values = new List<RowValue>();
                 _parameters.ForEach(p => values.Add(p.Convert()));
-                
-                foreach(var row in _table.Rows)
+
+                foreach (var row in _table.Rows)
                 {
                     _table.UpdateRow(row, values);
+                    rowCount++;
                 }
             }
 
-            throw new NotImplementedException();
+            resultString += " ------------ " + Environment.NewLine;
+
+            response.NumberOfRowsAffected = rowCount;
+            response.JsonData = resultString;
+            response.Message = "Succeeded";
+            response.IsSuccessful = true;
+
+            return response;
         }
 
         /*
