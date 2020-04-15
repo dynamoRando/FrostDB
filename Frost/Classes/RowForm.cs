@@ -5,6 +5,10 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Represents a "form" to be filled out for a row - the row itself and the participant that row is attached to
+    /// </summary>
+    /// <seealso cref="FrostDB.Interface.IRowForm" />
     public class RowForm : IRowForm
     {
         #region Private Fields
