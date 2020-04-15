@@ -64,6 +64,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        // TO DO: Don't do this. Refactor this.
         private Message BuildUpdateRowReponse(Message message)
         {
             Message response = new Message(
