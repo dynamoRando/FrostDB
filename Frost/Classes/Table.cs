@@ -134,6 +134,7 @@ namespace FrostDB
 
         public async Task UpdateRow(RowReference reference, List<RowValue> values)
         {
+            // TO DO: we should be checking the rights on the contract if this is allowed.
             var row = reference.Get(_process).Result;
 
             if (row != null)
