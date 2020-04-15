@@ -132,7 +132,7 @@ namespace FrostDB
             _schema = new TableSchema(this);
         }
 
-        public void UpdateRow(RowReference reference, List<RowValue> values)
+        public async Task UpdateRow(RowReference reference, List<RowValue> values)
         {
             var row = reference.Get(_process).Result;
 
@@ -152,12 +152,26 @@ namespace FrostDB
                     // update the row locally and trigger update row event to re-save the database
 
                     // do we need to do this? or just go ahead and re-save the database since we've modified the row?
-                    //_store.RemoveRow(reference.RowId);
-                    //_store.AddRow(row);
+                    _store.RemoveRow(reference.RowId);
+                    _store.AddRow(row);
+
+                    _process.EventManager.TriggerEvent(EventName.Row.Modified, CreateNewRowModifiedEventArgs(row));
+
                 }
                 else
                 {
                     // need to send a message to the remote participant to update the row
+
+                    var updateRemoteRowId = Guid.NewGuid();
+                    RowForm rowInfo = new RowForm(row, reference.Participant);
+                    var content = JsonConvert.SerializeObject(rowInfo);
+                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId);
+                    var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
+
+                    if (response != null)
+                    {
+                        _process.EventManager.TriggerEvent(EventName.Row.Modified, CreateNewRowModifiedEventArgs(row));
+                    }
                 }
             }
 
@@ -617,6 +631,16 @@ namespace FrostDB
                 DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
                 TableName = this.Name,
                 ColumnName = column.Name
+            };
+        }
+
+        private RowModifiedEventArgs CreateNewRowModifiedEventArgs(Row row)
+        {
+            return new RowModifiedEventArgs
+            {
+                Database = _process.GetDatabase(this.DatabaseId),
+                Table = this,
+                RowId = row.Id
             };
         }
 

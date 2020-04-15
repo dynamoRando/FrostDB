@@ -1,5 +1,6 @@
 ﻿using FrostCommon.Net;
 using FrostDB.Classes;
+using FrostDB.EventArgs;
 using FrostDB.Extensions;
 using FrostDB.Interface;
 using System;
@@ -261,6 +262,7 @@ namespace FrostDB
         {
             _database = (Database)_process.GetDatabase(DatabaseName);
         }
+
         #endregion
     }
 }
