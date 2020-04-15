@@ -156,14 +156,13 @@ namespace FrostDB
                     _store.AddRow(row);
 
                     _process.EventManager.TriggerEvent(EventName.Row.Modified, CreateNewRowModifiedEventArgs(row));
-
                 }
                 else
                 {
                     // need to send a message to the remote participant to update the row
 
                     var updateRemoteRowId = Guid.NewGuid();
-                    RowForm rowInfo = new RowForm(row, reference.Participant);
+                    RowForm rowInfo = new RowForm(row, reference.Participant, reference, values);
                     var content = JsonConvert.SerializeObject(rowInfo);
                     var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId);
                     var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
@@ -174,8 +173,6 @@ namespace FrostDB
                     }
                 }
             }
-
-            throw new NotImplementedException();
         }
 
         public Row GetRow(RowReference reference)
