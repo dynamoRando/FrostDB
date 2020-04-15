@@ -34,7 +34,7 @@ namespace FrostDB
         public string DatabaseName { get; set; }
         public Guid? DatabaseId { get; set; }
         public bool IsRemoteInsert { get; set; }
-        public RowReference Reference { get; set }
+        public RowReference Reference { get; set; }
         public List<RowValue> RowValues { get; set; }
         #endregion
 

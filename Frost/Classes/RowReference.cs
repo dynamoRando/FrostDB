@@ -12,6 +12,12 @@ using log4net.Util;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// A reference to a row in a database. The RowId is the row that is being referenced.
+    /// </summary>
+    /// <seealso cref="FrostDB.Interface.IBaseRowReference" />
+    /// <seealso cref="System.Runtime.Serialization.ISerializable" />
+    /// <seealso cref="FrostDB.Interface.IDBObject" />
     [Serializable]
     public class RowReference :
         IBaseRowReference, ISerializable, IDBObject
