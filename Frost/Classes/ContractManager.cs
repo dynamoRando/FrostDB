@@ -85,9 +85,9 @@ namespace FrostDB
                 }
 
                 db.Contract.ContractPermissions.Add(new TableContractPermission(_process.GetDatabase(db.Name).GetTableId(tableName), cooperator, permissions));
-                db.Contract.ContractDescription = info.ContractDescription;
-
             }
+
+            db.Contract.ContractDescription = info.ContractDescription;
 
             _process.EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
         }
@@ -109,7 +109,7 @@ namespace FrostDB
         {
             _contracts.Add(contract);
             SaveContract(contract);
-          
+
             _process.EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
         }

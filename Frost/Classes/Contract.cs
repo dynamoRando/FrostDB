@@ -7,6 +7,11 @@ using FrostCommon;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// An object that describes the schema and the permissions agreed to by all participants in a database.
+    /// </summary>
+    /// <seealso cref="System.Runtime.Serialization.ISerializable" />
+    /// <seealso cref="FrostDB.Interface.IContract" />
     [Serializable]
     public class Contract : ISerializable, IContract
     {
