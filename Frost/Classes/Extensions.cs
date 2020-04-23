@@ -1,6 +1,8 @@
 ﻿using FrostCommon;
 using FrostCommon.ConsoleMessages;
+using FrostDB;
 using System;
+using System.Collections.Generic;
 using FrostLocation = FrostCommon.ConsoleMessages.LocationInfo;
 
 namespace FrostDB.Extensions
@@ -19,6 +21,16 @@ namespace FrostDB.Extensions
              */
 
             throw new NotImplementedException();
+        }
+
+        public static RowValue Convert(this UpdateQueryColumnParameters parameters)
+        {
+            return new RowValue
+            {
+                ColumnName = parameters.ColumnName,
+                ColumnType = parameters.ColumnType,
+                Value = parameters.Value
+            };
         }
 
         public static void SendResponse(this Message message, MessageResponse responder, Process process)

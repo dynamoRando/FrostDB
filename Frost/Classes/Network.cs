@@ -77,6 +77,15 @@ namespace FrostDB
             _consoleServer.Stop();
         }
 
+        /// <summary>
+        /// Builds a message with the current process as origin and tags the message with a specific request id (to id the call site)
+        /// </summary>
+        /// <param name="destination">The destination for the message.</param>
+        /// <param name="messageContent">Content of the message.</param>
+        /// <param name="messageAction">The message action. See MessageDataAction.cs or MessageConsoleAction.cs.</param>
+        /// <param name="messageType">Type of the message, from MessageType.cs in FrostCommon.</param>
+        /// <param name="requestorId">The requestor identifier. Send this when you want to identify a return message at a call site.</param>
+        /// <returns></returns>
         public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId)
         {
             return _messageBuilder.BuildMessage(destination, messageContent, messageAction, messageType, requestorId);
@@ -130,6 +139,13 @@ namespace FrostDB
             return _requestMessageIds.TryPeek(out id);
         }
 
+        /// <summary>
+        /// Sends the message and attempts to get the correct message back from data processor with the provided request token (to consume return message back at call site).
+        /// This method will await for a response from the destination process or time out. 
+        /// </summary>
+        /// <param name="messageToSend">The message to send.</param>
+        /// <param name="requestToken">The request token.</param>
+        /// <returns>The requested message with the appropriate request token. If there was a network or process problem, the message will be NULL.</returns>
         public async Task<Message> SendAndGetDataMessageFromToken(Message messageToSend, Guid? requestToken)
         {
             bool gotData = false;

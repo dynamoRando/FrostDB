@@ -52,6 +52,9 @@ namespace FrostDB
                 case MessageDataAction.Row.Delete_Row:
                     response = BuildRowDeleteResponse(message);
                     break;
+                case MessageDataAction.Row.Update_Row:
+                    response = BuildUpdateRowReponse(message);
+                    break;
                 default:
                     throw new InvalidOperationException("Unknown Message To Respond To");
             }
@@ -61,42 +64,57 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        // TO DO: Don't do this. Refactor this.
+        private Message BuildUpdateRowReponse(Message message)
+        {
+            Message response = new Message(
+           destination: message.Origin,
+           origin: _process.GetLocation(),
+           messageContent: string.Empty,
+           messageAction: MessageDataAction.Row.Update_Row_Response,
+           referenceMessageId: message.Id,
+           messageType: message.MessageType
+           );
+
+            return response;
+
+        }
         private Message BuildRowDeleteResponse(Message message)
         {
             Message response = new Message(
-     destination: message.Origin,
-     origin: _process.GetLocation(),
-     messageContent: string.Empty,
-     messageAction: MessageDataAction.Row.Delete_Row_Response,
-     referenceMessageId: message.Id,
-     messageType: message.MessageType
-     );
+             destination: message.Origin,
+             origin: _process.GetLocation(),
+             messageContent: string.Empty,
+             messageAction: MessageDataAction.Row.Delete_Row_Response,
+             referenceMessageId: message.Id,
+             messageType: message.MessageType
+             );
 
             return response;
         }
         private Message BuildRemoteRowInfoResponse(Message message)
         {
             Message response = new Message(
-     destination: message.Origin,
-     origin: _process.GetLocation(),
-     messageContent: string.Empty,
-     messageAction: MessageDataAction.Process.Remote_Row_Information_Response,
-     referenceMessageId: message.Id,
-     messageType: message.MessageType
-     );
+             destination: message.Origin,
+             origin: _process.GetLocation(),
+             messageContent: string.Empty,
+             messageAction: MessageDataAction.Process.Remote_Row_Information_Response,
+             referenceMessageId: message.Id,
+             messageType: message.MessageType
+             );
 
             return response;
         }
         private Message BuildGetRemoteRowResponse(Message message)
         {
             Message response = new Message(
-       destination: message.Origin,
-       origin: _process.GetLocation(),
-       messageContent: string.Empty,
-       messageAction: MessageDataAction.Process.Get_Remote_Row_Response,
-       referenceMessageId: message.Id,
-       messageType: message.MessageType
-       );
+            destination: message.Origin,
+           origin: _process.GetLocation(),
+           messageContent: string.Empty,
+           messageAction: MessageDataAction.Process.Get_Remote_Row_Response,
+           referenceMessageId: message.Id,
+           messageType: message.MessageType
+           );
 
             return response;
         }

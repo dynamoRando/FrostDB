@@ -5,6 +5,10 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Represents a "form" to be filled out for a row - the row itself and the participant that row is attached to
+    /// </summary>
+    /// <seealso cref="FrostDB.Interface.IRowForm" />
     public class RowForm : IRowForm
     {
         #region Private Fields
@@ -30,6 +34,8 @@ namespace FrostDB
         public string DatabaseName { get; set; }
         public Guid? DatabaseId { get; set; }
         public bool IsRemoteInsert { get; set; }
+        public RowReference Reference { get; set; }
+        public List<RowValue> RowValues { get; set; }
         #endregion
 
         #region Protected Methods
@@ -43,6 +49,15 @@ namespace FrostDB
         {
             _row = row;
             _participant = participant;
+            RowValues = new List<RowValue>();
+        }
+
+        public RowForm(Row row, Participant participant, RowReference reference, List<RowValue> rowValues)
+        {
+            _row = row;
+            _participant = participant;
+            Reference = reference;
+            RowValues = rowValues;
         }
         #endregion
 

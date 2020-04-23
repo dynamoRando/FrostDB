@@ -243,80 +243,9 @@ namespace FrostDB
             return _contractManager.HasContract(contract.ContractId);
         }
 
-        public virtual Database GetFullDatabase(string databaseName)
-        {
-            Database db = null;
-
-            Databases.ForEach(database =>
-            {
-                if (database is Database && database.Name == databaseName)
-                {
-                    db = database as Database;
-                }
-            });
-
-            return db;
-        }
-
         public virtual List<Contract> GetPendingContracts()
         {
             return _contractManager.GetContractsFromDisk().Where(c => c.IsAccepted == false).ToList();
-        }
-
-        public virtual List<PartialDatabase> GetPartialDatabases()
-        {
-            var dbs = new List<PartialDatabase>();
-
-            PartialDatabases.ForEach(database =>
-            {
-                if (database is PartialDatabase)
-                {
-                    dbs.Add(database as PartialDatabase);
-                }
-            });
-
-            return dbs;
-        }
-
-        public virtual List<Database> GetFullDatabases()
-        {
-            var dbs = new List<Database>();
-
-            Databases.ForEach(database => 
-            { 
-                if (database is Database)
-                {
-                    dbs.Add(database as Database);
-                }
-            });
-
-            return dbs;
-        }
-
-        public List<string> GetDatabases()
-        {
-            var dbs = new List<string>();
-
-            Databases.ForEach(d => {
-                dbs.Add(d.Name);
-            });
-
-            return dbs;
-        }
-
-        public List<string> GetPartialDatabasesString()
-        {
-            var dbs = new List<string>();
-
-            PartialDatabases.ForEach(database => 
-            { 
-                if (database is PartialDatabase)
-                {
-                    dbs.Add(database.Name);
-                }
-            });
-
-            return dbs;
         }
 
         public Configuration GetConfiguration()

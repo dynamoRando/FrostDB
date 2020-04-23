@@ -49,7 +49,7 @@ namespace FrostDB
         #region Constructors
         public Table(Process process)
         {
-            
+
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
@@ -130,6 +130,50 @@ namespace FrostDB
         public void UpdateSchema()
         {
             _schema = new TableSchema(this);
+        }
+
+        public async Task UpdateRow(RowReference reference, List<RowValue> values)
+        {
+            // TO DO: we should be checking the rights on the contract if this is allowed.
+            var row = reference.Get(_process).Result;
+
+            if (row != null)
+            {
+                foreach (var value in values)
+                {
+                    var item = row.Values.Where(v => v.ColumnName == value.ColumnName && v.ColumnType == value.ColumnType).FirstOrDefault();
+                    if (item != null)
+                    {
+                        item.Value = value.Value;
+                    }
+                }
+
+                if (reference.IsLocal(_process))
+                {
+                    // update the row locally and trigger update row event to re-save the database
+
+                    // do we need to do this? or just go ahead and re-save the database since we've modified the row?
+                    _store.RemoveRow(reference.RowId);
+                    _store.AddRow(row);
+
+                    _process.EventManager.TriggerEvent(EventName.Row.Modified, CreateNewRowModifiedEventArgs(row));
+                }
+                else
+                {
+                    // need to send a message to the remote participant to update the row
+
+                    var updateRemoteRowId = Guid.NewGuid();
+                    RowForm rowInfo = new RowForm(row, reference.Participant, reference, values);
+                    var content = JsonConvert.SerializeObject(rowInfo);
+                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId);
+                    var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
+
+                    if (response != null)
+                    {
+                        _process.EventManager.TriggerEvent(EventName.Row.Modified, CreateNewRowModifiedEventArgs(row));
+                    }
+                }
+            }
         }
 
         public Row GetRow(RowReference reference)
@@ -238,7 +282,7 @@ namespace FrostDB
         {
             int rowsAffected = 0;
 
-            _rows.ForEach(r => 
+            _rows.ForEach(r =>
             {
                 if (r.IsLocal(_process))
                 {
@@ -585,6 +629,16 @@ namespace FrostDB
                 DatabaseName = _process.GetDatabase(this.DatabaseId).Name,
                 TableName = this.Name,
                 ColumnName = column.Name
+            };
+        }
+
+        private RowModifiedEventArgs CreateNewRowModifiedEventArgs(Row row)
+        {
+            return new RowModifiedEventArgs
+            {
+                Database = _process.GetDatabase(this.DatabaseId),
+                Table = this,
+                RowId = row.Id
             };
         }
 

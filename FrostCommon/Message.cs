@@ -47,7 +47,7 @@ namespace FrostCommon
         /// </value>
         public DateTime CreatedDateTimeUTC => CreatedDateTime.ToUniversalTime();
         /// <summary>
-        /// Gets or sets the reference message identifier.
+        /// Gets or sets the reference message identifier. Used usually for response messages, or in Console messages.
         /// </summary>
         /// <value>
         /// The reference message identifier.
@@ -110,7 +110,7 @@ namespace FrostCommon
         /// </value>
         public bool HasProcessRequestor { get; set; }
         /// <summary>
-        /// Gets or sets the request information identifier.
+        /// Gets or sets the request information identifier. Used for returning to call site. Usually used in Data messages.
         /// </summary>
         /// <value>
         /// The request information identifier.
