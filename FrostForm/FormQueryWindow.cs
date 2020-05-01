@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,11 +17,14 @@ namespace FrostForm
         List<string> _databases;
         string _currentSelectedDb;
         string _currentSelectedTable;
+        List<IQueryExample> _exampleQueries;
 
         public FormQueryWindow(App app)
         {
             _app = app;
             _databases = new List<string>();
+            _exampleQueries = new List<IQueryExample>();
+            MakeQueryExamples();
             InitializeComponent();
             LoadDatabases();
         }
@@ -144,6 +148,44 @@ namespace FrostForm
         {
             textResults.Text = string.Empty;
             textQuery.Text = string.Empty;
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FormQueryWindow_Load(object sender, EventArgs e)
+        {
+            AddQueryExamples();
+        }
+
+        private void AddQueryExamples()
+        {
+            comboExampleQuery.Items.Clear();
+            comboExampleQuery.Items.Add("Select");
+            comboExampleQuery.Items.Add("Insert");
+            comboExampleQuery.Items.Add("Update");
+            comboExampleQuery.Items.Add("Delete");
+        }
+
+        private void MakeQueryExamples()
+        {
+            _exampleQueries.Clear();
+            _exampleQueries.Add(new SelectQueryExample());
+            _exampleQueries.Add(new UpdateQueryExample());
+            _exampleQueries.Add(new DeleteQueryExample());
+            _exampleQueries.Add(new InsertQueryExample());
+        }
+
+        private void comboExampleQuery_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedExample = comboExampleQuery.SelectedItem.ToString();
+            if (!string.IsNullOrEmpty(selectedExample))
+            {
+                textQuery.Text = string.Empty;
+                textQuery.Text = _exampleQueries.Where(q => q.Name == selectedExample).FirstOrDefault().GetExample();
+            }
         }
     }
 }
