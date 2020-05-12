@@ -220,6 +220,25 @@ namespace FrostDB
             return new QueryRunner().Execute(parameters, rows);
         }
 
+        public Task<List<Row>> GetRowsAsync(string queryString)
+        {
+            _rows.ForEach(row => 
+            { 
+                if (!row.IsLocal(_process))
+                {
+                    // send the queryString to each participant to be evaluated to see if they have matching rows
+                    // build a message with a content type that makes sense for a query string parameter
+                }
+                else
+                {
+                    var result = row.Get(_process).Result;
+                    // do the evaluation here to try and determine if the WHERE clause fits
+                }
+            });
+
+            throw new NotImplementedException();
+        }
+
         public bool HasColumn(string columnName)
         {
             return this.Columns.Any(c => c.Name == columnName);
