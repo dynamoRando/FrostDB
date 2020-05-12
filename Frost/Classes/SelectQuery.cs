@@ -23,6 +23,7 @@ namespace FrostDB
         private Table _table;
         private List<Column> _columns;
         private bool _hasWhereClause;
+        private string _whereClause;
         #endregion
 
         #region Public Properties
@@ -58,17 +59,11 @@ namespace FrostDB
 
             if (!_hasWhereClause)
             {
-                var rows = _table.GetAllRows();
-                rows.ForEach(r => 
-                {
-                    r.Values.ForEach(v => 
-                    {
-                        resultString += " { " + _table.Columns.Where(c => c.Id == v.ColumnId).First().Name + " : " + v.Value.ToString() + " } ";
-                    });
-
-                    rowCount += 1;
-                    resultString += Environment.NewLine;
-                });
+                resultString += ExecuteWithoutWhereClause(out rowCount);
+            }
+            else
+            {
+                resultString += ExecuteWithWhereClause(_whereClause);
             }
 
             resultString += " ------------ " + Environment.NewLine;
@@ -116,6 +111,35 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private string ExecuteWithWhereClause(string whereClause)
+        {
+            string results = string.Empty;
+            var rows = _table.GetRowsAsync(whereClause).Result;
+
+            throw new NotImplementedException();
+        }
+
+        private string ExecuteWithoutWhereClause(out int numberOfRowsAffected)
+        {
+            string results = string.Empty;
+            int rowCount = 0;
+
+            var rows = _table.GetAllRows();
+            rows.ForEach(r =>
+            {
+                r.Values.ForEach(v =>
+                {
+                    results += " { " + _table.Columns.Where(c => c.Id == v.ColumnId).First().Name + " : " + v.Value.ToString() + " } ";
+                });
+
+                rowCount += 1;
+                results += Environment.NewLine;
+            });
+
+            numberOfRowsAffected = rowCount;
+            return results;
+        }
+
         private bool CheckHasWhereClause(string statement)
         {
             if (statement.Contains(QueryKeywords.Where))
