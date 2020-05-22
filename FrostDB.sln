@@ -19,6 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrostBlazeServer", "FrostBl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarnessForm", "TestHarnessForm\TestHarnessForm.csproj", "{7E27B3BC-6714-4031-9E5E-0227872B0A6C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{03AC1A8F-DB7A-4ED8-8522-33089414F153}"
+	ProjectSection(SolutionItems) = preProject
+		TSqlLexer.g4 = TSqlLexer.g4
+		TSqlParser.g4 = TSqlParser.g4
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

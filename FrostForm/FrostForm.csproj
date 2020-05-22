@@ -18,9 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="formManagePendingContracts.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="formManagePendingContracts.cs" />
   </ItemGroup>
 
 </Project>

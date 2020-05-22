@@ -100,6 +100,10 @@ namespace FrostDB
                     hasColumns = CheckHasColumns(columns);
                 }
 
+                if (_hasWhereClause)
+                {
+                    ParseWhereClause(statement);
+                }
             }
             else
             {
@@ -111,6 +115,65 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        /*
+         *  private const string WHERE = "WHERE";
+
+        public void ParseWhereClause(string statement)
+        {
+            // find the {} after the WHERE keyword
+            int whereClauseIndex = statement.IndexOf(WHERE);
+
+            // find the start position
+            int startPosition = whereClauseIndex + WHERE.Length;
+
+            // get the string from the start position to the end of the string 
+            string clause = statement.Substring(startPosition, statement.Length - startPosition);
+
+            // grab the text between the { } 
+            var item = clause.Split('{', '}');
+
+            // grab the ( ) groupings
+            var clauses = item.ToList();
+
+            foreach(var c in clauses)
+            {
+                string value = c.Trim();
+                if (value.Length > 0)
+                {
+                    var items = value.Split('(', ')');
+
+                    foreach(var i in items)
+                    {
+                        var x = i.Trim();
+                        Debug.WriteLine(x);
+                        Console.WriteLine(x);
+                    }
+                }
+            }
+        }
+         */
+
+        private void ParseWhereClause(string statement)
+        {
+            // find the {} after the WHERE keyword
+            int whereClauseIndex = statement.IndexOf(QueryKeywords.Where);
+
+            // find the start position
+            int startPosition = whereClauseIndex + QueryKeywords.Where.Length;
+
+            // get the string from the start position to the end of the string 
+            string clause = statement.Substring(startPosition, statement.Length - startPosition);
+
+            // grab the text between the { } 
+            var item = clause.Split('{', '}');
+
+            // grab the ( ) groupings
+            var clauses = item[0].Split('(', ')').ToList();
+
+            throw new NotImplementedException();
+        }
+
         private string ExecuteWithWhereClause(string whereClause)
         {
             string results = string.Empty;

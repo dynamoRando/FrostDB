@@ -9,6 +9,12 @@ using System.Xml;
 using System.Reflection;
 using System.IO;
 
+/*
+ * May you do good and not evil.
+ * May you find forgiveness for yourself and forgive others.
+ * May you share freely, never taking more than you give.
+ */
+
 namespace FrostDB
 {
     public class Process : IBaseProcess<IDatabase>
