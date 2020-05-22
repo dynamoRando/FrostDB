@@ -12,9 +12,13 @@ namespace FrostDB.Interface
         string Name { get; }
         List<Table> Tables { get; }
         Table GetTable(string tableName);
+        string GetTableName(Guid? tableId);
+        Guid? GetTableId(string tableName);
         bool HasTable(string tableName);
         bool HasTable(Guid? tableName);
         void AddTable(Table table);
+        void RemoveTable(string tableName);
+        void RemoveTable(Guid? tableId);
         void UpdateSchema();
         DbSchema Schema { get; }
         List<Participant> AcceptedParticipants { get; }
@@ -23,5 +27,9 @@ namespace FrostDB.Interface
         void AddParticipant(Participant participant);
         void AddPendingParticipant(Participant participant);
         bool IsCooperative();
+        bool HasParticipant(Guid? participantId);
+        Participant GetParticipant(Guid? participantId);
+        Participant GetPendingParticipant(string ipAddress, int portNumber);
+        void RemovePendingParticipant(Participant participant);
     }
 }

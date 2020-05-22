@@ -1,16 +1,17 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Linq;
 using FrostDB.EventArgs;
 using System.Threading.Tasks;
+using FrostCommon;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
     [Serializable]
-    public class Database : 
+    public class Database :
         IDatabase, ISerializable, IFrostObjectGet, IDBObject
     {
         #region Private Fields
@@ -20,6 +21,8 @@ namespace FrostDB
         private DbSchema _schema;
         private ParticipantManager _participantManager;
         private Contract _contract;
+        private Process _process;
+
         #endregion
 
         #region Public Properties
@@ -39,59 +42,91 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Database()
+        public Database(Process process)
         {
+            _process = process;
             _id = Guid.NewGuid();
             _tables = new List<Table>();
-            _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>());
+            _participantManager = new ParticipantManager(this, new List<Participant>(), new List<Participant>(), _process);
+
+            if (_schema is null)
+            {
+                _schema = new DbSchema(this, _process);
+            }
 
             if (_contract is null)
             {
-                _contract = new Contract(this);
+                _contract = new Contract(_process);
             }
+
+            SetProcessForParticipants();
         }
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
-            List<Table> tables) : this(name)
+        public Database(string name, Guid id,
+            List<Table> tables, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
-            _schema = new DbSchema(this);
+            _schema = new DbSchema(this, _process);
+            SetProcessForParticipants();
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
-            List<Table> tables, DbSchema schema) : this(name)
+        public Database(string name, Guid id,
+            List<Table> tables, DbSchema schema, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
+            SetProcessForParticipants();
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
-            List<Participant> acceptedParticipants) : this(name)
+            List<Participant> acceptedParticipants, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>());
+            _participantManager = new ParticipantManager(this, acceptedParticipants, new List<Participant>(), _process);
+            SetProcessForParticipants();
         }
 
-        public Database(string name, DataManager<IDatabase> manager, Guid id,
+        public Database(string name, Guid id,
             List<Table> tables, DbSchema schema,
             List<Participant> acceptedParticipants,
             List<Participant> pendingParticipants,
-            Contract contract) : this(name)
+            Contract contract, Process process) : this(name, process)
         {
             _id = id;
             _tables = tables;
             _schema = schema;
-            _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants);
+
+            if (acceptedParticipants is null)
+            {
+                acceptedParticipants = new List<Participant>();
+            }
+
+            if (pendingParticipants is null)
+            {
+                pendingParticipants = new List<Participant>();
+            }
+
+            if (contract is null)
+            {
+                contract = new Contract(_process, this);
+            }
+
+            _participantManager = new ParticipantManager(this, acceptedParticipants, pendingParticipants, _process);
             _contract = contract;
+
+            _process = process;
+            SetProcessForParticipants();
         }
 
-        public Database(string name) : this()
+        public Database(string name, Process process) : this(process)
         {
             _name = name;
+            _contract = new Contract(_process, this);
+            SetProcessForParticipants();
         }
 
         protected Database(SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -101,6 +136,14 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public string GetTableName(Guid? tableId)
+        {
+            return Tables.Where(t => t.Id == tableId).First().Name;
+        }
+        public Guid? GetTableId(string tableName)
+        {
+            return Tables.Where(t => t.Name == tableName).First().Id;
+        }
         public bool HasTable(Guid? tableId)
         {
             return Tables.Any(t => t.Id == tableId);
@@ -108,16 +151,55 @@ namespace FrostDB
         public Participant GetProcessParticipant()
         {
             return new Participant(
-                ProcessReference.Process.Id,
-                (Location)Process.GetLocation());
+                _process.Id,
+                (Location)_process.GetLocation());
+        }
+
+        public Participant GetParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Where(p => p.Id == participantId).First();
+        }
+
+        public void RemovePendingParticipant(Participant participant)
+        {
+            var p = PendingParticipants.Where(p => p.Location.IpAddress == participant.Location.IpAddress && p.Location.PortNumber == participant.Location.PortNumber).FirstOrDefault();
+            PendingParticipants.Remove(p);
+        }
+
+        public Participant GetParticipant(string ipAddress, int portNumber)
+        {
+            return AcceptedParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == portNumber).First();
+        }
+
+        public Participant GetPendingParticipant(string ipAddress, int portNumber)
+        {
+            return PendingParticipants.Where(p => p.Location.IpAddress == ipAddress && p.Location.PortNumber == portNumber).First();
+        }
+
+        public bool HasParticipant(Guid? participantId)
+        {
+            return AcceptedParticipants.Any(p => p.Id == participantId);
         }
 
         public void AddPendingParticipant(Participant participant)
         {
-            Message contractMessage = new Message(participant.Location, Process.GetLocation(), this.Contract, MessageAction.Contract.Save_Pending_Contract);
+            this.UpdateSchema();
+
+            this.Contract.DatabaseName = this.Name;
+            this.Contract.DatabaseId = this.Id;
+            this.Contract.DatabaseLocation = _process.GetLocation();
+            this.Contract.DatabaseSchema = this.Schema;
+
+            var contractMessage = new Message(
+                destination: participant.Location,
+                origin: _process.GetLocation(),
+                messageContent: JsonExt.SeralizeContract(this.Contract),
+                messageAction: MessageDataAction.Contract.Save_Pending_Contract,
+                messageType: MessageType.Data
+                );
 
             //TO DO: Should this wait if the send is successful or not before adding participant?
-            Task.Run(() => Client.Send(contractMessage));
+            _process.Network.SendMessage(contractMessage);
             _participantManager.AddPendingParticipant(participant);
         }
 
@@ -128,7 +210,7 @@ namespace FrostDB
 
         public void UpdateSchema()
         {
-            _schema = new DbSchema(this);
+            _schema = new DbSchema(this, _process);
         }
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -142,9 +224,12 @@ namespace FrostDB
 
         public void AddTable(Table table)
         {
-            _tables.Add(table);
-            EventManager.TriggerEvent(EventName.Table.Created,
-              CreateTableCreatedEventArgs(table));
+            if (!HasTable(table.Name))
+            {
+                _tables.Add(table);
+                _process.EventManager.TriggerEvent(EventName.Table.Created,
+                  CreateTableCreatedEventArgs(table));
+            }
         }
 
         public Table GetTable(string tableName)
@@ -154,17 +239,35 @@ namespace FrostDB
 
         public bool HasTable(string tableName)
         {
-            return _tables.Any(t => t.Name == tableName);
+            return _tables.Any(t => t.Name.Equals(tableName));
         }
 
         public bool IsCooperative()
         {
-            return AcceptedParticipants.Any(participant => !participant.Location.IsLocal());
+            return AcceptedParticipants.Any(participant => !participant.Location.IsLocal(_process));
+        }
+        public void RemoveTable(string tableName)
+        {
+            var table = this.GetTable(tableName);
+            _tables.Remove(table);
+            _process.EventManager.TriggerEvent(EventName.Table.Dropped,
+                TableDroppedEventArgs(table));
         }
 
+        public void RemoveTable(Guid? tableId)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
+        private void SetProcessForParticipants()
+        {
+            foreach (var p in AcceptedParticipants)
+            {
+                p.SetProcess(_process);
+            }
+        }
         private TableCreatedEventArgs CreateTableCreatedEventArgs(Table table)
         {
             var eventargs = new TableCreatedEventArgs();
@@ -172,6 +275,14 @@ namespace FrostDB
             eventargs.Database = this;
             return eventargs;
         }
+        private TableDroppedEventArgs TableDroppedEventArgs(Table table)
+        {
+            var eventargs = new TableDroppedEventArgs();
+            eventargs.Table = table;
+            eventargs.Database = this;
+            return eventargs;
+        }
+
         #endregion
 
     }

@@ -81,6 +81,13 @@ namespace FrostDB
             _columnIds.AddRange(columnIds);
             _tableId = tableId;
         }
+
+        public Row(List<Guid?> columnIds, Guid? tableId, Guid? rowId) : this()
+        {
+            _columnIds.AddRange(columnIds);
+            _tableId = tableId;
+            _id = rowId;
+        }
         #endregion
     }
 }

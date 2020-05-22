@@ -2,19 +2,31 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Linq;
+using FrostDB.Extensions;
+using FrostCommon;
+using FrostCommon.DataMessages;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using log4net.Util;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// A reference to a row in a database. The RowId is the row that is being referenced.
+    /// </summary>
+    /// <seealso cref="FrostDB.Interface.IBaseRowReference" />
+    /// <seealso cref="System.Runtime.Serialization.ISerializable" />
+    /// <seealso cref="FrostDB.Interface.IDBObject" />
     [Serializable]
-    public class RowReference : 
+    public class RowReference :
         IBaseRowReference, ISerializable, IDBObject
     {
         #region Private Fields
         private List<Guid?> _columnIds;
         private Guid? _tableId;
         private Guid? _databaseId;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -34,13 +46,14 @@ namespace FrostDB
         #region Constructors
         public RowReference() { }
 
-        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant, Guid? databaseId, Guid? rowId)
+        public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant, Guid? databaseId, Guid? rowId, Process process)
         {
             _columnIds = columnIds;
             _tableId = tableId;
             Participant = participant;
             _databaseId = databaseId;
             RowId = rowId;
+            _process = process;
         }
         public RowReference(List<Guid?> columnIds, Guid? tableId, Participant participant)
         {
@@ -72,17 +85,23 @@ namespace FrostDB
             info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
-        public Row Get()
+        public async Task<Row> Get(Process process)
         {
+            if (_process is null)
+            {
+                _process = process;
+            }
+
             var row = new Row();
 
-            if (Participant.Location.IsLocal() || Participant.IsDatabase(_databaseId))
+            if (Participant.Location.IsLocal(_process) || Participant.IsDatabase(_databaseId))
             {
-                row = ProcessReference.GetRow(DatabaseId, TableId, RowId);
+                row = _process.GetRow(DatabaseId, TableId, RowId);
             }
             else
             {
-                //row = Client.GetRow(Participant.Location, DatabaseId, TableId, RowId).Result;
+                row = await GetRowAsync();
+
             }
 
             return row;
@@ -90,6 +109,38 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<Row> GetRowAsync()
+        {
+            Row row = new Row();
+            RemoteRowInfo request = BuildRemoteRowInfo();
+            string content = JsonConvert.SerializeObject(request);
+            Guid? requestId = Guid.NewGuid();
+            Message rowMessage = null;
+
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            rowMessage = await _process.Network.SendAndGetDataMessageFromToken(getRowMessage, requestId);
+
+            if (rowMessage != null)
+            {
+                row = rowMessage.GetContentAs<Row>();
+            }
+
+            return row;
+        }
+
+        private RemoteRowInfo BuildRemoteRowInfo()
+        {
+            RemoteRowInfo request = new RemoteRowInfo();
+            request.DatabaseId = this.DatabaseId;
+            var db = _process.GetDatabase(this.DatabaseId);
+            request.DatabaseName = db.Name;
+            request.TableId = this.TableId;
+            request.TableName = db.GetTableName(this.TableId);
+            request.RowId = this.RowId;
+            return request;
+        }
+
+
         #endregion
 
     }

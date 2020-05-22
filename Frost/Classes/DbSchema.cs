@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -11,6 +12,7 @@ namespace FrostDB
     {
         #region Private Fields
         private Guid? _schemaVersion;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -47,8 +49,14 @@ namespace FrostDB
             Tables = new List<TableSchema>();
         }
 
-        public DbSchema(Database database) : this()
+        public DbSchema(Database database, Process process) : this()
         {
+            _process = process;
+            Map(database);
+        }
+        public DbSchema(PartialDatabase database, Process process) : this()
+        {
+            _process = process;
             Map(database);
         }
         #endregion
@@ -71,7 +79,14 @@ namespace FrostDB
             DatabaseName = database.Name;
             DatabaseId = database.Id;
             database.Tables.ForEach(table => Tables.Add(table.Schema));
-            Location = (Location)Process.GetLocation();
+            Location = (Location)_process.GetLocation();
+        }
+        private void Map(PartialDatabase database)
+        {
+            DatabaseName = database.Name;
+            DatabaseId = database.Id;
+            database.Tables.ForEach(table => Tables.Add(table.GetSchema()));
+            Location = (Location)_process.GetLocation();
         }
         #endregion
     }

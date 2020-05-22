@@ -10,5 +10,7 @@ namespace FrostDB.Interface
         Row GetRow(RowReference reference);
         bool HasRow(Guid? rowId);
         Row GetRow(Guid? rowId);
+        void AddColumn(string columnName, Type type);
+        void RemoveColumn(string columnName);
     }
 }

@@ -2,10 +2,17 @@
 {
     public class EventName
     {
+        public class Message
+        {
+            public const string Message_Recieved = "Message_Recieved";
+            public const string Message_Sent = "Message_Sent";
+        }
+
         public class Contract
         {
             public const string Pending_Added = "Pending_Contract_Added";
             public const string Accepted = "Contract_Accepted";
+            public const string Contract_Updated = "Contract_Updated";
         }
         public class Database
         {
@@ -24,6 +31,8 @@
         {
             public const string Created = "Table_Created";
             public const string Dropped = "Table_Dropped";
+
+            public const string Truncated = "Table_Truncated";
         }
         
         public class Row

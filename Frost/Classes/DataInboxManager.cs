@@ -13,7 +13,7 @@ namespace FrostDB
     {
         #region Private Fields
         private ConcurrentBag<DataMessage> _messages;
-        private ConcurrentBag<Guid> _messageIds;
+        private ConcurrentBag<Guid?> _messageIds;
         private int _timeoutInSeconds = 180;
         #endregion
 

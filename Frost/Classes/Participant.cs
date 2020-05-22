@@ -1,9 +1,11 @@
 ﻿using FrostDB.Interface;
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Linq;
+using FrostDB.Enum;
+using FrostCommon;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace FrostDB
 {
@@ -15,6 +17,7 @@ namespace FrostDB
         private Guid? _id;
         private string _name;
         private Location _location;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -61,16 +64,42 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void SetProcess(Process process)
+        {
+            _process = process;
+        }
+        public async Task<bool> IsOnlineAsync()
+        {
+            bool isOnline = false;
 
-        public bool HasAcceptedContract(Guid? databaseId)
+            var isOnlineCheck = new Message(_location, _process.GetLocation(), null, MessageDataAction.Status.Is_Online, MessageType.Data);
+            var id = _process.Network.SendMessage(isOnlineCheck);
+            bool gotData = await WaitForMessageAsync(id);
+
+            if (gotData)
+            {
+                isOnline = true;
+            }
+
+            return isOnline;
+        }
+        // is the participant okay with the action we're doing?
+        // this logic should probably live in a different class
+        public bool AcceptsAction(TableAction action)
+        {
+            // TO DO: fix this
+            return true;
+        }
+
+        public bool HasAcceptedContract(Guid? databaseId, Process process)
         {
             if (this.IsDatabase(databaseId))
             {
                 return true;
             }
 
-            if (Contract.ContractVersion == ProcessReference.GetDatabase(databaseId).Contract.ContractVersion &&
-            ProcessReference.GetDatabase(databaseId).AcceptedParticipants.Any(participant => participant.Id == this.Id)
+            if (Contract.ContractVersion == process.GetDatabase(databaseId).Contract.ContractVersion &&
+            process.GetDatabase(databaseId).AcceptedParticipants.Any(participant => participant.Id == this.Id)
             && !this.IsDatabase(databaseId))
             {
                 return true;
@@ -101,6 +130,40 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private async Task<bool> WaitForMessageAsync(Guid? id)
+        {
+            return await Task.Run(() => WaitForMessage(id));
+        }
+
+        private bool WaitForMessage(Guid? id)
+        {
+            Stopwatch watch = new Stopwatch();
+            bool responseRecieved = false;
+
+            watch.Start();
+
+            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
+            {
+                if (!_process.Network.HasMessageId(id))
+                {
+                    responseRecieved = true;
+
+                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
+
+                    break;
+
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            watch.Stop();
+
+            return responseRecieved;
+        }
         #endregion
 
     }

@@ -49,27 +49,63 @@ namespace FrostDB
             return config;
         }
 
-        #endregion
+        public virtual Configuration GetConfiguration(string rootDirectory)
+        {
+            var config = new Configuration();
+            var filePath = rootDirectory + @"\" + @"frost.config";
 
-        #region Private Methods
-        private void SaveConfiguration(Configuration configuration)
+            if (File.Exists(filePath))
+            {
+                config = _configManager.LoadConfiguration(filePath);
+            }
+            else
+            {
+                SetDefaultValues(config, rootDirectory);
+                SaveConfiguration(config);
+            }
+
+            return config;
+        }
+
+        public void SaveConfiguration(Configuration configuration)
         {
             _configManager.SaveConfiguration(configuration);
         }
 
-        private void SetDefaultValues(Configuration config)
+        public void SetDefaultValues(Configuration config)
         {
             config.DatabaseFolder = _default.DatabaseFolder;
             config.FileLocation = _default.ConfigurationFileLocation;
             config.Address = _default.IPAddress;
-            config.ServerPort = _default.PortNumber;
+            config.DataServerPort = _default.DataPortNumber;
             config.DatabaseExtension = _default.DatabaseExtension;
             config.Id = Guid.NewGuid();
             config.Name = _default.Name;
             config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
             config.ContractExtension = _default.ContractExtension;
             config.ContractFolder = _default.ContractFolder;
+            config.ConsoleServerPort = _default.ConsolePortNumber;
         }
+
+        public void SetDefaultValues(Configuration config, string rootDirectory)
+        {
+            config.DatabaseFolder = rootDirectory + @"\" + @"\dbs\";
+            config.FileLocation = rootDirectory + @"\" + @"\frost.config";
+            config.Address = _default.IPAddress;
+            config.DataServerPort = _default.DataPortNumber;
+            config.DatabaseExtension = _default.DatabaseExtension;
+            config.Id = Guid.NewGuid();
+            config.Name = _default.Name;
+            config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
+            config.ContractExtension = _default.ContractExtension;
+            config.ContractFolder = rootDirectory + @"\" + @"\contracts\";
+            config.ConsoleServerPort = _default.ConsolePortNumber;
+        }
+
+        #endregion
+
+        #region Private Methods
+
         #endregion
     }
 }

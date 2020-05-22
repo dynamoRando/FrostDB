@@ -5,17 +5,35 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class PartialDatabaseFileMapper : IDatabaseFileMapper<PartialDatabase,
-        DataFile, DataManager<PartialDatabase>>
+    public class PartialDatabaseFileMapper : IDatabaseFileMapper<PartialDatabase, DataFile>
     {
-        public PartialDatabase Map(DataFile file, DataManager<PartialDatabase> manager)
+        public PartialDatabase Map(DataFile file, Process process)
         {
-            throw new NotImplementedException();
+            foreach (var t in file.Tables)
+            {
+                t.SetProcess(process);
+            }
+
+            var database = new PartialDatabase(
+            file.Name,
+            file.Id.Value,
+            file.Tables,
+            process
+            );
+
+            return database;
         }
 
         public DataFile Map(PartialDatabase database)
         {
-            throw new NotImplementedException();
+            return new DataFile
+            {
+                Id = database.Id,
+                Name = database.Name,
+                Tables = database.Tables,
+                Schema = database.Schema
+            };
         }
+
     }
 }

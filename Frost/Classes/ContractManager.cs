@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using FrostDB.EventArgs;
+using FrostCommon.ConsoleMessages;
+using FrostDB.Enum;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -20,9 +23,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public ContractManager() 
+        public ContractManager()
         {
             _fileManager = new ContractFileManager();
+            _contracts = new List<Contract>();
         }
         public ContractManager(Process process) : this()
         {
@@ -31,15 +35,82 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void UpdateContractPermissions(ContractInfo info)
+        {
+            var db = _process.GetDatabase(info.DatabaseName);
+            db.Contract.ContractPermissions.Clear();
+
+            foreach (var item in info.SchemaData)
+            {
+                var tableName = item.Item1;
+
+                Cooperator cooperator;
+
+                if (item.Item2 == "Process")
+                {
+                    cooperator = Cooperator.Process;
+                }
+                else
+                {
+                    cooperator = Cooperator.Participant;
+                }
+
+                List<TablePermission> permissions = new List<TablePermission>();
+
+                foreach (var k in item.Item3)
+                {
+                    switch (k)
+                    {
+                        case "None":
+                            permissions.Add(TablePermission.None);
+                            break;
+                        case "All":
+                            permissions.Add(TablePermission.All);
+                            break;
+                        case "Read":
+                            permissions.Add(TablePermission.Read);
+                            break;
+                        case "Insert":
+                            permissions.Add(TablePermission.Insert);
+                            break;
+                        case "Update":
+                            permissions.Add(TablePermission.Update);
+                            break;
+                        case "Delete":
+                            permissions.Add(TablePermission.Delete);
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown permission");
+                    }
+                }
+
+                db.Contract.ContractPermissions.Add(new TableContractPermission(_process.GetDatabase(db.Name).GetTableId(tableName), cooperator, permissions));
+            }
+
+            db.Contract.ContractDescription = info.ContractDescription;
+
+            _process.EventManager.TriggerEvent(EventName.Contract.Contract_Updated, CreatewNewContractUpdatedEventArgs((Database)db));
+        }
+
+        public List<Contract> GetContractsFromDisk()
+        {
+            _contracts = _fileManager.GetContracts(_process.GetConfiguration().ContractFolder);
+            return _contracts;
+        }
+
+        public void AcceptPendingContract(ContractInfo contract)
+        {
+            var localContract = _contracts.Where(c => c.DatabaseName == contract.DatabaseName).First();
+            localContract.IsAccepted = true;
+            SaveContract(localContract);
+        }
+
         public void AddPendingContract(Contract contract)
         {
             _contracts.Add(contract);
-            _fileManager
-                .SaveContract(contract,
-                Process.Configuration.ContractFolder,
-                Process.Configuration.ContractExtension);
+            SaveContract(contract);
 
-            EventManager.TriggerEvent(EventName.Contract.Pending_Added,
+            _process.EventManager.TriggerEvent(EventName.Contract.Pending_Added,
                 CreateNewPendingContractEventArgs(contract));
         }
         public bool HasContract(Guid? contractId)
@@ -49,9 +120,21 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SaveContract(Contract contract)
+        {
+            _fileManager
+              .SaveContract(contract,
+              _process.GetConfiguration().ContractFolder,
+              _process.GetConfiguration().ContractExtension);
+        }
         private PendingContractAddedEventArgs CreateNewPendingContractEventArgs(Contract contract)
         {
             return new PendingContractAddedEventArgs { Contract = contract };
+        }
+
+        private ContractUpdatedEventArgs CreatewNewContractUpdatedEventArgs(Database database)
+        {
+            return new ContractUpdatedEventArgs { Database = database };
         }
         #endregion
     }

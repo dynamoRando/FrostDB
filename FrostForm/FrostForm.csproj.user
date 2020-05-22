@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="formAddParticipant.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formManageContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formManagePendingContracts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formNewColumn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formNewDb.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formNewTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="formPartialDbs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FormQueryWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FrostForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>
