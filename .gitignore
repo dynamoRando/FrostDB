@@ -11,3 +11,10 @@
 /_Obj
 /.gitattributes
 /Directory.build.props
+/FrostBlaze/bin/Debug/netstandard2.1
+/FrostBlazeServer/bin/Debug/netcoreapp3.1
+/FrostCommon/bin/Debug/netstandard2.1
+/FrostConsole/bin/Debug
+/FrostDbClient/bin/Debug/netstandard2.1
+/FrostForm/bin/Debug
+/TestHarnessForm/bin/Debug/netcoreapp3.1
