@@ -125,7 +125,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse, type, MessageActionType.Process);
+            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Process.Get_Pending_Process_Contracts_Response, type, MessageActionType.Process);
         }
 
         private void HandleAcceptPendingContract(Message message)

@@ -41,3 +41,6 @@
 /FrostWPF/obj/Debug/netcoreapp3.1
 /FrostWPF/obj
 /FrostWPF/obj
+FrostConsole/log4net.config
+FrostConsole/frostDb.log
+FrostConsole/frost.config
