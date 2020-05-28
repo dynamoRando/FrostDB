@@ -188,7 +188,7 @@ namespace FrostDbClient
                 case MessageConsoleAction.Process.Get_Id_Response:
                     HandleProcessId(message);
                     break;
-                case MessageConsoleAction.Process.Get_Pending_Process_Contracts_Respoonse:
+                case MessageConsoleAction.Process.Get_Pending_Process_Contracts_Response:
                     HandleGetPendingProcessContractsResponse(message);
                     break;
             }
