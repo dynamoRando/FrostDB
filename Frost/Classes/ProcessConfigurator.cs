@@ -89,8 +89,8 @@ namespace FrostDB
 
         public void SetDefaultValues(Configuration config, string rootDirectory)
         {
-            config.DatabaseFolder = rootDirectory + @"\" + @"\dbs\";
-            config.FileLocation = rootDirectory + @"\" + @"\frost.config";
+            config.DatabaseFolder = Path.Combine(rootDirectory, "dbs");
+            config.FileLocation = Path.Combine(rootDirectory, "frost.config");
             config.Address = _default.IPAddress;
             config.DataServerPort = _default.DataPortNumber;
             config.DatabaseExtension = _default.DatabaseExtension;
@@ -98,7 +98,7 @@ namespace FrostDB
             config.Name = _default.Name;
             config.PartialDatabaseExtension = _default.PartialDatabaseExtension;
             config.ContractExtension = _default.ContractExtension;
-            config.ContractFolder = rootDirectory + @"\" + @"\contracts\";
+            config.ContractFolder = Path.Combine(rootDirectory, "contracts");
             config.ConsoleServerPort = _default.ConsolePortNumber;
         }
 

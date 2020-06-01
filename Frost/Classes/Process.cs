@@ -57,7 +57,7 @@ namespace FrostDB
             _contractManager = new ContractManager(this);
             _networkManager = new Network(this);
         }
-        public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber) 
+        public Process(string instanceIpAddress, int dataPortNumber, int consolePortNumber)
         {
             SetupLogging();
 
@@ -87,8 +87,8 @@ namespace FrostDB
             config.Address = instanceIpAddress;
             config.DataServerPort = dataPortNumber;
             config.ConsoleServerPort = consolePortNumber;
-            config.ContractFolder = rootDirectory + @"\contracts\";
-            config.DatabaseFolder = rootDirectory + @"\dbs\";
+            config.ContractFolder = Path.Combine(rootDirectory, "contracts");
+            config.DatabaseFolder = Path.Combine(rootDirectory, "dbs");
             configurator.SaveConfiguration(config);
             Configuration = config;
 
@@ -153,7 +153,7 @@ namespace FrostDB
         {
             return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder, Configuration.DatabaseExtension);
         }
-  
+
         public virtual IDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
@@ -268,7 +268,7 @@ namespace FrostDB
         {
             _networkManager.StartDataServer();
         }
-        
+
         public void StopRemoteServer()
         {
             _networkManager.StopDataServer();

@@ -64,9 +64,12 @@ namespace FrostDB
         {
             if (_info.OS == OSPlatform.Windows)
             {
-                _configFileLocation = _appPath + @"\frost.config";
-                _dbFolder = _appPath + @"\dbs\";
-                _contractFolder = _appPath + @"\contracts\";
+                //_configFileLocation = _appPath + @"\frost.config";
+                _configFileLocation = Path.Combine(_appPath, "frost.config");
+                //_dbFolder = _appPath + @"\dbs\";
+                _dbFolder = Path.Combine(_appPath, "dbs");
+                //_contractFolder = _appPath + @"\contracts\";
+                _contractFolder = Path.Combine(_appPath, "contracts");
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
@@ -77,9 +80,12 @@ namespace FrostDB
             }
             else if (_info.OS == OSPlatform.Linux)
             {
-                _configFileLocation = _appPath + @"/frost.config";
-                _dbFolder = _appPath + @"/dbs/";
-                _contractFolder = _appPath + @"/contracts/";
+                //_configFileLocation = _appPath + @"/frost.config";
+                _configFileLocation = Path.Combine(_appPath, "frost.config");
+                //_dbFolder = _appPath + @"/dbs/";
+                _dbFolder = Path.Combine(_appPath, "dbs");
+                //_contractFolder = _appPath + @"/contracts/";
+                _contractFolder = Path.Combine(_appPath, "contracts");
                 _dbext = ".frost";
                 _contractext = ".frostContract";
                 _name = "FrostHost";
