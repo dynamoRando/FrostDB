@@ -28,8 +28,11 @@ namespace FrostConsoleHarness
         {
             Processes.ForEach(i => 
             {
+                Console.WriteLine("-----------");
                 Console.WriteLine($"IP Address: { i.IPAddress } " +
                 $"PortNumber: { i.PortNumber.ToString() } ConsolePortNumber: { i.ConsolePortNumber.ToString() }");
+                Console.WriteLine($"Root Dir: { i.RootDirectory }");
+                Console.WriteLine("-----------");
             });
         }
     }
