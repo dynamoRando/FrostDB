@@ -1,10 +1,35 @@
 using System;
 using FrostDB;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft;
 
 namespace FrostConsoleHarness
 {
     class ProcessConfigurator
     {
+        public List<FrostInstance> LoadExistingHarness()
+        {
+            var harnessLocation = Prompt.For("Enter config location:");
+            List<FrostInstance> item = new List<FrostInstance>();
+            if (File.Exists(harnessLocation))
+            {
+                    var fileText = File.ReadAllText(harnessLocation);
+                    item = JsonConvert.DeseralizeObject<HarnessFile>(fileText).Instances;
+            }
+
+            return item;
+        }
+
+        public void SaveCurrentHarness(List<FrostInstance> instances, string fileLocation)
+        {
+            HarnessFile file = new HarnessFile();
+            file.Instances = instances;
+
+            var item = JsonConvert.SeralizeObject(file);
+            File.WriteAllText(fileLocation, item);
+        }
+
         public FrostInstance ConfigureInstance()
         {
             Process process = null;
