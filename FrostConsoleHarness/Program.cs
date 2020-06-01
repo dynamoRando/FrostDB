@@ -7,7 +7,8 @@ namespace FrostConsoleHarness
 {
     class Program
     {
-        static List<Process> FrostInstances = new List<Process>();
+        static FrostInstanceManager Manager = new FrostInstanceManager();
+        static ProcessConfigurator Configurator = new ProcessConfigurator();
 
         static void Main(string[] args)
         {
@@ -26,6 +27,7 @@ namespace FrostConsoleHarness
             Console.WriteLine("Frost Console Harness");
             Console.WriteLine("Please choose an option:");
             Console.WriteLine("(s) - start a new instance with default settings");
+            Console.WriteLine("(l) - list all running instances");
             Console.WriteLine("(c) - configure a new instance");
             Console.WriteLine("(k) - kill a existing instance");
             Console.WriteLine("(e) - exit application");
@@ -46,6 +48,9 @@ namespace FrostConsoleHarness
                 case "k":
                     KillExistingProcess();
                     break;
+                case "l":
+                    ListInstances();
+                    break;
                 default:
                     // do nothing
                     break;
@@ -58,10 +63,20 @@ namespace FrostConsoleHarness
             throw new NotImplementedException();
         }
 
+        static void ListInstances()
+        {
+            Manager.ListRunningInstances();
+        }
+
         static void ConfigureNewProcess()
         {
             Console.WriteLine("Configure A New Process");
-            throw new NotImplementedException();
+            var item = Configurator.ConfigureInstance();
+            if (item != null)
+            {
+                Manager.AddInstance(item);
+                Console.WriteLine("Instance added");
+            }
         }
 
         static void KillExistingProcess()

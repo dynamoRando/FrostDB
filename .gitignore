@@ -75,3 +75,6 @@ FrostConsoleHarness/bin/Debug/netcoreapp3.1/FrostDB.dll
 FrostConsoleHarness/bin/Debug/netcoreapp3.1/FrostCommon.pdb
 FrostConsoleHarness/bin/Debug/netcoreapp3.1/FrostCommon.dll
 FrostConsoleHarness/bin/Debug/netcoreapp3.1/Antlr4.Runtime.Standard.dll
+FrostConsoleHarness/frost.config
+FrostConsoleHarness/frostDb.log
+FrostConsoleHarness/log4net.config
