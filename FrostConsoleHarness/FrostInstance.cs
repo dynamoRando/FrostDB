@@ -3,6 +3,7 @@ using FrostDB;
 
 namespace FrostConsoleHarness
 {
+    [Serializable]
     class FrostInstance
     {
         public string IPAddress { get; set; }

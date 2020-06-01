@@ -10,6 +10,11 @@ namespace FrostConsoleHarness
     {
         public List<FrostInstance> Processes = new List<FrostInstance>();
 
+        public void AddInstances(List<FrostInstance> instances)
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddInstance(FrostInstance instance)
         {
             if (!ContainsInstance(instance))

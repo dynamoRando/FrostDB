@@ -28,6 +28,7 @@ namespace FrostConsoleHarness
             Console.WriteLine("Please choose an option:");
             Console.WriteLine("(s) - start a new instance with default settings");
             Console.WriteLine("(l) - list all running instances");
+            Console.WriteLine("(lh) - load an existing harness");
             Console.WriteLine("(c) - configure a new instance");
             Console.WriteLine("(k) - kill a existing instance");
             Console.WriteLine("(e) - exit application");
@@ -50,6 +51,9 @@ namespace FrostConsoleHarness
                     break;
                 case "l":
                     ListInstances();
+                    break;
+                case "lh":
+                    LoadExistingHarness();
                     break;
                 default:
                     // do nothing
@@ -83,6 +87,11 @@ namespace FrostConsoleHarness
         {
             Console.WriteLine("Kill an existing process");
             throw new NotImplementedException();
+        }
+
+        static void LoadExistingHarness()
+        {
+            Configurator.LoadExistingHarness();
         }
 
     }
