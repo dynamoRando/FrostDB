@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace FrostConsoleHarness
 {
     [Serializable]
     class HarnessFile
     {
-        public List<FrostInstances> Instances { get; set; }
+        public List<FrostInstance> Instances { get; set; }
     }
 }
