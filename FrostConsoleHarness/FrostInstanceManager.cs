@@ -12,7 +12,15 @@ namespace FrostConsoleHarness
 
         public void AddInstances(List<FrostInstance> instances)
         {
-            throw new NotImplementedException();
+            Processes.ForEach(p => 
+            {
+                p.Instance.StopConsoleServer();
+                p.Instance.StopRemoteServer();
+            });
+
+            Processes.Clear();
+
+            Processes.AddRange(instances);
         }
 
         public void AddInstance(FrostInstance instance)

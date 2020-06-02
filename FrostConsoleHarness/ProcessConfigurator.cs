@@ -2,7 +2,7 @@ using System;
 using FrostDB;
 using System.IO;
 using Newtonsoft.Json;
-using Newtonsoft;
+using System.Collections.Generic;
 
 namespace FrostConsoleHarness
 {
@@ -15,18 +15,19 @@ namespace FrostConsoleHarness
             if (File.Exists(harnessLocation))
             {
                     var fileText = File.ReadAllText(harnessLocation);
-                    item = JsonConvert.DeseralizeObject<HarnessFile>(fileText).Instances;
+                    item = JsonConvert.DeserializeObject<HarnessFile>(fileText).Instances;
             }
 
             return item;
         }
 
-        public void SaveCurrentHarness(List<FrostInstance> instances, string fileLocation)
+        public void SaveCurrentHarness(List<FrostInstance> instances)
         {
+            var fileLocation = Prompt.For("Enter config file location");
             HarnessFile file = new HarnessFile();
             file.Instances = instances;
 
-            var item = JsonConvert.SeralizeObject(file);
+            var item = JsonConvert.SerializeObject(file);
             File.WriteAllText(fileLocation, item);
         }
 

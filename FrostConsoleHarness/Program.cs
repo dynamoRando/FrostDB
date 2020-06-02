@@ -29,6 +29,7 @@ namespace FrostConsoleHarness
             Console.WriteLine("(s) - start a new instance with default settings");
             Console.WriteLine("(l) - list all running instances");
             Console.WriteLine("(lh) - load an existing harness");
+            Console.WriteLine("(sh) - save current harness");
             Console.WriteLine("(c) - configure a new instance");
             Console.WriteLine("(k) - kill a existing instance");
             Console.WriteLine("(e) - exit application");
@@ -55,6 +56,9 @@ namespace FrostConsoleHarness
                 case "lh":
                     LoadExistingHarness();
                     break;
+                case "sh":
+                    SaveCurrentHarness();
+                    break;
                 default:
                     // do nothing
                     break;
@@ -65,6 +69,11 @@ namespace FrostConsoleHarness
         {
             Console.WriteLine("Start A New Default Process");
             throw new NotImplementedException();
+        }
+
+        static void SaveCurrentHarness()
+        {
+            Configurator.SaveCurrentHarness(Manager.Processes);
         }
 
         static void ListInstances()
@@ -91,7 +100,8 @@ namespace FrostConsoleHarness
 
         static void LoadExistingHarness()
         {
-            Configurator.LoadExistingHarness();
+            var items = Configurator.LoadExistingHarness();
+            Manager.AddInstances(items);
         }
 
     }
