@@ -151,7 +151,7 @@ namespace FrostDB
 
         public void SaveToDisk(PartialDatabase database)
         {
-            var fileName = _databaseFolder + database.Name + _databaseExtension;
+            var fileName = Path.Combine(_databaseFolder, database.Name + _databaseExtension);
             var file = _databaseFileMapper.Map(database);
             _dataFileManager.SaveDataFile(fileName, file);
         }
