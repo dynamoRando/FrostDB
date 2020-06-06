@@ -29,6 +29,14 @@ else
             }
         </tbody>
     </table>
+
+    <p>Databases</p>
+    <select id="databaseNames">
+    @foreach (var db in databases)
+    {
+        <option value="@db">@db</option>
+    }
+    </select>
 }
 
 @code {
@@ -50,6 +58,8 @@ else
 
         var task = client.GetDatabasesAsync();
         await task;
+
+        List<string> items = task.Result;
 
         client.GetDatabases();
 
