@@ -1,0 +1,89 @@
+@page "/froststudio"
+
+@using FrostDbClient
+
+<h1>Frost Studio</h1>
+
+<h2>Instance Information</h2>
+<table class="table">
+    <tr>
+        <th>IP Address</th>
+        <th>Console Port Number</th>
+        <th>Studio Port Number</th>
+    </tr>
+    <tr>
+        <td><input type="text" id="ipAddress" @bind="IPAddress"/></td>
+        <td><input type="text" id="consolePortNumber" @bind="ConsolePortNumber"/></td>
+        <td><input type="text" id="studioPortNumber" @bind="StudioPortNumber"/></td>
+    </tr>
+</table>
+
+<h2>Create Database</h2>
+DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
+
+<input type="button" @onclick="CreateNewDatabase" />
+
+
+<h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" />
+<select id="databaseNames">
+    @foreach (var db in DatabaseNames)
+    {
+        <option value="@db">@db</option>
+    }
+</select>
+
+
+@code {
+    private FrostClient _client;
+    private string IPAddress;
+    private int ConsolePortNumber;
+    private int StudioPortNumber;
+    private FrostClient Client
+    {
+        get
+        {
+            if (_client is null)
+            {
+                return _client = new FrostClient(IPAddress, "127.0.0.1", ConsolePortNumber, StudioPortNumber);
+            }
+            else
+            {
+                return _client;
+            }
+        }
+        set
+        {
+            _client = value;
+        }
+    }
+
+    private List<string> DatabaseNames = new List<string>();
+    private string NewDatabaseName;
+
+    private async Task<List<string>> ConnectToInstance()
+    {
+        try
+        {
+            DatabaseNames.Clear();
+            
+            var task = Client.GetDatabasesAsync();
+            await task;
+            Client.GetDatabases();
+
+            DatabaseNames = Client.Info.DatabaseNames;
+            DatabaseNames.Sort();
+
+            return task.Result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return null;
+        }
+    }
+
+    private void CreateNewDatabase()
+    {
+        Client.AddNewDatabase(NewDatabaseName);
+    }
+}
