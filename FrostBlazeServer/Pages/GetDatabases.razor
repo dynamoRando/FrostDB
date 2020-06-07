@@ -37,11 +37,24 @@ else
         <option value="@db">@db</option>
     }
     </select>
+
+    <h1>Create table in database</h1>
+
+    TableName: <input type="text" id="tableName" @bind="tableName"/>
+
+    <input type="button" @onclick="createTable" />
 }
 
 @code {
     private WeatherForecast[] forecasts;
     private List<string> databases;
+    private string databaseName;
+    private string tableName;
+
+    private void createTable()
+    {
+        throw new NotImplementedException();
+    }
 
     protected override async Task OnInitializedAsync()
     {
