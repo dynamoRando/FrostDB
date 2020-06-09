@@ -47,6 +47,16 @@ DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
 <p>
 TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
 <input type="button" @onclick="CreateNewTable" value="Create Table"/>
+Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
+<select id="dataTypes" @bind="SelectedDataType">
+    <option value=@_dateTimeType> @_dateTimeType</option>
+    <option value=@_intType>@_intType</option>
+    <option value=@_floatType>@_floatType</option>
+    <option value=@_stringType>@_stringType</option>
+</select>
+Columns: <select name="tableColumns" multiple>
+
+</select>
 </p>
 
 @code {
@@ -63,6 +73,8 @@ TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
     private string NewTableName = string.Empty;
     private List<string> DatabaseNames = new List<string>();
     private string NewDatabaseName = string.Empty;
+    private string NewColumnName = string.Empty;
+    private string SelectedDataType = string.Empty;
     private FrostClient Client
     {
         get
