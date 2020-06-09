@@ -50,6 +50,11 @@ TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
 </p>
 
 @code {
+    string _intType = "System.Int32";
+    string _floatType = "System.Single";
+    string _dateTimeType = "System.DateTime";
+    string _stringType = "System.String";
+    List<(string, Type)> _columns = new List<(string, Type)>();
     private string SelectedDatabaseName = string.Empty;
     private FrostClient _client;
     private string IPAddress = string.Empty;
@@ -79,6 +84,7 @@ TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
 
     private void CreateNewTable()
     {
+         Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
         throw new NotImplementedException();
     }
 
@@ -87,7 +93,7 @@ TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
         try
         {
             DatabaseNames.Clear();
-            
+
             var task = Client.GetDatabasesAsync();
             await task;
             Client.GetDatabases();
