@@ -54,8 +54,12 @@ Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
     <option value=@_floatType>@_floatType</option>
     <option value=@_stringType>@_stringType</option>
 </select>
+<input type="button" @onclick="AddColumnToTable" value="Add Column To Table"/>
 Columns: <select name="tableColumns" multiple>
-
+@foreach (var column in _columns)
+{
+    <option value=@column.Item1>@column.Item1</option>
+}
 </select>
 </p>
 
@@ -97,6 +101,11 @@ Columns: <select name="tableColumns" multiple>
     private void CreateNewTable()
     {
          Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
+        throw new NotImplementedException();
+    }
+
+    private void AddColumnToTable()
+    {
         throw new NotImplementedException();
     }
 
