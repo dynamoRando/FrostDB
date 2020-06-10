@@ -55,7 +55,7 @@ Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
     <option value=@_stringType>@_stringType</option>
 </select>
 <input type="button" @onclick="AddColumnToTable" value="Add Column To Table"/>
-Columns: <select name="tableColumns" multiple>
+Columns: <select name="tableColumns" multiple @bind="NewColumnsForTable">
 @foreach (var column in _columns)
 {
     <option value=@column.Item1>@column.Item1</option>
@@ -69,6 +69,7 @@ Columns: <select name="tableColumns" multiple>
     string _dateTimeType = "System.DateTime";
     string _stringType = "System.String";
     List<(string, Type)> _columns = new List<(string, Type)>();
+    private string NewColumnsForTable = string.Empty;
     private string SelectedDatabaseName = string.Empty;
     private FrostClient _client;
     private string IPAddress = string.Empty;
