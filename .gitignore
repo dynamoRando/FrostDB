@@ -78,3 +78,8 @@ FrostConsoleHarness/bin/Debug/netcoreapp3.1/Antlr4.Runtime.Standard.dll
 FrostConsoleHarness/frost.config
 FrostConsoleHarness/frostDb.log
 FrostConsoleHarness/log4net.config
+FrostConsoleHarness/bin/Debug/netcoreapp3.1/FrostConsoleHarness.exe
+FrostConsoleHarness/obj/FrostConsoleHarness.csproj.nuget.cache
+FrostConsoleHarness/obj/Debug/netcoreapp3.1/FrostConsoleHarness.exe
+FrostConsoleHarness/bin/Debug/netcoreapp3.1/frostDb.log
+FrostConsoleHarness/obj/project.packagespec.json
