@@ -1,6 +1,8 @@
 @page "/froststudio"
 
 @using FrostDbClient
+@using FrostCommon.ConsoleMessages
+@using System.Diagnostics
 
 <h1>Frost Studio</h1>
 
@@ -26,12 +28,23 @@ DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
 
 <p>
 <h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Load Databases"/>
-<select id="databaseNames" @bind="SelectedDatabaseName">
+<select id="databaseNames" value="SelectedDatabaseName" @onchange="GetTableNamesForDatabase">
     @foreach (var db in DatabaseNames)
     {
         <option value="@db">@db</option>
     }
 </select>
+</p>
+
+<p>
+<h2>Tables</h2>
+<select id="tableNames" @bind="SelectedTableName">
+    @foreach (var table in TableNames)
+    {
+        <option value="@table">@table</option>
+    }
+</select>
+
 </p>
 
 <p>
@@ -55,10 +68,11 @@ Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
     <option value=@_stringType>@_stringType</option>
 </select>
 <input type="button" @onclick="AddColumnToTable" value="Add Column To Table"/>
-Columns: <select name="tableColumns" multiple @bind="NewColumnsForTable">
-@foreach (var column in _columns)
+<input type="button" @onclick="ClearItemsFromTable" value="Reset Columns"/>
+Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
+@foreach (var column in NewColumnsForTable)
 {
-    <option value=@column.Item1>@column.Item1</option>
+    <option value=@column>@column</option>
 }
 </select>
 </p>
@@ -69,8 +83,11 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnsForTable">
     string _dateTimeType = "System.DateTime";
     string _stringType = "System.String";
     List<(string, Type)> _columns = new List<(string, Type)>();
-    private string NewColumnsForTable = string.Empty;
+    private string NewColumnForTable = string.Empty;
+    private List<string> NewColumnsForTable = new List<string>();
+    private List<string> TableNames = new List<string>();
     private string SelectedDatabaseName = string.Empty;
+    private string SelectedTableName = string.Empty;
     private FrostClient _client;
     private string IPAddress = string.Empty;
     private int ConsolePortNumber = 0;
@@ -99,15 +116,44 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnsForTable">
         }
     }
 
+    private async Task GetTableNamesForDatabase(ChangeEventArgs e)
+    {
+        TableNames.Clear();
+        Debug.WriteLine("GetTableNamesForDatabase");
+        Debug.WriteLine(e.Value.ToString());
+
+        SelectedDatabaseName = e.Value.ToString();
+
+        var task = Client.GetDatabaseInfoAsync(SelectedDatabaseName);
+        await task;
+
+        Client.GetDatabaseInfo(SelectedDatabaseName);
+        DatabaseInfo item;
+        if (Client.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
+        {
+            item.Tables.ForEach(table => TableNames.Add(table.Item2));
+        }
+    }
+
     private void CreateNewTable()
     {
-         Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
-        throw new NotImplementedException();
+        Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
     }
 
     private void AddColumnToTable()
     {
-        throw new NotImplementedException();
+        string col = NewColumnName + "-" + SelectedDataType;
+
+        var item = (NewColumnName, Type.GetType(SelectedDataType));
+        
+        _columns.Add(item);
+        NewColumnsForTable.Add(col);
+    }
+
+    private void ClearItemsFromTable()
+    {
+        NewColumnsForTable.Clear();
+        _columns.Clear();
     }
 
     private async Task<List<string>> ConnectToInstance()
