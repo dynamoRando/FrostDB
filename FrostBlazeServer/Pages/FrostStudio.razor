@@ -38,13 +38,22 @@ DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
 
 <p>
 <h2>Tables</h2>
-<select id="tableNames" @bind="SelectedTableName">
+<select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
     @foreach (var table in TableNames)
     {
         <option value="@table">@table</option>
     }
 </select>
+</p>
 
+<p>
+<h2>Columns</h2>    
+<select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
+@foreach (var column in ColumnNames)
+{
+    <option value=@column>@column</option>
+}
+</select>
 </p>
 
 <p>
@@ -86,6 +95,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
     private string NewColumnForTable = string.Empty;
     private List<string> NewColumnsForTable = new List<string>();
     private List<string> TableNames = new List<string>();
+    private List<string> ColumnNames = new List<string>();
     private string SelectedDatabaseName = string.Empty;
     private string SelectedTableName = string.Empty;
     private FrostClient _client;
@@ -113,6 +123,22 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
         set
         {
             _client = value;
+        }
+    }
+
+    private void GetColumnInfoForTable(ChangeEventArgs e)
+    {
+        ColumnNames.Clear();
+        Debug.WriteLine("GetColumnNamesForTable");
+        Debug.WriteLine(e.Value.ToString());
+
+        SelectedTableName = e.Value.ToString();
+
+        Client.GetTableInfo(SelectedDatabaseName, SelectedTableName);
+        TableInfo item = null;
+        if (_client.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        {
+            item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
     }
 
@@ -145,7 +171,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
         string col = NewColumnName + "-" + SelectedDataType;
 
         var item = (NewColumnName, Type.GetType(SelectedDataType));
-        
+
         _columns.Add(item);
         NewColumnsForTable.Add(col);
     }
