@@ -1,0 +1,41 @@
+@using FrostDbClient
+
+<h2>Instance Information</h2>
+<table class="table">
+    <tr>
+        <th>IP Address</th>
+        <th>Console Port Number (Default 519)</th>
+        <th>Studio Port Number (Default 525)</th>
+    </tr>
+    <tr>
+        <td><input type="text" id="ipAddress" @bind="IPAddress"/></td>
+        <td><input type="text" id="consolePortNumber" @bind="ConsolePortNumber"/></td>
+        <td><input type="text" id="studioPortNumber" @bind="StudioPortNumber"/></td>
+    </tr>
+</table>
+
+@code {
+    private FrostClient _client;
+    public string IPAddress = string.Empty;
+    public int ConsolePortNumber = 0;
+    public int StudioPortNumber = 0;
+
+     public FrostClient Client
+    {
+        get
+        {
+            if (_client is null)
+            {
+                return _client = new FrostClient(IPAddress, "127.0.0.1", ConsolePortNumber, StudioPortNumber);
+            }
+            else
+            {
+                return _client;
+            }
+        }
+        set
+        {
+            _client = value;
+        }
+    }
+}

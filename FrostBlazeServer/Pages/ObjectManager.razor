@@ -6,19 +6,7 @@
 
 <h1>Object Manager</h1>
 
-<h2>Instance Information</h2>
-<table class="table">
-    <tr>
-        <th>IP Address</th>
-        <th>Console Port Number (Default 519)</th>
-        <th>Studio Port Number (Default 525)</th>
-    </tr>
-    <tr>
-        <td><input type="text" id="ipAddress" @bind="IPAddress"/></td>
-        <td><input type="text" id="consolePortNumber" @bind="ConsolePortNumber"/></td>
-        <td><input type="text" id="studioPortNumber" @bind="StudioPortNumber"/></td>
-    </tr>
-</table>
+<Instance @ref="instance"></Instance>
 
 <p>
 <h2>Create Database</h2>
@@ -87,6 +75,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 </p>
 
 @code {
+    private Instance instance;
     string _intType = "System.Int32";
     string _floatType = "System.Single";
     string _dateTimeType = "System.DateTime";
@@ -98,33 +87,12 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
     private List<string> ColumnNames = new List<string>();
     private string SelectedDatabaseName = string.Empty;
     private string SelectedTableName = string.Empty;
-    private FrostClient _client;
-    private string IPAddress = string.Empty;
-    private int ConsolePortNumber = 0;
-    private int StudioPortNumber = 0;
     private string NewTableName = string.Empty;
     private List<string> DatabaseNames = new List<string>();
     private string NewDatabaseName = string.Empty;
     private string NewColumnName = string.Empty;
     private string SelectedDataType = string.Empty;
-    private FrostClient Client
-    {
-        get
-        {
-            if (_client is null)
-            {
-                return _client = new FrostClient(IPAddress, "127.0.0.1", ConsolePortNumber, StudioPortNumber);
-            }
-            else
-            {
-                return _client;
-            }
-        }
-        set
-        {
-            _client = value;
-        }
-    }
+   
 
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
@@ -134,9 +102,9 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
         SelectedTableName = e.Value.ToString();
 
-        Client.GetTableInfo(SelectedDatabaseName, SelectedTableName);
+        instance.Client.GetTableInfo(SelectedDatabaseName, SelectedTableName);
         TableInfo item = null;
-        if (_client.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        if (instance.Client.Info.TableInfos.TryGetValue(SelectedTableName, out item))
         {
             item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
@@ -150,12 +118,12 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
         SelectedDatabaseName = e.Value.ToString();
 
-        var task = Client.GetDatabaseInfoAsync(SelectedDatabaseName);
+        var task = instance.Client.GetDatabaseInfoAsync(SelectedDatabaseName);
         await task;
 
-        Client.GetDatabaseInfo(SelectedDatabaseName);
+        instance.Client.GetDatabaseInfo(SelectedDatabaseName);
         DatabaseInfo item;
-        if (Client.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
+        if (instance.Client.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
         {
             item.Tables.ForEach(table => TableNames.Add(table.Item2));
         }
@@ -163,7 +131,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
     private void CreateNewTable()
     {
-        Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
+        instance.Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
     }
 
     private void AddColumnToTable()
@@ -188,11 +156,11 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
         {
             DatabaseNames.Clear();
 
-            var task = Client.GetDatabasesAsync();
+            var task = instance.Client.GetDatabasesAsync();
             await task;
-            Client.GetDatabases();
+            instance.Client.GetDatabases();
 
-            DatabaseNames = Client.Info.DatabaseNames;
+            DatabaseNames = instance.Client.Info.DatabaseNames;
             DatabaseNames.Sort();
 
             return task.Result;
@@ -206,6 +174,6 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
     private void CreateNewDatabase()
     {
-        Client.AddNewDatabase(NewDatabaseName);
+        instance.Client.AddNewDatabase(NewDatabaseName);
     }
 }
