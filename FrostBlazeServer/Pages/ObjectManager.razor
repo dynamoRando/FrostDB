@@ -1,6 +1,8 @@
 @page "/objectmanager"
 
-@using FrostDbClient
+@inject Services.Client FrostService
+
+@using Services
 @using FrostCommon.ConsoleMessages
 @using System.Diagnostics
 
@@ -102,9 +104,9 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
         SelectedTableName = e.Value.ToString();
 
-        instance.Client.GetTableInfo(SelectedDatabaseName, SelectedTableName);
+        FrostService.FrostClient.GetTableInfo(SelectedDatabaseName, SelectedTableName);
         TableInfo item = null;
-        if (instance.Client.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
         {
             item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
@@ -118,12 +120,12 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
         SelectedDatabaseName = e.Value.ToString();
 
-        var task = instance.Client.GetDatabaseInfoAsync(SelectedDatabaseName);
+        var task = FrostService.FrostClient.GetDatabaseInfoAsync(SelectedDatabaseName);
         await task;
 
-        instance.Client.GetDatabaseInfo(SelectedDatabaseName);
+        FrostService.FrostClient.GetDatabaseInfo(SelectedDatabaseName);
         DatabaseInfo item;
-        if (instance.Client.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
+        if (FrostService.FrostClient.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
         {
             item.Tables.ForEach(table => TableNames.Add(table.Item2));
         }
@@ -131,7 +133,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
     private void CreateNewTable()
     {
-        instance.Client.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
+        FrostService.FrostClient.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
     }
 
     private void AddColumnToTable()
@@ -156,11 +158,11 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
         {
             DatabaseNames.Clear();
 
-            var task = instance.Client.GetDatabasesAsync();
+            var task = instance.Client.FrostClient.GetDatabasesAsync();
             await task;
-            instance.Client.GetDatabases();
+            FrostService.FrostClient.GetDatabases();
 
-            DatabaseNames = instance.Client.Info.DatabaseNames;
+            DatabaseNames = instance.Client.FrostClient.Info.DatabaseNames;
             DatabaseNames.Sort();
 
             return task.Result;
@@ -174,6 +176,6 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
     private void CreateNewDatabase()
     {
-        instance.Client.AddNewDatabase(NewDatabaseName);
+        FrostService.FrostClient.AddNewDatabase(NewDatabaseName);
     }
 }
