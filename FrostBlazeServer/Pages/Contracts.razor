@@ -1,18 +1,293 @@
 @page "/contracts"
+@inject Services.Client FrostService
+@using FrostCommon.ConsoleMessages
+@using System.Diagnostics
 
 <h1>Contracts</h1>
 
-<Instance @ref="instance"></Instance>
+<Instance @ref="instance" OnDatabseClickCallback="@GetContractInformation"></Instance>
 
 <h2>DatabaseName</h2>
+<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
 <h2>Contract Description</h2>
+<input type="text" id="contractDescription" @bind="ContractDescription"/>
 <h2>Database Schema</h2>
+<select name="tableColumns" multiple @bind="DatabaseTables">
+@foreach (var table in DatabaseTableNames)
+{
+    <option value=@table>@table</option>
+}
+</select>
 <h2>Participant Overview</h2>
 <h2>Participant Tables and Permissions (Read, Write, Modify, Delete)</h2>
+<select name="participantTableColumns" multiple @onchange="GetParticipantPermission">
+@foreach (var table in ParticipantTableNames)
+{
+    <option value=@table>@table</option>
+}
+</select>
+
+<input type="checkbox" id="participantRead" name="participantRead" @bind="IsParticipantRead">
+<label for="partcipantRead">Read</label>
+
+<input type="checkbox" id="participantWrite" name="participantWrite" @bind="IsParticipantWrite">
+<label for="partcipantWrite">Write</label>
+
+<input type="checkbox" id="participantModify" name="participantModify" @bind="IsParticipantModify">
+<label for="participantModify">Modify</label>
+
+<input type="checkbox" id="participantDelete" name="participantDelete" @bind="IsParticipantDelete">
+<label for="participantDelete">Delete</label>
+
+<input type="button" @onclick="SaveParticipantChanges" value="Save Participant Changes"/>
+
 <h2>Database Author Overview</h2>
 <h2>Database Author Tables and Permissions (Read, Write, Modify, Delete)</h2>
+<select name="authorTableColumns" multiple @onchange="GetAuthorPermission">
+@foreach (var table in AuthorTableNames)
+{
+    <option value=@table>@table</option>
+}
+</select>
+
+<input type="checkbox" id="authorRead" name="authorRead" @bind="IsAuthorRead">
+<label for="partcipantRead">Read</label>
+
+<input type="checkbox" id="authorWrite" name="authorWrite" @bind="IsAuthorWrite">
+<label for="partcipantWrite">Write</label>
+
+<input type="checkbox" id="authorModify" name="authorModify" @bind="IsAuthorModify">
+<label for="authorModify">Modify</label>
+
+<input type="checkbox" id="authorDelete" name="authorDelete" @bind="IsAuthorDelete">
+<label for="authorDelete">Delete</label>
+<input type="button" @onclick="SaveAuthorChanges" value="Save Author Changes"/>
+
 <h2>Save Button</h2>
+<input type="button" @onclick="SaveContractChanges" value="Save Changes"/>
 
 @code {
     private Instance instance;
+    private string DatabaseTables = string.Empty;
+    private string ParticipantTable = string.Empty;
+    private string AuthorTable = string.Empty;
+    private string ContractDescription = string.Empty;
+    private List<string> DatabaseTableNames = new List<string>();
+    private List<string> ParticipantTableNames = new List<string>();
+    private List<string> AuthorTableNames = new List<string>();
+    private bool IsParticipantRead = false;
+    private bool IsParticipantWrite = false;
+    private bool IsParticipantModify = false;
+    private bool IsParticipantDelete = false;
+    private bool IsAuthorRead = false;
+    private bool IsAuthorWrite = false;
+    private bool IsAuthorModify = false;
+    private bool IsAuthorDelete = false;
+    private ContractInfo Info;
+    const string _PARTICIPANT = "Participant";
+    const string _PROCESS = "Process";
+
+    private async Task GetContractInformation(MouseEventArgs e)
+    {
+        var item = await FrostService.FrostClient.GetContractInformationAsync(FrostService.SelectedDatabaseName);
+        BindInfo(item);
+        Info = item;
+    }
+
+    private void BindInfo(ContractInfo info)
+    {
+        ResetInfo();
+        ContractDescription = info.ContractDescription;
+        info.TableNames.ForEach(table => {
+            DatabaseTableNames.Add(table);
+            ParticipantTableNames.Add(table);
+            AuthorTableNames.Add(table);
+            }
+            );
+    }
+
+    private void ResetInfo()
+    {
+        ContractDescription = string.Empty;
+        DatabaseTableNames.Clear();
+        ParticipantTableNames.Clear();
+        AuthorTableNames.Clear();
+    }
+
+    private void SaveAuthorChanges()
+    {
+        (string, string, List<string>) permission;
+        permission.Item1 = AuthorTable;
+        permission.Item2 = _PROCESS;
+        permission.Item3 = new List<string>();
+
+        if (IsAuthorRead)
+        {
+            permission.Item3.Add("Read");
+        }
+
+        if (IsAuthorWrite)
+        {
+            permission.Item3.Add("Insert");
+        }
+
+        if (IsAuthorModify)
+        {
+            permission.Item3.Add("Update");
+        }
+
+        if (IsAuthorDelete)
+        {
+            permission.Item3.Add("Delete");
+        }
+
+        if (ContainsTablePermission(AuthorTable, _PROCESS))
+        {
+            RemovePermission(AuthorTable, _PROCESS);
+        }
+
+        Info.SchemaData.Add(permission);
+    }
+
+    private void SaveParticipantChanges()
+    {
+        (string, string, List<string>) permission;
+        permission.Item1 = ParticipantTable;
+        permission.Item2 = _PARTICIPANT;
+        permission.Item3 = new List<string>();
+
+        if (IsParticipantRead)
+        {
+            permission.Item3.Add("Read");
+        }
+
+        if (IsParticipantWrite)
+        {
+            permission.Item3.Add("Insert");
+        }
+
+        if (IsParticipantModify)
+        {
+            permission.Item3.Add("Update");
+        }
+
+        if (IsParticipantDelete)
+        {
+            permission.Item3.Add("Delete");
+        }
+
+        if (ContainsTablePermission(ParticipantTable, _PARTICIPANT))
+        {
+            RemovePermission(ParticipantTable, _PARTICIPANT);
+        }
+
+        Info.SchemaData.Add(permission);
+    }
+
+    private void SaveContractChanges()
+    {
+        FrostService.FrostClient.UpdateContractInformation(FrostService.SelectedDatabaseName, ContractDescription, Info.SchemaData);
+    }
+
+    private void ResetCheckboxes(string cooperator)
+    {
+        if (cooperator == _PARTICIPANT)
+        {
+            IsParticipantDelete = false;
+            IsParticipantModify = false;
+            IsParticipantRead = false;
+            IsParticipantWrite = false;
+        }
+        else
+        {
+            IsAuthorDelete = false;
+            IsAuthorModify = false;
+            IsAuthorRead = false;
+            IsAuthorWrite = false;
+        }
+    }
+
+    private void GetAuthorPermission(ChangeEventArgs e)
+    {
+        ResetCheckboxes(_PROCESS);
+        AuthorTable = e.Value.ToString();
+        var permission = GetPermission(AuthorTable, _PROCESS);
+
+        if (permission.Item3.Contains("Read"))
+        {
+            IsAuthorRead = true;
+        }
+
+        if (permission.Item3.Contains("Insert"))
+        {
+            IsAuthorWrite = true;
+        }
+
+        if (permission.Item3.Contains("Update"))
+        {
+            IsAuthorModify = true;
+        }
+
+        if (permission.Item3.Contains("Delete"))
+        {
+            IsAuthorDelete = true;
+        }
+    }
+
+    private void GetParticipantPermission(ChangeEventArgs e)
+    {
+        ResetCheckboxes(_PARTICIPANT);
+        ParticipantTable = e.Value.ToString();
+        var permission = GetPermission(ParticipantTable, _PARTICIPANT);
+
+        if (permission.Item3.Contains("Read"))
+        {
+            IsParticipantRead = true;
+        }
+
+        if (permission.Item3.Contains("Insert"))
+        {
+            IsParticipantWrite = true;
+        }
+
+        if (permission.Item3.Contains("Update"))
+        {
+            IsParticipantModify = true;
+        }
+
+        if (permission.Item3.Contains("Delete"))
+        {
+            IsParticipantDelete = true;
+        }
+    }
+
+    private (string, string, List<string>) GetPermission(string tableName, string cooperator)
+    {
+        var item = Info.SchemaData.Where(p => p.Item1 == tableName && p.Item2 == cooperator).FirstOrDefault();
+            if (item.Item1 == null && item.Item2 == null && item.Item3 == null)
+            {
+                item.Item1 = string.Empty;
+                item.Item2 = string.Empty;
+                item.Item3 = new List<string>();
+            }
+
+            if (item.Item3 == null)
+            {
+                item.Item3 = new List<string>();
+            }
+
+            return item;
+    }
+
+    private void RemovePermission(string tableName, string cooperator)
+    {
+        var item = Info.SchemaData.Where(p => p.Item1 == tableName && p.Item2 == cooperator).FirstOrDefault();
+        Info.SchemaData.Remove(item);
+    }
+
+    private bool ContainsTablePermission(string tableName, string cooperator)
+    {
+        return Info.SchemaData.Any(p => p.Item1 == tableName && p.Item2 == cooperator);
+    }
+
 }
