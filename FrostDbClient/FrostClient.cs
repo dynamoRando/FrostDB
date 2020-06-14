@@ -13,7 +13,7 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
-        double _queueTimeout = 30.0;
+        double _queueTimeout = 10.0;
         string _localIpAddress;
         string _remoteIpAddress;
         int _remotePortNumber;
@@ -387,7 +387,8 @@ namespace FrostDbClient
             Guid? id = message.Id;
             // this timeout should be part of a configuration or a param passed in
             _info.AddToQueue(id);
-            _client.Send(message, ClientConstants.TimeOut);
+            // should this be done in a task?
+            Task.Run(() => _client.Send(message, ClientConstants.TimeOut));
             return id;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)
