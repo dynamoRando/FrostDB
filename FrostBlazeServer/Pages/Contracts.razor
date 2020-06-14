@@ -1,14 +1,17 @@
 @page "/contracts"
 @inject Services.Client FrostService
+@using FrostCommon.ConsoleMessages
 
 <h1>Contracts</h1>
 
-<Instance @ref="instance"></Instance>
+<Instance @ref="instance" OnDatabseClickCallback="@GetContractInformation"></Instance>
 
 <h2>DatabaseName</h2>
 <input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
 <h2>Contract Description</h2>
+<input type="text" id="contractDescription" @bind="ContractDescription"/>
 <h2>Database Schema</h2>
+<input type="text" id="databaseSchema" @bind="DatabaseSchema" />
 <h2>Participant Overview</h2>
 <h2>Participant Tables and Permissions (Read, Write, Modify, Delete)</h2>
 <h2>Database Author Overview</h2>
@@ -17,4 +20,26 @@
 
 @code {
     private Instance instance;
+    private string ContractDescription = string.Empty;
+    private string DatabaseSchema = string.Empty;
+
+    private async Task GetContractInformation(MouseEventArgs e)
+    {
+        var item = await FrostService.FrostClient.GetContractInformationAsync(FrostService.SelectedDatabaseName);
+        BindInfo(item);
+    }
+
+    private void BindInfo(ContractInfo info)
+    {
+        ResetInfo();
+        ContractDescription = info.ContractDescription;
+        info.TableNames.ForEach(table => DatabaseSchema += table + ", ");
+    }
+
+    private void ResetInfo()
+    {
+        ContractDescription = string.Empty;
+        DatabaseSchema = string.Empty;
+    }
+
 }
