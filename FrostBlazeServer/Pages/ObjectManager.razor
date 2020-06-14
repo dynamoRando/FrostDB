@@ -8,7 +8,7 @@
 
 <h1>Object Manager</h1>
 
-<Instance @ref="instance"></Instance>
+<Instance @ref="instance" OnDatabseClickCallback="@SetCurrentDatabase"></Instance>
 
 <p>
 <h2>Create Database</h2>
@@ -16,20 +16,12 @@ DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
 <input type="button" @onclick="CreateNewDatabase" value="Create Database"/>
 </p>
 
-<p>
-<h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Load Databases"/>
-<select id="databaseNames" value="SelectedDatabaseName" @onchange="GetTableNamesForDatabase">
-    @foreach (var db in DatabaseNames)
-    {
-        <option value="@db">@db</option>
-    }
-</select>
-</p>
+
 
 <p>
 <h2>Tables</h2>
 <select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
-    @foreach (var table in TableNames)
+    @foreach (var table in FrostService.TableNames)
     {
         <option value="@table">@table</option>
     }
@@ -48,9 +40,9 @@ DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
 
 <p>
 <h2>Create Table</h2> 
-@if (SelectedDatabaseName != string.Empty)
+@if (FrostService.SelectedDatabaseName != string.Empty)
 {
-    <h3>For Database: @SelectedDatabaseName</h3>
+    <h3>For Database: @FrostService.SelectedDatabaseName</h3>
 }
 </p>
 
@@ -77,7 +69,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 </p>
 
 @code {
-    private Instance instance;
+    private Instance instance = new Instance();
     string _intType = "System.Int32";
     string _floatType = "System.Single";
     string _dateTimeType = "System.DateTime";
@@ -85,16 +77,17 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
     List<(string, Type)> _columns = new List<(string, Type)>();
     private string NewColumnForTable = string.Empty;
     private List<string> NewColumnsForTable = new List<string>();
-    private List<string> TableNames = new List<string>();
     private List<string> ColumnNames = new List<string>();
-    private string SelectedDatabaseName = string.Empty;
     private string SelectedTableName = string.Empty;
     private string NewTableName = string.Empty;
-    private List<string> DatabaseNames = new List<string>();
+
     private string NewDatabaseName = string.Empty;
     private string NewColumnName = string.Empty;
     private string SelectedDataType = string.Empty;
-   
+
+    private void SetCurrentDatabase(MouseEventArgs e)
+    {
+    }
 
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
@@ -104,7 +97,7 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
         SelectedTableName = e.Value.ToString();
 
-        FrostService.FrostClient.GetTableInfo(SelectedDatabaseName, SelectedTableName);
+        FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
         TableInfo item = null;
         if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
         {
@@ -112,28 +105,9 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
         }
     }
 
-    private async Task GetTableNamesForDatabase(ChangeEventArgs e)
-    {
-        TableNames.Clear();
-        Debug.WriteLine("GetTableNamesForDatabase");
-        Debug.WriteLine(e.Value.ToString());
-
-        SelectedDatabaseName = e.Value.ToString();
-
-        var task = FrostService.FrostClient.GetDatabaseInfoAsync(SelectedDatabaseName);
-        await task;
-
-        FrostService.FrostClient.GetDatabaseInfo(SelectedDatabaseName);
-        DatabaseInfo item;
-        if (FrostService.FrostClient.Info.DatabaseInfos.TryGetValue(SelectedDatabaseName, out item))
-        {
-            item.Tables.ForEach(table => TableNames.Add(table.Item2));
-        }
-    }
-
     private void CreateNewTable()
     {
-        FrostService.FrostClient.AddTableToDb(SelectedDatabaseName, NewTableName, _columns);
+        FrostService.FrostClient.AddTableToDb(FrostService.SelectedDatabaseName, NewTableName, _columns);
     }
 
     private void AddColumnToTable()
@@ -150,28 +124,6 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
     {
         NewColumnsForTable.Clear();
         _columns.Clear();
-    }
-
-    private async Task<List<string>> ConnectToInstance()
-    {
-        try
-        {
-            DatabaseNames.Clear();
-
-            var task = instance.Client.FrostClient.GetDatabasesAsync();
-            await task;
-            FrostService.FrostClient.GetDatabases();
-
-            DatabaseNames = instance.Client.FrostClient.Info.DatabaseNames;
-            DatabaseNames.Sort();
-
-            return task.Result;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-            return null;
-        }
     }
 
     private void CreateNewDatabase()

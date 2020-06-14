@@ -1,5 +1,6 @@
 using FrostDbClient;
 using System;
+using System.Collections.Generic;
 
 namespace FrostBlazeServer.Services
 {
@@ -40,5 +41,9 @@ namespace FrostBlazeServer.Services
                 _client = value;
             }
         }
+
+        public string SelectedDatabaseName = string.Empty;
+        public List<string> DatabaseNames = new List<string>();
+        public List<string> TableNames = new List<string>();
     }
 }
