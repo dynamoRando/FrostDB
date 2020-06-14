@@ -11,7 +11,12 @@
 <h2>Contract Description</h2>
 <input type="text" id="contractDescription" @bind="ContractDescription"/>
 <h2>Database Schema</h2>
-<input type="text" id="databaseSchema" @bind="DatabaseSchema" />
+<select name="tableColumns" multiple @bind="DatabaseTables">
+@foreach (var table in DatabaseTableNames)
+{
+    <option value=@table>@table</option>
+}
+</select>
 <h2>Participant Overview</h2>
 <h2>Participant Tables and Permissions (Read, Write, Modify, Delete)</h2>
 <h2>Database Author Overview</h2>
@@ -20,8 +25,9 @@
 
 @code {
     private Instance instance;
+    private string DatabaseTables = string.Empty;
     private string ContractDescription = string.Empty;
-    private string DatabaseSchema = string.Empty;
+    private List<string> DatabaseTableNames = new List<string>();
 
     private async Task GetContractInformation(MouseEventArgs e)
     {
@@ -33,13 +39,13 @@
     {
         ResetInfo();
         ContractDescription = info.ContractDescription;
-        info.TableNames.ForEach(table => DatabaseSchema += table + ", ");
+        info.TableNames.ForEach(table => DatabaseTableNames.Add(table));
     }
 
     private void ResetInfo()
     {
         ContractDescription = string.Empty;
-        DatabaseSchema = string.Empty;
+        DatabaseTableNames.Clear();
     }
 
 }
