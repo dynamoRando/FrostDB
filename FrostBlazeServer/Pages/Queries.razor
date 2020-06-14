@@ -1,6 +1,11 @@
 @page "/queries"
 @inject Services.Client FrostService
 
+@using Services
+@using FrostCommon.ConsoleMessages
+@using System.Diagnostics
+
+
 <Instance @ref="instance"></Instance>
 
 <h1>Queries</h1>
@@ -8,13 +13,102 @@
 <h2>Database</h2>
 <input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
 <h2>Table</h2>
+<select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
+    @foreach (var table in FrostService.TableNames)
+    {
+        <option value="@table">@table</option>
+    }
+</select>
 <h2>Table Columns</h2>
+<select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
+@foreach (var column in ColumnNames)
+{
+    <option value=@column>@column</option>
+}
+</select>
 <h2>Table Participants</h2>
+<select name="tableParticipants" multiple @onchange="GetParticipants">
+@foreach (var participant in Participants)
+{
+    <option value=@participant>@participant</option>
+}
+</select>
 <h2>Example Query</h2>
+<textarea id="exampleQuery" name="exampleQuery" rows="6" cols="100">
+    select { * } from { testtable };
+    insert into { testtable } { ( test1, test2 ) values ( 1, '2020-03-14') } for participant { local } ;
+    insert into { t1 } { ( col1 ) values ( 999 )} for participant { 127.0.0.1:525 } ;
+    UPDATE { tableName } SET { col 1 = value1, col 2 = value 2 };
+    DELETE FROM { t1 };
+</textarea>
 <h2>Query Text</h2>
+<textarea id="queryText" name="queryText" rows="10" cols="100" @bind="QueryText">
+</textarea>
+<input type="button" @onclick="ExecuteQuery" value="Execute Query"/>
 <h2>Query Results</h2>
-
+<textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
+</textarea>
 
 @code {
     private Instance instance;
+    private AcceptedContractInfo ContractInfo;
+    private List<string> Participants = new List<string>();
+    private string SelectedParticipant = string.Empty;
+    private string SelectedTableName = string.Empty;
+    private List<string> ColumnNames = new List<string>();
+    private string NewColumnForTable = string.Empty;
+    private string QueryText = string.Empty;
+    private string QueryResult = string.Empty;
+    private void GetColumnInfoForTable(ChangeEventArgs e)
+    {
+        ColumnNames.Clear();
+        Debug.WriteLine("GetColumnNamesForTable");
+        Debug.WriteLine(e.Value.ToString());
+
+        SelectedTableName = e.Value.ToString();
+
+        FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
+        TableInfo item = null;
+        if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        {
+            item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
+        }
+    }
+
+    private void GetParticipants(ChangeEventArgs e)
+    {
+        SelectedParticipant = e.Value.ToString();
+
+        if (FrostService.FrostClient.Info.AcceptedContractInfos.TryGetValue(FrostService.SelectedDatabaseName, out ContractInfo))
+        {
+            Participants.Clear();
+            foreach (var p in ContractInfo.AcceptedContracts)
+            {
+                Participants.Add(p);
+            }
+        }
+    }
+
+    private async Task ExecuteQuery()
+    {
+        string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
+        var result = await FrostService.FrostClient.ExecuteCommandAsync(finalQueryText);
+
+        if (result.IsSuccessful)
+        {
+            QueryResult = $"Message: {result.Message} {Environment.NewLine}  Rows Affected:  {result.NumberOfRowsAffected.ToString()}";
+
+            if (result.JsonData.Length > 0)
+            {
+                QueryResult += Environment.NewLine + result.JsonData;
+            }
+        }
+        else
+        {
+            QueryResult = result.Message;
+        }
+
+        QueryResult += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
+
+    }
 }
