@@ -1,10 +1,12 @@
 @page "/contracts"
+@inject Services.Client FrostService
 
 <h1>Contracts</h1>
 
 <Instance @ref="instance"></Instance>
 
 <h2>DatabaseName</h2>
+<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
 <h2>Contract Description</h2>
 <h2>Database Schema</h2>
 <h2>Participant Overview</h2>
