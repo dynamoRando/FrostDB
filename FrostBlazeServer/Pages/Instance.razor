@@ -28,10 +28,10 @@
 
 <p>
 <h2>Partial Databases</h2> 
-<select id="databaseNames" @bind="Item.SelectedPartialDatabaseName">
-    @foreach (var db in Item.PartialDatabaseNames)
+<select id="partialDatabaseNames" @bind="Item.SelectedPartialDatabaseName">
+    @foreach (var pdb in Item.PartialDatabaseNames)
     {
-        <option value="@db">@db</option>
+        <option value="@pdb">@pdb</option>
     }
 </select>
 </p>
@@ -72,6 +72,11 @@
             //Item.DatabaseNames = Item.FrostClient.Info.DatabaseNames;
             Item.DatabaseNames = task.Result;
             Item.DatabaseNames.Sort();
+
+            var task2 = Item.FrostClient.GetPartialDatabasesAsync();
+            await task2;
+
+            Item.PartialDatabaseNames = task2.Result;
 
             return task.Result;
         }
