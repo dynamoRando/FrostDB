@@ -43,7 +43,9 @@ namespace FrostBlazeServer.Services
         }
 
         public string SelectedDatabaseName = string.Empty;
+        public string SelectedPartialDatabaseName = string.Empty;
         public List<string> DatabaseNames = new List<string>();
+        public List<string> PartialDatabaseNames = new List<string>();
         public List<string> TableNames = new List<string>();
     }
 }

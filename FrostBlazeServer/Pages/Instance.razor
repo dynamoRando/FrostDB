@@ -26,6 +26,16 @@
 </select>
 </p>
 
+<p>
+<h2>Partial Databases</h2> 
+<select id="databaseNames" @bind="Item.SelectedPartialDatabaseName">
+    @foreach (var db in Item.PartialDatabaseNames)
+    {
+        <option value="@db">@db</option>
+    }
+</select>
+</p>
+
 @code {
     [Parameter]
     public EventCallback<MouseEventArgs> OnDatabseClickCallback { get; set; }
