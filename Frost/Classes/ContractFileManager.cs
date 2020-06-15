@@ -39,7 +39,7 @@ namespace FrostDB
                 Directory.CreateDirectory(contractFolder);
             }
 
-            string fileLocation = contractFolder + contract.DatabaseName + contractExtension;
+            string fileLocation = Path.Combine(contractFolder, contract.DatabaseName + contractExtension);
 
             _locker.EnterWriteLock();
 
