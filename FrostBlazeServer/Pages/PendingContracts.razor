@@ -1,0 +1,72 @@
+@page "/pendingcontracts"
+@inject Services.Client FrostService
+@using FrostCommon.ConsoleMessages
+@using System.Linq
+
+<Instance @ref="instance"></Instance>
+
+<h2>Pending Contracts</h2>
+<input type="button" @onclick="LoadPendingContracts" value="Load Pending"/>
+<p>
+<select name="pendingContracts" multiple @onchange="ShowContractInfo" value="SelectedContract">
+@foreach (var contract in PendingContractsList)
+{
+    <option value=@contract>@contract</option>
+}
+</select>
+</p>
+
+
+<h2>DatabaseName</h2>
+<input type="text" id="pendingContractDbName" @bind="PendingContractDatabaseName"/>
+<h2>Database IP Address</h2>
+<input type="text" id="pendingContractIPAddress" @bind="PendingContractIPAddress"/>
+<h2>Database Port Number</h2>
+<input type="text" id="pendingContractDbPortNumber" @bind="PendingContractDatabasePort"/>
+<h2>Database Description</h2>
+<input type="text" id="pendingContractDbDescription" @bind="PendingDatabaseContractDescription"/>
+<input type="button" @onclick="AcceptPendingContract" value="Accept Contract"/>
+<input type="button" @onclick="RejectPendingContract" value="Reject Contract"/>
+
+@code {
+    private Instance instance;
+    private string SelectedContract = string.Empty;
+    private string PendingContractDatabaseName = string.Empty;
+    private string PendingContractIPAddress = string.Empty;
+    private int PendingContractDatabasePort = 0;
+    private string PendingDatabaseContractDescription = string.Empty;
+    private List<string> PendingContractsList = new List<string>();
+    private List<ContractInfo> PendingContractsInfo = new List<ContractInfo>();
+    private ContractInfo SelectedContractInfo;
+
+    private void AcceptPendingContract()
+    {
+        FrostService.FrostClient.AcceptContract(SelectedContractInfo);
+    }
+
+    private void RejectPendingContract()
+    {
+        FrostService.FrostClient.RejectContract(SelectedContractInfo);
+    }
+
+    private async Task LoadPendingContracts()
+    {
+        PendingContractsList.Clear();
+        PendingContractsInfo = await FrostService.FrostClient.GetProcessPendingContractInformationAsync();
+        PendingContractsInfo.ForEach(contract => PendingContractsList.Add(contract.DatabaseName));
+    }
+
+    private void ShowContractInfo(ChangeEventArgs e)
+    {
+        SelectedContract = e.Value.ToString();
+        SelectedContractInfo = PendingContractsInfo.Where(contract => contract.DatabaseName == SelectedContract).FirstOrDefault();
+        BindCurrentContract(SelectedContractInfo);
+    }
+    private void BindCurrentContract(ContractInfo info)
+    {
+        PendingContractDatabaseName = info.DatabaseName;
+        PendingContractDatabasePort = info.Location.PortNumber;
+        PendingContractIPAddress = info.Location.IpAddress;
+        PendingDatabaseContractDescription = info.ContractDescription;
+    }
+}
