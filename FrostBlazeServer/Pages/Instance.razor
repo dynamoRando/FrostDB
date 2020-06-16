@@ -73,6 +73,8 @@
             Item.DatabaseNames = task.Result;
             Item.DatabaseNames.Sort();
 
+            Item.FrostClient.GetPartialDatabases();
+
             var task2 = Item.FrostClient.GetPartialDatabasesAsync();
             await task2;
 

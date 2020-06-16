@@ -27,7 +27,7 @@
 }
 </select>
 <h2>Table Participants</h2>
-<select name="tableParticipants" multiple @onchange="GetParticipants">
+<select name="tableParticipants" multiple @bind="SelectedParticipant">
 @foreach (var participant in Participants)
 {
     <option value=@participant>@participant</option>
@@ -73,11 +73,13 @@
         {
             item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
+
+        GetParticipants();        
     }
 
-    private void GetParticipants(ChangeEventArgs e)
+    private void GetParticipants()
     {
-        SelectedParticipant = e.Value.ToString();
+        FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
 
         if (FrostService.FrostClient.Info.AcceptedContractInfos.TryGetValue(FrostService.SelectedDatabaseName, out ContractInfo))
         {

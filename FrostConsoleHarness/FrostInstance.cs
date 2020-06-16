@@ -40,6 +40,7 @@ namespace FrostConsoleHarness
             {
                 Instance = new Process(IPAddress, PortNumber, ConsolePortNumber, RootDirectory);
                 Instance.LoadDatabases();
+                Instance.LoadPartialDatabases();
                 Instance.StartRemoteServer();
                 Instance.StartConsoleServer();
             }
