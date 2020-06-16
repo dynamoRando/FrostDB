@@ -51,6 +51,9 @@ namespace FrostDB
         {
             _participant = (Participant)serializationInfo.GetValue("Participant", typeof(Participant));
             _row = (Row)serializationInfo.GetValue("Row", typeof(Row));
+            DatabaseName = (string)serializationInfo.GetValue("DatabaseName", typeof(string));
+            TableName = (string)serializationInfo.GetValue("TableName", typeof(string));
+            DatabaseId = (Guid?)serializationInfo.GetValue("DatabaseId", typeof(Guid?));
         }
         public RowForm()
         {
@@ -75,6 +78,9 @@ namespace FrostDB
         {
             info.AddValue("Participant", _participant, typeof(Participant));
             info.AddValue("Row", _row, typeof(Row));
+            info.AddValue("DatabaseId", DatabaseId, typeof(Guid?));
+            info.AddValue("DatabaseName", DatabaseName, typeof(string));
+            info.AddValue("TableName", TableName, typeof(string));
         }
         #endregion
 

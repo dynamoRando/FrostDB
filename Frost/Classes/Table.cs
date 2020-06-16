@@ -201,7 +201,15 @@ namespace FrostDB
         {
             var result = new List<Row>();
 
-            _rows.ForEach(r => result.Add(r.Get(_process).Result));
+            foreach(var row in _rows)
+            {
+                var task = row.Get(_process);
+                task.Wait();
+                if (task.Result != null)
+                {
+                    result.Add(task.Result);
+                };
+            }
 
             return result;
         }
