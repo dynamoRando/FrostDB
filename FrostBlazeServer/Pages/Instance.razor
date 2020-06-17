@@ -17,7 +17,8 @@
 </table>
 
 <p>
-<h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Load Databases"/>
+<h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Connect and Load Databases"/>
+ <input type="button" @onclick="DisconnectAll" value="Disconnect"/>
 <select id="databaseNames" value="Item.SelectedDatabaseName" @onchange="GetTableNamesForDatabase" @onclick="OnDatabseClickCallback">
     @foreach (var db in Item.DatabaseNames)
     {
@@ -63,6 +64,8 @@
     {
         try
         {
+            Item.ResetClient();
+            
             Item.DatabaseNames.Clear();
 
             var task = Item.FrostClient.GetDatabasesAsync();
@@ -109,12 +112,11 @@
         {
             Debug.WriteLine("No tables returned");
         }
+    }
 
-        //Item.FrostClient.GetDatabaseInfo(Item.SelectedDatabaseName);
-        //DatabaseInfo item;
-        //if (Item.FrostClient.Info.DatabaseInfos.TryGetValue(Item.SelectedDatabaseName, out item))
-        //{
-        //    item.Tables.ForEach(table => Item.TableNames.Add(table.Item2));
-       // }
+    private void DisconnectAll()
+    {
+        Item.FrostClient.DisconnectClient();
+        Item.FrostClient.DisconnectServer();
     }
 }

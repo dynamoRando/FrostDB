@@ -64,6 +64,31 @@ namespace FrostDbClient
         #endregion
 
         #region Public Methods
+        public void DisconnectServer()
+        {
+            try
+            {
+                _localServer.DisconnectSocket();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public void DisconnectClient()
+        {
+            try
+            {
+                _client.DisconnectSocket();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
+            }
+            
+        }
         public async Task<FrostPromptResponse> ExecuteCommandAsync(string command)
         {
             var result = new FrostPromptResponse();
@@ -99,7 +124,7 @@ namespace FrostDbClient
         {
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
         }
-        
+
         // i can either call a method and then try and wait for an event to be recieved
         public void GetDatabases()
         {
@@ -117,7 +142,7 @@ namespace FrostDbClient
             if (_info.TableInfos.TryGetValue(columnName, out item))
             {
                 var column = item.Columns.Where(c => c.Item1 == columnName).First();
-                
+
             }
             throw new NotImplementedException();
         }
@@ -169,7 +194,7 @@ namespace FrostDbClient
 
         public void GetContractInformation(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));  
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
         }
 
         public async Task<ContractInfo> GetContractInformationAsync(string databaseName)

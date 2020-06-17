@@ -18,8 +18,9 @@ namespace FrostCommon.Net
     {
         #region Private Fields
         private String response = String.Empty;
-
         private ConcurrentDictionary<LocationInfo, SocketHelper> connections;
+        private bool _autoDisconnect = false;
+        private SocketHelper _currentSocket;
         #endregion
 
         #region Public Properties
@@ -39,6 +40,10 @@ namespace FrostCommon.Net
         #endregion
 
         #region Public Methods
+        public void DisconnectSocket()
+        {
+                DisconnectSocket(_currentSocket);
+        }
         public void Send(Message message, int timeout)
         {
             Send(message.Destination, message, timeout);
@@ -48,7 +53,7 @@ namespace FrostCommon.Net
         {
             try
             {
-                
+
                 DebugSend(location, message);
 
                 SocketHelper connection;
@@ -70,10 +75,13 @@ namespace FrostCommon.Net
                 }
 
                 SendData(connection, message);
-               //connection.SendDone.WaitOne(connection.TimeOut);
+                //connection.SendDone.WaitOne(connection.TimeOut);
 
-                DisconnectSocket(connection);
-                //connection.DisconnectDone.WaitOne(connection.TimeOut);
+                if (_autoDisconnect)
+                {
+                    DisconnectSocket(connection);
+                    //connection.DisconnectDone.WaitOne(connection.TimeOut);
+                }
             }
             catch (Exception e)
             {
@@ -99,11 +107,11 @@ namespace FrostCommon.Net
                 item.Socket.BeginConnect(GetEndPoint(item.Location),
                                new AsyncCallback(ConnectCallback), item);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.WriteLine($"Client: ConnectSocket Error: {e.ToString()}");
             }
-     
+
             item.ConnectDone.WaitOne(item.TimeOut);
         }
 
@@ -140,7 +148,7 @@ namespace FrostCommon.Net
         private void DisconnectSocket(SocketHelper item)
         {
             var client = item.Socket;
-           
+
             if (client.IsConnected())
             {
                 client.Shutdown(SocketShutdown.Both);

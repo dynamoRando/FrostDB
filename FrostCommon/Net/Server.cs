@@ -9,11 +9,13 @@ using System.Diagnostics;
 
 namespace FrostCommon.Net
 {
-    public class Server 
+    public class Server
     {
         #region Private Fields
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
         private IMessageProcessor _messageProcessor;
+        private Socket _activeSocket;
+        private bool _autoDisconnect = false;
         #endregion
 
         #region Public Fields
@@ -47,7 +49,12 @@ namespace FrostCommon.Net
         {
             IsRunning = false;
         }
-        
+
+        public void DisconnectSocket()
+        {
+            DisconnectSocket(_activeSocket);
+        }
+
         public void AcceptCallback(IAsyncResult ar)
         {
             // Signal the main thread to continue.  
@@ -78,6 +85,7 @@ namespace FrostCommon.Net
             // from the asynchronous state object.  
             StateObject state = (StateObject)ar.AsyncState;
             Socket handler = state.workSocket;
+            _activeSocket = handler;
 
             // Read data from the client socket. 
             int bytesRead = 0;
@@ -86,7 +94,7 @@ namespace FrostCommon.Net
             {
                 bytesRead = handler.EndReceive(ar);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Debug.WriteLine(e.ToString());
@@ -122,7 +130,10 @@ namespace FrostCommon.Net
                 }
             }
 
-            DisconnectSocket(handler);
+            if (_autoDisconnect)
+            {
+                DisconnectSocket(handler);
+            }
         }
         #endregion
 
@@ -138,12 +149,12 @@ namespace FrostCommon.Net
                     socket.Disconnect(true);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Debug.WriteLine(e.ToString());
             }
-           
+
             //socket.Close();
         }
 
@@ -154,20 +165,20 @@ namespace FrostCommon.Net
             var socket = state.workSocket;
             //SetKeepAliveOnSocket(socket);
 
-           // while (socket.Connected)
+            // while (socket.Connected)
             //{
-                try
-                {
-                    socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
-                }
-                catch(SocketException se)
-                {
-                    Debug.WriteLine(se.ToString());
-                }
-                catch(Exception e)
-                {
-                    Debug.WriteLine(e.ToString());
-                }
+            try
+            {
+                socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
+            }
+            catch (SocketException se)
+            {
+                Debug.WriteLine(se.ToString());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
             //}
         }
 
@@ -213,7 +224,7 @@ namespace FrostCommon.Net
                 Console.WriteLine(e.ToString());
             }
         }
-       
+
         #endregion
     }
 }
