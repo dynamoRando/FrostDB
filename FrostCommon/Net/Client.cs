@@ -17,10 +17,16 @@ namespace FrostCommon.Net
     public class Client
     {
         #region Private Fields
+        private static ManualResetEvent ConnectDone = new ManualResetEvent(false);
+        private static ManualResetEvent SendDone = new ManualResetEvent(false);
+        private static ManualResetEvent ReceiveDone = new ManualResetEvent(false);
+        private static ManualResetEvent DisconnectDone = new ManualResetEvent(false);
+        
         private String response = String.Empty;
-        private ConcurrentDictionary<LocationInfo, SocketHelper> connections;
-        private bool _autoDisconnect = false;
+        private ConcurrentDictionary<string, SocketHelper> connections;
+        private bool _autoDisconnect = true;
         private SocketHelper _currentSocket;
+        private object _lock = new object();
         #endregion
 
         #region Public Properties
@@ -35,18 +41,21 @@ namespace FrostCommon.Net
         #region Constructors
         public Client()
         {
-            connections = new ConcurrentDictionary<LocationInfo, SocketHelper>();
+            connections = new ConcurrentDictionary<string, SocketHelper>();
         }
         #endregion
 
         #region Public Methods
         public void DisconnectSocket()
         {
-                DisconnectSocket(_currentSocket);
+            DisconnectSocket(_currentSocket);
         }
         public void Send(Message message, int timeout)
         {
-            Send(message.Destination, message, timeout);
+            lock (_lock)
+            {
+                Send(message.Destination, message, timeout);
+            }
         }
 
         public void Send(Location location, Message message, int timeOut)
@@ -58,6 +67,7 @@ namespace FrostCommon.Net
 
                 SocketHelper connection;
 
+                DebugOutput("Check For Connection At Send");
                 if (HasConnection(location))
                 {
                     connection = GetConnection(location);
@@ -65,7 +75,7 @@ namespace FrostCommon.Net
                 else
                 {
                     connection = GetNewSocketHelper(location, GetNewSocket(location), timeOut);
-                    connections.TryAdd(location.Convert(), connection);
+                    connections.TryAdd(location.ConvertToString(), connection);
                 }
 
                 if (!connection.Socket.IsConnected())
@@ -77,11 +87,19 @@ namespace FrostCommon.Net
                 SendData(connection, message);
                 //connection.SendDone.WaitOne(connection.TimeOut);
 
+                DebugOutput("Check For Connection After Send");
+                if (!HasConnection(location))
+                {
+                    DebugOutput($"Adding back connection {location.ConvertToString()}" );
+                    connections.TryAdd(location.ConvertToString(), connection);
+                }
+
                 if (_autoDisconnect)
                 {
                     DisconnectSocket(connection);
                     //connection.DisconnectDone.WaitOne(connection.TimeOut);
                 }
+
             }
             catch (Exception e)
             {
@@ -93,6 +111,12 @@ namespace FrostCommon.Net
 
 
         #region Private Methods
+        private void DebugOutput(string message)
+        {
+            Console.WriteLine(message);
+            Debug.WriteLine(message);
+        }
+
         private void DebugSend(Location location, Message message)
         {
             Debug.WriteLine($"Client: Destination: {location.IpAddress}:{location.PortNumber.ToString()}");
@@ -105,14 +129,13 @@ namespace FrostCommon.Net
             try
             {
                 item.Socket.BeginConnect(GetEndPoint(item.Location),
-                               new AsyncCallback(ConnectCallback), item);
+                               new AsyncCallback(ConnectCallback), item.Socket);
+                ConnectDone.WaitOne();
             }
             catch (Exception e)
             {
                 Debug.WriteLine($"Client: ConnectSocket Error: {e.ToString()}");
-            }
-
-            item.ConnectDone.WaitOne(item.TimeOut);
+            }            
         }
 
         private void SendData(SocketHelper item, Message message)
@@ -120,7 +143,6 @@ namespace FrostCommon.Net
             Debug.WriteLine("Client: -- Send Data To: --");
             DebugSend(item.Location, message);
             Send(item, message);
-            item.SendDone.WaitOne(item.TimeOut);
         }
 
         private void Send(SocketHelper item, Message message)
@@ -137,7 +159,8 @@ namespace FrostCommon.Net
             if (item.Socket.IsConnected())
             {
                 item.Socket.BeginSend(byteData, 0, byteData.Length, 0,
-                          new AsyncCallback(SendCallback), item);
+                          new AsyncCallback(SendCallback), item.Socket);
+                SendDone.WaitOne();                          
             }
             else
             {
@@ -152,8 +175,9 @@ namespace FrostCommon.Net
             if (client.IsConnected())
             {
                 client.Shutdown(SocketShutdown.Both);
-                client.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), item);
-                item.DisconnectDone.WaitOne(item.TimeOut);
+                client.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), item.Socket);
+                DisconnectDone.WaitOne();
+                DebugOutput($"Disconnected {item.Location.ConvertToString()}");
             }
             else
             {
@@ -163,13 +187,12 @@ namespace FrostCommon.Net
 
         private static void DisconnectCallback(IAsyncResult ar)
         {
-            SocketHelper item = (SocketHelper)ar.AsyncState;
-            Socket client = item.Socket;
+            Socket client = (Socket)ar.AsyncState;
 
             client.EndDisconnect(ar);
 
             // Signal that the disconnect is complete.
-            item.DisconnectDone.Set();
+            DisconnectDone.Set();
             Debug.WriteLine($"Client: DisconnectCallback done.");
         }
 
@@ -194,21 +217,32 @@ namespace FrostCommon.Net
         private SocketHelper GetNewSocketHelper(Location location, Socket socket, int timeout)
         {
             var item = new SocketHelper(socket, location, timeout);
-            item.ConnectDone.Reset();
-            item.SendDone.Reset();
-            item.DisconnectDone.Reset();
+            ConnectDone.Reset();
+            SendDone.Reset();
+            DisconnectDone.Reset();
             return item;
         }
 
         private bool HasConnection(Location location)
         {
-            return connections.ContainsKey(location.Convert());
+            var hasConnection = connections.ContainsKey(location.ConvertToString());
+            if (hasConnection)
+            {
+                string message = $"Has Connection {location.ConvertToString()}";
+                DebugOutput(message);
+            }
+            else
+            {
+                string message = $"Connection Not Found! - {location.ConvertToString()}";
+                DebugOutput(message);
+            }
+            return hasConnection;
         }
 
         private SocketHelper GetConnection(Location location)
         {
             SocketHelper item;
-            connections.TryRemove(location.Convert(), out item);
+            connections.TryRemove(location.ConvertToString(), out item);
             return item;
         }
 
@@ -216,15 +250,15 @@ namespace FrostCommon.Net
         {
             try
             {
-                SocketHelper item = (SocketHelper)ar.AsyncState;
-                Socket client = item.Socket;
+                Socket client = (Socket)ar.AsyncState;
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = client.EndSend(ar);
+                SendDone.Set();
                 Console.WriteLine("Client: Sent {0} bytes to server.", bytesSent);
 
                 // Signal that all bytes have been sent.  
-                item.SendDone.Set();
+                
             }
             catch (Exception e)
             {
@@ -238,19 +272,18 @@ namespace FrostCommon.Net
             try
             {
                 // Retrieve the socket from the state object.  
-                SocketHelper item = (SocketHelper)ar.AsyncState;
-                Socket client = (Socket)item.Socket;
+                Socket client = (Socket)ar.AsyncState;
 
                 // Complete the connection.  
                 client.EndConnect(ar);
+                // Signal that the connection has been made.  
+                ConnectDone.Set();
 
                 string debug = $"Client: Socket connected to {client.RemoteEndPoint.ToString()}";
 
                 Console.WriteLine(debug);
                 Debug.WriteLine(debug);
 
-                // Signal that the connection has been made.  
-                item.ConnectDone.Set();
             }
             catch (Exception e)
             {

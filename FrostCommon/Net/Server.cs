@@ -15,7 +15,7 @@ namespace FrostCommon.Net
         private static ManualResetEvent _allDone = new ManualResetEvent(false);
         private IMessageProcessor _messageProcessor;
         private Socket _activeSocket;
-        private bool _autoDisconnect = false;
+        private bool _autoDisconnect = true;
         #endregion
 
         #region Public Fields

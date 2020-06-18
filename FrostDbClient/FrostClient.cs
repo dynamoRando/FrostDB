@@ -413,7 +413,8 @@ namespace FrostDbClient
             // this timeout should be part of a configuration or a param passed in
             _info.AddToQueue(id);
             // should this be done in a task?
-            Task.Run(() => _client.Send(message, ClientConstants.TimeOut));
+            //Task.Run(() => _client.Send(message, ClientConstants.TimeOut));
+            _client.Send(message, ClientConstants.TimeOut);
             return id;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)

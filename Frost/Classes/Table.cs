@@ -201,7 +201,14 @@ namespace FrostDB
         {
             var result = new List<Row>();
 
-            foreach(var row in _rows)
+            /*
+            Parallel.ForEach(_rows, (row) =>
+            {
+               
+            });
+            */
+
+            foreach (var row in _rows)
             {
                 var task = row.Get(_process);
                 task.Wait();
@@ -230,8 +237,8 @@ namespace FrostDB
 
         public Task<List<Row>> GetRowsAsync(string queryString)
         {
-            _rows.ForEach(row => 
-            { 
+            _rows.ForEach(row =>
+            {
                 if (!row.IsLocal(_process))
                 {
                     // send the queryString to each participant to be evaluated to see if they have matching rows
