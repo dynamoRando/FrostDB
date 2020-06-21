@@ -31,6 +31,11 @@ namespace FrostDB
             //_dbManager.AddToInbox(message);
             throw new NotImplementedException();
         }
+
+        public IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods

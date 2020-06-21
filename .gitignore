@@ -83,3 +83,4 @@ FrostConsoleHarness/obj/FrostConsoleHarness.csproj.nuget.cache
 FrostConsoleHarness/obj/Debug/netcoreapp3.1/FrostConsoleHarness.exe
 FrostConsoleHarness/bin/Debug/netcoreapp3.1/frostDb.log
 FrostConsoleHarness/obj/project.packagespec.json
+/FrostConsoleHarness/bin/Debug/netcoreapp3.1

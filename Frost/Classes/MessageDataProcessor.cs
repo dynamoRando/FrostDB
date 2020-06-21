@@ -50,6 +50,11 @@ namespace FrostDB
             IncomingMessages.TryRemove(id, out message);
         }
 
+        public override IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Process(IMessage message)
         {
             HandleProcessMessage(message);

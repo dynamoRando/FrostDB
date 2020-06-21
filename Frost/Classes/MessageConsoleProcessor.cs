@@ -42,6 +42,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public override IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
         public override void Process(IMessage message)
         {
             HandleProcessMessage(message);

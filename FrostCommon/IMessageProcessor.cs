@@ -6,5 +6,7 @@ namespace FrostCommon
     {
         void Process(IMessage message);
         int PortNumber { get; set; }
+
+        IMessage ProcessWithResult(IMessage message);
     }
 }

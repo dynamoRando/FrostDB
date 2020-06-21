@@ -30,6 +30,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public virtual IMessage ProcessWithResult(IMessage message)
+        {
+            HandleProcessMessage(message);
+            throw new NotImplementedException();
+        }
+
         public virtual void Process(IMessage message)
         {
             HandleProcessMessage(message);

@@ -35,6 +35,11 @@ namespace FrostDbClient
         #endregion
 
         #region Public Methods
+        public IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Process(IMessage message)
         {
             var m = (message as Message);
