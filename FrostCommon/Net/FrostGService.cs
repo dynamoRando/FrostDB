@@ -11,11 +11,39 @@ namespace FrostCommon.Net
     {
         private readonly ILogger<FrostGService> _logger;
         private IMessageProcessor _messageProcessor;
+
+        #region Private Fields
+        #endregion
+
+        #region Public Properties
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Constructors
+        public FrostGService() { }
         public FrostGService(ILogger<FrostGService> logger)
         {
             _logger = logger;
         }
 
+        public FrostGService(IMessageProcessor messageProcessor)
+        {
+            _messageProcessor = messageProcessor;
+        }
+
+        public FrostGService(ILogger<FrostGService> logger, IMessageProcessor messageProcessor)
+        {
+            _logger = logger;
+            _messageProcessor = messageProcessor;
+        }
+        #endregion
+
+        #region Public Methods
         public void SetProcessor(IMessageProcessor messageProcessor)
         {
             _messageProcessor = messageProcessor;
@@ -39,5 +67,9 @@ namespace FrostCommon.Net
             }
             return Task.FromResult(result.ToSkeleton());
         }
+        #endregion
+
+        #region Private Methods
+        #endregion
     }
 }

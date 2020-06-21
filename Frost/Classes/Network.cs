@@ -17,10 +17,10 @@ namespace FrostDB
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         MessageBuilder _messageBuilder;
-        Server _dataServer;
-        Server _consoleServer;
+        GServer _dataServer;
+        GServer _consoleServer;
         Process _process;
-        Client _client;
+        GClient _client;
         #endregion
 
         #region Public Properties
@@ -41,12 +41,12 @@ namespace FrostDB
             _process = process;
             _messageIds = new ConcurrentBag<Guid?>();
             _requestMessageIds = new ConcurrentBag<Guid?>();
-            _client = new Client();
+            _client = new GClient();
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
-            _dataServer = new Server();
+            _dataServer = new GServer();
             _dataServer.ServerName = "Data";
-            _consoleServer = new Server();
+            _consoleServer = new GServer();
             _consoleServer.ServerName = "Console";
             _messageBuilder = new MessageBuilder(_process);
         }
@@ -100,7 +100,7 @@ namespace FrostDB
         {
             Guid? id = message.Id;
             AddToQueue(id);
-            _client.Send(message, ClientConstants.TimeOut);
+            _client.Send(message);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return id;
         }
@@ -113,7 +113,7 @@ namespace FrostDB
         public void SendMessageRequestId(Message message, Guid? requestId)
         {
             _requestMessageIds.Add(requestId);
-            _client.Send(message, ClientConstants.TimeOut);
+            _client.Send(message);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
         }
         public void AddToQueue(Guid? id)
