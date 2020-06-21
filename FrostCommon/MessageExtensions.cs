@@ -1,4 +1,5 @@
 ﻿using FrostCommon.Net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,13 @@ namespace FrostCommon
         {
             var result = new MessageSkeleton();
             result.Text = Json.SeralizeMessage(message);
+            return result;
+        }
+
+        public static Message FromSkeleton(this MessageSkeleton message) 
+        {
+            var result = new Message();
+            result = JsonConvert.DeserializeObject<Message>(message.Text);
             return result;
         }
     }

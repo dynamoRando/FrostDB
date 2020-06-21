@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Grpc;
 using Grpc.Core;
+using System.Diagnostics;
 
 namespace FrostCommon.Net
 {
@@ -36,6 +37,7 @@ namespace FrostCommon.Net
             };
             
             _server.Start();
+            Debug.WriteLine($"GServer Started for {ipAddress} : {PortNumber.ToString()}");
         }
         public void Stop()
         {

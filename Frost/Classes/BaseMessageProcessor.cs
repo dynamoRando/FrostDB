@@ -38,13 +38,15 @@ namespace FrostDB
 
         public virtual IMessage Process(IMessage message)
         {
-            HandleProcessMessage(message);
+            return HandleProcessMessage(message);
         }
 
         public IMessage HandleProcessMessage(IMessage message)
         {
+            IMessage result = new Message();
             Message m = (message as Message);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));
+            return result;
         }
 
         #endregion
@@ -52,6 +54,10 @@ namespace FrostDB
         #region Private Methods
         private MessageRecievedEventArgs CreateMessageRecievedEventArgs(Message message, string content)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                content = string.Empty;
+            }
             return new MessageRecievedEventArgs { Message = message, MessageLength = content.Length, StringMessage = content };
         }
         #endregion

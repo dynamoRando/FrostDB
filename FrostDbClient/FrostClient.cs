@@ -24,7 +24,7 @@ namespace FrostDbClient
         Location _remote;
         FrostClientInfo _info;
         EventManager _eventManager;
-        Client _client;
+        GClient _client;
         #endregion
 
         #region Public Properties
@@ -34,7 +34,7 @@ namespace FrostDbClient
         public string LocalIpAddress => _localIpAddress;
         public int RemotePortNumber => _remotePortNumber;
         public int LocalPortNumber => _localPortNumber;
-        public Client Client => _client;
+        public GClient Client => _client;
         #endregion
 
         #region Protected Methods
@@ -46,7 +46,7 @@ namespace FrostDbClient
         #region Constructors
         public FrostClient(string remoteIpAddress, string localIpAddress, int remotePortNumber, int localPortNumber)
         {
-            _client = new Client();
+            _client = new GClient();
             _remoteIpAddress = remoteIpAddress;
             _remotePortNumber = remotePortNumber;
             _localPortNumber = localPortNumber;
@@ -80,27 +80,26 @@ namespace FrostDbClient
         {
             try
             {
-                _client.DisconnectSocket();
+                //_client.DisconnectSocket();
+                Client.Shutdown();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 Console.WriteLine(ex.ToString());
             }
-            
+
         }
         public async Task<FrostPromptResponse> ExecuteCommandAsync(string command)
         {
             var result = new FrostPromptResponse();
-            var id = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
-            bool gotData = await WaitForMessageAsync(id);
+            var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
+            _processor.Process(data);
+            Guid? id = data.ReferenceMessageId;
 
-            if (gotData)
+            if (_info.Responses.ContainsKey(id))
             {
-                if (_info.Responses.ContainsKey(id))
-                {
-                    _info.Responses.TryRemove(id, out result);
-                }
+                _info.Responses.TryRemove(id, out result);
             }
 
             return result;
@@ -176,18 +175,12 @@ namespace FrostDbClient
         public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
         {
             var list = new List<ContractInfo>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
+            var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
+            _processor.Process(data);
 
-            if (gotData)
-            {
-                if (_info.ProcessPendingContracts.ContainsKey(string.Empty))
-                {
-                    List<ContractInfo> removed = null;
-                    _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
-                    list = removed;
-                }
-            }
+            List<ContractInfo> removed = null;
+            _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
+            list = removed;
 
             return list;
         }
@@ -200,17 +193,14 @@ namespace FrostDbClient
         public async Task<ContractInfo> GetContractInformationAsync(string databaseName)
         {
             var result = new ContractInfo();
-            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
-            bool gotData = await WaitForMessageAsync(id);
+            var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
+            _processor.Process(data);
 
-            if (gotData)
+            if (_info.ContractInfos.ContainsKey(databaseName))
             {
-                if (_info.ContractInfos.ContainsKey(databaseName))
-                {
-                    ContractInfo removed = null;
-                    _info.ContractInfos.TryRemove(databaseName, out removed);
-                    result = removed;
-                }
+                ContractInfo removed = null;
+                _info.ContractInfos.TryRemove(databaseName, out removed);
+                result = removed;
             }
 
             return result;
@@ -285,13 +275,9 @@ namespace FrostDbClient
         public async Task<List<string>> GetDatabasesAsync()
         {
             var result = new List<string>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                result = _info.DatabaseNames;
-            }
+            var response = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
+            _processor.Process(response);
+            return _info.DatabaseNames;
 
             return result;
         }
@@ -299,14 +285,9 @@ namespace FrostDbClient
         public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
         {
             var result = new DatabaseInfo();
-            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
-
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
-            }
+            var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
+            _processor.Process(data);
+            result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
 
             return result;
         }
@@ -314,13 +295,10 @@ namespace FrostDbClient
         public async Task<List<string>> GetPartialDatabasesAsync()
         {
             var result = new List<string>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
+            var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+            _processor.Process(data);
 
-            if (gotData)
-            {
-                result = _info.PartialDatabaseNames;
-            }
+            result = _info.PartialDatabaseNames;
 
             return result;
         }
@@ -328,17 +306,14 @@ namespace FrostDbClient
         public async Task<TableInfo> GetTableInfoAsync(Guid? databaseId, Guid? tableId, string tableName)
         {
             var requestInfo = (database: databaseId, table: tableId);
-            var id = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            var data = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            _processor.Process(data);
 
             var result = new TableInfo();
-            bool gotData = await WaitForMessageAsync(id);
 
-            if (gotData)
+            if (_info.TableInfos.ContainsKey(tableName))
             {
-                if (_info.TableInfos.ContainsKey(tableName))
-                {
-                    _info.TableInfos.TryRemove(tableName, out result);
-                }
+                _info.TableInfos.TryRemove(tableName, out result);
             }
 
             return result;
@@ -407,15 +382,9 @@ namespace FrostDbClient
             return responseRecieved;
         }
 
-        private Guid? SendMessage(Message message)
+        private Message SendMessage(Message message)
         {
-            Guid? id = message.Id;
-            // this timeout should be part of a configuration or a param passed in
-            _info.AddToQueue(id);
-            // should this be done in a task?
-            //Task.Run(() => _client.Send(message, ClientConstants.TimeOut));
-            _client.Send(message, ClientConstants.TimeOut);
-            return id;
+            return _client.Send(message);
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)
         {

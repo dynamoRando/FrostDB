@@ -33,11 +33,10 @@ namespace FrostDB.Extensions
             };
         }
 
-        public static void SendResponse(this Message message, MessageResponse responder, Process process)
+        public static Message CreateResponse(this Message message, MessageResponse responder)
         {
             // once a message has been processed, generate the appropriate response message and send it
-            Message m = responder.Create(message);
-            process.Network.SendMessage(m);
+            return responder.Create(message);
         }
 
         public static bool IsLocal(this RowReference reference, Process process)

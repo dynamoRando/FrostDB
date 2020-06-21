@@ -119,6 +119,7 @@ namespace FrostDB
         }
         private IMessage HandleAddNewTable(Message message)
         {
+            IMessage result = new Message();
             var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
             var db = _process.GetDatabase(info.DatabaseName);
 
@@ -132,13 +133,16 @@ namespace FrostDB
 
             var table = new Table(info.TableName, columns, db.Id, _process);
             db.AddTable(table);
+            return result;
         }
 
         private IMessage HandleRemoveTable(Message message)
         {
+            IMessage result = new Message();
             var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
             var db = _process.GetDatabase(info.DatabaseName);
             db.RemoveTable(info.TableName);
+            return result;
         }
         private IMessage HandleGetContractInformation(Message message)
         {

@@ -45,6 +45,23 @@ namespace FrostDB
             return response;
         }
 
+        public Message BuildMessageData(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType)
+        {
+            Message response = new Message(
+                destination: destination,
+                origin: _process.GetLocation(),
+                messageContent: messageContent,
+                messageAction: messageAction,
+                messageType: messageType,
+                contentType: null,
+                messageActionType: messageActionType
+                );
+
+            response.ReferenceMessageId = requestorId;
+
+            return response;
+        }
+
         public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType)
         {
             return new Message(destination, _process.GetLocation(), messageContent, messageAction, messageType);

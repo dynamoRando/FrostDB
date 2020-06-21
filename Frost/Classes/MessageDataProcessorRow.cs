@@ -3,6 +3,7 @@ using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,7 +45,7 @@ namespace FrostDB.Classes
                     result = ProcessDeleteRow(message);
                     break;
                 case MessageDataAction.Row.Update_Row:
-                    result = ProcessUpdateRow(message);
+                    result = ProcessUpdateRow(message).Result;
                     break;
                 default:
                     throw new InvalidOperationException("Unknown Data Row Message");
@@ -54,8 +55,9 @@ namespace FrostDB.Classes
         #endregion
 
         #region Private Methods
-        private async Task ProcessUpdateRow(Message message)
+        private async Task<IMessage> ProcessUpdateRow(Message message)
         {
+            IMessage result = null;
             var info = message.GetContentAs<RowForm>();
             if (_process.HasPartialDatabase(info.DatabaseName))
             {
@@ -64,14 +66,16 @@ namespace FrostDB.Classes
                 {
                     var table = db.GetTable(info.TableName);
                     await table.UpdateRow(info.Reference, info.RowValues);
-                    var returnMessage = _process.Network.BuildMessage(message.Origin, null, MessageDataAction.Row.Update_Row_Information, MessageType.Data, message.RequestInformationId);
+                    var returnMessage = _process.Network.BuildMessage(message.Origin, null, MessageDataAction.Row.Update_Row_Information, MessageType.Data, message.RequestInformationId, MessageActionType.Table);
                     _process.Network.SendMessage(returnMessage);
                 }
             }
+            return result;
         }
 
         private IMessage ProcessDeleteRow(Message message)
         {
+            IMessage result = new Message();
             // TO DO: We should be checking the contract here if the host is allowed to delete our data;
 
             var info = message.GetContentAs<RemoteRowInfo>();
@@ -84,9 +88,12 @@ namespace FrostDB.Classes
                     table.RemoveRow(info.RowId);
                 }
             }
+
+            return message;
         }
         private IMessage ProcessSaveRow(Message message)
         {
+            IMessage result = new Message();
             var info = JsonConvert.DeserializeObject<RowForm>(message.Content);
             if (_process.HasPartialDatabase(info.DatabaseName))
             {
@@ -97,6 +104,8 @@ namespace FrostDB.Classes
                     table.AddRow(info);
                 }
             }
+
+            return result;
         }
         #endregion
 

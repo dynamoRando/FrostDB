@@ -165,7 +165,7 @@ namespace FrostDB
                     var updateRemoteRowId = Guid.NewGuid();
                     RowForm rowInfo = new RowForm(row, reference.Participant, reference, values);
                     var content = JsonConvert.SerializeObject(rowInfo);
-                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId);
+                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId, MessageActionType.Table);
                     var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
 
                     if (response != null)
@@ -429,7 +429,7 @@ namespace FrostDB
                 var remoteRowInfo = BuildRemoteRowInfo(reference);
                 var content = JsonConvert.SerializeObject(remoteRowInfo);
 
-                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId);
+                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId, MessageActionType.Table);
                 _process.Network.SendMessageRequestId(message, requestId);
                 bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
 

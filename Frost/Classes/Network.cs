@@ -86,9 +86,9 @@ namespace FrostDB
         /// <param name="messageType">Type of the message, from MessageType.cs in FrostCommon.</param>
         /// <param name="requestorId">The requestor identifier. Send this when you want to identify a return message at a call site.</param>
         /// <returns></returns>
-        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId)
+        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType)
         {
-            return _messageBuilder.BuildMessage(destination, messageContent, messageAction, messageType, requestorId);
+            return _messageBuilder.BuildMessageData(destination, messageContent, messageAction, messageType, requestorId, messageActionType);
         }
 
         /// <summary>

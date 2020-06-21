@@ -76,19 +76,23 @@ namespace FrostDB
 
 		private IMessage HandleAddColumnMessage(Message message)
 		{
+			IMessage result = new Message();
 			var info = message.GetContentAs<ColumnInfo>();
 			var db = _process.GetDatabase(info.DatabaseName);
 			var table = db.GetTable(info.TableName);
 			table.AddColumn(info.ColumnName, info.Type);
+			return result;
 		}
 
 		private IMessage HandleRemoveColumnMessage(Message message)
 		{
+			IMessage result = new Message();
 			var info = message.GetContentAs<ColumnInfo>();
 			var db = _process.GetDatabase(info.DatabaseName);
 			var table = db.GetTable(info.TableName);
 
 			table.RemoveColumn(info.ColumnName);
+			return result;
 		}
 		#endregion
 

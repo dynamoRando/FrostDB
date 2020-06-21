@@ -133,6 +133,7 @@ namespace FrostDB
 
         private IMessage HandleAcceptPendingContract(Message message)
         {
+            IMessage result = new Message();
             /*
              * We need to accept the incoming contract on our side (mark it as accepted)
              * and then create a new partial database on our side
@@ -149,6 +150,7 @@ namespace FrostDB
 
             Message acceptContract = new Message(location, _process.GetLocation(), contract.DatabaseName, MessageDataAction.Contract.Accept_Pending_Contract, MessageType.Data);
             _process.Network.SendMessage(acceptContract);
+            return result;
         }
 
         #endregion

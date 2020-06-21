@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FrostCommon.ConsoleMessages;
 using Grpc.Core;
+using System.Diagnostics;
 
 namespace FrostCommon.Net
 {
@@ -30,10 +31,10 @@ namespace FrostCommon.Net
         {
             var channel = GetChannel(message);
             var client = GetClient(channel);
+            Debug.WriteLine($"GClient: Sending Message {message.Content}");
             var reply = client.GetData(message.ToSkeleton());
-            
-            // do something with reply
-            throw new NotImplementedException();
+            Debug.WriteLine($"GClient: Reply {reply.Text}");
+            return reply.FromSkeleton();
         }
 
         public void Shutdown()

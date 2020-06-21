@@ -57,7 +57,8 @@ namespace FrostDB
 
         public override IMessage Process(IMessage message)
         {
-            HandleProcessMessage(message);
+            IMessage result = new Message();
+            result = HandleProcessMessage(message);
 
             var m = (message as Message);
 
@@ -89,7 +90,7 @@ namespace FrostDB
                         _processProcessor.Process(m);
                     }
 
-                    m.SendResponse(new MessageResponse(_process), _process);
+                    result = m.CreateResponse(new MessageResponse(_process));
                 }
                 else
                 {
@@ -101,7 +102,7 @@ namespace FrostDB
                 Console.WriteLine("Message console arrived on data port");
             }
 
-            
+            return result;
         }
         #endregion
 

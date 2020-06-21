@@ -117,7 +117,7 @@ namespace FrostDB
             Guid? requestId = Guid.NewGuid();
             Message rowMessage = null;
 
-            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId);
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId, MessageActionType.Table);
             rowMessage = await _process.Network.SendAndGetDataMessageFromToken(getRowMessage, requestId);
 
             if (rowMessage != null)
