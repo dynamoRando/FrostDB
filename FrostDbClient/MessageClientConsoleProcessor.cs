@@ -40,34 +40,35 @@ namespace FrostDbClient
             throw new NotImplementedException();
         }
 
-        public void Process(IMessage message)
+        public IMessage Process(IMessage message)
         {
             var m = (message as Message);
+            IMessage result = null;
 
             switch (m.ActionType)
             {
                 case MessageActionType.Process:
-                    HandleProcessMessage(m);
+                    result = HandleProcessMessage(m);
                     break;
                 case MessageActionType.Database:
-                    HandleDatabaseMessage(m);
+                    result = HandleDatabaseMessage(m);
                     break;
                 case MessageActionType.Table:
-                    HandleTableMessage(m);
+                    result = HandleTableMessage(m);
                     break;
                 case MessageActionType.Prompt:
-                    HandlePromptMessage(m);
+                    result = HandlePromptMessage(m);
                     break;
             }
 
             HandleInfoQueue(m.ReferenceMessageId);
 
-            //throw new NotImplementedException();
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private void HandlePromptMessage(Message message)
+        private IMessage HandlePromptMessage(Message message)
         {
             FrostPromptResponse data = JsonConvert.DeserializeObject<FrostPromptResponse>(message.Content);
 
@@ -79,7 +80,7 @@ namespace FrostDbClient
 
             _info.Responses.TryAdd(message.ReferenceMessageId, data);
         }
-        private void HandleTableMessage(Message message)
+        private IMessage HandleTableMessage(Message message)
         {
             switch(message.Action)
             {
@@ -112,7 +113,7 @@ namespace FrostDbClient
                 _info.RemoveFromQueue(id);
             }
         }
-        private void HandleDatabaseMessage(Message message)
+        private IMessage HandleDatabaseMessage(Message message)
         {
             switch (message.Action)
             {
@@ -180,7 +181,7 @@ namespace FrostDbClient
             }
         }
 
-        private void HandleProcessMessage(Message message)
+        private IMessage HandleProcessMessage(Message message)
         {
             switch (message.Action) 
             {

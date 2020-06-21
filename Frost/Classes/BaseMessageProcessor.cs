@@ -36,12 +36,12 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public virtual void Process(IMessage message)
+        public virtual IMessage Process(IMessage message)
         {
             HandleProcessMessage(message);
         }
 
-        public void HandleProcessMessage(IMessage message)
+        public IMessage HandleProcessMessage(IMessage message)
         {
             Message m = (message as Message);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));

@@ -33,25 +33,27 @@ namespace FrostDB
 		#endregion
 
 		#region Public Methods
-		public void Process(Message message)
+		public IMessage Process(Message message)
 		{
+			IMessage result = null;
 			switch (message.Action)
 			{
 				case MessageConsoleAction.Table.Get_Table_Info:
-					HandleGetTableInfo(message);
+					result = HandleGetTableInfo(message);
 					break;
 				case MessageConsoleAction.Table.Add_Column:
-					HandleAddColumnMessage(message);
+					result = HandleAddColumnMessage(message);
 					break;
 				case MessageConsoleAction.Table.Remove_Column:
-					HandleRemoveColumnMessage(message);
+					result = HandleRemoveColumnMessage(message);
 					break;
 			}
+			return result;
 		}
 		#endregion
 
 		#region Private Methods
-		private void HandleGetTableInfo(Message message)
+		private IMessage HandleGetTableInfo(Message message)
 		{
 			var databaseTable = message.TwoGuidTuple;
 			var db = _process.GetDatabase(databaseTable.Item1);
@@ -69,10 +71,10 @@ namespace FrostDB
 			string messageContent = string.Empty;
 
 			messageContent = JsonConvert.SerializeObject(info);
-			_messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, MessageActionType.Table);
+			return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Table.Get_Table_Info_Response, type, message.Id, MessageActionType.Table);
 		}
 
-		private void HandleAddColumnMessage(Message message)
+		private IMessage HandleAddColumnMessage(Message message)
 		{
 			var info = message.GetContentAs<ColumnInfo>();
 			var db = _process.GetDatabase(info.DatabaseName);
@@ -80,7 +82,7 @@ namespace FrostDB
 			table.AddColumn(info.ColumnName, info.Type);
 		}
 
-		private void HandleRemoveColumnMessage(Message message)
+		private IMessage HandleRemoveColumnMessage(Message message)
 		{
 			var info = message.GetContentAs<ColumnInfo>();
 			var db = _process.GetDatabase(info.DatabaseName);

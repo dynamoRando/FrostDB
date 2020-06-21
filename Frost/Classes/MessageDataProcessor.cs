@@ -55,7 +55,7 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public override void Process(IMessage message)
+        public override IMessage Process(IMessage message)
         {
             HandleProcessMessage(message);
 

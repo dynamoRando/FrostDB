@@ -61,7 +61,7 @@ namespace FrostCommon.Net
 
                     if (Json.TryParse(content, out message))
                     {
-                        result = (Message)_messageProcessor.ProcessWithResult(message);
+                        result = (Message)_messageProcessor.Process(message);
                     }
                 }
             }

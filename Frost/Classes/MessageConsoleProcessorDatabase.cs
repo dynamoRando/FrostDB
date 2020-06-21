@@ -26,7 +26,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public MessageConsoleProcessorDatabase(Process process) 
+        public MessageConsoleProcessorDatabase(Process process)
         {
             _process = process;
             _messageBuilder = new MessageBuilder(_process);
@@ -34,43 +34,46 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Process(Message message)
+        public IMessage Process(Message message)
         {
+            IMessage result = null;
             switch (message.Action)
             {
                 case MessageConsoleAction.Database.Get_Database_Info:
-                    HandleGetDatabaseInfo(message);
+                    result = HandleGetDatabaseInfo(message);
                     break;
                 case MessageConsoleAction.Database.Get_Database_Tables:
-                    HandleGetDatabaseTables(message);
+                    result = HandleGetDatabaseTables(message);
                     break;
                 case MessageConsoleAction.Database.Add_Table_To_Database:
-                    HandleAddNewTable(message);
+                    result = HandleAddNewTable(message);
                     break;
                 case MessageConsoleAction.Database.Remove_Table_From_Database:
-                    HandleRemoveTable(message);
+                    result = HandleRemoveTable(message);
                     break;
                 case MessageConsoleAction.Database.Get_Contract_Information:
-                    HandleGetContractInformation(message);
+                    result = HandleGetContractInformation(message);
                     break;
                 case MessageConsoleAction.Database.Update_Contract_Information:
-                    HandleUpdateContractInformation(message);
+                    result = HandleUpdateContractInformation(message);
                     break;
                 case MessageConsoleAction.Database.Add_Participant:
-                    HandleAddParticipant(message);
+                    result = HandleAddParticipant(message);
                     break;
                 case MessageConsoleAction.Database.Get_Pending_Contracts:
-                    HandleGetPendingContracts(message);
+                    result = HandleGetPendingContracts(message);
                     break;
                 case MessageConsoleAction.Database.Get_Accepted_Contracts:
-                    HandleGetAcceptedContracts(message);
+                    result = HandleGetAcceptedContracts(message);
                     break;
             }
+
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private void HandleGetAcceptedContracts(Message message)
+        private IMessage HandleGetAcceptedContracts(Message message)
         {
             var info = new AcceptedContractInfo();
 
@@ -88,11 +91,10 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Accepted_Contracts_Response, type, MessageActionType.Database);
-
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Accepted_Contracts_Response, type, message.Id, MessageActionType.Database);
         }
 
-        private void HandleGetDatabaseInfo(Message message)
+        private IMessage HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;
             var db = _process.GetDatabase(dbName);
@@ -108,14 +110,14 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, MessageActionType.Database);
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, message.Id, MessageActionType.Database);
         }
 
-        private void HandleGetDatabaseTables(Message message)
+        private IMessage HandleGetDatabaseTables(Message message)
         {
             throw new NotImplementedException();
         }
-        private void HandleAddNewTable(Message message)
+        private IMessage HandleAddNewTable(Message message)
         {
             var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
             var db = _process.GetDatabase(info.DatabaseName);
@@ -132,13 +134,13 @@ namespace FrostDB
             db.AddTable(table);
         }
 
-        private void HandleRemoveTable(Message message)
+        private IMessage HandleRemoveTable(Message message)
         {
             var info = JsonConvert.DeserializeObject<TableInfo>(message.Content);
             var db = _process.GetDatabase(info.DatabaseName);
             db.RemoveTable(info.TableName);
         }
-        private void HandleGetContractInformation(Message message)
+        private IMessage HandleGetContractInformation(Message message)
         {
             var databaseName = message.Content;
             var db = _process.GetDatabase(databaseName);
@@ -169,27 +171,27 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Contract_Information_Response, type, MessageActionType.Database);
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Contract_Information_Response, type, message.Id, MessageActionType.Database);
         }
 
-        private void HandleUpdateContractInformation(Message message)
+        private IMessage HandleUpdateContractInformation(Message message)
         {
             var info = message.GetContentAs<ContractInfo>();
             _process.UpdateContractInformation(info);
-            _messageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), MessageActionType.Database);
+            return _messageBuilder.BuildMessage(message.Origin, string.Empty, MessageConsoleAction.Database.Update_Contract_Information_Response, message.Content.GetType(), message.Id, MessageActionType.Database);
         }
 
-        private void HandleAddParticipant(Message message)
+        private IMessage HandleAddParticipant(Message message)
         {
             ParticipantInfo info = new ParticipantInfo();
             info = message.GetContentAs<ParticipantInfo>();
             var db = _process.GetDatabase(info.DatabaseName);
             var participant = new Participant(new Location(Guid.NewGuid(), info.IpAddress, Convert.ToInt32(info.PortNumber), string.Empty));
             db.AddPendingParticipant(participant);
-            _messageBuilder.SendResponse(message, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), MessageActionType.Database);
+            return _messageBuilder.BuildMessage(message.Origin, string.Empty, MessageConsoleAction.Database.Add_Participant_Response, message.Content.GetType(), message.Id, MessageActionType.Database);
         }
 
-        private void HandleGetPendingContracts(Message message)
+        private IMessage HandleGetPendingContracts(Message message)
         {
             var info = new PendingContractInfo();
 
@@ -207,7 +209,7 @@ namespace FrostDB
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Database.Get_Pending_Contracts_Response, type, MessageActionType.Database);
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Pending_Contracts_Response, type, message.Id, MessageActionType.Database);
         }
 
         #endregion

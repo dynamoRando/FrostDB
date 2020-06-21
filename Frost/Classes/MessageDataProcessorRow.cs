@@ -32,22 +32,24 @@ namespace FrostDB.Classes
         #endregion
 
         #region Public Methods
-        public void Process(Message message)
+        public IMessage Process(Message message)
         {
+            IMessage result = null;
             switch (message.Action)
             {
                 case MessageDataAction.Row.Save_Row:
-                    ProcessSaveRow(message);
+                    result = ProcessSaveRow(message);
                     break;
                 case MessageDataAction.Row.Delete_Row:
-                    ProcessDeleteRow(message);
+                    result = ProcessDeleteRow(message);
                     break;
                 case MessageDataAction.Row.Update_Row:
-                    ProcessUpdateRow(message);
+                    result = ProcessUpdateRow(message);
                     break;
                 default:
                     throw new InvalidOperationException("Unknown Data Row Message");
             }
+            return result;
         }
         #endregion
 
@@ -68,7 +70,7 @@ namespace FrostDB.Classes
             }
         }
 
-        private void ProcessDeleteRow(Message message)
+        private IMessage ProcessDeleteRow(Message message)
         {
             // TO DO: We should be checking the contract here if the host is allowed to delete our data;
 
@@ -83,7 +85,7 @@ namespace FrostDB.Classes
                 }
             }
         }
-        private void ProcessSaveRow(Message message)
+        private IMessage ProcessSaveRow(Message message)
         {
             var info = JsonConvert.DeserializeObject<RowForm>(message.Content);
             if (_process.HasPartialDatabase(info.DatabaseName))
