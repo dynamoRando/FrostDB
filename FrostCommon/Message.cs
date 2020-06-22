@@ -80,6 +80,8 @@ namespace FrostCommon
         /// <value>
         /// The action.
         /// </value>
+        /// 
+        public (string, string) TwoStringTuple { get; set; }
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         /// <summary>
         /// Gets or sets the json data.
@@ -150,6 +152,7 @@ namespace FrostCommon
             MessageType = (MessageType)serializationInfo.GetValue("MessageType", typeof(MessageType));
             ContentType = (string)serializationInfo.GetValue("MessageContentType", typeof(string));
             TwoGuidTuple = ((Guid?, Guid?))serializationInfo.GetValue("MessageTwoGuidTuple", typeof((Guid?, Guid?)));
+            TwoStringTuple = ((string, string))serializationInfo.GetValue("MessageTwoStringTuple", typeof((string, string)));
             ActionType = (MessageActionType)serializationInfo.GetValue("MessageActionType", typeof(MessageActionType));
             RequestInformationId = (Guid?)serializationInfo.GetValue("MessageRequestInformationId", typeof(Guid?));
             HasProcessRequestor = (bool)serializationInfo.GetValue("MessageHasRequestor", typeof(bool));
@@ -250,6 +253,7 @@ namespace FrostCommon
             info.AddValue("MessageType", MessageType, typeof(MessageType));
             info.AddValue("MessageContentType", ContentType, typeof(string));
             info.AddValue("MessageTwoGuidTuple", TwoGuidTuple, typeof((Guid?, Guid?)));
+            info.AddValue("MessageTwoStringTuple", TwoStringTuple, typeof((string, string)));
             info.AddValue("MessageActionType", ActionType, typeof(MessageActionType));
             info.AddValue("MessageRequestInformationId", RequestInformationId, typeof(Guid?));
             info.AddValue("MessageHasRequestor", HasProcessRequestor, typeof(bool));

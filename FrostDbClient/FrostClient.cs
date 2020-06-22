@@ -18,13 +18,12 @@ namespace FrostDbClient
         string _remoteIpAddress;
         int _remotePortNumber;
         int _localPortNumber;
-        Server _localServer;
         MessageClientConsoleProcessor _processor;
         Location _local;
         Location _remote;
         FrostClientInfo _info;
         EventManager _eventManager;
-        GClient _client;
+        Client _client;
         #endregion
 
         #region Public Properties
@@ -34,7 +33,7 @@ namespace FrostDbClient
         public string LocalIpAddress => _localIpAddress;
         public int RemotePortNumber => _remotePortNumber;
         public int LocalPortNumber => _localPortNumber;
-        public GClient Client => _client;
+        public Client Client => _client;
         #endregion
 
         #region Protected Methods
@@ -46,7 +45,7 @@ namespace FrostDbClient
         #region Constructors
         public FrostClient(string remoteIpAddress, string localIpAddress, int remotePortNumber, int localPortNumber)
         {
-            _client = new GClient();
+            _client = new Client();
             _remoteIpAddress = remoteIpAddress;
             _remotePortNumber = remotePortNumber;
             _localPortNumber = localPortNumber;
@@ -59,23 +58,10 @@ namespace FrostDbClient
             _info = new FrostClientInfo();
             _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
 
-            SetupServer();
         }
         #endregion
 
         #region Public Methods
-        public void DisconnectServer()
-        {
-            try
-            {
-                _localServer.DisconnectSocket();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-                Console.WriteLine(ex.ToString());
-            }
-        }
         public void DisconnectClient()
         {
             try
@@ -255,21 +241,7 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase, MessageActionType.Process));
         }
 
-        public void GetTableInfo(string databaseName, string tableName)
-        {
-            DatabaseInfo item;
-            if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
-            {
-                var table = item.Tables.Where(t => t.Item2 == tableName).First();
-                Guid? tableId = table.Item1;
-                GetTableInfo(item.Id, tableId);
-            }
-        }
-
-        public async Task<List<string>> GetTablesAsync(Guid? databaseId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         // or, i can send a message and then check for when the data has come back and return to the caller
         public async Task<List<string>> GetDatabasesAsync()
@@ -303,6 +275,57 @@ namespace FrostDbClient
             return result;
         }
 
+        
+
+        public void GetDatabaseInfo(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
+        }
+
+        public void GetAcceptedContractsForDb(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+        }
+
+        public void GetPendingContractsForDb(string databaseName)
+        {
+            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));
+        }
+        #endregion
+
+        #region Private Methods
+        private void GetTableInfo(Guid? databaseId, Guid? tableId)
+        {
+            var requestInfo = (database: databaseId, table: tableId);
+            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+        }
+        public void GetTableInfo(string databaseName, string tableName)
+        {
+            DatabaseInfo item;
+            if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
+            {
+                var table = item.Tables.Where(t => t.Item2 == tableName).First();
+                Guid? tableId = table.Item1;
+                GetTableInfo(item.Id, tableId);
+            }
+        }
+
+        public async Task<TableInfo> GetTableInfoAsync(string databaseName, string tableName)
+        {
+            var requestInfo = (database: databaseName, tableName: tableName);
+            var data = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            _processor.Process(data);
+
+            var result = new TableInfo();
+
+            if (_info.TableInfos.ContainsKey(tableName))
+            {
+                _info.TableInfos.TryRemove(tableName, out result);
+            }
+
+            return result;
+        }
+
         public async Task<TableInfo> GetTableInfoAsync(Guid? databaseId, Guid? tableId, string tableName)
         {
             var requestInfo = (database: databaseId, table: tableId);
@@ -319,72 +342,24 @@ namespace FrostDbClient
             return result;
         }
 
-        public void GetDatabaseInfo(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
-        }
-
-        public void GetAcceptedContractsForDb(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
-        }
-
-        public void GetPendingContractsForDb(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));
-        }
-
-        public void Connect()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        #region Private Methods
-        private void GetTableInfo(Guid? databaseId, Guid? tableId)
-        {
-            var requestInfo = (database: databaseId, table: tableId);
-            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
-        }
-
-        private async Task<bool> WaitForMessageAsync(Guid? id)
-        {
-            return await Task.Run(() => WaitForMessage(id));
-        }
-
-        private bool WaitForMessage(Guid? id)
-        {
-            Stopwatch watch = new Stopwatch();
-            bool responseRecieved = false;
-
-            watch.Start();
-
-            while (watch.Elapsed.TotalSeconds < _queueTimeout)
-            {
-                if (!_info.HasMessageId(id))
-                {
-                    responseRecieved = true;
-
-                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-
-                    break;
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            watch.Stop();
-
-            return responseRecieved;
-        }
-
         private Message SendMessage(Message message)
         {
             return _client.Send(message);
+        }
+        private Message BuildMessage((string, string) tuple, string action, MessageActionType actionType)
+        {
+            Message message = new Message(
+             destination: _remote,
+             origin: _local,
+             messageContent: string.Empty,
+             messageAction: action,
+             messageType: MessageType.Console,
+             messageActionType: actionType
+             );
+
+            message.TwoStringTuple = tuple;
+
+            return message;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)
         {
@@ -413,11 +388,6 @@ namespace FrostDbClient
                );
 
             return message;
-        }
-        private void SetupServer()
-        {
-            _localServer = new Server();
-            _localServer.Start(_localPortNumber, _localIpAddress, _processor);
         }
         #endregion
 

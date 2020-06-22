@@ -17,10 +17,10 @@ namespace FrostDB
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         MessageBuilder _messageBuilder;
-        GServer _dataServer;
-        GServer _consoleServer;
+        Server _dataServer;
+        Server _consoleServer;
         Process _process;
-        GClient _client;
+        Client _client;
         #endregion
 
         #region Public Properties
@@ -41,12 +41,12 @@ namespace FrostDB
             _process = process;
             _messageIds = new ConcurrentBag<Guid?>();
             _requestMessageIds = new ConcurrentBag<Guid?>();
-            _client = new GClient();
+            _client = new Client();
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
-            _dataServer = new GServer();
+            _dataServer = new Server();
             _dataServer.ServerName = "Data";
-            _consoleServer = new GServer();
+            _consoleServer = new Server();
             _consoleServer.ServerName = "Console";
             _messageBuilder = new MessageBuilder(_process);
         }
