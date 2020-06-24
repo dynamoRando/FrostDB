@@ -304,9 +304,12 @@ namespace FrostDbClient
             DatabaseInfo item;
             if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
             {
-                var table = item.Tables.Where(t => t.Item2 == tableName).First();
-                Guid? tableId = table.Item1;
-                GetTableInfo(item.Id, tableId);
+                var table = item.Tables.Where(t => t.Item2 == tableName).FirstOrDefault();
+                if (table.Item1.HasValue)
+                {
+                    Guid? tableId = table.Item1;
+                    GetTableInfo(item.Id, tableId);
+                }  
             }
         }
 
