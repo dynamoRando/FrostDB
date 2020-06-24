@@ -67,21 +67,20 @@
 
         SelectedTableName = e.Value.ToString();
 
-        FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
-        TableInfo item = null;
-        if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        TableInfo item = FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
+        if (item != null)
         {
             item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
 
-        GetParticipants();        
+        GetParticipants();
     }
 
     private void GetParticipants()
     {
-        FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
+         ContractInfo = FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
 
-        if (FrostService.FrostClient.Info.AcceptedContractInfos.TryGetValue(FrostService.SelectedDatabaseName, out ContractInfo))
+        if (ContractInfo != null)
         {
             Participants.Clear();
             foreach (var p in ContractInfo.AcceptedContracts)

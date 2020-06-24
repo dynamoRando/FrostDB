@@ -282,9 +282,12 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
-        public void GetAcceptedContractsForDb(string databaseName)
+        public AcceptedContractInfo GetAcceptedContractsForDb(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+            var result = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+            AcceptedContractInfo info = null;
+            info = result.GetContentAs<AcceptedContractInfo>();
+            return info;
         }
 
         public void GetPendingContractsForDb(string databaseName)
@@ -294,23 +297,27 @@ namespace FrostDbClient
         #endregion
 
         #region Private Methods
-        private void GetTableInfo(Guid? databaseId, Guid? tableId)
+        private TableInfo GetTableInfo(Guid? databaseId, Guid? tableId)
         {
             var requestInfo = (database: databaseId, table: tableId);
-            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            var result = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            TableInfo info = result.GetContentAs<TableInfo>();
+            return info;
         }
-        public void GetTableInfo(string databaseName, string tableName)
+        public TableInfo GetTableInfo(string databaseName, string tableName)
         {
             DatabaseInfo item;
+            TableInfo tableInfo = null;
             if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
             {
                 var table = item.Tables.Where(t => t.Item2 == tableName).FirstOrDefault();
                 if (table.Item1.HasValue)
                 {
                     Guid? tableId = table.Item1;
-                    GetTableInfo(item.Id, tableId);
+                    tableInfo = GetTableInfo(item.Id, tableId);
                 }  
             }
+            return tableInfo;
         }
 
         public async Task<TableInfo> GetTableInfoAsync(string databaseName, string tableName)
