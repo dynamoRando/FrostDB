@@ -164,25 +164,10 @@ namespace FrostDbClient
             return list;
         }
 
-        public void GetContractInformation(string databaseName)
+        public ContractInfo GetContractInformation(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
-        }
-
-        public async Task<ContractInfo> GetContractInformationAsync(string databaseName)
-        {
-            var result = new ContractInfo();
             var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
-            _processor.Process(data);
-
-            if (_info.ContractInfos.ContainsKey(databaseName))
-            {
-                ContractInfo removed = null;
-                _info.ContractInfos.TryRemove(databaseName, out removed);
-                result = removed;
-            }
-
-            return result;
+            return data.GetContentAs<ContractInfo>();
         }
 
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
