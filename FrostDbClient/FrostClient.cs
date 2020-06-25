@@ -76,19 +76,12 @@ namespace FrostDbClient
             }
 
         }
-        public async Task<FrostPromptResponse> ExecuteCommandAsync(string command)
+
+        public FrostPromptResponse ExecuteCommand(string command)
         {
             var result = new FrostPromptResponse();
             var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
-            _processor.Process(data);
-            Guid? id = data.ReferenceMessageId;
-
-            if (_info.Responses.ContainsKey(id))
-            {
-                _info.Responses.TryRemove(id, out result);
-            }
-
-            return result;
+            return data.GetContentAs<FrostPromptResponse>();
         }
         public void AcceptContract(ContractInfo contract)
         {
@@ -241,7 +234,7 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase, MessageActionType.Process));
         }
 
-       
+
 
         // or, i can send a message and then check for when the data has come back and return to the caller
         public async Task<List<string>> GetDatabasesAsync()
@@ -275,7 +268,7 @@ namespace FrostDbClient
             return result;
         }
 
-        
+
 
         public void GetDatabaseInfo(string databaseName)
         {
@@ -315,7 +308,7 @@ namespace FrostDbClient
                 {
                     Guid? tableId = table.Item1;
                     tableInfo = GetTableInfo(item.Id, tableId);
-                }  
+                }
             }
             return tableInfo;
         }

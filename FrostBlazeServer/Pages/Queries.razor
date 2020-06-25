@@ -11,7 +11,7 @@
 <h1>Queries</h1>
 
 <h2>Database</h2>
-<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
+<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName" />
 <h2>Table</h2>
 <select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
     @foreach (var table in FrostService.TableNames)
@@ -21,17 +21,17 @@
 </select>
 <h2>Table Columns</h2>
 <select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
-@foreach (var column in ColumnNames)
-{
-    <option value=@column>@column</option>
-}
+    @foreach (var column in ColumnNames)
+    {
+        <option value=@column>@column</option>
+    }
 </select>
 <h2>Table Participants</h2>
 <select name="tableParticipants" multiple @bind="SelectedParticipant">
-@foreach (var participant in Participants)
-{
-    <option value=@participant>@participant</option>
-}
+    @foreach (var participant in Participants)
+    {
+        <option value=@participant>@participant</option>
+    }
 </select>
 <h2>Example Query</h2>
 <textarea id="exampleQuery" name="exampleQuery" rows="6" cols="100">
@@ -44,7 +44,7 @@
 <h2>Query Text</h2>
 <textarea id="queryText" name="queryText" rows="10" cols="100" @bind="QueryText">
 </textarea>
-<input type="button" @onclick="ExecuteQuery" value="Execute Query"/>
+<input type="button" @onclick="ExecuteQuery" value="Execute Query" />
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
@@ -78,7 +78,7 @@
 
     private void GetParticipants()
     {
-         ContractInfo = FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
+        ContractInfo = FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
 
         if (ContractInfo != null)
         {
@@ -93,7 +93,7 @@
     private async Task ExecuteQuery()
     {
         string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
-        var result = await FrostService.FrostClient.ExecuteCommandAsync(finalQueryText);
+        var result = FrostService.FrostClient.ExecuteCommand(finalQueryText);
 
         if (result.IsSuccessful)
         {
