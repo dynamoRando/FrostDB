@@ -90,7 +90,7 @@
         }
     }
 
-    private async Task ExecuteQuery()
+    private void ExecuteQuery()
     {
         string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
         var result = FrostService.FrostClient.ExecuteCommand(finalQueryText);
