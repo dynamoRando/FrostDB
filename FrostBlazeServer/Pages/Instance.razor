@@ -59,32 +59,27 @@
         }
     }
 
-     private async Task<List<string>> ConnectToInstance()
+    private void ConnectToInstance()
     {
         try
         {
-            
             Item.DatabaseNames.Clear();
 
-            var task = Item.FrostClient.GetDatabasesAsync();
-            await task;
-         
-            Item.DatabaseNames = task.Result;
+            var databases = Item.FrostClient.GetDatabases();
+
+            Item.DatabaseNames = databases;
             Item.DatabaseNames.Sort();
 
             Item.FrostClient.GetPartialDatabases();
 
-            var task2 = Item.FrostClient.GetPartialDatabasesAsync();
-            await task2;
+            var partialDatabases = Item.FrostClient.GetPartialDatabases();
 
-            Item.PartialDatabaseNames = task2.Result;
+            Item.PartialDatabaseNames = partialDatabases;
 
-            return task.Result;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
-            return null;
         }
     }
 

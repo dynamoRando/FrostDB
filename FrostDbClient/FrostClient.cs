@@ -98,17 +98,6 @@ namespace FrostDbClient
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));
         }
 
-        public void GetPartialDatabases()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
-        }
-
-        // i can either call a method and then try and wait for an event to be recieved
-        public void GetDatabases()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
-        }
-
         public void GetTables(Guid? databaseId)
         {
             SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables, MessageActionType.Database));
@@ -127,6 +116,7 @@ namespace FrostDbClient
 
         public void AddParticipantToDb(string ipAddress, string portNumber, string databaseName)
         {
+            // TO DO: update the UI to confirm that the message was sent
             ParticipantInfo info = new ParticipantInfo();
             info.IpAddress = ipAddress;
             info.PortNumber = Convert.ToInt32(portNumber);
@@ -219,17 +209,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase, MessageActionType.Process));
         }
 
-
-
         // or, i can send a message and then check for when the data has come back and return to the caller
-        public async Task<List<string>> GetDatabasesAsync()
+        public List<string> GetDatabases()
         {
-            var result = new List<string>();
             var response = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
-            _processor.Process(response);
-            return _info.DatabaseNames;
-
-            return result;
+            return response.GetContentAs<List<string>>();
         }
 
         public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
@@ -242,15 +226,10 @@ namespace FrostDbClient
             return result;
         }
 
-        public async Task<List<string>> GetPartialDatabasesAsync()
+        public List<string> GetPartialDatabases()
         {
-            var result = new List<string>();
             var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
-            _processor.Process(data);
-
-            result = _info.PartialDatabaseNames;
-
-            return result;
+            return data.GetContentAs<List<string>>();
         }
 
 
