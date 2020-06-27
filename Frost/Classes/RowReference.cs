@@ -100,7 +100,7 @@ namespace FrostDB
             }
             else
             {
-                row = await GetRowAsync();
+                row = GetRow();
 
             }
 
@@ -109,7 +109,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private async Task<Row> GetRowAsync()
+        private Row GetRow()
         {
             Row row = new Row();
             RemoteRowInfo request = BuildRemoteRowInfo();
@@ -117,8 +117,8 @@ namespace FrostDB
             Guid? requestId = Guid.NewGuid();
             Message rowMessage = null;
 
-            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId, MessageActionType.Table);
-            rowMessage = await _process.Network.SendAndGetDataMessageFromToken(getRowMessage, requestId);
+            var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId, MessageActionType.Table, request.GetType());
+            rowMessage = _process.Network.SendMessage(getRowMessage);
 
             if (rowMessage != null)
             {

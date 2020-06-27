@@ -45,7 +45,7 @@ namespace FrostDB
             return response;
         }
 
-        public Message BuildMessageData(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType)
+        public Message BuildMessageData(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType, Type contentType)
         {
             Message response = new Message(
                 destination: destination,
@@ -53,7 +53,7 @@ namespace FrostDB
                 messageContent: messageContent,
                 messageAction: messageAction,
                 messageType: messageType,
-                contentType: null,
+                contentType: contentType,
                 messageActionType: messageActionType
                 );
 

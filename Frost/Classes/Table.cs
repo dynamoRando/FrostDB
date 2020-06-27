@@ -165,8 +165,8 @@ namespace FrostDB
                     var updateRemoteRowId = Guid.NewGuid();
                     RowForm rowInfo = new RowForm(row, reference.Participant, reference, values);
                     var content = JsonConvert.SerializeObject(rowInfo);
-                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId, MessageActionType.Table);
-                    var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
+                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId, MessageActionType.Table, rowInfo.GetType());
+                    var response = _process.Network.SendMessage(updateRemoteRowMessage);
 
                     if (response != null)
                     {
@@ -429,21 +429,12 @@ namespace FrostDB
                 var remoteRowInfo = BuildRemoteRowInfo(reference);
                 var content = JsonConvert.SerializeObject(remoteRowInfo);
 
-                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId, MessageActionType.Table);
-                _process.Network.SendMessageRequestId(message, requestId);
-                bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
-
-                if (gotData)
+                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId, MessageActionType.Table, remoteRowInfo.GetType());
+                var response = _process.Network.SendMessage(message);
+                
+                if (response != null)
                 {
-                    if (_process.Network.DataProcessor.HasMessageId(requestId))
-                    {
-                        // validate that the row has been deleted
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
                 else
                 {

@@ -86,9 +86,9 @@ namespace FrostDB
         /// <param name="messageType">Type of the message, from MessageType.cs in FrostCommon.</param>
         /// <param name="requestorId">The requestor identifier. Send this when you want to identify a return message at a call site.</param>
         /// <returns></returns>
-        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType)
+        public Message BuildMessage(Location destination, string messageContent, string messageAction, MessageType messageType, Guid? requestorId, MessageActionType messageActionType, Type contentType)
         {
-            return _messageBuilder.BuildMessageData(destination, messageContent, messageAction, messageType, requestorId, messageActionType);
+            return _messageBuilder.BuildMessageData(destination, messageContent, messageAction, messageType, requestorId, messageActionType, contentType);
         }
 
         /// <summary>
@@ -96,29 +96,11 @@ namespace FrostDB
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns></returns>
-        public Guid? SendMessage(Message message)
+        public Message SendMessage(Message message)
         {
-            Guid? id = message.Id;
-            AddToQueue(id);
-            _client.Send(message);
+            var response =  _client.Send(message);
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
-            return id;
-        }
-
-        /// <summary>
-        /// Sends the message and queue's the provided requestId to be acquired elsewhere from a Processor.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="requestId">The request identifier. Use this as a token to get your data back from a Processor.</param>
-        public void SendMessageRequestId(Message message, Guid? requestId)
-        {
-            _requestMessageIds.Add(requestId);
-            _client.Send(message);
-            _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
-        }
-        public void AddToQueue(Guid? id)
-        {
-            _messageIds.Add(id);
+            return response;
         }
         public void RemoveFromQueue(Guid? id)
         {
@@ -137,42 +119,6 @@ namespace FrostDB
         public bool HasMessageRequest(Guid? id)
         {
             return _requestMessageIds.TryPeek(out id);
-        }
-
-        /// <summary>
-        /// Sends the message and attempts to get the correct message back from data processor with the provided request token (to consume return message back at call site).
-        /// This method will await for a response from the destination process or time out. 
-        /// </summary>
-        /// <param name="messageToSend">The message to send.</param>
-        /// <param name="requestToken">The request token.</param>
-        /// <returns>The requested message with the appropriate request token. If there was a network or process problem, the message will be NULL.</returns>
-        public async Task<Message> SendAndGetDataMessageFromToken(Message messageToSend, Guid? requestToken)
-        {
-            bool gotData = false;
-            Message outMessage = null;
-            SendMessageRequestId(messageToSend, requestToken);
-            gotData = await WaitForMessageTokenAsync(requestToken);
-
-            if (gotData)
-            {
-                if (_process.Network.DataProcessor.HasMessageId(requestToken))
-                {
-                    _process.Network.DataProcessor.TryGetMessage(requestToken, out outMessage);
-
-                }
-            }
-
-            return outMessage;
-        }
-
-        public async Task<bool> WaitForMessageTokenAsync(Guid? token)
-        {
-            return await Task.Run(() => WaitForMessageToken(token));
-        }
-
-        public async Task<bool> WaitForMessageAsync(Guid? id)
-        {
-            return await Task.Run(() => WaitForMessage(id));
         }
 
         #endregion

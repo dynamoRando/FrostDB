@@ -198,6 +198,11 @@ namespace FrostCommon
         }
         public Message(Location destination, Location origin, string messageContent, string messageAction, MessageType messageType, Type contentType, MessageActionType messageActionType) : this()
         {
+            if (contentType is null)
+            {
+                contentType = new object().GetType();
+            }
+
             CreatedDateTime = DateTime.Now;
             Destination = destination;
             Origin = origin;
