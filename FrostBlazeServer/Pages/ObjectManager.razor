@@ -98,7 +98,7 @@
 
         SelectedTableName = e.Value.ToString();
 
-        item = FrostService.FrostClient.GetTableInfoAsync(FrostService.SelectedDatabaseName, SelectedTableName).Result;
+        item = FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
 
         item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
     }

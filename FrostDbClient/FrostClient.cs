@@ -18,16 +18,13 @@ namespace FrostDbClient
         string _remoteIpAddress;
         int _remotePortNumber;
         int _localPortNumber;
-        MessageClientConsoleProcessor _processor;
         Location _local;
         Location _remote;
-        FrostClientInfo _info;
         EventManager _eventManager;
         Client _client;
         #endregion
 
         #region Public Properties
-        public FrostClientInfo Info => _info;
         public EventManager EventManager => _eventManager;
         public string RemoteIpAddress => _remoteIpAddress;
         public string LocalIpAddress => _localIpAddress;
@@ -55,9 +52,6 @@ namespace FrostDbClient
 
             _local = new Location(Guid.NewGuid(), _localIpAddress, _localPortNumber, "FrostDbClient");
             _remote = new Location(Guid.NewGuid(), _remoteIpAddress, _remotePortNumber, string.Empty);
-            _info = new FrostClientInfo();
-            _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
-
         }
         #endregion
 
@@ -66,7 +60,6 @@ namespace FrostDbClient
         {
             try
             {
-                //_client.DisconnectSocket();
                 Client.Shutdown();
             }
             catch (Exception ex)
@@ -74,7 +67,6 @@ namespace FrostDbClient
                 Debug.WriteLine(ex.ToString());
                 Console.WriteLine(ex.ToString());
             }
-
         }
 
         public FrostPromptResponse ExecuteCommand(string command)
@@ -103,17 +95,6 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables, MessageActionType.Database));
         }
 
-        public void GetColumnInfo(string databaseName, string tableName, string columnName)
-        {
-            TableInfo item;
-            if (_info.TableInfos.TryGetValue(columnName, out item))
-            {
-                var column = item.Columns.Where(c => c.Item1 == columnName).First();
-
-            }
-            throw new NotImplementedException();
-        }
-
         public void AddParticipantToDb(string ipAddress, string portNumber, string databaseName)
         {
             // TO DO: update the UI to confirm that the message was sent
@@ -136,21 +117,11 @@ namespace FrostDbClient
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Update_Contract_Information, MessageActionType.Database));
         }
 
-        public void GetProcessPendingContractInformation()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
-        }
-
-        public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
+        public List<ContractInfo> GetProcessPendingContractInformation()
         {
             var list = new List<ContractInfo>();
             var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
-            _processor.Process(data);
-
-            List<ContractInfo> removed = null;
-            _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
-            list = removed;
-
+            list = data.GetContentAs<List<ContractInfo>>();
             return list;
         }
 
@@ -216,13 +187,11 @@ namespace FrostDbClient
             return response.GetContentAs<List<string>>();
         }
 
-        public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
+        public DatabaseInfo GetDatabaseInfo(string databaseName)
         {
             var result = new DatabaseInfo();
             var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
-            _processor.Process(data);
-            result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
-
+            result = data.GetContentAs<DatabaseInfo>();
             return result;
         }
 
@@ -230,13 +199,6 @@ namespace FrostDbClient
         {
             var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
             return data.GetContentAs<List<string>>();
-        }
-
-
-
-        public void GetDatabaseInfo(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
         }
 
         public AcceptedContractInfo GetAcceptedContractsForDb(string databaseName)
@@ -261,51 +223,13 @@ namespace FrostDbClient
             TableInfo info = result.GetContentAs<TableInfo>();
             return info;
         }
+        
         public TableInfo GetTableInfo(string databaseName, string tableName)
-        {
-            DatabaseInfo item;
-            TableInfo tableInfo = null;
-            if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
-            {
-                var table = item.Tables.Where(t => t.Item2 == tableName).FirstOrDefault();
-                if (table.Item1.HasValue)
-                {
-                    Guid? tableId = table.Item1;
-                    tableInfo = GetTableInfo(item.Id, tableId);
-                }
-            }
-            return tableInfo;
-        }
-
-        public async Task<TableInfo> GetTableInfoAsync(string databaseName, string tableName)
         {
             var requestInfo = (database: databaseName, tableName: tableName);
             var data = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
-            _processor.Process(data);
-
             var result = new TableInfo();
-
-            if (_info.TableInfos.ContainsKey(tableName))
-            {
-                _info.TableInfos.TryRemove(tableName, out result);
-            }
-
-            return result;
-        }
-
-        public async Task<TableInfo> GetTableInfoAsync(Guid? databaseId, Guid? tableId, string tableName)
-        {
-            var requestInfo = (database: databaseId, table: tableId);
-            var data = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
-            _processor.Process(data);
-
-            var result = new TableInfo();
-
-            if (_info.TableInfos.ContainsKey(tableName))
-            {
-                _info.TableInfos.TryRemove(tableName, out result);
-            }
-
+            result = data.GetContentAs<TableInfo>();
             return result;
         }
 
