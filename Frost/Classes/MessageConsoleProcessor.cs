@@ -37,47 +37,32 @@ namespace FrostDB
             _processDatabase = new MessageConsoleProcessorDatabase(_process);
             _processTable = new MessageConsoleProcessorTable(_process);
             _processPrompt = new MessageConsoleProcessorPrompt(_process);
-            
+
         }
         #endregion
 
         #region Public Methods
-        public override IMessage ProcessWithResult(IMessage message)
-        {
-            throw new NotImplementedException();
-        }
         public override IMessage Process(IMessage message)
         {
-            HandleProcessMessage(message);
             var m = (message as Message);
             IMessage result = null;
 
             if (m.MessageType == MessageType.Console)
             {
-                // process messages from the console
-                // likely to send data back to the console so it can render on it's UI
-                if (m.ReferenceMessageId.Value == Guid.Empty)
+                switch (m.ActionType)
                 {
-                    switch (m.ActionType)
-                    {
-                        case MessageActionType.Process:
-                            result = _processProcess.Process(m);
-                            break;
-                        case MessageActionType.Database:
-                            result = _processDatabase.Process(m);
-                            break;
-                        case MessageActionType.Table:
-                            result = _processTable.Process(m);
-                            break;
-                        case MessageActionType.Prompt:
-                            result = _processPrompt.Process(m);
-                            break;
-                    }
-                    //m.SendResponse();
-                }
-                else
-                {
-                    // do nothing
+                    case MessageActionType.Process:
+                        result = _processProcess.Process(m);
+                        break;
+                    case MessageActionType.Database:
+                        result = _processDatabase.Process(m);
+                        break;
+                    case MessageActionType.Table:
+                        result = _processTable.Process(m);
+                        break;
+                    case MessageActionType.Prompt:
+                        result = _processPrompt.Process(m);
+                        break;
                 }
             }
             else
@@ -88,6 +73,7 @@ namespace FrostDB
             return result;
         }
         #endregion
+
         #region Private Methods
         #endregion
     }

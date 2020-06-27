@@ -21,7 +21,6 @@ namespace FrostDB
 
         #region Public Properties
         public int PortNumber { get; set; }
-        public ConcurrentDictionary<Guid?, Message> IncomingMessages { get; set; }
         #endregion
 
         #region Events
@@ -35,37 +34,15 @@ namespace FrostDB
             _contractProcessor = new MessageDataProcessorContract(_process);
             _datarowProcesor = new MessageDataProcessorRow(_process);
             _processProcessor = new MessageDataProcessorProcess(_process);
-            IncomingMessages = new ConcurrentDictionary<Guid?, Message>();
         }
         #endregion
 
         #region Public Methods
-        public bool HasMessageId(Guid? id)
-        {
-            return IncomingMessages.ContainsKey(id);
-        }
-
-        public void TryGetMessage(Guid? id, out Message message)
-        {
-            IncomingMessages.TryRemove(id, out message);
-        }
-
-        public override IMessage ProcessWithResult(IMessage message)
-        {
-            throw new NotImplementedException();
-        }
 
         public override IMessage Process(IMessage message)
         {
             IMessage result = new Message();
-            result = HandleProcessMessage(message);
-
             var m = (message as Message);
-
-            if (HandleMessageQueue(message))
-            {
-                m.HasProcessRequestor = true;
-            }
 
             // process data messages
             if (m.MessageType == MessageType.Data)
@@ -98,32 +75,6 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private bool HandleMessageQueue(IMessage message)
-        {
-            // TO DO: Need to really think about what this is doing and if this is correct
-            // trying to remove from queue the reference to the message to signal elsewhere that our message was recieved
-            // so there is an implicit assumption that we have got data and can carry on
-            // by looking at client info in case of Message Console examples (not Message Data)
-            // so in Console example, when we send the response back we always populate with the reference id to let it know we have our data
-            // in Message Data we've reinvented this idea but with the requestor id to try and figure out where we are at the call site
-            // we should consolidate these methods if possible. Really, the Build Response on the Message Data side should not just be reply only, but also contain the information requested -
-            // this is truly actually the bug. In the Message Console side, the response always contains the actual data to be sent back, which is why it works.
-
-            // this does not at all address why sometimes the app just drops the connection or data is not returned.
-            if (_process.Network.HasMessageId(message.ReferenceMessageId))
-            {
-                _process.Network.RemoveFromQueue(message.ReferenceMessageId);
-                return true;
-            }
-
-            if (_process.Network.HasMessageId(message.RequestInformationId))
-            {
-                _process.Network.RemoveFromQueueToken(message.RequestInformationId);
-                return true;
-            }
-
-            return false;
-        }
         #endregion
 
     }

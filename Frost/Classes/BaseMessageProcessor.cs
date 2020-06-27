@@ -30,23 +30,9 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public virtual IMessage ProcessWithResult(IMessage message)
-        {
-            HandleProcessMessage(message);
-            throw new NotImplementedException();
-        }
-
         public virtual IMessage Process(IMessage message)
         {
-            return HandleProcessMessage(message);
-        }
-
-        public IMessage HandleProcessMessage(IMessage message)
-        {
-            IMessage result = new Message();
-            Message m = (message as Message);
-            _process.EventManager.TriggerEvent(EventName.Message.Message_Recieved, CreateMessageRecievedEventArgs(m, m.JsonData));
-            return result;
+            return new Message();
         }
 
         #endregion
