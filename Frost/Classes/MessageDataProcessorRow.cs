@@ -65,7 +65,7 @@ namespace FrostDB.Classes
                 if (db.HasTable(info.TableName))
                 {
                     var table = db.GetTable(info.TableName);
-                    await table.UpdateRow(info.Reference, info.RowValues);
+                    table.UpdateRow(info.Reference, info.RowValues);
                     var returnMessage = _process.Network.BuildMessage(message.Origin, null, MessageDataAction.Row.Update_Row_Information, MessageType.Data, message.RequestInformationId, MessageActionType.Table, null);
                     _process.Network.SendMessage(returnMessage);
                 }

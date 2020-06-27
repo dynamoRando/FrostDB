@@ -132,10 +132,10 @@ namespace FrostDB
             _schema = new TableSchema(this);
         }
 
-        public async Task UpdateRow(RowReference reference, List<RowValue> values)
+        public void UpdateRow(RowReference reference, List<RowValue> values)
         {
             // TO DO: we should be checking the rights on the contract if this is allowed.
-            var row = reference.Get(_process).Result;
+            var row = reference.Get(_process);
 
             if (row != null)
             {
@@ -191,7 +191,7 @@ namespace FrostDB
             }
             else
             {
-                row = reference.Get(_process).Result;
+                row = reference.Get(_process);
             }
 
             return row;
@@ -210,11 +210,11 @@ namespace FrostDB
 
             foreach (var row in _rows)
             {
-                var task = row.Get(_process);
-                task.Wait();
-                if (task.Result != null)
+                var response = row.Get(_process);
+
+                if (response != null)
                 {
-                    result.Add(task.Result);
+                    result.Add(response);
                 };
             }
 
@@ -223,7 +223,7 @@ namespace FrostDB
         public List<Row> GetRows(string queryString)
         {
             var rows = new List<Row>();
-            _rows.ForEach(row => { rows.Add(row.Get(_process).Result); });
+            _rows.ForEach(row => { rows.Add(row.Get(_process)); });
 
             var parameters = new List<RowValueQueryParam>();
 
@@ -246,7 +246,7 @@ namespace FrostDB
                 }
                 else
                 {
-                    var result = row.Get(_process).Result;
+                    var result = row.Get(_process);
                     // do the evaluation here to try and determine if the WHERE clause fits
                 }
             });

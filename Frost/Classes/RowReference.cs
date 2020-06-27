@@ -85,7 +85,7 @@ namespace FrostDB
             info.AddValue("ReferenceColumnIds", _columnIds, typeof(List<Guid?>));
         }
 
-        public async Task<Row> Get(Process process)
+        public Row Get(Process process)
         {
             if (_process is null)
             {
@@ -122,7 +122,10 @@ namespace FrostDB
 
             if (rowMessage != null)
             {
-                row = rowMessage.GetContentAs<Row>();
+                if (rowMessage.Content != null)
+                {
+                    row = rowMessage.GetContentAs<Row>();
+                }
             }
 
             return row;
