@@ -11,12 +11,12 @@ namespace FrostCommon.Net
     {
         public Socket Socket { get; set; }
         public Location Location { get; set; }
-        public ManualResetEvent ConnectDone = new ManualResetEvent(false);
-        public ManualResetEvent SendDone = new ManualResetEvent(false);
-        public int TimeOut;
-        public ManualResetEvent ReceiveDone = new ManualResetEvent(false);
-        public ManualResetEvent DisconnectDone = new ManualResetEvent(false);
+        // public ManualResetEvent ConnectDone = new ManualResetEvent(false);
+        // public ManualResetEvent SendDone = new ManualResetEvent(false);
+        // public ManualResetEvent ReceiveDone = new ManualResetEvent(false);
+        // public ManualResetEvent DisconnectDone = new ManualResetEvent(false);
         public StateObject StateObject { get; set; }
+        public int TimeOut;
 
         public SocketHelper(Socket socket, Location location, int timeout)
         {

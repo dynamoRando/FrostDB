@@ -132,10 +132,10 @@ namespace FrostDB
             _schema = new TableSchema(this);
         }
 
-        public async Task UpdateRow(RowReference reference, List<RowValue> values)
+        public void UpdateRow(RowReference reference, List<RowValue> values)
         {
             // TO DO: we should be checking the rights on the contract if this is allowed.
-            var row = reference.Get(_process).Result;
+            var row = reference.Get(_process);
 
             if (row != null)
             {
@@ -165,8 +165,8 @@ namespace FrostDB
                     var updateRemoteRowId = Guid.NewGuid();
                     RowForm rowInfo = new RowForm(row, reference.Participant, reference, values);
                     var content = JsonConvert.SerializeObject(rowInfo);
-                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId);
-                    var response = await _process.Network.SendAndGetDataMessageFromToken(updateRemoteRowMessage, updateRemoteRowId);
+                    var updateRemoteRowMessage = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Update_Row, MessageType.Data, updateRemoteRowId, MessageActionType.Table, rowInfo.GetType());
+                    var response = _process.Network.SendMessage(updateRemoteRowMessage);
 
                     if (response != null)
                     {
@@ -191,7 +191,7 @@ namespace FrostDB
             }
             else
             {
-                row = reference.Get(_process).Result;
+                row = reference.Get(_process);
             }
 
             return row;
@@ -201,13 +201,20 @@ namespace FrostDB
         {
             var result = new List<Row>();
 
-            foreach(var row in _rows)
+            /*
+            Parallel.ForEach(_rows, (row) =>
             {
-                var task = row.Get(_process);
-                task.Wait();
-                if (task.Result != null)
+               
+            });
+            */
+
+            foreach (var row in _rows)
+            {
+                var response = row.Get(_process);
+
+                if (response != null)
                 {
-                    result.Add(task.Result);
+                    result.Add(response);
                 };
             }
 
@@ -216,7 +223,7 @@ namespace FrostDB
         public List<Row> GetRows(string queryString)
         {
             var rows = new List<Row>();
-            _rows.ForEach(row => { rows.Add(row.Get(_process).Result); });
+            _rows.ForEach(row => { rows.Add(row.Get(_process)); });
 
             var parameters = new List<RowValueQueryParam>();
 
@@ -230,8 +237,8 @@ namespace FrostDB
 
         public Task<List<Row>> GetRowsAsync(string queryString)
         {
-            _rows.ForEach(row => 
-            { 
+            _rows.ForEach(row =>
+            {
                 if (!row.IsLocal(_process))
                 {
                     // send the queryString to each participant to be evaluated to see if they have matching rows
@@ -239,7 +246,7 @@ namespace FrostDB
                 }
                 else
                 {
-                    var result = row.Get(_process).Result;
+                    var result = row.Get(_process);
                     // do the evaluation here to try and determine if the WHERE clause fits
                 }
             });
@@ -422,21 +429,12 @@ namespace FrostDB
                 var remoteRowInfo = BuildRemoteRowInfo(reference);
                 var content = JsonConvert.SerializeObject(remoteRowInfo);
 
-                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId);
-                _process.Network.SendMessageRequestId(message, requestId);
-                bool gotData = await _process.Network.WaitForMessageTokenAsync(requestId);
-
-                if (gotData)
+                var message = _process.Network.BuildMessage(reference.Participant.Location, content, MessageDataAction.Row.Delete_Row, MessageType.Data, requestId, MessageActionType.Table, remoteRowInfo.GetType());
+                var response = _process.Network.SendMessage(message);
+                
+                if (response != null)
                 {
-                    if (_process.Network.DataProcessor.HasMessageId(requestId))
-                    {
-                        // validate that the row has been deleted
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
                 else
                 {

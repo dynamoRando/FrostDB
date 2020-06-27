@@ -33,41 +33,30 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Process(Message message)
+        public Message Process(Message message)
         {
+            Message response = new Message();
             switch (message.Action)
             {
                 case MessageDataAction.Process.Get_Remote_Row:
-                    ProcessGetRemoteRow(message);
+                    response = ProcessGetRemoteRow(message);
                     break;
                 case MessageDataAction.Process.Remote_Row_Information:
-                    ProcessRemoteRowInformation(message);
+                    response = ProcessRemoteRowInformation(message);
                     break;
                 default:
                     throw new InvalidOperationException("Unknown Process Data Message");
             }
+            return response;
         }
         #endregion
 
         #region Private Methods
-        private void ProcessRemoteRowInformation(Message message)
+        private Message ProcessRemoteRowInformation(Message message)
         {
-            // someone has sent us information that we requested for a remote row. we need to figure out who asked for this information and
-            // return to call site
-
-            if (message.RequestInformationId != null)
-            {
-                // singal that we got the data
-                _process.Network.RemoveFromQueueToken(message.RequestInformationId);
-                // add it to the dictionary so that the caller can parse it
-                _process.Network.DataProcessor.IncomingMessages.TryAdd(message.RequestInformationId, message);
-
-            }
-
-            string debug = $"ProcessRemoteRowInformation";
-            Debug.WriteLine(debug);
+            throw new NotImplementedException();
         }
-        private void ProcessGetRemoteRow(Message message)
+        private Message ProcessGetRemoteRow(Message message)
         {
 
             // get are getting a request for a remote row. We need to find the row and then return it to the requestor.
@@ -75,14 +64,11 @@ namespace FrostDB
             // when we NEW up a message, we need to set the RequestInfoId to the message we got from the GetRmote_RowInformation
 
             RemoteRowInfo info = message.GetContentAs<RemoteRowInfo>();
-
             Row row = new Row(); // TO DO: need to actually find the row
-
             row = GetRow(info, row);
-
             var content = JsonConvert.SerializeObject(row);
-            var rowDataMessage = new Message(message.Origin, _process.GetLocation(), content, MessageDataAction.Process.Remote_Row_Information, MessageType.Data, message.RequestInformationId);
-            _process.Network.SendMessage(rowDataMessage);
+            return new Message(message.Origin, _process.GetLocation(), content, MessageDataAction.Process.Remote_Row_Information, MessageType.Data, message.RequestInformationId);
+            
         }
 
         private Row GetRow(RemoteRowInfo info, Row row)

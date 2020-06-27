@@ -25,10 +25,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Process(IMessage message)
+        public IMessage Process(IMessage message)
         {
             // act on the message and send to appropriate database
             //_dbManager.AddToInbox(message);
+            throw new NotImplementedException();
+        }
+
+        public IMessage ProcessWithResult(IMessage message)
+        {
             throw new NotImplementedException();
         }
         #endregion

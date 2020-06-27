@@ -33,13 +33,6 @@ namespace FrostDB.Extensions
             };
         }
 
-        public static void SendResponse(this Message message, MessageResponse responder, Process process)
-        {
-            // once a message has been processed, generate the appropriate response message and send it
-            Message m = responder.Create(message);
-            process.Network.SendMessage(m);
-        }
-
         public static bool IsLocal(this RowReference reference, Process process)
         {
             if (reference.Participant.Location.IpAddress == process.GetLocation().IpAddress && reference.Participant.Location.PortNumber == process.GetLocation().PortNumber)

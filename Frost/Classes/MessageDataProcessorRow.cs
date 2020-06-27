@@ -3,6 +3,7 @@ using FrostCommon.DataMessages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,28 +33,31 @@ namespace FrostDB.Classes
         #endregion
 
         #region Public Methods
-        public void Process(Message message)
+        public IMessage Process(Message message)
         {
+            IMessage result = null;
             switch (message.Action)
             {
                 case MessageDataAction.Row.Save_Row:
-                    ProcessSaveRow(message);
+                    result = ProcessSaveRow(message);
                     break;
                 case MessageDataAction.Row.Delete_Row:
-                    ProcessDeleteRow(message);
+                    result = ProcessDeleteRow(message);
                     break;
                 case MessageDataAction.Row.Update_Row:
-                    ProcessUpdateRow(message);
+                    result = ProcessUpdateRow(message).Result;
                     break;
                 default:
                     throw new InvalidOperationException("Unknown Data Row Message");
             }
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private async Task ProcessUpdateRow(Message message)
+        private async Task<IMessage> ProcessUpdateRow(Message message)
         {
+            IMessage result = null;
             var info = message.GetContentAs<RowForm>();
             if (_process.HasPartialDatabase(info.DatabaseName))
             {
@@ -61,15 +65,17 @@ namespace FrostDB.Classes
                 if (db.HasTable(info.TableName))
                 {
                     var table = db.GetTable(info.TableName);
-                    await table.UpdateRow(info.Reference, info.RowValues);
-                    var returnMessage = _process.Network.BuildMessage(message.Origin, null, MessageDataAction.Row.Update_Row_Information, MessageType.Data, message.RequestInformationId);
+                    table.UpdateRow(info.Reference, info.RowValues);
+                    var returnMessage = _process.Network.BuildMessage(message.Origin, null, MessageDataAction.Row.Update_Row_Information, MessageType.Data, message.RequestInformationId, MessageActionType.Table, null);
                     _process.Network.SendMessage(returnMessage);
                 }
             }
+            return result;
         }
 
-        private void ProcessDeleteRow(Message message)
+        private IMessage ProcessDeleteRow(Message message)
         {
+            IMessage result = new Message();
             // TO DO: We should be checking the contract here if the host is allowed to delete our data;
 
             var info = message.GetContentAs<RemoteRowInfo>();
@@ -82,9 +88,12 @@ namespace FrostDB.Classes
                     table.RemoveRow(info.RowId);
                 }
             }
+
+            return message;
         }
-        private void ProcessSaveRow(Message message)
+        private IMessage ProcessSaveRow(Message message)
         {
+            IMessage result = new Message();
             var info = JsonConvert.DeserializeObject<RowForm>(message.Content);
             if (_process.HasPartialDatabase(info.DatabaseName))
             {
@@ -95,6 +104,8 @@ namespace FrostDB.Classes
                     table.AddRow(info);
                 }
             }
+
+            return result;
         }
         #endregion
 

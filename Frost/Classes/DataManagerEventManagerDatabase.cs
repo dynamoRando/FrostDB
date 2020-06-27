@@ -55,7 +55,6 @@ namespace FrostDB
             RegisterRowAccessedEvents();
             RegisterPendingPartcipantAddedEvents();
             RegisterPendingContractAddedEvents();
-            RegisterMessageRecievedEvents();
             RegisterMessageSentEvents();
             RegisterColumnAddedEvents();
             RegisterColumnRemovedEvents();
@@ -97,12 +96,7 @@ namespace FrostDB
                 new Action<IEventArgs>(HandleMessageSentEvent));
         }
 
-        private void RegisterMessageRecievedEvents()
-        {
-            _process.EventManager.StartListening(EventName.Message.Message_Recieved,
-                new Action<IEventArgs>(HandleMessageRecievedEvent));
-        }
-
+        
         private void RegisterPendingContractAddedEvents()
         {
             _process.EventManager.StartListening(EventName.Contract.Pending_Added,
@@ -176,28 +170,6 @@ namespace FrostDB
                 if (args.Database is Database)
                 {
                     _dataManager.SaveToDisk((Database)args.Database);
-                }
-            }
-        }
-
-        private void HandleMessageRecievedEvent(IEventArgs e)
-        {
-            if (e is MessageRecievedEventArgs)
-            {
-                var args = (MessageRecievedEventArgs)e;
-                string debugMessage = $"Read {args.MessageLength.ToString()} bytes from socket. \n Data : {args.StringMessage}";
-
-                Console.WriteLine(debugMessage);
-                _process.Log.Debug(debugMessage);
-
-                if (args.Message.ReferenceMessageId.HasValue)
-                {
-                    if (args.Message.ReferenceMessageId.Value != Guid.Empty)
-                    {
-                        string responseMessage = $"ACK: {args.Message.Origin.IpAddress} acknolweges message {args.Message.ReferenceMessageId}";
-                        Console.WriteLine(responseMessage);
-                        _process.Log.Debug(responseMessage);
-                    }
                 }
             }
         }

@@ -6,6 +6,6 @@ namespace FrostCommon.Net
 {
     public static class ClientConstants
     {
-        public static int TimeOut = 2000;
+        public static int TimeOut = 100000;
     }
 }

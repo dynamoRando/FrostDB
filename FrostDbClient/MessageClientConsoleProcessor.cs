@@ -35,35 +35,42 @@ namespace FrostDbClient
         #endregion
 
         #region Public Methods
-        public void Process(IMessage message)
+        public IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMessage Process(IMessage message)
         {
             var m = (message as Message);
+            IMessage result = null;
 
             switch (m.ActionType)
             {
                 case MessageActionType.Process:
-                    HandleProcessMessage(m);
+                    result = HandleProcessMessage(m);
                     break;
                 case MessageActionType.Database:
-                    HandleDatabaseMessage(m);
+                    result = HandleDatabaseMessage(m);
                     break;
                 case MessageActionType.Table:
-                    HandleTableMessage(m);
+                    result = HandleTableMessage(m);
                     break;
                 case MessageActionType.Prompt:
-                    HandlePromptMessage(m);
+                    result = HandlePromptMessage(m);
                     break;
             }
 
             HandleInfoQueue(m.ReferenceMessageId);
 
-            //throw new NotImplementedException();
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private void HandlePromptMessage(Message message)
+        private IMessage HandlePromptMessage(Message message)
         {
+            IMessage result = new Message();
             FrostPromptResponse data = JsonConvert.DeserializeObject<FrostPromptResponse>(message.Content);
 
             if (_info.Responses.ContainsKey(message.ReferenceMessageId))
@@ -73,15 +80,19 @@ namespace FrostDbClient
             }
 
             _info.Responses.TryAdd(message.ReferenceMessageId, data);
+            return result;
         }
-        private void HandleTableMessage(Message message)
+        private IMessage HandleTableMessage(Message message)
         {
-            switch(message.Action)
+            IMessage result = new Message();
+            switch (message.Action)
             {
                 case MessageConsoleAction.Table.Get_Table_Info_Response:
                     HandleGetTableInfo(message);
                     break;
             }
+
+            return result;
         }
 
         private void HandleGetTableInfo(Message message)
@@ -107,8 +118,9 @@ namespace FrostDbClient
                 _info.RemoveFromQueue(id);
             }
         }
-        private void HandleDatabaseMessage(Message message)
+        private IMessage HandleDatabaseMessage(Message message)
         {
+            IMessage result = new Message();
             switch (message.Action)
             {
                 case MessageConsoleAction.Database.Get_Database_Info_Response:
@@ -124,6 +136,7 @@ namespace FrostDbClient
                     HandleAcceptedContractInfo(message);
                     break;
             }
+            return result;
         }
 
         private void HandleAcceptedContractInfo(Message message)
@@ -175,9 +188,10 @@ namespace FrostDbClient
             }
         }
 
-        private void HandleProcessMessage(Message message)
+        private IMessage HandleProcessMessage(Message message)
         {
-            switch (message.Action) 
+            IMessage result = new Message();
+            switch (message.Action)
             {
                 case MessageConsoleAction.Process.Get_Databases_Response:
                     HandleDatabaseList(message);
@@ -192,6 +206,7 @@ namespace FrostDbClient
                     HandleGetPendingProcessContractsResponse(message);
                     break;
             }
+            return result;
         }
 
         private void HandleGetPendingProcessContractsResponse(Message message)
@@ -213,14 +228,14 @@ namespace FrostDbClient
         private void HandleDbInfo(Message message)
         {
             DatabaseInfo dbInformation = JsonConvert.DeserializeObject<DatabaseInfo>(message.Content);
-            
+
             if (_info.DatabaseInfos.ContainsKey(dbInformation.Name))
             {
                 DatabaseInfo removed = null;
                 _info.DatabaseInfos.TryRemove(dbInformation.Name, out removed);
             }
 
-            if(_info.DatabaseInfos.TryAdd(dbInformation.Name, dbInformation))
+            if (_info.DatabaseInfos.TryAdd(dbInformation.Name, dbInformation))
             {
                 _eventManager.TriggerEvent(ClientEvents.GotDatabaseInfo, null);
             }

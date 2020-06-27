@@ -33,19 +33,21 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public void Process(Message message)
+        public IMessage Process(Message message)
         {
+            IMessage result = null;
             switch (message.Action)
             {
                 case MessageConsoleAction.Prompt.Execute_Command:
-                    HandleExecuteCommand(message);
+                    result = HandleExecuteCommand(message);
                     break;
             }
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private void HandleExecuteCommand(Message message)
+        private IMessage HandleExecuteCommand(Message message)
         {
             string messageContent = string.Empty;
 
@@ -54,7 +56,7 @@ namespace FrostDB
             Type type = response.GetType();
             messageContent = JsonConvert.SerializeObject(response);
 
-            _messageBuilder.SendResponse(message, messageContent, MessageConsoleAction.Prompt.Eecute_Command_Response, type, MessageActionType.Prompt);
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Prompt.Eecute_Command_Response, type, message.Id, MessageActionType.Prompt);
         }
         #endregion
 

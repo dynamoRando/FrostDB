@@ -144,6 +144,11 @@ namespace FrostDB
             return GetDatabase(databaseId).GetTable(tableId);
         }
 
+        public virtual Table GetTable(string databaseName, string tableName)
+        {
+            return GetDatabase(databaseName).GetTable(tableName);
+        }
+
         public virtual int LoadPartialDatabases()
         {
             return PartialDatabaseManager.LoadDatabases(Configuration.DatabaseFolder, Configuration.PartialDatabaseExtension);

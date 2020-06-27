@@ -13,5 +13,10 @@ namespace FrostCommon.ConsoleMessages
             item.PortNumber = location.PortNumber;
             return item;
         }
+
+        public static string ConvertToString(this Location location)
+        {
+            return location.IpAddress + ":" + location.PortNumber.ToString();
+        }
     }
 }

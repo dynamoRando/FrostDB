@@ -42,10 +42,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public override void Process(IMessage message)
+        public override IMessage ProcessWithResult(IMessage message)
+        {
+            throw new NotImplementedException();
+        }
+        public override IMessage Process(IMessage message)
         {
             HandleProcessMessage(message);
             var m = (message as Message);
+            IMessage result = null;
 
             if (m.MessageType == MessageType.Console)
             {
@@ -56,16 +61,16 @@ namespace FrostDB
                     switch (m.ActionType)
                     {
                         case MessageActionType.Process:
-                            _processProcess.Process(m);
+                            result = _processProcess.Process(m);
                             break;
                         case MessageActionType.Database:
-                            _processDatabase.Process(m);
+                            result = _processDatabase.Process(m);
                             break;
                         case MessageActionType.Table:
-                            _processTable.Process(m);
+                            result = _processTable.Process(m);
                             break;
                         case MessageActionType.Prompt:
-                            _processPrompt.Process(m);
+                            result = _processPrompt.Process(m);
                             break;
                     }
                     //m.SendResponse();
@@ -79,6 +84,8 @@ namespace FrostDB
             {
                 Console.WriteLine("Message data arrived on console port");
             }
+
+            return result;
         }
         #endregion
         #region Private Methods

@@ -7,6 +7,6 @@ namespace FrostDB.Interface
 {
     public interface IMessageConsoleProcessorObject
     {
-        void Process(Message message);
+        IMessage Process(Message message);
     }
 }

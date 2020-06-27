@@ -68,21 +68,7 @@ namespace FrostDB
         {
             _process = process;
         }
-        public async Task<bool> IsOnlineAsync()
-        {
-            bool isOnline = false;
-
-            var isOnlineCheck = new Message(_location, _process.GetLocation(), null, MessageDataAction.Status.Is_Online, MessageType.Data);
-            var id = _process.Network.SendMessage(isOnlineCheck);
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                isOnline = true;
-            }
-
-            return isOnline;
-        }
+       
         // is the participant okay with the action we're doing?
         // this logic should probably live in a different class
         public bool AcceptsAction(TableAction action)

@@ -50,9 +50,15 @@ namespace FrostDB
             IncomingMessages.TryRemove(id, out message);
         }
 
-        public override void Process(IMessage message)
+        public override IMessage ProcessWithResult(IMessage message)
         {
-            HandleProcessMessage(message);
+            throw new NotImplementedException();
+        }
+
+        public override IMessage Process(IMessage message)
+        {
+            IMessage result = new Message();
+            result = HandleProcessMessage(message);
 
             var m = (message as Message);
 
@@ -64,31 +70,22 @@ namespace FrostDB
             // process data messages
             if (m.MessageType == MessageType.Data)
             {
-                if (message.ReferenceMessageId.Value == Guid.Empty)
+                var items = message.Action.Split('.');
+                var actionType = items[0];
+
+                if (actionType.Contains("Row"))
                 {
-                    var items = message.Action.Split('.');
-                    var actionType = items[0];
-
-                    if (actionType.Contains("Row"))
-                    {
-                        _datarowProcesor.Process(m);
-                    }
-
-                    if (actionType.Contains("Contract"))
-                    {
-                        _contractProcessor.Process(m);
-                    }
-
-                    if (actionType.Contains("Process"))
-                    {
-                        _processProcessor.Process(m);
-                    }
-
-                    m.SendResponse(new MessageResponse(_process), _process);
+                    result = _datarowProcesor.Process(m);
                 }
-                else
+
+                if (actionType.Contains("Contract"))
                 {
-                    // do nothing
+                    result = _contractProcessor.Process(m);
+                }
+
+                if (actionType.Contains("Process"))
+                {
+                    result = _processProcessor.Process(m);
                 }
             }
             else
@@ -96,7 +93,7 @@ namespace FrostDB
                 Console.WriteLine("Message console arrived on data port");
             }
 
-            
+            return result;
         }
         #endregion
 

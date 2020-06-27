@@ -11,61 +11,61 @@
 <Instance @ref="instance" OnDatabseClickCallback="@SetCurrentDatabase"></Instance>
 
 <p>
-<h2>Create Database</h2>
-DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName"/>
-<input type="button" @onclick="CreateNewDatabase" value="Create Database"/>
+    <h2>Create Database</h2>
+    DatabaseName: <input type="text" id="newDatabaseName" @bind="NewDatabaseName" />
+    <input type="button" @onclick="CreateNewDatabase" value="Create Database" />
 </p>
 
 
 
 <p>
-<h2>Tables</h2>
-<select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
-    @foreach (var table in FrostService.TableNames)
+    <h2>Tables</h2>
+    <select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
+        @foreach (var table in FrostService.TableNames)
+        {
+            <option value="@table">@table</option>
+        }
+    </select>
+</p>
+
+<p>
+    <h2>Columns</h2>
+    <select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
+        @foreach (var column in ColumnNames)
+        {
+            <option value=@column>@column</option>
+        }
+    </select>
+</p>
+
+<p>
+    <h2>Create Table</h2>
+    @if (FrostService.SelectedDatabaseName != string.Empty)
     {
-        <option value="@table">@table</option>
+        <h3>For Database: @FrostService.SelectedDatabaseName</h3>
     }
-</select>
-</p>
-
-<p>
-<h2>Columns</h2>    
-<select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
-@foreach (var column in ColumnNames)
-{
-    <option value=@column>@column</option>
-}
-</select>
-</p>
-
-<p>
-<h2>Create Table</h2> 
-@if (FrostService.SelectedDatabaseName != string.Empty)
-{
-    <h3>For Database: @FrostService.SelectedDatabaseName</h3>
-}
 </p>
 
 <!-- need to create UI to add column names and column types when creating a new table -->
 
 <p>
-TableName: <input type="text" id="newTableName" @bind="NewTableName"/>
-<input type="button" @onclick="CreateNewTable" value="Create Table"/>
-Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
-<select id="dataTypes" @bind="SelectedDataType">
-    <option value=@_dateTimeType> @_dateTimeType</option>
-    <option value=@_intType>@_intType</option>
-    <option value=@_floatType>@_floatType</option>
-    <option value=@_stringType>@_stringType</option>
-</select>
-<input type="button" @onclick="AddColumnToTable" value="Add Column To Table"/>
-<input type="button" @onclick="ClearItemsFromTable" value="Reset Columns"/>
-Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
-@foreach (var column in NewColumnsForTable)
-{
-    <option value=@column>@column</option>
-}
-</select>
+    TableName: <input type="text" id="newTableName" @bind="NewTableName" />
+    <input type="button" @onclick="CreateNewTable" value="Create Table" />
+    Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
+    <select id="dataTypes" @bind="SelectedDataType">
+        <option value=@_dateTimeType> @_dateTimeType</option>
+        <option value=@_intType>@_intType</option>
+        <option value=@_floatType>@_floatType</option>
+        <option value=@_stringType>@_stringType</option>
+    </select>
+    <input type="button" @onclick="AddColumnToTable" value="Add Column To Table" />
+    <input type="button" @onclick="ClearItemsFromTable" value="Reset Columns" />
+    Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
+        @foreach (var column in NewColumnsForTable)
+        {
+            <option value=@column>@column</option>
+        }
+    </select>
 </p>
 
 @code {
@@ -91,18 +91,16 @@ Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
 
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
+        TableInfo item = null;
         ColumnNames.Clear();
         Debug.WriteLine("GetColumnNamesForTable");
         Debug.WriteLine(e.Value.ToString());
 
         SelectedTableName = e.Value.ToString();
 
-        FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
-        TableInfo item = null;
-        if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
-        {
-            item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
-        }
+        item = FrostService.FrostClient.GetTableInfoAsync(FrostService.SelectedDatabaseName, SelectedTableName).Result;
+
+        item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
     }
 
     private void CreateNewTable()

@@ -18,7 +18,6 @@
 
 <p>
 <h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Connect and Load Databases"/>
- <input type="button" @onclick="DisconnectAll" value="Disconnect"/>
 <select id="databaseNames" value="Item.SelectedDatabaseName" @onchange="GetTableNamesForDatabase" @onclick="OnDatabseClickCallback">
     @foreach (var db in Item.DatabaseNames)
     {
@@ -60,35 +59,27 @@
         }
     }
 
-     private async Task<List<string>> ConnectToInstance()
+    private void ConnectToInstance()
     {
         try
         {
-            Item.ResetClient();
-            
             Item.DatabaseNames.Clear();
 
-            var task = Item.FrostClient.GetDatabasesAsync();
-            await task;
-            //Item.FrostClient.GetDatabases();
+            var databases = Item.FrostClient.GetDatabases();
 
-            //Item.DatabaseNames = Item.FrostClient.Info.DatabaseNames;
-            Item.DatabaseNames = task.Result;
+            Item.DatabaseNames = databases;
             Item.DatabaseNames.Sort();
 
             Item.FrostClient.GetPartialDatabases();
 
-            var task2 = Item.FrostClient.GetPartialDatabasesAsync();
-            await task2;
+            var partialDatabases = Item.FrostClient.GetPartialDatabases();
 
-            Item.PartialDatabaseNames = task2.Result;
+            Item.PartialDatabaseNames = partialDatabases;
 
-            return task.Result;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
-            return null;
         }
     }
 
@@ -112,11 +103,5 @@
         {
             Debug.WriteLine("No tables returned");
         }
-    }
-
-    private void DisconnectAll()
-    {
-        Item.FrostClient.DisconnectClient();
-        Item.FrostClient.DisconnectServer();
     }
 }

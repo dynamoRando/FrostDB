@@ -47,21 +47,6 @@ namespace FrostBlazeServer.Services
         public string SelectedPartialDatabaseName = string.Empty;
         public List<string> DatabaseNames = new List<string>();
         public List<string> PartialDatabaseNames = new List<string>();
-        public List<string> TableNames = new List<string>();
-
-        public void ResetClient() 
-        {
-            try
-            {
-                _client.DisconnectServer();
-                _client.DisconnectClient();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                Debug.WriteLine(ex.ToString());
-            }
-            _client = null;
-        }       
+        public List<string> TableNames = new List<string>();     
     }
 }
