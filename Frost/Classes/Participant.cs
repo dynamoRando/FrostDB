@@ -116,40 +116,6 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private async Task<bool> WaitForMessageAsync(Guid? id)
-        {
-            return await Task.Run(() => WaitForMessage(id));
-        }
-
-        private bool WaitForMessage(Guid? id)
-        {
-            Stopwatch watch = new Stopwatch();
-            bool responseRecieved = false;
-
-            watch.Start();
-
-            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
-            {
-                if (!_process.Network.HasMessageId(id))
-                {
-                    responseRecieved = true;
-
-                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-
-                    break;
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            watch.Stop();
-
-            return responseRecieved;
-        }
         #endregion
 
     }

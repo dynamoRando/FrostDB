@@ -102,86 +102,14 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return response;
         }
-        public void RemoveFromQueue(Guid? id)
-        {
-            _messageIds.TryTake(out id);
-        }
-
-        public void RemoveFromQueueToken(Guid? id)
-        {
-            _requestMessageIds.TryTake(out id);
-        }
+       
         public bool HasMessageId(Guid? id)
         {
             return _messageIds.TryPeek(out id);
         }
-
-        public bool HasMessageRequest(Guid? id)
-        {
-            return _requestMessageIds.TryPeek(out id);
-        }
-
         #endregion
 
         #region Private Methods
-        private bool WaitForMessageToken(Guid? id)
-        {
-            Stopwatch watch = new Stopwatch();
-            bool responseRecieved = false;
-
-            watch.Start();
-
-            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
-            {
-                if (!_requestMessageIds.TryPeek(out id))
-                {
-                    responseRecieved = true;
-
-                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-
-                    break;
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            watch.Stop();
-
-            return responseRecieved;
-        }
-        private bool WaitForMessage(Guid? id)
-        {
-            Stopwatch watch = new Stopwatch();
-            bool responseRecieved = false;
-
-            watch.Start();
-
-            while (watch.Elapsed.TotalSeconds < Network.QUEUE_TIMEOUT)
-            {
-                if (!HasMessageId(id))
-                {
-                    responseRecieved = true;
-
-                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-
-                    break;
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            watch.Stop();
-
-            return responseRecieved;
-        }
         private static MessageSentEventArgs CreateMessageSentEventArgs(Message message)
         {
             string data = Json.SeralizeMessage(message);
