@@ -147,6 +147,12 @@ namespace FrostDB
         private IMessage HandleGetContractInformation(Message message)
         {
             var databaseName = message.Content;
+
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                return new Message();
+            }
+
             var db = _process.GetDatabase(databaseName);
 
             var info = new ContractInfo();
