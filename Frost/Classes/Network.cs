@@ -12,8 +12,6 @@ namespace FrostDB
     public class Network
     {
         #region Private Fields
-        private ConcurrentBag<Guid?> _messageIds;
-        private ConcurrentBag<Guid?> _requestMessageIds;
         MessageDataProcessor _messageDataProcessor;
         MessageConsoleProcessor _messageConsoleProcessor;
         MessageBuilder _messageBuilder;
@@ -24,9 +22,6 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
-        public const double QUEUE_TIMEOUT = 30.0;
-        public MessageDataProcessor DataProcessor => _messageDataProcessor;
-        public MessageConsoleProcessor ConsoleProcessor => _messageConsoleProcessor;
         #endregion
 
         #region Protected Methods
@@ -39,8 +34,6 @@ namespace FrostDB
         public Network(Process process)
         {
             _process = process;
-            _messageIds = new ConcurrentBag<Guid?>();
-            _requestMessageIds = new ConcurrentBag<Guid?>();
             _client = new Client();
             _messageConsoleProcessor = new MessageConsoleProcessor(_process);
             _messageDataProcessor = new MessageDataProcessor(_process);
@@ -102,11 +95,7 @@ namespace FrostDB
             _process.EventManager.TriggerEvent(EventName.Message.Message_Sent, CreateMessageSentEventArgs(message));
             return response;
         }
-       
-        public bool HasMessageId(Guid? id)
-        {
-            return _messageIds.TryPeek(out id);
-        }
+     
         #endregion
 
         #region Private Methods
