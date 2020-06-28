@@ -96,7 +96,6 @@ namespace FrostDB
                 new Action<IEventArgs>(HandleMessageSentEvent));
         }
 
-        
         private void RegisterPendingContractAddedEvents()
         {
             _process.EventManager.StartListening(EventName.Contract.Pending_Added,
@@ -305,7 +304,6 @@ namespace FrostDB
             }
         }
 
-
         private void HandleRowAddedEvent(IEventArgs e)
         {
             if (e is RowAddedEventArgs)
@@ -336,8 +334,6 @@ namespace FrostDB
 
                     _process.DatabaseManager.SaveToDisk((Database)db);
                 }
-
-
             }
         }
 
