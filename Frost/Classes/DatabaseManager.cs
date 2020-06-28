@@ -143,11 +143,6 @@ namespace FrostDB
 
             return _databaseFileMapper.Map(dataFile, _process);
         }
-
-        private void RegisterEvents()
-        {
-            _dataEventManager.RegisterEvents();
-        }
         #endregion
 
     }
