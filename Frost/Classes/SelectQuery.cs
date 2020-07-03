@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
-    public class SelectQuery : IQuery
+    internal class SelectQuery : IQuery
     {
         /*
          * SELECT { ( col1, col2, col3 .. ) }
          * FROM { tableName }
          * WHERE { ( condition 1 ) ... }
+         * 
+         * SELECTNAME,AGE,RANKFROMEMPLOYEEWHERE(NAMELIKE'%RANDY%'ANDAGE>32)OR(NAME= 'BRIAN')
          */
         #region Private Fields
         private const int MINIMUM_LINE_COUNT = 4;
@@ -30,6 +32,10 @@ namespace FrostDB
         public string DatabaseName { get; set; }
         public string TableName { get; set; }
         public Process Process { get; set; }
+        public List<string> SelectListText { get; set; }
+        public List<string> TableListText { get; set; }
+        public string SearchConditionText { get; set; }
+        public bool HasBooleans { get; set; }
         #endregion
 
         #region Protected Methods
@@ -43,6 +49,8 @@ namespace FrostDB
         {
             _process = process;
             _columns = new List<Column>();
+            SelectListText = new List<string>();
+            TableListText = new List<string>();
         }
         #endregion
 
@@ -74,6 +82,17 @@ namespace FrostDB
             response.IsSuccessful = true;
 
             return response;
+        }
+
+        public bool CanWalk(string statement, TSqlWalker walker)
+        {
+            walker.Walk();
+            throw new NotImplementedException();
+        }
+
+        public bool IsValid()
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsValid(string statement)

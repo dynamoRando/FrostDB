@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
-    public class InsertQuery : IQuery
+    internal class InsertQuery : IQuery
     {
         #region Private Fields
         private const int MINIMUM_LINE_COUNT = 5;
@@ -43,6 +43,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool CanWalk(string statement, TSqlWalker walker)
+        {
+            throw new NotImplementedException();
+        }
         public FrostPromptResponse Execute()
         {
             return ExecuteAsync().Result;

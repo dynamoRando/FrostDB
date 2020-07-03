@@ -7,12 +7,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using FrostCommon.Net;
 using FrostDB;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace FrostDB
 {
     public class QueryParser : IQueryParser
     {
         private Process _process;
+       
         // will work
         // (FirstName = "Randy"), (Age = "34")
         // won't work
@@ -65,7 +68,7 @@ namespace FrostDB
             return isValid;
         }
 
-        public bool IsValidCommand(string command, Process process, out IQuery query)
+        internal bool IsValidCommand(string command, Process process, out IQuery query)
         {
             var commands = GetCommands(command);
 
@@ -110,9 +113,57 @@ namespace FrostDB
             }
         }
 
+        internal bool IsValidCommandAntlr(string command, Process process, out IQuery query)
+        {
+            var commands = GetCommands(command);
+
+            string database = commands[0];
+            string statement = commands[1];
+
+            bool processHasDatabase = false;
+            bool canParseStatement = false;
+
+            var item = SetQueryType(statement);
+
+            if (database.Contains(QueryKeywords.Use))
+            {
+                processHasDatabase = TryParseDatabase(commands[0], item);
+            }
+
+            canParseStatement = item.CanWalk(statement, GetWalker(statement, ref item));
+
+            if (processHasDatabase && canParseStatement)
+            {
+                query = item;
+                return true;
+            }
+            else
+            {
+                query = null;
+                return false;
+            }
+        }
+
         #endregion
 
         #region Private Methods
+        private TSqlWalker GetWalker(string input, ref IQuery query)
+        {
+            AntlrInputStream inputStream = new AntlrInputStream(input);
+            TSqlLexer lexer = new TSqlLexer(inputStream);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            TSqlParser parser = new TSqlParser(tokens);
+            var parseTree = parser.dml_clause();
+            ParseTreeWalker walker = new ParseTreeWalker();
+            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(ref query);
+            return new TSqlWalker(walker, loader, parseTree);
+        }
+
+        private IQuery SetQueryTypeAntlr(string statement)
+        {
+            throw new NotImplementedException();
+        }
+
         private IQuery SetQueryType(string statement)
         {
             if (statement.Contains(QueryKeywords.Select, StringComparison.OrdinalIgnoreCase))

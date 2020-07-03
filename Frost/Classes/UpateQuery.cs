@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
-    public class UpdateQuery : IQuery
+    internal class UpdateQuery : IQuery
     {
         #region Private Fields
         private Process _process;
@@ -48,6 +48,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool CanWalk(string statement, TSqlWalker walker)
+        {
+            throw new NotImplementedException();
+        }
         public FrostPromptResponse Execute()
         {
             int rowCount = 0;

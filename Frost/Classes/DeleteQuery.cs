@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrostDB
 {
-    public class DeleteQuery : IQuery
+    internal class DeleteQuery : IQuery
     {
         #region Private Fields
         private const int MINIMUM_LINE_COUNT = 3;
@@ -38,6 +38,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool CanWalk(string statement, TSqlWalker walker)
+        {
+            throw new NotImplementedException();
+        }
         public FrostPromptResponse Execute()
         {
             FrostPromptResponse response = new FrostPromptResponse();
