@@ -36,6 +36,9 @@ namespace FrostDB
         public List<string> TableListText { get; set; }
         public string SearchConditionText { get; set; }
         public bool HasBooleans { get; set; }
+        public int SearchConditionCount = 0;
+        public int SearchConditionAndCount = 0;
+        public int SearchConditionNotCount = 0;
         #endregion
 
         #region Protected Methods

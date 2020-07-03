@@ -117,6 +117,7 @@ namespace FrostDB
             if (_query is SelectQuery)
             {
                 var query = (_query as SelectQuery);
+                query.SearchConditionCount++;
                 query.SearchConditionText = context.GetText();
                 if (query.SearchConditionText.Contains(QueryKeywords.And)
                     || query.SearchConditionText.Contains(QueryKeywords.Or))
