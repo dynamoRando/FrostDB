@@ -71,7 +71,9 @@ namespace FrostDbClient
 
         public FrostPromptPlan GetQueryPlan(string command)
         {
-            throw new NotImplementedException();
+            var result = new FrostPromptPlan();
+            var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Get_Plan, MessageActionType.Prompt));
+            return data.GetContentAs<FrostPromptPlan>();
         }
 
         public FrostPromptResponse ExecuteCommand(string command)
