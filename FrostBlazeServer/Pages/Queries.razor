@@ -48,6 +48,10 @@
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
+<h2>Query Plan</h2>
+<textarea id="queryPlan" name="queryPlan" rows="10" cols="100" @bind="QueryPlan">
+</textarea>
+
 
 @code {
     private Instance instance;
@@ -59,6 +63,7 @@
     private string NewColumnForTable = string.Empty;
     private string QueryText = string.Empty;
     private string QueryResult = string.Empty;
+    private string QueryPlan = string.Empty;
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
         ColumnNames.Clear();

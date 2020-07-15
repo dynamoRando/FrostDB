@@ -69,6 +69,11 @@ namespace FrostDbClient
             }
         }
 
+        public FrostPromptPlan GetQueryPlan(string command)
+        {
+            throw new NotImplementedException();
+        }
+
         public FrostPromptResponse ExecuteCommand(string command)
         {
             var result = new FrostPromptResponse();
