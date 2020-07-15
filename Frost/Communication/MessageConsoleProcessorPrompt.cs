@@ -55,7 +55,13 @@ namespace FrostDB
         #region Private Methods
         private IMessage HandleGetPlan(Message message)
         {
-            throw new NotImplementedException();
+            string messageContent = string.Empty;
+            FrostPromptPlan response = new FrostPromptPlan();
+            response = _process.GetPlan(message.Content);
+            Type type = response.GetType();
+            messageContent = JsonConvert.SerializeObject(response);
+
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Prompt.Get_Plan_Response, type, message.Id, MessageActionType.Prompt);
         }
         private IMessage HandleExecuteCommand(Message message)
         {
@@ -66,7 +72,7 @@ namespace FrostDB
             Type type = response.GetType();
             messageContent = JsonConvert.SerializeObject(response);
 
-            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Prompt.Eecute_Command_Response, type, message.Id, MessageActionType.Prompt);
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Prompt.Execute_Command_Response, type, message.Id, MessageActionType.Prompt);
         }
         #endregion
 

@@ -225,6 +225,11 @@ namespace FrostDB
             return PartialDatabases.Where(d => d.Name == databaseName).FirstOrDefault();
         }
 
+        public FrostPromptPlan GetPlan(string command)
+        {
+            throw new NotImplementedException();
+        }
+
         public FrostPromptResponse ExecuteCommand(string command)
         {
             FrostPromptResponse response = new FrostPromptResponse();

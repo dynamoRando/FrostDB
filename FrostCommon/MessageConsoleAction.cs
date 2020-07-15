@@ -9,7 +9,7 @@ namespace FrostCommon
         public static class Prompt
         {
             public const string Execute_Command = "Execute_Command";
-            public const string Eecute_Command_Response = "Execute_Command_Response";
+            public const string Execute_Command_Response = "Execute_Command_Response";
 
             public const string Get_Plan = "Get_Plan";
             public const string Get_Plan_Response = "Get_Plan_Response";
