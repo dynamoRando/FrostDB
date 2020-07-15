@@ -13,7 +13,6 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
-        double _queueTimeout = 10.0;
         string _localIpAddress;
         string _remoteIpAddress;
         int _remotePortNumber;

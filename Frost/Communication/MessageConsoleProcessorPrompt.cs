@@ -41,12 +41,22 @@ namespace FrostDB
                 case MessageConsoleAction.Prompt.Execute_Command:
                     result = HandleExecuteCommand(message);
                     break;
+                case MessageConsoleAction.Prompt.Get_Plan:
+                    result = HandleGetPlan(message);
+                    break;
+                default:
+                    throw new NotImplementedException("Unknown Prompt type");
+                    break;
             }
             return result;
         }
         #endregion
 
         #region Private Methods
+        private IMessage HandleGetPlan(Message message)
+        {
+            throw new NotImplementedException();
+        }
         private IMessage HandleExecuteCommand(Message message)
         {
             string messageContent = string.Empty;
