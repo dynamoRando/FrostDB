@@ -29,18 +29,22 @@ public class BoolStep : IPlanStep
         throw new NotImplementedException();
     }
 
-    public void GetResultText()
+    public string GetResultText()
     {
-        Console.WriteLine("Executing BoolStep:");
-        Console.WriteLine($"BoolStep Id: {Id.ToString()}");
+        var item = string.Empty;
 
-        Console.WriteLine($"BoolStep Executing Input 1:");
-        InputOne.GetResultText();
-        Console.WriteLine($"BoolStep Executing Input 2:");
-        InputTwo.GetResultText();
+        item += "Executing BoolStep:" + Environment.NewLine;
 
-        Console.WriteLine($"Combining Results with {Boolean}");
+        item += $"BoolStep Id: {Id.ToString()}" + Environment.NewLine;
 
+        item += $"BoolStep Executing Input 1:" + Environment.NewLine;
+        item += InputOne.GetResultText() + Environment.NewLine;
+        item += $"BoolStep Executing Input 2:" + Environment.NewLine;
+        item += InputTwo.GetResultText() + Environment.NewLine;
+
+        item += $"Combining Results with {Boolean}" + Environment.NewLine;
+
+        return item;
     }
     #endregion
 

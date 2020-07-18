@@ -1,5 +1,6 @@
 ﻿using FrostCommon;
 using FrostCommon.ConsoleMessages;
+using FrostCommon.Net;
 using FrostDB;
 using System;
 using System.Collections.Generic;
@@ -91,6 +92,18 @@ namespace FrostDB.Extensions
             var contract = new Contract(process);
             throw new NotImplementedException();
             return contract;
+        }
+
+        public static FrostPromptPlan Convert(this QueryPlan plan)
+        {
+            var result = new FrostPromptPlan();
+
+            foreach(var step in plan.Steps)
+            {
+                result.PlanText += step.GetResultText() + Environment.NewLine;
+            }
+
+            return result;
         }
 
     }

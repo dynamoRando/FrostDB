@@ -7,5 +7,5 @@ public interface IPlanStep
     Guid Id { get; set; }
     int Level { get; set; }
     public PlanResult GetResult();
-    public void GetResultText();
+    public string GetResultText();
 }

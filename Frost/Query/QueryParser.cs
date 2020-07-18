@@ -12,6 +12,9 @@ using Antlr4.Runtime.Tree;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Deprecated. Will be replaced by QueryManager
+    /// </summary>
     public class QueryParser : IQueryParser
     {
         private Process _process;
@@ -101,37 +104,6 @@ namespace FrostDB
                     break;
             }
 
-            if (processHasDatabase && canParseStatement)
-            {
-                query = item;
-                return true;
-            }
-            else
-            {
-                query = null;
-                return false;
-            }
-        }
-
-        internal bool IsValidCommandAntlr(string command, Process process, out IQuery query)
-        {
-            var commands = GetCommands(command);
-
-            string database = commands[0];
-            string statement = commands[1];
-
-            bool processHasDatabase = false;
-            bool canParseStatement = false;
-
-            var item = SetQueryType(statement);
-
-            if (database.Contains(QueryKeywords.Use))
-            {
-                processHasDatabase = TryParseDatabase(commands[0], item);
-            }
-
-            throw new NotImplementedException();
-           
             if (processHasDatabase && canParseStatement)
             {
                 query = item;

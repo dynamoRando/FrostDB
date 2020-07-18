@@ -27,6 +27,7 @@ namespace FrostDB
         private EventManager _eventManager;
         private ProcessLogger _log;
         private QueryParser _parser;
+        private QueryManager _queryManager;
         #endregion
 
         #region Public Properties
@@ -327,6 +328,7 @@ namespace FrostDB
             partialDbManager.RegisterEvents();
 
             _parser = new QueryParser(this);
+            _queryManager = new QueryManager(this);
         }
         private void SetConfiguration()
         {
