@@ -228,7 +228,7 @@ namespace FrostDB
 
         public FrostPromptPlan GetPlan(string command)
         {
-            return _queryManager.GetPlan(command);
+            return _queryManager.GetPlan(command.ToUpper());
         }
 
         public FrostPromptResponse ExecuteCommand(string command)
