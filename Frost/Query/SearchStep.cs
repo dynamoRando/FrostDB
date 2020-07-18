@@ -32,11 +32,14 @@ public class SearchStep : IPlanStep
         throw new NotImplementedException();
     }
 
-    public void GetResultText()
+    public string GetResultText()
     {
-        Console.WriteLine($"Executing SearchStep:");
-        Console.WriteLine($"SearchStep Id: {Id.ToString()}");
-        Console.WriteLine($"Executing Search: {Part.TextWithWhiteSpace}");
+        var item = string.Empty;
+        item += $"Executing SearchStep:" + Environment.NewLine;
+        item += $"SearchStep Id: {Id.ToString()}" + Environment.NewLine;
+        item += $"Executing Search: {Part.TextWithWhiteSpace}" + Environment.NewLine;
+
+        return item;
     }
     #endregion
 }

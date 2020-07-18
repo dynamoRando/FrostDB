@@ -45,6 +45,7 @@
 <textarea id="queryText" name="queryText" rows="10" cols="100" @bind="QueryText">
 </textarea>
 <input type="button" @onclick="ExecuteQuery" value="Execute Query" />
+<input type="button" @onclick="GetPlan" value="Get Query Plan" />
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
@@ -116,5 +117,11 @@
 
         QueryResult += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
 
+    }
+
+    private void GetPlan()
+    {
+        var result = FrostService.FrostClient.GetQueryPlan(QueryText);
+        QueryPlan = result.PlanText;
     }
 }

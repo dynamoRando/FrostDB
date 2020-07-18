@@ -228,7 +228,7 @@ namespace FrostDB
 
         public FrostPromptPlan GetPlan(string command)
         {
-            throw new NotImplementedException();
+            return _queryManager.GetPlan(command);
         }
 
         public FrostPromptResponse ExecuteCommand(string command)

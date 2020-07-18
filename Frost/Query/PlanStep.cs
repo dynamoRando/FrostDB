@@ -43,7 +43,7 @@ public class PlanStep : IPlanStep
         throw new NotImplementedException();
     }
 
-    public void GetResultText()
+    public string GetResultText()
     {
         throw new NotImplementedException();
     }

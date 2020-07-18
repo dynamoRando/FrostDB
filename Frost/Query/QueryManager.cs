@@ -36,8 +36,16 @@ namespace FrostDB
         #region Public Methods
         public FrostPromptPlan GetPlan(string input)
         {
+            var promptPlan = new FrostPromptPlan();
             var statement = GetStatement(input);
             var plan = _planGenerator.GeneratePlan(statement);
+
+            foreach(var step in plan.Steps)
+            {
+                promptPlan.PlanText += step.GetResultText();
+            }
+
+            return promptPlan;
         }
 
         public FrostPromptResponse GetResult(string input)
