@@ -130,8 +130,8 @@ namespace FrostDB
                 processHasDatabase = TryParseDatabase(commands[0], item);
             }
 
-            canParseStatement = item.CanWalk(statement, GetWalker(statement, ref item));
-
+            throw new NotImplementedException();
+           
             if (processHasDatabase && canParseStatement)
             {
                 query = item;
@@ -147,18 +147,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private TSqlWalker GetWalker(string input, ref IQuery query)
-        {
-            AntlrInputStream inputStream = new AntlrInputStream(input);
-            TSqlLexer lexer = new TSqlLexer(inputStream);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            TSqlParser parser = new TSqlParser(tokens);
-            var parseTree = parser.dml_clause();
-            ParseTreeWalker walker = new ParseTreeWalker();
-            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(ref query);
-            return new TSqlWalker(walker, loader, parseTree);
-        }
-
+      
         private IQuery SetQueryTypeAntlr(string statement)
         {
             throw new NotImplementedException();

@@ -87,12 +87,6 @@ namespace FrostDB
             return response;
         }
 
-        public bool CanWalk(string statement, TSqlWalker walker)
-        {
-            walker.Walk();
-            throw new NotImplementedException();
-        }
-
         public bool IsValid()
         {
             throw new NotImplementedException();

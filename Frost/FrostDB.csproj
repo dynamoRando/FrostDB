@@ -12,8 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SQLParsing\**" />
     <Compile Remove="TSQL\**" />
+    <EmbeddedResource Remove="SQLParsing\**" />
     <EmbeddedResource Remove="TSQL\**" />
+    <None Remove="SQLParsing\**" />
     <None Remove="TSQL\**" />
   </ItemGroup>
 

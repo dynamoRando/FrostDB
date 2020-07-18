@@ -13,7 +13,6 @@ namespace FrostDB.Interface
         public string TableName { get; set; }
         public Process Process { get; set; }
         public bool IsValid(string statement);
-        public bool CanWalk(string statement, TSqlWalker walker);
         public FrostPromptResponse Execute();
         public Task<FrostPromptResponse> ExecuteAsync();
     }

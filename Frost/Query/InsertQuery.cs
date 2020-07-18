@@ -43,10 +43,6 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public bool CanWalk(string statement, TSqlWalker walker)
-        {
-            throw new NotImplementedException();
-        }
         public FrostPromptResponse Execute()
         {
             return ExecuteAsync().Result;
