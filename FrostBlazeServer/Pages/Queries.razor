@@ -121,6 +121,7 @@
 
     private void GetPlan()
     {
+        QueryPlan = string.Empty;
         var result = FrostService.FrostClient.GetQueryPlan(QueryText);
         QueryPlan = result.PlanText;
     }
