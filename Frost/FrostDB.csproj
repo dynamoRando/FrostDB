@@ -12,6 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SQLParsing\**" />
+    <Compile Remove="TSQL\**" />
+    <EmbeddedResource Remove="SQLParsing\**" />
+    <EmbeddedResource Remove="TSQL\**" />
+    <None Remove="SQLParsing\**" />
+    <None Remove="TSQL\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
     <PackageReference Include="Google.Protobuf" Version="3.12.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.29.0" />

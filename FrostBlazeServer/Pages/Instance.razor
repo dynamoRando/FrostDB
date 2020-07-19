@@ -91,10 +91,7 @@
 
         Item.SelectedDatabaseName = e.Value.ToString();
 
-        var task = Item.FrostClient.GetDatabaseInfoAsync(Item.SelectedDatabaseName);
-        await task;
-
-        DatabaseInfo i = task.Result;
+        var i = Item.FrostClient.GetDatabaseInfo(Item.SelectedDatabaseName);
         if (i.Tables.Count > 0)
         {
             i.Tables.ForEach(t => Item.TableNames.Add(t.Item2));

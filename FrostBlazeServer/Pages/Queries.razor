@@ -45,9 +45,14 @@
 <textarea id="queryText" name="queryText" rows="10" cols="100" @bind="QueryText">
 </textarea>
 <input type="button" @onclick="ExecuteQuery" value="Execute Query" />
+<input type="button" @onclick="GetPlan" value="Get Query Plan" />
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
+<h2>Query Plan</h2>
+<textarea id="queryPlan" name="queryPlan" rows="10" cols="100" @bind="QueryPlan">
+</textarea>
+
 
 @code {
     private Instance instance;
@@ -59,6 +64,7 @@
     private string NewColumnForTable = string.Empty;
     private string QueryText = string.Empty;
     private string QueryResult = string.Empty;
+    private string QueryPlan = string.Empty;
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
         ColumnNames.Clear();
@@ -111,5 +117,11 @@
 
         QueryResult += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
 
+    }
+
+    private void GetPlan()
+    {
+        var result = FrostService.FrostClient.GetQueryPlan(QueryText);
+        QueryPlan = result.PlanText;
     }
 }

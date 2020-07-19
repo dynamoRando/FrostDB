@@ -1,0 +1,76 @@
+﻿@page "/instruction"
+
+@using Services
+@using FrostCommon.ConsoleMessages
+@using System.Diagnostics
+@inject Services.Client FrostService
+
+<Instance @ref="instance"></Instance>
+
+<h1>Queries</h1>
+
+<h2>Database</h2>
+<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName" />
+<h2>Table</h2>
+<select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
+    @foreach (var table in FrostService.TableNames)
+    {
+        <option value="@table">@table</option>
+    }
+</select>
+<h2>Table Columns</h2>
+<select name="tableColumnsSelected" multiple @bind="CurrentColumn">
+    @foreach (var column in ColumnNames)
+    {
+        <option value=@column>@column</option>
+    }
+</select>
+<h2>Table Participants</h2>
+<select name="tableParticipants" multiple @bind="SelectedParticipant">
+    @foreach (var participant in Participants)
+    {
+        <option value=@participant>@participant</option>
+    }
+</select>
+<h2>Instruction</h2>
+
+@code {
+    private Instance instance;
+    private string CurrentColumn = string.Empty;
+    private List<string> ColumnNames = new List<string>();
+    private string SelectedParticipant = string.Empty;
+    private string SelectedTableName = string.Empty;
+    private List<string> Participants = new List<string>();
+    private AcceptedContractInfo ContractInfo;
+
+    private void GetColumnInfoForTable(ChangeEventArgs e)
+    {
+        ColumnNames.Clear();
+        Debug.WriteLine("GetColumnNamesForTable");
+        Debug.WriteLine(e.Value.ToString());
+
+        SelectedTableName = e.Value.ToString();
+
+        TableInfo item = FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
+        if (item != null)
+        {
+            item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
+        }
+
+        GetParticipants();
+    }
+
+    private void GetParticipants()
+    {
+        ContractInfo = FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
+
+        if (ContractInfo != null)
+        {
+            Participants.Clear();
+            foreach (var p in ContractInfo.AcceptedContracts)
+            {
+                Participants.Add(p);
+            }
+        }
+    }
+}

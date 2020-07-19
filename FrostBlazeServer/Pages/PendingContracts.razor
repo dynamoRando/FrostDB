@@ -52,7 +52,7 @@
     private async Task LoadPendingContracts()
     {
         PendingContractsList.Clear();
-        PendingContractsInfo = await FrostService.FrostClient.GetProcessPendingContractInformationAsync();
+        PendingContractsInfo = FrostService.FrostClient.GetProcessPendingContractInformation();
         PendingContractsInfo.ForEach(contract => PendingContractsList.Add(contract.DatabaseName));
     }
 
