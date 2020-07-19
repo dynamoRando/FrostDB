@@ -1,6 +1,7 @@
 using FrostDbClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FrostBlazeServer.Services
 {
@@ -46,6 +47,6 @@ namespace FrostBlazeServer.Services
         public string SelectedPartialDatabaseName = string.Empty;
         public List<string> DatabaseNames = new List<string>();
         public List<string> PartialDatabaseNames = new List<string>();
-        public List<string> TableNames = new List<string>();
+        public List<string> TableNames = new List<string>();     
     }
 }

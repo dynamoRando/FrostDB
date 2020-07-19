@@ -12,7 +12,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SQLParsing\**" />
+    <Compile Remove="TSQL\**" />
+    <EmbeddedResource Remove="SQLParsing\**" />
+    <EmbeddedResource Remove="TSQL\**" />
+    <None Remove="SQLParsing\**" />
+    <None Remove="TSQL\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.12.3" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.29.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.29.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>

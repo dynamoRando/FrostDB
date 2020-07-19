@@ -11,7 +11,7 @@
 <h1>Queries</h1>
 
 <h2>Database</h2>
-<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName"/>
+<input type="text" id="currentDatabaseName" @bind="FrostService.SelectedDatabaseName" />
 <h2>Table</h2>
 <select id="tableNames" @onchange="GetColumnInfoForTable" value="SelectedTableName">
     @foreach (var table in FrostService.TableNames)
@@ -21,17 +21,17 @@
 </select>
 <h2>Table Columns</h2>
 <select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
-@foreach (var column in ColumnNames)
-{
-    <option value=@column>@column</option>
-}
+    @foreach (var column in ColumnNames)
+    {
+        <option value=@column>@column</option>
+    }
 </select>
 <h2>Table Participants</h2>
-<select name="tableParticipants" multiple @onchange="GetParticipants">
-@foreach (var participant in Participants)
-{
-    <option value=@participant>@participant</option>
-}
+<select name="tableParticipants" multiple @bind="SelectedParticipant">
+    @foreach (var participant in Participants)
+    {
+        <option value=@participant>@participant</option>
+    }
 </select>
 <h2>Example Query</h2>
 <textarea id="exampleQuery" name="exampleQuery" rows="6" cols="100">
@@ -44,10 +44,15 @@
 <h2>Query Text</h2>
 <textarea id="queryText" name="queryText" rows="10" cols="100" @bind="QueryText">
 </textarea>
-<input type="button" @onclick="ExecuteQuery" value="Execute Query"/>
+<input type="button" @onclick="ExecuteQuery" value="Execute Query" />
+<input type="button" @onclick="GetPlan" value="Get Query Plan" />
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
+<h2>Query Plan</h2>
+<textarea id="queryPlan" name="queryPlan" rows="10" cols="100" @bind="QueryPlan">
+</textarea>
+
 
 @code {
     private Instance instance;
@@ -59,6 +64,7 @@
     private string NewColumnForTable = string.Empty;
     private string QueryText = string.Empty;
     private string QueryResult = string.Empty;
+    private string QueryPlan = string.Empty;
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
         ColumnNames.Clear();
@@ -67,19 +73,20 @@
 
         SelectedTableName = e.Value.ToString();
 
-        FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
-        TableInfo item = null;
-        if (FrostService.FrostClient.Info.TableInfos.TryGetValue(SelectedTableName, out item))
+        TableInfo item = FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
+        if (item != null)
         {
             item.Columns.ForEach(column => ColumnNames.Add(column.Item1 + "-" + column.Item2.ToString()));
         }
+
+        GetParticipants();
     }
 
-    private void GetParticipants(ChangeEventArgs e)
+    private void GetParticipants()
     {
-        SelectedParticipant = e.Value.ToString();
+        ContractInfo = FrostService.FrostClient.GetAcceptedContractsForDb(FrostService.SelectedDatabaseName);
 
-        if (FrostService.FrostClient.Info.AcceptedContractInfos.TryGetValue(FrostService.SelectedDatabaseName, out ContractInfo))
+        if (ContractInfo != null)
         {
             Participants.Clear();
             foreach (var p in ContractInfo.AcceptedContracts)
@@ -89,10 +96,10 @@
         }
     }
 
-    private async Task ExecuteQuery()
+    private void ExecuteQuery()
     {
         string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
-        var result = await FrostService.FrostClient.ExecuteCommandAsync(finalQueryText);
+        var result = FrostService.FrostClient.ExecuteCommand(finalQueryText);
 
         if (result.IsSuccessful)
         {
@@ -110,5 +117,11 @@
 
         QueryResult += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
 
+    }
+
+    private void GetPlan()
+    {
+        var result = FrostService.FrostClient.GetQueryPlan(QueryText);
+        QueryPlan = result.PlanText;
     }
 }

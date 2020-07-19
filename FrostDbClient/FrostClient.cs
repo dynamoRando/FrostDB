@@ -13,22 +13,17 @@ namespace FrostDbClient
     public class FrostClient
     {
         #region Private Fields
-        double _queueTimeout = 10.0;
         string _localIpAddress;
         string _remoteIpAddress;
         int _remotePortNumber;
         int _localPortNumber;
-        Server _localServer;
-        MessageClientConsoleProcessor _processor;
         Location _local;
         Location _remote;
-        FrostClientInfo _info;
         EventManager _eventManager;
         Client _client;
         #endregion
 
         #region Public Properties
-        public FrostClientInfo Info => _info;
         public EventManager EventManager => _eventManager;
         public string RemoteIpAddress => _remoteIpAddress;
         public string LocalIpAddress => _localIpAddress;
@@ -56,29 +51,35 @@ namespace FrostDbClient
 
             _local = new Location(Guid.NewGuid(), _localIpAddress, _localPortNumber, "FrostDbClient");
             _remote = new Location(Guid.NewGuid(), _remoteIpAddress, _remotePortNumber, string.Empty);
-            _info = new FrostClientInfo();
-            _processor = new MessageClientConsoleProcessor(ref _info, ref _eventManager);
-
-            SetupServer();
         }
         #endregion
 
         #region Public Methods
-        public async Task<FrostPromptResponse> ExecuteCommandAsync(string command)
+        public void DisconnectClient()
+        {
+            try
+            {
+                Client.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public FrostPromptPlan GetQueryPlan(string command)
+        {
+            var result = new FrostPromptPlan();
+            var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Get_Plan, MessageActionType.Prompt));
+            return data.GetContentAs<FrostPromptPlan>();
+        }
+
+        public FrostPromptResponse ExecuteCommand(string command)
         {
             var result = new FrostPromptResponse();
-            var id = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                if (_info.Responses.ContainsKey(id))
-                {
-                    _info.Responses.TryRemove(id, out result);
-                }
-            }
-
-            return result;
+            var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Command, MessageActionType.Prompt));
+            return data.GetContentAs<FrostPromptResponse>();
         }
         public void AcceptContract(ContractInfo contract)
         {
@@ -95,35 +96,14 @@ namespace FrostDbClient
             SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Id, MessageActionType.Process));
         }
 
-        public void GetPartialDatabases()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
-        }
-        
-        // i can either call a method and then try and wait for an event to be recieved
-        public void GetDatabases()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
-        }
-
         public void GetTables(Guid? databaseId)
         {
             SendMessage(BuildMessage(databaseId.ToString(), MessageConsoleAction.Database.Get_Database_Tables, MessageActionType.Database));
         }
 
-        public void GetColumnInfo(string databaseName, string tableName, string columnName)
-        {
-            TableInfo item;
-            if (_info.TableInfos.TryGetValue(columnName, out item))
-            {
-                var column = item.Columns.Where(c => c.Item1 == columnName).First();
-                
-            }
-            throw new NotImplementedException();
-        }
-
         public void AddParticipantToDb(string ipAddress, string portNumber, string databaseName)
         {
+            // TO DO: update the UI to confirm that the message was sent
             ParticipantInfo info = new ParticipantInfo();
             info.IpAddress = ipAddress;
             info.PortNumber = Convert.ToInt32(portNumber);
@@ -143,52 +123,18 @@ namespace FrostDbClient
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Database.Update_Contract_Information, MessageActionType.Database));
         }
 
-        public void GetProcessPendingContractInformation()
-        {
-            SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
-        }
-
-        public async Task<List<ContractInfo>> GetProcessPendingContractInformationAsync()
+        public List<ContractInfo> GetProcessPendingContractInformation()
         {
             var list = new List<ContractInfo>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                if (_info.ProcessPendingContracts.ContainsKey(string.Empty))
-                {
-                    List<ContractInfo> removed = null;
-                    _info.ProcessPendingContracts.TryRemove(string.Empty, out removed);
-                    list = removed;
-                }
-            }
-
+            var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Pending_Process_Contracts, MessageActionType.Process));
+            list = data.GetContentAs<List<ContractInfo>>();
             return list;
         }
 
-        public void GetContractInformation(string databaseName)
+        public ContractInfo GetContractInformation(string databaseName)
         {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));  
-        }
-
-        public async Task<ContractInfo> GetContractInformationAsync(string databaseName)
-        {
-            var result = new ContractInfo();
-            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                if (_info.ContractInfos.ContainsKey(databaseName))
-                {
-                    ContractInfo removed = null;
-                    _info.ContractInfos.TryRemove(databaseName, out removed);
-                    result = removed;
-                }
-            }
-
-            return result;
+            var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Contract_Information, MessageActionType.Database));
+            return data.GetContentAs<ContractInfo>();
         }
 
         public void RemoveColumnFromTable(string databaseName, string tableName, string columnName)
@@ -240,156 +186,77 @@ namespace FrostDbClient
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Process.Remove_Datababase, MessageActionType.Process));
         }
 
-        public void GetTableInfo(string databaseName, string tableName)
-        {
-            DatabaseInfo item;
-            if (_info.DatabaseInfos.TryGetValue(databaseName, out item))
-            {
-                var table = item.Tables.Where(t => t.Item2 == tableName).First();
-                Guid? tableId = table.Item1;
-                GetTableInfo(item.Id, tableId);
-            }
-        }
-
-        public async Task<List<string>> GetTablesAsync(Guid? databaseId)
-        {
-            throw new NotImplementedException();
-        }
-
         // or, i can send a message and then check for when the data has come back and return to the caller
-        public async Task<List<string>> GetDatabasesAsync()
+        public List<string> GetDatabases()
         {
-            var result = new List<string>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                result = _info.DatabaseNames;
-            }
-
-            return result;
+            var response = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Databases, MessageActionType.Process));
+            return response.GetContentAs<List<string>>();
         }
 
-        public async Task<DatabaseInfo> GetDatabaseInfoAsync(string databaseName)
+        public DatabaseInfo GetDatabaseInfo(string databaseName)
         {
             var result = new DatabaseInfo();
-            var id = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
-
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                result = _info.DatabaseInfos.Where(d => d.Key == databaseName).First().Value;
-            }
-
+            var data = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
+            result = data.GetContentAs<DatabaseInfo>();
             return result;
         }
 
-        public async Task<List<string>> GetPartialDatabasesAsync()
+        public List<string> GetPartialDatabases()
         {
-            var result = new List<string>();
-            var id = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                result = _info.PartialDatabaseNames;
-            }
-
-            return result;
+            var data = SendMessage(BuildMessage(string.Empty, MessageConsoleAction.Process.Get_Partial_Databases, MessageActionType.Process));
+            return data.GetContentAs<List<string>>();
         }
 
-        public async Task<TableInfo> GetTableInfoAsync(Guid? databaseId, Guid? tableId, string tableName)
+        public AcceptedContractInfo GetAcceptedContractsForDb(string databaseName)
         {
-            var requestInfo = (database: databaseId, table: tableId);
-            var id = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
-
-            var result = new TableInfo();
-            bool gotData = await WaitForMessageAsync(id);
-
-            if (gotData)
-            {
-                if (_info.TableInfos.ContainsKey(tableName))
-                {
-                    _info.TableInfos.TryRemove(tableName, out result);
-                }
-            }
-
-            return result;
-        }
-
-        public void GetDatabaseInfo(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Database_Info, MessageActionType.Database));
-        }
-
-        public void GetAcceptedContractsForDb(string databaseName)
-        {
-            SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+            var result = SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Accepted_Contracts, MessageActionType.Database));
+            AcceptedContractInfo info = null;
+            info = result.GetContentAs<AcceptedContractInfo>();
+            return info;
         }
 
         public void GetPendingContractsForDb(string databaseName)
         {
             SendMessage(BuildMessage(databaseName, MessageConsoleAction.Database.Get_Pending_Contracts, MessageActionType.Database));
         }
-
-        public void Connect()
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Private Methods
-        private void GetTableInfo(Guid? databaseId, Guid? tableId)
+        private TableInfo GetTableInfo(Guid? databaseId, Guid? tableId)
         {
             var requestInfo = (database: databaseId, table: tableId);
-            SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            var result = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            TableInfo info = result.GetContentAs<TableInfo>();
+            return info;
+        }
+        
+        public TableInfo GetTableInfo(string databaseName, string tableName)
+        {
+            var requestInfo = (database: databaseName, tableName: tableName);
+            var data = SendMessage(BuildMessage(requestInfo, MessageConsoleAction.Table.Get_Table_Info, MessageActionType.Table));
+            var result = new TableInfo();
+            result = data.GetContentAs<TableInfo>();
+            return result;
         }
 
-        private async Task<bool> WaitForMessageAsync(Guid? id)
+        private Message SendMessage(Message message)
         {
-            return await Task.Run(() => WaitForMessage(id));
+            return _client.Send(message);
         }
-
-        private bool WaitForMessage(Guid? id)
+        private Message BuildMessage((string, string) tuple, string action, MessageActionType actionType)
         {
-            Stopwatch watch = new Stopwatch();
-            bool responseRecieved = false;
+            Message message = new Message(
+             destination: _remote,
+             origin: _local,
+             messageContent: string.Empty,
+             messageAction: action,
+             messageType: MessageType.Console,
+             messageActionType: actionType
+             );
 
-            watch.Start();
+            message.TwoStringTuple = tuple;
 
-            while (watch.Elapsed.TotalSeconds < _queueTimeout)
-            {
-                if (!_info.HasMessageId(id))
-                {
-                    responseRecieved = true;
-
-                    Debug.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-                    Console.WriteLine(watch.Elapsed.TotalSeconds.ToString());
-
-                    break;
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            watch.Stop();
-
-            return responseRecieved;
-        }
-
-        private Guid? SendMessage(Message message)
-        {
-            Guid? id = message.Id;
-            // this timeout should be part of a configuration or a param passed in
-            _info.AddToQueue(id);
-            // should this be done in a task?
-            Task.Run(() => _client.Send(message, ClientConstants.TimeOut));
-            return id;
+            return message;
         }
         private Message BuildMessage((Guid?, Guid?) tuple, string action, MessageActionType actionType)
         {
@@ -418,11 +285,6 @@ namespace FrostDbClient
                );
 
             return message;
-        }
-        private void SetupServer()
-        {
-            _localServer = new Server();
-            _localServer.Start(_localPortNumber, _localIpAddress, _processor);
         }
         #endregion
 

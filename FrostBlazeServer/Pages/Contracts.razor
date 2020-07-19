@@ -87,9 +87,9 @@
     const string _PARTICIPANT = "Participant";
     const string _PROCESS = "Process";
 
-    private async Task GetContractInformation(MouseEventArgs e)
+    private void GetContractInformation(MouseEventArgs e)
     {
-        var item = await FrostService.FrostClient.GetContractInformationAsync(FrostService.SelectedDatabaseName);
+        var item = FrostService.FrostClient.GetContractInformation(FrostService.SelectedDatabaseName);
         BindInfo(item);
         Info = item;
     }

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option csharp_namespace = "FrostCommon";
+
+service FrostGrpcService {
+  // Sends a greeting
+  rpc GetData(MessageSkeleton) returns (MessageSkeleton) {}
+}
+message MessageSkeleton {
+  string Text = 1;
+}
+

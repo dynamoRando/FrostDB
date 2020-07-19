@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FrostDB.Interface
 {
-    public interface IQuery
+    internal interface IQuery
     {
         public string DatabaseName { get; set; }
         public string TableName { get; set; }
