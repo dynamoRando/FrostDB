@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrostDB;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,26 +31,33 @@ public class SelectQueryPlanGenerator
         _statement = statement;
         var plan = new QueryPlan();
 
-        var endStatements = GetEndStatements(statement.Statements);
-
-        // if there was no where clause, then we just want to search the table
-        // add 1 search step to search just the table for the columns needed
-        if (endStatements.Count == 0)
-        {
-            
-        }
-
+        var endStatements = GetEndStatements(statement.Statements);      
         var searchEndSteps = GetSearchParts(endStatements);
         var booleanSteps = GetBooleanSteps(searchEndSteps);
 
         plan.Steps.AddRange(searchEndSteps);
         plan.Steps.AddRange(booleanSteps);
 
+        // if there was no where clause, then we just want to search the table
+        // add 1 search step to search just the table for the columns needed
+        if (endStatements.Count == 0)
+        {
+            plan.Steps.Add(GetTableStep(statement));
+        }
+
         return plan;
     }
     #endregion
 
     #region Private Methods
+    private TableStep GetTableStep(SelectStatement statement)
+    {
+        var step = new TableStep();
+        step.TableName = statement.Tables.First();
+        step.Columns.AddRange(statement.SelectList);
+
+        return step;
+    }
     private List<SearchStep> GetSearchParts(List<StatementPart> parts)
     {
         var result = new List<SearchStep>();
