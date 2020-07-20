@@ -125,4 +125,26 @@
         var result = FrostService.FrostClient.GetQueryPlan(QueryText);
         QueryPlan = result.PlanText;
     }
+
+    private void ExecuteQueryNew()
+    {
+        string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
+        var result = FrostService.FrostClient.ExecuteCommand(finalQueryText);
+
+        if (result.IsSuccessful)
+        {
+            QueryResult = $"Message: {result.Message} {Environment.NewLine}  Rows Affected:  {result.NumberOfRowsAffected.ToString()}";
+
+            if (result.JsonData.Length > 0)
+            {
+                QueryResult += Environment.NewLine + result.JsonData;
+            }
+        }
+        else
+        {
+            QueryResult = result.Message;
+        }
+
+        QueryResult += Environment.NewLine + "Last command executed: " + DateTime.Now.ToString();
+    }
 }

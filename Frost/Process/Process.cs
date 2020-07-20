@@ -231,6 +231,12 @@ namespace FrostDB
             return _queryManager.GetPlan(command.ToUpper());
         }
 
+        public FrostPromptResponse ExecuteQuery(string command)
+        {
+            var cmd = command.ToUpper();
+            throw new NotImplementedException();
+        }
+
         public FrostPromptResponse ExecuteCommand(string command)
         {
             FrostPromptResponse response = new FrostPromptResponse();

@@ -13,6 +13,9 @@ namespace FrostCommon
 
             public const string Get_Plan = "Get_Plan";
             public const string Get_Plan_Response = "Get_Plan_Response";
+
+            public const string Execute_Query = "Execute_Query";
+            public const string Execute_Query_Response = "Execute_Query_Response";
         }
 
         public static class Process
