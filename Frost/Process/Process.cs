@@ -233,6 +233,7 @@ namespace FrostDB
 
         public FrostPromptResponse ExecuteQuery(string command)
         {
+            FrostPromptResponse response = new FrostPromptResponse();
             var cmd = command.ToUpper();
             throw new NotImplementedException();
         }

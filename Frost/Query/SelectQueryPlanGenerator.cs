@@ -31,6 +31,14 @@ public class SelectQueryPlanGenerator
         var plan = new QueryPlan();
 
         var endStatements = GetEndStatements(statement.Statements);
+
+        // if there was no where clause, then we just want to search the table
+        // add 1 search step to search just the table for the columns needed
+        if (endStatements.Count == 0)
+        {
+            
+        }
+
         var searchEndSteps = GetSearchParts(endStatements);
         var booleanSteps = GetBooleanSteps(searchEndSteps);
 
