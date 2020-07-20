@@ -46,6 +46,7 @@
 </textarea>
 <input type="button" @onclick="ExecuteQuery" value="Execute Query" />
 <input type="button" @onclick="GetPlan" value="Get Query Plan" />
+<input type="button" @onclick="ExecuteQueryNew" value="Execute Query New" />
 <h2>Query Results</h2>
 <textarea id="queryResult" name="queryResult" rows="10" cols="100" @bind="QueryResult">
 </textarea>
@@ -129,7 +130,7 @@
     private void ExecuteQueryNew()
     {
         string finalQueryText = "USE " + FrostService.SelectedDatabaseName + ";" + QueryText;
-        var result = FrostService.FrostClient.ExecuteCommand(finalQueryText);
+        var result = FrostService.FrostClient.ExecuteCommandNew(finalQueryText);
 
         if (result.IsSuccessful)
         {
