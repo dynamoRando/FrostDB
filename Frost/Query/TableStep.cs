@@ -24,7 +24,16 @@ namespace FrostDB
 
         public string GetResultText()
         {
-            throw new NotImplementedException();
+            var result = string.Empty;
+
+            foreach(var column in Columns)
+            {
+                result += $"Searching column: {column}" + Environment.NewLine;
+            }
+
+            result += $"Searching table: {TableName}";
+
+            return result;
         }
     }
 }
