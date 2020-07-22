@@ -18,7 +18,7 @@ public class SearchStep : IPlanStep
     #endregion
 
     #region Constructors
-    public SearchStep() 
+    public SearchStep()
     {
         Id = Guid.NewGuid();
     }
@@ -77,24 +77,41 @@ public class SearchStep : IPlanStep
     private List<Row> CompareInt(string operation, string value, Table table)
     {
         var result = new List<Row>();
+        int item = Convert.ToInt32(value);
 
-        foreach(var row in table.Rows)
+        foreach (var row in table.Rows)
         {
-            if (operation.Equals(">"))
+            var rowdata = row.Get(_process);
+            rowdata.Values.ForEach(value =>
             {
-                int item = Convert.ToInt32(value);
-                var rowdata = row.Get(_process);
-                rowdata.Values.ForEach(value => 
-                { 
-                    if (value.ColumnName.Equals(Part.StatementColumnName))
+                if (value.ColumnName.Equals(Part.StatementColumnName))
+                {
+                    if (operation.Equals(">"))
                     {
                         if (Convert.ToInt32(value.Value) > item)
                         {
                             result.Add(rowdata);
                         }
                     }
-                });
-            }
+
+                    if (operation.Equals("<"))
+                    {
+                        if (Convert.ToInt32(value.Value) < item)
+                        {
+                            result.Add(rowdata);
+                        }
+                    }
+
+                    if (operation.Equals("="))
+                    {
+                        if (Convert.ToInt32(value.Value) == item)
+                        {
+                            result.Add(rowdata);
+                        }
+                    }
+
+                }
+            });
         }
 
         return result;
