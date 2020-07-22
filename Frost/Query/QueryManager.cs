@@ -34,13 +34,19 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public FrostPromptPlan GetPlan(string input)
+        public QueryPlan GetPlan(string input)
         {
             var promptPlan = new FrostPromptPlan();
             var statement = GetStatement(input);
-            var plan = _planGenerator.GeneratePlan(statement);
+            return _planGenerator.GeneratePlan(statement);
+        }
 
-            foreach(var step in plan.Steps)
+        public FrostPromptPlan GetPlanExplanation(string input)
+        {
+            var promptPlan = new FrostPromptPlan();
+            var plan = GetPlan(input);
+
+            foreach (var step in plan.Steps)
             {
                 promptPlan.PlanText += step.GetResultText();
             }

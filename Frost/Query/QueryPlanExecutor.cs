@@ -3,44 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using FrostDB;
+using FrostCommon;
+using FrostCommon.Net;
 
-namespace QueryParserConsole.Query
+public class QueryPlanExecutor
 {
-    public class QueryPlanExecutor
+    #region Private Fields
+    private Process _process;
+    #endregion
+
+    #region Public Properties
+    #endregion
+
+    #region Protected Methods
+    #endregion
+
+    #region Events
+    #endregion
+
+    #region Constructors
+    public QueryPlanExecutor() { }
+    public QueryPlanExecutor(Process process)
     {
-        #region Private Fields
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Protected Methods
-        #endregion
-
-        #region Events
-        #endregion
-
-        #region Constructors
-        #endregion
-
-        #region Public Methods
-        public void Execute(QueryPlan plan)
-        {
-            plan.Steps.OrderBy(s => s.Level);
-
-            Console.WriteLine("Executing Plan...");
-
-            foreach (var step in plan.Steps)
-            {
-                Console.WriteLine("Executing Step...");
-                Console.WriteLine($"Step Level: {step.Level.ToString()}");
-                step.GetResultText();
-            }
-        }
-        #endregion
-
-        #region Private Methods
-        #endregion
-
+        _process = process;
     }
+    #endregion
+
+    #region Public Methods
+    public FrostPromptResponse Execute(QueryPlan plan)
+    {
+        var result = new FrostPromptResponse();
+        foreach (var step in plan.Steps)
+        {
+            ExecuteStep(step);
+        }
+        throw new NotImplementedException();
+    }
+    #endregion
+
+    #region Private Methods
+    private void ExecuteStep(IPlanStep step)
+    {
+        step.GetResult();
+        throw new NotImplementedException();
+    }
+    #endregion
+
 }
+
