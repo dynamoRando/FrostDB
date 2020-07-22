@@ -45,7 +45,8 @@ public class QueryPlanExecutor
     #region Private Methods
     private void ExecuteStep(IPlanStep step)
     {
-        step.GetResult();
+        var result = step.GetResult();
+        
         throw new NotImplementedException();
     }
     #endregion
