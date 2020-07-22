@@ -55,6 +55,8 @@ public class BoolStep : IPlanStep
             rows = result1.Rows.Union(result2.Rows).ToList();
         }
 
+        result.Rows = rows;
+
         return result;
     }
 
