@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrostDB;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,6 +8,7 @@ public class SearchStep : IPlanStep
 {
     #region Private Fields
     StatementPart _part;
+    Process _process;
     #endregion
 
     #region Public Properties
@@ -27,8 +29,29 @@ public class SearchStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult()
+    public PlanResult GetResult(Process process, string databaseName)
     {
+        _process = process;
+
+        var result = new PlanResult();
+        var tableName = Part.StatementTableName;
+        var columnName = Part.StatementColumnName;
+        var operation = Part.StatementOperator;
+
+        if (_process.HasDatabase(databaseName))
+        {
+            var db = _process.GetDatabase(databaseName);
+            if (db.HasTable(tableName))
+            {
+                var table = db.GetTable(tableName);
+                if (table.HasColumn(columnName))
+                {
+                    var column = table.GetColumn(columnName);
+                    var type = column.DataType;
+                }
+            }
+        }
+
         throw new NotImplementedException();
     }
 
@@ -41,5 +64,8 @@ public class SearchStep : IPlanStep
 
         return item;
     }
+    #endregion
+
+    #region Private Methods
     #endregion
 }

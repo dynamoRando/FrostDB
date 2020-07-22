@@ -36,9 +36,11 @@ namespace FrostDB
         #region Public Methods
         public QueryPlan GetPlan(string input)
         {
-            var promptPlan = new FrostPromptPlan();
             var statement = GetStatement(input);
-            return _planGenerator.GeneratePlan(statement);
+            var databaseName = GetDatabaseName(input);
+            var plan = _planGenerator.GeneratePlan(statement, databaseName);
+            
+            return plan;
         }
 
         public FrostPromptPlan GetPlanExplanation(string input)
@@ -61,6 +63,19 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private string GetDatabaseName(string input)
+        {
+            string databaseName = string.Empty;
+
+            if (input.Contains("USE "))
+            {
+                var items = input.Split(";");
+                var words = items[0].Split(" ");
+                databaseName = words[1];
+            }
+
+            return databaseName;
+        }
         private IStatement GetStatement(string input)
         {
             AntlrInputStream inputStream = new AntlrInputStream(input);

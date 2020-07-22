@@ -36,16 +36,16 @@ public class QueryPlanExecutor
         var result = new FrostPromptResponse();
         foreach (var step in plan.Steps)
         {
-            ExecuteStep(step);
+            ExecuteStep(step, plan.DatabaseName);
         }
         throw new NotImplementedException();
     }
     #endregion
 
     #region Private Methods
-    private void ExecuteStep(IPlanStep step)
+    private void ExecuteStep(IPlanStep step, string databaseName)
     {
-        var result = step.GetResult();
+        var result = step.GetResult(_process, databaseName);
         
         throw new NotImplementedException();
     }

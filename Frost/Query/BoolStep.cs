@@ -1,10 +1,15 @@
-﻿using System;
+﻿using FrostDB;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 
 public class BoolStep : IPlanStep
 {
+    #region Private Properties
+    private Process _process;
+    #endregion
+
     #region Public Properties
     public Guid Id { get; set; }
     public int Level { get; set; }
@@ -24,9 +29,21 @@ public class BoolStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult()
+    public PlanResult GetResult(Process process, string databaseName)
     {
-        throw new NotImplementedException();
+        _process = process;
+        var result = new PlanResult();
+
+        var result1 = InputOne.GetResult(process, databaseName);
+        var result2 = InputTwo.GetResult(process, databaseName);
+
+        if (Boolean.Equals("AND"))
+        {
+            result.Rows.AddRange(result1.Rows);
+            result.Rows.AddRange(result2.Rows);
+        }
+
+        return result;
     }
 
     public string GetResultText()

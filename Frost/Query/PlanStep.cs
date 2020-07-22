@@ -12,6 +12,7 @@ public class PlanStep : IPlanStep
     string _tableName;
     Table _table;
     Column _column;
+    Process _process;
     #endregion
 
     #region Public Properties
@@ -38,8 +39,9 @@ public class PlanStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult()
+    public PlanResult GetResult(Process process, string databaseName)
     {
+        _process = process;
         throw new NotImplementedException();
     }
 

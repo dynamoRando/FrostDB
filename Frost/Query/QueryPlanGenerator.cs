@@ -16,6 +16,13 @@ namespace QueryParserConsole.Query
         #endregion
 
         #region Public Methods
+        public QueryPlan GeneratePlan(IStatement statement, string databaseName)
+        {
+            var plan = new QueryPlan();
+            plan = GeneratePlan(statement);
+            plan.DatabaseName = databaseName;
+            return plan;
+        }
         public QueryPlan GeneratePlan(IStatement statement)
         {
             var plan = new QueryPlan();
