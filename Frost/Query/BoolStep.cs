@@ -1,6 +1,8 @@
 ﻿using FrostDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 
@@ -8,6 +10,7 @@ public class BoolStep : IPlanStep
 {
     #region Private Properties
     private Process _process;
+    private string _databaseName;
     #endregion
 
     #region Public Properties
@@ -32,6 +35,9 @@ public class BoolStep : IPlanStep
     public PlanResult GetResult(Process process, string databaseName)
     {
         _process = process;
+        _databaseName = databaseName;
+
+        var rows = new List<Row>();
         var result = new PlanResult();
 
         var result1 = InputOne.GetResult(process, databaseName);
@@ -39,8 +45,14 @@ public class BoolStep : IPlanStep
 
         if (Boolean.Equals("AND"))
         {
-            result.Rows.AddRange(result1.Rows);
-            result.Rows.AddRange(result2.Rows);
+            // return rows where the condition is true for both parts
+            rows = result1.Rows.Intersect(result2.Rows).ToList();
+        }
+
+        if (Boolean.Equals("OR"))
+        {
+            // union returns both rows, removing duplicates
+            rows = result1.Rows.Union(result2.Rows).ToList();
         }
 
         return result;
@@ -66,5 +78,7 @@ public class BoolStep : IPlanStep
     #endregion
 
     #region Private Methods
+   
+
     #endregion
 }
