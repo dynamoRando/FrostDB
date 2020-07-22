@@ -34,9 +34,11 @@ public class SearchStep : IPlanStep
         _process = process;
 
         var result = new PlanResult();
+        var rows = new List<Row>();
         var tableName = Part.StatementTableName;
         var columnName = Part.StatementColumnName;
         var operation = Part.StatementOperator;
+        var value = Part.StatementValue;
 
         if (_process.HasDatabase(databaseName))
         {
@@ -48,6 +50,11 @@ public class SearchStep : IPlanStep
                 {
                     var column = table.GetColumn(columnName);
                     var type = column.DataType;
+
+                    if (type == Type.GetType("System.Int32"))
+                    {
+                        rows = CompareInt(operation, value, table);
+                    }
                 }
             }
         }
@@ -67,5 +74,30 @@ public class SearchStep : IPlanStep
     #endregion
 
     #region Private Methods
+    private List<Row> CompareInt(string operation, string value, Table table)
+    {
+        var result = new List<Row>();
+
+        foreach(var row in table.Rows)
+        {
+            if (operation.Equals(">"))
+            {
+                int item = Convert.ToInt32(value);
+                var rowdata = row.Get(_process);
+                rowdata.Values.ForEach(value => 
+                { 
+                    if (value.ColumnName.Equals(Part.StatementColumnName))
+                    {
+                        if (Convert.ToInt32(value.Value) > item)
+                        {
+                            result.Add(rowdata);
+                        }
+                    }
+                });
+            }
+        }
+
+        return result;
+    }
     #endregion
 }
