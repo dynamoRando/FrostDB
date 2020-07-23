@@ -194,18 +194,18 @@ public class SearchStep : IPlanStep
     private List<Row> CompareString(string operation, string value, Table table)
     {
         var result = new List<Row>();
-        string item = value;
+        string item = value.Replace("'", "").ToUpper();
 
         foreach (var row in table.Rows)
         {
             var rowdata = row.Get(_process);
             rowdata.Values.ForEach(value =>
             {
-                if (value.ColumnName.Equals(Part.StatementColumnName))
+                if (value.ColumnName.ToUpper().Equals(Part.StatementColumnName))
                 {
                     if (operation.Equals("="))
                     {
-                        if (Convert.ToString(value.Value) == item)
+                        if (Convert.ToString(value.Value).ToUpper() == item)
                         {
                             result.Add(rowdata);
                         }
