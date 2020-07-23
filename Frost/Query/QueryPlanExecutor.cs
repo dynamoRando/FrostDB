@@ -36,6 +36,7 @@ public class QueryPlanExecutor
         var result = new FrostPromptResponse();
         var resultString = string.Empty;
         bool planFailed = false;
+        var rowList = new List<Row>();
 
         resultString += " ------------ " + Environment.NewLine;
         int totalRows = 0;
@@ -52,11 +53,12 @@ public class QueryPlanExecutor
                 break;
             }
             totalRows += rows;
-            resultString += BuildResponse(stepResult);
+            rowList.AddRange(stepResult.Rows);
         }
 
         if (!planFailed)
         {
+            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns));
             resultString += " ------------ " + Environment.NewLine;
             result.Message = "Succeeded";
             result.IsSuccessful = true;
@@ -69,12 +71,35 @@ public class QueryPlanExecutor
             result.Message = resultString;
             result.NumberOfRowsAffected = 0;
         }
-        
+
         return result;
     }
     #endregion
 
     #region Private Methods
+    private List<Row> GetFinalColumns(List<Row> input, List<string> columns)
+    {
+        var result = new List<Row>();
+        Row x = null;
+
+        foreach (var row in input)
+        {
+            x = new Row();
+            foreach (var value in row.Values)
+            {
+                foreach(var column in columns)
+                {
+                    if (value.ColumnName.ToUpper() == column.ToUpper())
+                    {
+                        x.AddValue(null, value.Value, value.ColumnName, value.ColumnType);
+                    }
+                }
+            }
+            result.Add(x);
+        }
+
+        return result;
+    }
     private StepResult ExecuteStep(IPlanStep step, string databaseName, out int rowCount)
     {
         var result = step.GetResult(_process, databaseName);
@@ -82,11 +107,11 @@ public class QueryPlanExecutor
         return result;
     }
 
-    private string BuildResponse(StepResult input)
+    private string BuildResponse(List<Row> input)
     {
         string results = string.Empty;
 
-        var rows = input.Rows;
+        var rows = input;
         rows.ForEach(r =>
         {
             r.Values.ForEach(v =>
