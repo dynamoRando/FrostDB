@@ -46,6 +46,7 @@ public class SelectQueryPlanGenerator
         }
 
         // TO DO: We should make the final rows equal the columns in the SELECT statement
+        plan.Columns = statement.SelectList;
 
         return plan;
     }
