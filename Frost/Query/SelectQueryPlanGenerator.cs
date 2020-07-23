@@ -1,4 +1,5 @@
 ﻿using FrostDB;
+using FrostDB.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,19 @@ public class SelectQueryPlanGenerator
 
         // TO DO: We should make the final rows equal the columns in the SELECT statement
         plan.Columns = statement.SelectList;
+
+        int maxStep = 0;
+        var columnOutput = new ColumnOutputStep();
+        foreach(var step in plan.Steps)
+        {
+            if (step.Level > maxStep)
+            {
+                maxStep = step.Level;
+            }
+        }
+
+        columnOutput.Level = maxStep + 1;
+        
 
         return plan;
     }
