@@ -32,13 +32,13 @@ public class BoolStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult(Process process, string databaseName)
+    public StepResult GetResult(Process process, string databaseName)
     {
         _process = process;
         _databaseName = databaseName;
 
         var rows = new List<Row>();
-        var result = new PlanResult();
+        var result = new StepResult();
 
         var result1 = InputOne.GetResult(process, databaseName);
         var result2 = InputTwo.GetResult(process, databaseName);

@@ -118,6 +118,19 @@ namespace FrostDB
             row = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
             result = _store.Rows.Where(r => r.Id == rowId).FirstOrDefault();
 
+            if (row.IsLocal(_process))
+            {
+                foreach (var value in result.Values)
+                {
+                    // this can return null if we're on a remote host rather than the main host
+                    var item = GetColumn(value.ColumnId);
+                    if (item != null)
+                    {
+                        value.ColumnName = item.Name;
+                    }
+                }
+            }
+
             return result;
         }
 
@@ -256,17 +269,18 @@ namespace FrostDB
 
         public bool HasColumn(string columnName)
         {
-            return this.Columns.Any(c => c.Name == columnName);
+            return this.Columns.Any(c => c.Name.ToUpper() == columnName.ToUpper());
         }
 
         public Column GetColumn(Guid? id)
         {
-            return Columns.Where(c => c.Id == id).FirstOrDefault();
+            var column = Columns.Where(c => c.Id == id).FirstOrDefault();
+            return column;
         }
 
         public Column GetColumn(string columnName)
         {
-            return Columns.Where(c => c.Name == columnName).FirstOrDefault();
+            return Columns.Where(c => c.Name.ToUpper() == columnName.ToUpper()).FirstOrDefault();
         }
 
         public void AddColumn(string columnName, Type type)

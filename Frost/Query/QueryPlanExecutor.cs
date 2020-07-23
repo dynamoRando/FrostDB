@@ -34,20 +34,68 @@ public class QueryPlanExecutor
     public FrostPromptResponse Execute(QueryPlan plan)
     {
         var result = new FrostPromptResponse();
+        var resultString = string.Empty;
+        bool planFailed = false;
+
+        resultString += " ------------ " + Environment.NewLine;
+        int totalRows = 0;
+        int rows = 0;
+        StepResult stepResult = null;
+        plan.Steps.Reverse();
         foreach (var step in plan.Steps)
         {
-            ExecuteStep(step, plan.DatabaseName);
+            stepResult = ExecuteStep(step, plan.DatabaseName, out rows);
+            if (stepResult.IsValid == false)
+            {
+                planFailed = true;
+                resultString = stepResult.ErrorMessage;
+                break;
+            }
+            totalRows += rows;
+            resultString += BuildResponse(stepResult);
         }
-        throw new NotImplementedException();
+
+        if (!planFailed)
+        {
+            resultString += " ------------ " + Environment.NewLine;
+            result.Message = "Succeeded";
+            result.IsSuccessful = true;
+            result.JsonData = resultString;
+        }
+        else
+        {
+            result.IsSuccessful = false;
+            result.Message = resultString;
+        }
+
+        return result;
     }
     #endregion
 
     #region Private Methods
-    private void ExecuteStep(IPlanStep step, string databaseName)
+    private StepResult ExecuteStep(IPlanStep step, string databaseName, out int rowCount)
     {
         var result = step.GetResult(_process, databaseName);
-        
-        throw new NotImplementedException();
+        rowCount = result.Rows.Count();
+        return result;
+    }
+
+    private string BuildResponse(StepResult input)
+    {
+        string results = string.Empty;
+
+        var rows = input.Rows;
+        rows.ForEach(r =>
+        {
+            r.Values.ForEach(v =>
+            {
+                results += " { " + v.ColumnName + " : " + v.Value.ToString() + " } ";
+            });
+
+            results += Environment.NewLine;
+        });
+
+        return results;
     }
     #endregion
 

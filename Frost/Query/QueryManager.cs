@@ -4,6 +4,7 @@ using FrostCommon.Net;
 using QueryParserConsole.Query;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -36,8 +37,18 @@ namespace FrostDB
         #region Public Methods
         public QueryPlan GetPlan(string input)
         {
-            var statement = GetStatement(input);
-            var databaseName = GetDatabaseName(input);
+            var items = input.Split(';');
+            var databaseStatement = string.Empty;
+            var commandStatement = string.Empty;
+            if (items.Count() > 0)
+            {
+                databaseStatement = items[0];
+                commandStatement = items[1];
+            }
+
+            var databaseName = GetDatabaseName(databaseStatement);
+            var statement = GetStatement(commandStatement);
+            
             var plan = _planGenerator.GeneratePlan(statement, databaseName);
             
             return plan;

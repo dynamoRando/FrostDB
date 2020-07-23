@@ -39,7 +39,7 @@ public class PlanStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult(Process process, string databaseName)
+    public StepResult GetResult(Process process, string databaseName)
     {
         _process = process;
         throw new NotImplementedException();

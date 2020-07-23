@@ -29,11 +29,11 @@ public class SearchStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult(Process process, string databaseName)
+    public StepResult GetResult(Process process, string databaseName)
     {
         _process = process;
 
-        var result = new PlanResult();
+        var result = new StepResult();
         result.IsValid = true;
         result.ErrorMessage = string.Empty;
 

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-public class PlanResult : IPlanResult
+public class StepResult : IPlanResult
 {
     #region Public Properties
     public List<Row> Rows { get; set; }
@@ -12,12 +12,12 @@ public class PlanResult : IPlanResult
     #endregion
 
     #region Constructors
-    public PlanResult()
+    public StepResult()
     {
         Rows = new List<Row>();
     }
 
-    public PlanResult(List<Row> rows)
+    public StepResult(List<Row> rows)
     {
         Rows = rows;
     }
