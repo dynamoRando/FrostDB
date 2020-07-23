@@ -227,7 +227,7 @@ public class SearchStep : IPlanStep
             var rowdata = row.Get(_process);
             rowdata.Values.ForEach(value =>
             {
-                if (value.ColumnName.Equals(Part.StatementColumnName))
+                if (value.ColumnName.ToUpper().Equals(Part.StatementColumnName.ToUpper()))
                 {
                     if (operation.Equals(">"))
                     {

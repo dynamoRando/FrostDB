@@ -61,13 +61,15 @@ public class QueryPlanExecutor
             result.Message = "Succeeded";
             result.IsSuccessful = true;
             result.JsonData = resultString;
+            result.NumberOfRowsAffected = totalRows;
         }
         else
         {
             result.IsSuccessful = false;
             result.Message = resultString;
+            result.NumberOfRowsAffected = 0;
         }
-
+        
         return result;
     }
     #endregion
