@@ -45,6 +45,8 @@ public class SelectQueryPlanGenerator
             plan.Steps.Add(GetTableStep(statement));
         }
 
+        // TO DO: We should make the final rows equal the columns in the SELECT statement
+
         return plan;
     }
     #endregion
