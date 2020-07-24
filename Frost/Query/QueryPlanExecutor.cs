@@ -100,13 +100,13 @@ public class QueryPlanExecutor
         }
         var z = new List<Row>();
         z = result.Distinct(comparer).ToList();
-        rowCount = z.Count();
+        rowCount = z.Count;
         return z;
     }
     private StepResult ExecuteStep(IPlanStep step, string databaseName, out int rowCount)
     {
         var result = step.GetResult(_process, databaseName);
-        rowCount = result.Rows.Count();
+        rowCount = result.Rows.Count;
         return result;
     }
 
