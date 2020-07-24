@@ -58,7 +58,7 @@ public class QueryPlanExecutor
 
         if (!planFailed)
         {
-            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns));
+            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out totalRows));
             resultString += " ------------ " + Environment.NewLine;
             result.Message = "Succeeded";
             result.IsSuccessful = true;
@@ -77,14 +77,15 @@ public class QueryPlanExecutor
     #endregion
 
     #region Private Methods
-    private List<Row> GetFinalColumns(List<Row> input, List<string> columns)
+    private List<Row> GetFinalColumns(List<Row> input, List<string> columns,out int rowCount)
     {
         var result = new List<Row>();
         Row x = null;
+        RowQueryComparer comparer = new RowQueryComparer();
 
         foreach (var row in input)
         {
-            x = new Row();
+            x = new Row(Guid.Empty);
             foreach (var value in row.Values)
             {
                 foreach(var column in columns)
@@ -97,8 +98,10 @@ public class QueryPlanExecutor
             }
             result.Add(x);
         }
-
-        return result;
+        var z = new List<Row>();
+        z = result.Distinct(comparer).ToList();
+        rowCount = z.Count();
+        return z;
     }
     private StepResult ExecuteStep(IPlanStep step, string databaseName, out int rowCount)
     {

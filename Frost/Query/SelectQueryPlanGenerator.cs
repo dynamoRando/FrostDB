@@ -36,6 +36,23 @@ public class SelectQueryPlanGenerator
         var searchEndSteps = GetSearchParts(endStatements);
         var booleanSteps = GetBooleanSteps(searchEndSteps);
 
+        foreach(var step in booleanSteps)
+        {
+            SearchStep step1;
+            if (step.InputOne is SearchStep)
+            {
+                step1 = step.InputOne as SearchStep;
+                searchEndSteps.Remove(step1);
+            }
+
+            SearchStep step2;
+            if (step.InputTwo is SearchStep)
+            {
+                step2 = step.InputTwo as SearchStep;
+                searchEndSteps.Remove(step2);
+            }
+        }    
+
         plan.Steps.AddRange(searchEndSteps);
         plan.Steps.AddRange(booleanSteps);
 
@@ -289,11 +306,27 @@ public class SelectQueryPlanGenerator
                     }
                 }
             }
+            else if (totalBools == 1)
+            {
+                boolStep = new BoolStep();
+                boolStep.InputOne = steps[0];
+                boolStep.InputTwo = steps[1];
+                if (stepGrandParentText.Contains(" AND "))
+                {
+                    boolStep.Boolean = "AND";
+                }
+                if (stepGrandParentText.Contains(" OR "))
+                {
+                    boolStep.Boolean = "OR";
+                }
+            }
         }
 
         // we are an outermost term
         // NAME = BRIAN
-        if (stepParentText.Equals(stepGrandParentText) && boolStep is null)
+        if (stepParentText.Equals(stepGrandParentText) && boolStep is null
+            && stepParentText != _statement.WhereClauseWithWhiteSpace
+            )
         {
             if (boolSteps.Count > 0)
             {
@@ -336,6 +369,7 @@ public class SelectQueryPlanGenerator
             }
         }
 
+     
         if (boolStep != null)
         {
             DebugBoolStep(boolStep);

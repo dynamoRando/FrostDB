@@ -39,7 +39,7 @@ public class BoolStep : IPlanStep
 
         var rows = new List<Row>();
         var result = new StepResult();
-
+        
         var result1 = InputOne.GetResult(process, databaseName);
         var result2 = InputTwo.GetResult(process, databaseName);
 
@@ -56,7 +56,7 @@ public class BoolStep : IPlanStep
         }
 
         result.Rows = rows;
-
+        result.IsValid = true;
         return result;
     }
 
