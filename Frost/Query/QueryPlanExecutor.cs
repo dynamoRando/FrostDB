@@ -77,7 +77,7 @@ public class QueryPlanExecutor
     #endregion
 
     #region Private Methods
-    private List<Row> GetFinalColumns(List<Row> input, List<string> columns,out int rowCount)
+    private List<Row> GetFinalColumns(List<Row> input, List<string> columns, out int rowCount)
     {
         var result = new List<Row>();
         Row x = null;
@@ -88,7 +88,7 @@ public class QueryPlanExecutor
             x = new Row(Guid.Empty);
             foreach (var value in row.Values)
             {
-                foreach(var column in columns)
+                foreach (var column in columns)
                 {
                     if (value.ColumnName.ToUpper() == column.ToUpper())
                     {
