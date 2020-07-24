@@ -86,7 +86,7 @@ public class SelectQueryPlanGenerator
     #region Private Methods
     private TableStep GetTableStep(SelectStatement statement)
     {
-        var step = new TableStep();
+        var step = new TableStep(statement);
         step.TableName = statement.Tables.First();
         step.Columns.AddRange(statement.SelectList);
 
