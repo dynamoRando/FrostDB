@@ -23,6 +23,7 @@ namespace QueryParserConsole.Query
             plan.DatabaseName = databaseName;
             return plan;
         }
+
         public QueryPlan GeneratePlan(IStatement statement)
         {
             var plan = new QueryPlan();
