@@ -296,6 +296,11 @@ namespace FrostDB
             }
         }
 
+        public void AddAutoNumColumn(string columnName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemoveColumn(string columnName)
         {
             if (HasColumn(columnName))
