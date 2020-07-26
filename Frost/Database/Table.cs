@@ -326,7 +326,6 @@ namespace FrostDB
                 _identityId = seedNumber;
                 _identityColumnName = columnName;
                 
-
                 column = new Column(columnName, Type.GetType("System.Int64"));
                 _columns.Add(column);
 
