@@ -98,7 +98,33 @@ namespace FrostDB
             TSqlParserListenerExtended loader = new TSqlParserListenerExtended(new SelectStatement());
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
-            return loader.GetStatementAsSelect();
+            return GetStatementType(loader, input);
+        }
+
+        private IStatement GetStatementType(TSqlParserListenerExtended loader, string input)
+        {
+            IStatement result = null;
+            if (input.Contains("SELECT"))
+            {
+                result = loader.GetStatementAsSelect();
+            }
+
+            if (input.Contains("UPDATE"))      
+            {
+                result = loader.GetStatementAsUpdate();
+            }
+
+            if (input.Contains("INSERT"))
+            {
+                result = loader.GetStatementAsInsert();
+            }
+
+            if (input.Contains("DELETE"))
+            {
+                result = loader.GetStatementAsDelete();
+            }
+
+            return result;
         }
         #endregion
 

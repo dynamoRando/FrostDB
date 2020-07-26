@@ -1,5 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using FrostDB;
+using FrostDB.Query;
 using QueryParserConsole.Query;
 using System;
 using System.Collections.Generic;
@@ -42,6 +44,22 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     {
         return _statement as SelectStatement;
     }
+
+    public InsertStatement GetStatementAsInsert()
+    {
+        return _statement as InsertStatement;
+    }
+
+    public UpdateStatement GetStatementAsUpdate()
+    {
+        return _statement as UpdateStatement;
+    }
+
+    public DeleteStatement GetStatementAsDelete()
+    {
+        return _statement as DeleteStatement;
+    }
+
     public override void ExitSearch_condition([NotNull] TSqlParser.Search_conditionContext context)
     {
         base.ExitSearch_condition(context);
@@ -55,6 +73,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         _charStream = context.Start.InputStream;
         select.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
     }
+
     public override void EnterSelect_statement([NotNull] TSqlParser.Select_statementContext context)
     {
         base.EnterSelect_statement(context);
