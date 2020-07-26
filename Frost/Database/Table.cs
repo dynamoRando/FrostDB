@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FrostCommon.DataMessages;
+using System.Runtime.CompilerServices;
 
 namespace FrostDB
 {
@@ -29,6 +30,11 @@ namespace FrostDB
         private ContractValidator _contractValidator;
         private Process _process;
         private QueryParser _parser;
+        private bool _hasIdentity = false;
+        private Int64 _identityId = 0;
+        private Int64 _identityIncrement = 1;
+        private string _identityColumnName = string.Empty;
+        private Guid? _identityColumnId;
         #endregion
 
         #region Public Properties
@@ -88,6 +94,11 @@ namespace FrostDB
             _schema = (TableSchema)serializationInfo.GetValue
                 ("TableSchema", typeof(TableSchema));
             _parser = new QueryParser(_process);
+            _identityId = (Int64)serializationInfo.GetValue("TableIdentityId", typeof(Int64));
+            _identityIncrement = (Int64)serializationInfo.GetValue("TableIdentityIncrement", typeof(Int64));
+            _hasIdentity = (bool)serializationInfo.GetValue("TableHasIdentity", typeof(bool));
+            _identityColumnName = (string)serializationInfo.GetValue("TableIdentityColumnName", typeof(string));
+            _identityColumnId = (Guid?)serializationInfo.GetValue("TableIdentityColumnId", typeof(Guid?));
         }
         #endregion
 
@@ -283,7 +294,7 @@ namespace FrostDB
             return Columns.Where(c => c.Name.ToUpper() == columnName.ToUpper()).FirstOrDefault();
         }
 
-        public void AddColumn(string columnName, Type type)
+        public bool AddColumn(string columnName, Type type)
         {
             Column column;
             if (!HasColumn(columnName))
@@ -293,12 +304,43 @@ namespace FrostDB
 
                 _process.EventManager.TriggerEvent(EventName.Columm.Added,
                        CreateColumnAddedEventArgs(column));
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
-        public void AddAutoNumColumn(string columnName)
+        public bool AddAutoNumColumn(string columnName)
         {
-            throw new NotImplementedException();
+            return AddAutoNumColumn(columnName, _identityId, _identityIncrement);
+        }
+
+        public bool AddAutoNumColumn(string columnName, long seedNumber, long incrementNumber)
+        {
+            Column column;
+            if (!HasColumn(columnName))
+            {
+                _identityIncrement = incrementNumber;
+                _identityId = seedNumber;
+                _identityColumnName = columnName;
+                
+
+                column = new Column(columnName, Type.GetType("System.Int64"));
+                _columns.Add(column);
+
+                _identityColumnId = column.Id;
+                _hasIdentity = true;
+
+                _process.EventManager.TriggerEvent(EventName.Columm.Added,
+                     CreateColumnAddedEventArgs(column));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void RemoveColumn(string columnName)
@@ -317,6 +359,7 @@ namespace FrostDB
         {
             if (CheckInsertRules(form))
             {
+                form = HandleAutoNum(form);
                 if (form.Participant.Location.IsLocal(_process) || form.Participant.IsDatabase(DatabaseId))
                 {
                     AddRowLocally(form);
@@ -413,6 +456,11 @@ namespace FrostDB
                 typeof(Store));
             info.AddValue("TableSchema", _schema,
                 typeof(TableSchema));
+            info.AddValue("TableIdentityId", _identityId, typeof(Int64));
+            info.AddValue("TableIdentityIncrement", _identityIncrement, typeof(Int64));
+            info.AddValue("TableHasIdentity", _hasIdentity, typeof(bool));
+            info.AddValue("TableIdentityColumnName", _identityColumnName, typeof(string));
+            info.AddValue("TableIdentityColumnId", _identityColumnId, typeof(Guid?));
         }
         #endregion
 
@@ -684,6 +732,43 @@ namespace FrostDB
                 Table = this,
                 RowId = row.Id
             };
+        }
+
+        private RowForm HandleAutoNum(RowForm row)
+        {
+            if (_hasIdentity)
+            {
+                _identityId += _identityIncrement;
+
+                if (row.RowValues.Any(v => v.ColumnName == _identityColumnName))
+                {
+                    var value = row.RowValues.Where(k => k.ColumnName == _identityColumnName).First();
+                    if (value != null)
+                    {
+                        value.Value = _identityId;
+                    }
+                }
+                else
+                {
+                    RowValue identity = new RowValue(_identityColumnId, _identityId, _identityColumnName, Type.GetType("System.Int64"));
+                    row.RowValues.Add(identity);
+                }
+
+                if (row.Row.Values.Any(a => a.ColumnName == _identityColumnName))
+                {
+                    var item = row.Row.Values.Where(b => b.ColumnName == _identityColumnName).First();
+                    if (item != null)
+                    {
+                        item.Value = _identityId;
+                    }
+                }
+                else
+                {
+                    row.Row.AddValue(_identityColumnId, _identityId, _identityColumnName, Type.GetType("System.Int64"));
+                }
+            }
+
+            return row;
         }
 
         #endregion

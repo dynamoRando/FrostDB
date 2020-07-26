@@ -52,12 +52,13 @@
     TableName: <input type="text" id="newTableName" @bind="NewTableName" />
     <input type="button" @onclick="CreateNewTable" value="Create Table" />
     Add Column: <input type="text" id="newColumnName" @bind="NewColumnName" />
-    <select id="dataTypes" @bind="SelectedDataType">
-        <option value=@_dateTimeType> @_dateTimeType</option>
-        <option value=@_intType>@_intType</option>
-        <option value=@_floatType>@_floatType</option>
-        <option value=@_stringType>@_stringType</option>
-    </select>
+                <select id="dataTypes" @bind="SelectedDataType">
+                    <option value=@_dateTimeType> @_dateTimeType</option>
+                    <option value=@_intType>@_intType</option>
+                    <option value=@_floatType>@_floatType</option>
+                    <option value=@_stringType>@_stringType</option>
+                    <option value=@_identityType>@_identityType</option>
+                </select>
     <input type="button" @onclick="AddColumnToTable" value="Add Column To Table" />
     <input type="button" @onclick="ClearItemsFromTable" value="Reset Columns" />
     Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
@@ -74,6 +75,7 @@
     string _floatType = "System.Single";
     string _dateTimeType = "System.DateTime";
     string _stringType = "System.String";
+    string _identityType = "System.Int64";
     List<(string, Type)> _columns = new List<(string, Type)>();
     private string NewColumnForTable = string.Empty;
     private List<string> NewColumnsForTable = new List<string>();
