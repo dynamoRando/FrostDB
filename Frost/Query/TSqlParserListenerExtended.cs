@@ -41,8 +41,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     public override void EnterTable_name([NotNull] TSqlParser.Table_nameContext context)
     {
         base.EnterTable_name(context);
-        var select = GetStatementAsSelect();
-        select.Tables.Add(context.GetText());
+        _statement.Tables.Add(context.GetText());
     }
     public SelectStatement GetStatementAsSelect()
     {
@@ -68,21 +67,19 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     {
         base.ExitSearch_condition(context);
         // this will set the full statement on the final exit
-        var select = GetStatementAsSelect();
-        select.WhereClause = context.GetText();
+        _statement.WhereClause = context.GetText();
 
         int a = context.Start.StartIndex;
         int b = context.Stop.StopIndex;
         Interval interval = new Interval(a, b);
         _charStream = context.Start.InputStream;
-        select.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
+        _statement.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
     }
 
     public override void EnterSelect_statement([NotNull] TSqlParser.Select_statementContext context)
     {
         base.EnterSelect_statement(context);
-        var select = GetStatementAsSelect();
-        select.RawStatement = context.GetText();
+        _statement.RawStatement = context.GetText();
     }
 
     public override void EnterSelect_list([NotNull] TSqlParser.Select_listContext context)
@@ -109,9 +106,8 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.EnterPredicate(context);
         Console.WriteLine(context.GetText());
 
-        var select = GetStatementAsSelect();
         var part = new StatementPart();
-        part.StatementTableName = select.Tables.FirstOrDefault();
+        part.StatementTableName = _statement.Tables.FirstOrDefault();
         part.Text = context.GetText();
         part.StatementOrigin = "EnterPredicate";
 
@@ -139,7 +135,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         }
 
         part.ParseStatementPart();
-        select.Statements.Add(part);
+        _statement.Statements.Add(part);
     }
 
     // begin insert functions
