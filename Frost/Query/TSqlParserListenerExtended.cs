@@ -34,6 +34,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     #region Public Properties
     public CommonTokenStream TokenStream { get; set; }
+    public IStatement Statement => _statement;
     #endregion
 
     #region Public Methods

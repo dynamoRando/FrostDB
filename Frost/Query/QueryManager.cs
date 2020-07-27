@@ -98,7 +98,7 @@ namespace FrostDB
             TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(input), input);
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
-            return GetStatementType(input);
+            return loader.Statement;
         }
 
         private IStatement GetStatementType(string input)
