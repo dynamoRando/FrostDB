@@ -8,7 +8,8 @@ namespace FrostDB
     {
         public const string Select = "SELECT";
         public const string Use = "USE";
-        public const string Insert = "INSERT INTO";
+        public const string Insert_Into = "INSERT INTO";
+        public const string Insert = "INSERT";
         public const string Update = "UPDATE";
         public const string For = "FOR";
         public const string Delete = "DELETE";

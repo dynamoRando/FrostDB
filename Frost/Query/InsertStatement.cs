@@ -6,5 +6,11 @@ namespace FrostDB
 {
     public class InsertStatement : IStatement
     {
+        public List<string> Tables { get; set; }
+
+        public InsertStatement()
+        {
+            Tables = new List<string>();
+        }
     }
 }

@@ -15,17 +15,20 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     #region Private Fields
     IStatement _statement;
     ICharStream _charStream;
+    private string _input;
     #endregion
 
     #region Constructors
     public TSqlParserListenerExtended() { }
-    public TSqlParserListenerExtended(IStatement statement)
+    public TSqlParserListenerExtended(IStatement statement, string input)
     {
         _statement = statement;
+        _input = input;
     }
-    public TSqlParserListenerExtended(SelectStatement statement)
+    public TSqlParserListenerExtended(SelectStatement statement, string input)
     {
         _statement = statement;
+        _input = input;
     }
     #endregion
 
@@ -104,6 +107,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     {
         base.EnterPredicate(context);
         Console.WriteLine(context.GetText());
+
         var select = GetStatementAsSelect();
         var part = new StatementPart();
         part.StatementTableName = select.Tables.FirstOrDefault();
@@ -136,6 +140,74 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         part.ParseStatementPart();
         select.Statements.Add(part);
     }
+
+    // begin insert functions
+    public override void EnterInsert_statement([NotNull] TSqlParser.Insert_statementContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterFull_table_name(TSqlParser.Full_table_nameContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterColumn_name_list(TSqlParser.Column_name_listContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterSimple_id(TSqlParser.Simple_idContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterInsert_statement_value(TSqlParser.Insert_statement_valueContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterExpression_list(TSqlParser.Expression_listContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterPrimitive_expression(TSqlParser.Primitive_expressionContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    // end insert functions
+
+    // begin update functions
+    public override void EnterUpdate_statement(TSqlParser.Update_statementContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterUpdate_elem(TSqlParser.Update_elemContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterSearch_condition_list(TSqlParser.Search_condition_listContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+    // end update functions
+
+    // begin delete functions
+    public override void EnterDelete_statement(TSqlParser.Delete_statementContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterDelete_statement_from(TSqlParser.Delete_statement_fromContext context)
+    {
+        Console.WriteLine(context.GetText());
+    }
+    // end delete functions
+
     #endregion
 
     #region Private Properties

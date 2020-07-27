@@ -95,33 +95,33 @@ namespace FrostDB
             TSqlParser parser = new TSqlParser(tokens);
             var parseTree = parser.dml_clause();
             ParseTreeWalker walker = new ParseTreeWalker();
-            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(new SelectStatement());
+            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(input), input);
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
-            return GetStatementType(loader, input);
+            return GetStatementType(input);
         }
 
-        private IStatement GetStatementType(TSqlParserListenerExtended loader, string input)
+        private IStatement GetStatementType(string input)
         {
             IStatement result = null;
-            if (input.Contains("SELECT"))
+            if (input.Contains(QueryKeywords.Select))
             {
-                result = loader.GetStatementAsSelect();
+                result = new SelectStatement();
             }
 
-            if (input.Contains("UPDATE"))      
+            if (input.Contains(QueryKeywords.Update))      
             {
-                result = loader.GetStatementAsUpdate();
+                result = new UpdateStatement();
             }
 
-            if (input.Contains("INSERT"))
+            if (input.Contains(QueryKeywords.Insert))
             {
-                result = loader.GetStatementAsInsert();
+                result = new InsertStatement();
             }
 
-            if (input.Contains("DELETE"))
+            if (input.Contains(QueryKeywords.Delete))
             {
-                result = loader.GetStatementAsDelete();
+                result = new DeleteStatement();
             }
 
             return result;
