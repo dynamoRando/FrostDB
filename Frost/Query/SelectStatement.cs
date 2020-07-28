@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrostDB;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,21 +7,20 @@ using System.Text;
 public class SelectStatement : IStatement
 {
     #region Public Properties
-    public List<StatementPart> Statements { get; set; }
     public List<string> SelectList { get; set; }
     public string SelectListRaw { get; set; }
     public string RawStatement { get; set; }
-    public string WhereClause { get; set; }
-    public string WhereClauseWithWhiteSpace { get; set; }
     public List<string> Tables { get; set; }
+    public WhereClause WhereClause { get; set; }
+    public bool HasWhereClause => CheckIfHasWhereClause();
     #endregion
 
     #region Constructors
     public SelectStatement()
     {
-        Statements = new List<StatementPart>();
         SelectList = new List<string>();
         Tables = new List<string>();
+        WhereClause = new WhereClause();
     }
     #endregion
 
@@ -28,5 +28,16 @@ public class SelectStatement : IStatement
     #endregion
 
     #region Private Properties
+    private bool CheckIfHasWhereClause()
+    {
+        if (WhereClause.WhereClauseWithWhiteSpace.Length > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #endregion
 }

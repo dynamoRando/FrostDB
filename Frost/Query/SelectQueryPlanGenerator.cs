@@ -32,7 +32,7 @@ public class SelectQueryPlanGenerator
         _statement = statement;
         var plan = new QueryPlan();
 
-        var endStatements = GetEndStatements(statement.Statements);      
+        var endStatements = GetEndStatements(statement.WhereClause.Conditions);      
         var searchEndSteps = GetSearchParts(endStatements);
         var booleanSteps = GetBooleanSteps(searchEndSteps);
 
@@ -325,7 +325,7 @@ public class SelectQueryPlanGenerator
         // we are an outermost term
         // NAME = BRIAN
         if (stepParentText.Equals(stepGrandParentText) && boolStep is null
-            && stepParentText != _statement.WhereClauseWithWhiteSpace
+            && stepParentText != _statement.WhereClause.WhereClauseWithWhiteSpace
             )
         {
             if (boolSteps.Count > 0)
@@ -340,7 +340,7 @@ public class SelectQueryPlanGenerator
                     boolStep.Level = maxLevel++;
 
                     // need to find the boolean operator
-                    var text = _statement.WhereClauseWithWhiteSpace;
+                    var text = _statement.WhereClause.WhereClauseWithWhiteSpace;
                     foreach (var k in steps)
                     {
                         if (k.Part == step.Part)

@@ -6,16 +6,53 @@ namespace FrostDB
 {
     public class DeleteStatement : IStatement
     {
-        public List<string> Tables { get; set; }
-        public List<StatementPart> Statements { get; set; }
-        public string WhereClauseWithWhiteSpace { get; set; }
-        public string RawStatement { get; set; }
-        public string WhereClause { get; set; }
 
+        #region Private Fields
+        #endregion
+
+        #region Public Properties
+        public string RawStatement { get; set; }
+        public bool HasWhereClause => CheckIfHasWhereClause();
+        public List<string> Tables { get; set; }
+        public WhereClause WhereClause { get; set; }
+        #endregion
+
+        #region Protected Methods
+        #endregion
+
+        #region Events
+        #endregion
+
+        #region Constructors
         public DeleteStatement()
         {
             Tables = new List<string>();
-            Statements = new List<StatementPart>();
+            WhereClause = new WhereClause();
         }
+        #endregion
+
+        #region Public Methods
+        #endregion
+
+        #region Private Methods
+        private bool CheckIfHasWhereClause()
+        {
+            if (WhereClause.WhereClauseWithWhiteSpace.Length > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
+
+
+
+
+
+
+
     }
 }

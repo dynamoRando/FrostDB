@@ -7,18 +7,16 @@ namespace FrostDB
     public class InsertStatement : IStatement
     {
         public List<string> Tables { get; set; }
-        public List<StatementPart> Statements { get; set; }
+        public WhereClause WhereClause { get; set; }
         public string RawStatement { get; set; }
-        public string WhereClause { get; set; }
-        public string WhereClauseWithWhiteSpace { get; set; }
-
+        public bool HasWhereClause { get; set; }
         public List<string> ColumnNames { get; set; }
         public List<InsertStatementGroup> InsertValues {get; set;}
 
         public InsertStatement()
         {
             Tables = new List<string>();
-            Statements = new List<StatementPart>();
+            WhereClause = new WhereClause();
             ColumnNames = new List<string>();
             InsertValues = new List<InsertStatementGroup>();
         }
