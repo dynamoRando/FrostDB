@@ -12,10 +12,15 @@ namespace FrostDB
         public string WhereClause { get; set; }
         public string WhereClauseWithWhiteSpace { get; set; }
 
+        public List<string> ColumnNames { get; set; }
+        public List<string> InsertValues {get; set;}
+
         public InsertStatement()
         {
             Tables = new List<string>();
             Statements = new List<StatementPart>();
+            ColumnNames = new List<string>();
+            InsertValues = new List<string>();
         }
     }
 }

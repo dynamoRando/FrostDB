@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace QueryParserConsole.Query
+namespace FrostDB
 {
+
+
     public class QueryPlanGenerator
     {
         #region Private Fields
@@ -30,6 +32,12 @@ namespace QueryParserConsole.Query
             if (statement is SelectStatement)
             {
                 plan = new SelectQueryPlanGenerator().GeneratePlan((statement as SelectStatement));
+            }
+
+            if (statement is InsertStatement)
+            {
+                var insert = statement as InsertStatement;
+                throw new NotImplementedException();
             }
 
             return plan;

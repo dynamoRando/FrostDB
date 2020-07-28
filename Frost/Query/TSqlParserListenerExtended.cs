@@ -2,7 +2,6 @@
 using Antlr4.Runtime.Misc;
 using FrostDB;
 using FrostDB.Query;
-using QueryParserConsole.Query;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,6 +60,26 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     public DeleteStatement GetStatementAsDelete()
     {
         return _statement as DeleteStatement;
+    }
+
+    public bool IsStatementInsert()
+    {
+        return _statement is InsertStatement;
+    }
+
+    public bool IsStatementSelect()
+    {
+        return _statement is SelectStatement;
+    }
+
+    public bool IsStatementUpdate()
+    {
+        return _statement is UpdateStatement;
+    }
+
+    public bool IsStatementDelete()
+    {
+        return _statement is DeleteStatement;
     }
 
     public override void ExitSearch_condition([NotNull] TSqlParser.Search_conditionContext context)
@@ -141,32 +160,57 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     // begin insert functions
     public override void EnterInsert_statement([NotNull] TSqlParser.Insert_statementContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterInsert_statement(context);
+
+        var statement = GetStatementAsInsert();
+        statement.RawStatement = context.GetText();
     }
 
     public override void EnterFull_table_name(TSqlParser.Full_table_nameContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterFull_table_name(context);
+
+        if (IsStatementInsert())
+        {
+            var statement = GetStatementAsInsert();
+            statement.Tables.Add(context.GetText());
+        }
     }
 
     public override void EnterColumn_name_list(TSqlParser.Column_name_listContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterColumn_name_list(context);
+
+        if (IsStatementInsert())
+        {
+            var statement = GetStatementAsInsert();
+            statement.ColumnNames.AddRange(context.GetText().Split(",").ToList());
+        }
     }
 
     public override void EnterSimple_id(TSqlParser.Simple_idContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterSimple_id(context);
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterInsert_statement_value(TSqlParser.Insert_statement_valueContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterInsert_statement_value(context);
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterExpression_list(TSqlParser.Expression_listContext context)
     {
-        Console.WriteLine(context.GetText());
+        base.EnterExpression_list(context);
+
+        if (IsStatementInsert())
+        {
+            var statement = GetStatementAsInsert();
+            statement.InsertValues.AddRange(context.GetText().Split(",").ToList());
+        }
+
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterPrimitive_expression(TSqlParser.Primitive_expressionContext context)
