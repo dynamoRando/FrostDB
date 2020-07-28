@@ -207,7 +207,9 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         if (IsStatementInsert())
         {
             var statement = GetStatementAsInsert();
-            statement.InsertValues.AddRange(context.GetText().Split(",").ToList());
+            var group = new InsertStatementGroup();
+            group.Values.AddRange(context.GetText().Split(",").ToList());
+            statement.InsertValues.Add(group);
         }
 
         Debug.WriteLine(context.GetText());
