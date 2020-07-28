@@ -86,6 +86,7 @@ namespace FrostConsoleHarness
                 if (file != null)
                 {
                     var text = File.ReadAllText(file.FullName);
+                    text = text.Replace(Environment.NewLine, string.Empty);
                     var items = Configurator.LoadExistingHarness(text);
                     Manager.AddInstances(items);
                 }
