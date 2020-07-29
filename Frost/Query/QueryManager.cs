@@ -66,10 +66,6 @@ namespace FrostDB
             return promptPlan;
         }
 
-        public FrostPromptResponse GetResult(string input)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Private Methods
@@ -88,16 +84,41 @@ namespace FrostDB
         }
         private IStatement GetStatement(string input)
         {
-            AntlrInputStream inputStream = new AntlrInputStream(input);
+            IStatement result;
+            var sqlStatement = string.Empty;
+
+            if (HasParticipant(input))
+            {
+                sqlStatement = RemoveParticipantKeyword(input);
+            }
+            else
+            {
+                sqlStatement = input;
+            }
+                        
+            AntlrInputStream inputStream = new AntlrInputStream(sqlStatement);
             TSqlLexer lexer = new TSqlLexer(inputStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             TSqlParser parser = new TSqlParser(tokens);
             var parseTree = parser.dml_clause();
             ParseTreeWalker walker = new ParseTreeWalker();
-            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(input), input);
+            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(sqlStatement), sqlStatement);
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
-            return loader.Statement;
+
+            if (loader.Statement is InsertStatement)
+            {
+                var item = loader.Statement as InsertStatement;
+                item.Participant = GetParticipant(input);
+                item.ParticipantString = GetParticipantString(input);
+                result = item;
+            }
+            else
+            {
+                result = loader.Statement;
+            }
+
+            return result;
         }
 
         private IStatement GetStatementType(string input)
@@ -124,6 +145,31 @@ namespace FrostDB
             }
 
             return result;
+        }
+
+        private string GetParticipantString(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string RemoveParticipantKeyword(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool HasParticipant(string input)
+        {
+            if (input.Contains(QueryKeywords.For_Participant))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private Participant GetParticipant(string input)
+        {
+            var participant = new Participant();
+            throw new NotImplementedException();
         }
         #endregion
 

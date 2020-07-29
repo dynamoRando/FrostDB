@@ -13,10 +13,8 @@ namespace FrostDB
         public bool HasWhereClause { get; set; }
         public List<string> ColumnNames { get; set; }
         public List<InsertStatementGroup> InsertValues { get; set; }
-
         public string ParticipantString { get; set; }
-
-        public Location Location { get; set; }
+        public Participant Participant { get; set; }
 
         public InsertStatement()
         {
