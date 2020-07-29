@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -11,7 +12,11 @@ namespace FrostDB
         public string RawStatement { get; set; }
         public bool HasWhereClause { get; set; }
         public List<string> ColumnNames { get; set; }
-        public List<InsertStatementGroup> InsertValues {get; set;}
+        public List<InsertStatementGroup> InsertValues { get; set; }
+
+        public string ParticipantString { get; set; }
+
+        public Location Location { get; set; }
 
         public InsertStatement()
         {
