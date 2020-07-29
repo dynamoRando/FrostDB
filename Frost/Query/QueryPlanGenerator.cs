@@ -4,8 +4,6 @@ using System.Text;
 
 namespace FrostDB
 {
-
-
     public class QueryPlanGenerator
     {
         #region Private Fields
@@ -20,8 +18,7 @@ namespace FrostDB
         #region Public Methods
         public QueryPlan GeneratePlan(IStatement statement, string databaseName)
         {
-            var plan = new QueryPlan();
-            plan = GeneratePlan(statement);
+            var plan = GeneratePlan(statement);
             plan.DatabaseName = databaseName;
             return plan;
         }
