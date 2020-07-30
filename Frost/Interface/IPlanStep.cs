@@ -7,6 +7,6 @@ public interface IPlanStep
 {
     Guid Id { get; set; }
     int Level { get; set; }
-    public StepResult GetResult(Process process, string databaseName);
-    public string GetResultText();
+    StepResult GetResult(Process process, string databaseName);
+    string GetResultText();
 }
