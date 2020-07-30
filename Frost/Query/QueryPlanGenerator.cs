@@ -7,12 +7,17 @@ namespace FrostDB
     public class QueryPlanGenerator
     {
         #region Private Fields
+        Process _process;
         #endregion
 
         #region Public Properties
         #endregion
 
         #region Constructors
+        public QueryPlanGenerator(Process process)
+        {
+            _process = process;
+        }
         #endregion
 
         #region Public Methods
@@ -28,13 +33,13 @@ namespace FrostDB
             var plan = new QueryPlan();
             if (statement is SelectStatement)
             {
-                plan = new SelectQueryPlanGenerator().GeneratePlan((statement as SelectStatement));
+                plan = new SelectQueryPlanGenerator(_process).GeneratePlan((statement as SelectStatement));
             }
 
             if (statement is InsertStatement)
             {
                 var insert = statement as InsertStatement;
-                plan = new InsertQueryPlanGenerator().GeneratePlan((statement as InsertStatement));
+                plan = new InsertQueryPlanGenerator(_process).GeneratePlan((statement as InsertStatement));
             }
 
             return plan;

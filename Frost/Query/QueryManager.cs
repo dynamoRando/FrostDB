@@ -30,7 +30,7 @@ namespace FrostDB
         public QueryManager(Process process)
         {
             _process = process;
-            _planGenerator = new QueryPlanGenerator();
+            _planGenerator = new QueryPlanGenerator(_process);
         }
         #endregion
 

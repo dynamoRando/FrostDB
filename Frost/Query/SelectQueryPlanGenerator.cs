@@ -11,6 +11,7 @@ public class SelectQueryPlanGenerator
 {
     #region Private Fields
     SelectStatement _statement;
+    Process _process;
     int _level = 0;
     #endregion
 
@@ -24,6 +25,13 @@ public class SelectQueryPlanGenerator
     #endregion
 
     #region Constructors
+    public SelectQueryPlanGenerator()
+    {}
+
+    public SelectQueryPlanGenerator(Process process)
+    {
+        _process = process;
+    }
     #endregion
 
     #region Public Methods
