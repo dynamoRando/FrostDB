@@ -34,7 +34,7 @@ namespace FrostDB
             if (statement is InsertStatement)
             {
                 var insert = statement as InsertStatement;
-                throw new NotImplementedException();
+                plan = new InsertQueryPlanGenerator().GeneratePlan((statement as InsertStatement));
             }
 
             return plan;
