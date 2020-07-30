@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Net;
 
 namespace FrostDB
 {
@@ -149,12 +150,27 @@ namespace FrostDB
 
         private string GetParticipantString(string input)
         {
-            throw new NotImplementedException();
+            string result = string.Empty;
+            if (input.Contains(QueryKeywords.For_Participant))
+            {
+                int keywordIndex = input.IndexOf(QueryKeywords.For_Participant);
+                var participantString = input.Substring(keywordIndex + QueryKeywords.For_Participant.Length - input.Length).Trim();
+                result = participantString;
+            }
+
+            return result;
         }
 
         private string RemoveParticipantKeyword(string input)
         {
-            throw new NotImplementedException();
+            var result = string.Empty;
+            if (HasParticipant(input))
+            {
+                var indexOfParticipant = input.IndexOf(QueryKeywords.For_Participant);
+                result = input.Substring(0, indexOfParticipant);
+            }
+            
+            return result;
         }
 
         private bool HasParticipant(string input)
@@ -169,7 +185,23 @@ namespace FrostDB
         private Participant GetParticipant(string input)
         {
             var participant = new Participant();
-            throw new NotImplementedException();
+            var items = input.Split(":");
+            if (items.Length == 2)
+            {
+                var ipAddress = items[0];
+                var portNumber = items[1];
+
+                IPAddress address;
+                IPAddress.TryParse(ipAddress, out address);
+
+                if (address != null)
+                {
+                    participant.Location.IpAddress = ipAddress;
+                    participant.Location.PortNumber = Convert.ToInt32(portNumber);
+                }
+            }
+
+            return participant;
         }
         #endregion
 
