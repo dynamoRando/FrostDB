@@ -110,7 +110,7 @@ namespace FrostDB
             if (loader.Statement is InsertStatement)
             {
                 var item = loader.Statement as InsertStatement;
-                item.Participant = GetParticipant(input);
+                item.Participant = GetParticipant(GetParticipantString(input));
                 item.ParticipantString = GetParticipantString(input);
                 result = item;
             }
@@ -167,9 +167,9 @@ namespace FrostDB
             if (HasParticipant(input))
             {
                 var indexOfParticipant = input.IndexOf(QueryKeywords.For_Participant);
-                result = input.Substring(0, indexOfParticipant);
+                result = input.Substring(0, indexOfParticipant).Trim();
             }
-            
+
             return result;
         }
 
