@@ -17,6 +17,7 @@ public class StepResult : IPlanResult
     {
         Rows = new List<Row>();
         IsValid = true;
+        RowsAffected = 0;
     }
 
     public StepResult(List<Row> rows)

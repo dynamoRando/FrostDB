@@ -52,6 +52,14 @@ public class QueryPlanExecutor
                 resultString = stepResult.ErrorMessage;
                 break;
             }
+            else
+            {
+                if (stepResult.RowsAffected > 0)
+                {
+                    rows = stepResult.RowsAffected;
+                }
+            }
+            
             totalRows += rows;
             rowList.AddRange(stepResult.Rows);
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Net;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -155,7 +156,7 @@ namespace FrostDB
             if (input.Contains(QueryKeywords.For_Participant))
             {
                 int keywordIndex = input.IndexOf(QueryKeywords.For_Participant);
-                var participantString = input.Substring(keywordIndex + QueryKeywords.For_Participant.Length - input.Length).Trim();
+                var participantString = input.Substring(keywordIndex + QueryKeywords.For_Participant.Length).Trim();
                 result = participantString;
             }
 
@@ -185,7 +186,7 @@ namespace FrostDB
 
         private Participant GetParticipant(string input)
         {
-            var participant = new Participant();
+            Participant participant = null;
             var items = input.Split(":");
             if (items.Length == 2)
             {
@@ -197,8 +198,7 @@ namespace FrostDB
 
                 if (address != null)
                 {
-                    participant.Location.IpAddress = ipAddress;
-                    participant.Location.PortNumber = Convert.ToInt32(portNumber);
+                    participant = new Participant(new Location(Guid.NewGuid(), ipAddress, Convert.ToInt32(portNumber), string.Empty));
                 }
             }
 
