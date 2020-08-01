@@ -9,6 +9,7 @@ public class StepResult : IPlanResult
     public List<Row> Rows { get; set; }
     public bool IsValid { get; set; }
     public string ErrorMessage { get; set; }
+    public int RowsAffected { get; set; }
     #endregion
 
     #region Constructors

@@ -1,6 +1,7 @@
 using FrostDB;
 using System;
-
+using System.Collections.Generic;
+using System.Collections;
 
 public class InsertStepRemote : IPlanStep
 {
@@ -11,6 +12,8 @@ public class InsertStepRemote : IPlanStep
     public Guid Id { get; set; }
     public int Level { get; set; }
     public Participant Participant { get; set; }
+    public List<string> Columns { get; set; }
+    public List<string> Values { get; set; }
     #endregion
 
     #region Constructors
