@@ -14,6 +14,8 @@ public class InsertStepRemote : IPlanStep
     public Participant Participant { get; set; }
     public List<string> Columns { get; set; }
     public List<string> Values { get; set; }
+    public string TableName { get; set; }
+    public string DatabaseName { get; set; }
     #endregion
 
     #region Constructors

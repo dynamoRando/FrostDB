@@ -15,6 +15,7 @@ namespace FrostDB
         public List<InsertStatementGroup> InsertValues { get; set; }
         public string ParticipantString { get; set; }
         public Participant Participant { get; set; }
+        public string DatabaseName { get; set; }
 
         public InsertStatement()
         {

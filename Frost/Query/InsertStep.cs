@@ -7,15 +7,15 @@ public class InsertStep : IPlanStep
 {
     #region Private Fields
     Process _process;
-    string _databaseName;
-    string _tableName;
     #endregion
 
     #region Public Properties
     public Guid Id { get; set; }
     public int Level { get; set; }
     public List<string> Columns { get; set; }
-    public List<string> Values { get; set;}
+    public List<string> Values { get; set; }
+    public string TableName { get; set; }
+    public string DatabaseName { get; set; }
     #endregion
 
     #region Constructors
