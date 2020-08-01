@@ -6,6 +6,7 @@ using System.Collections;
 public class InsertStepRemote : IPlanStep
 {
     #region Private Fields
+    Process _process;
     #endregion
 
     #region Public Properties
@@ -28,7 +29,70 @@ public class InsertStepRemote : IPlanStep
     #region Public Methods
     public StepResult GetResult(Process process, string databaseName)
     {
-        throw new NotImplementedException();
+        _process = process;
+        var result = new StepResult();
+        Table table = null;
+        Database database = null;
+        if (_process.HasDatabase(DatabaseName))
+        {
+            database = _process.GetDatabase(DatabaseName) as Database;
+            if (database.HasTable(TableName))
+            {
+                table = database.GetTable(TableName);
+                bool hasAllColumns = true;
+
+                foreach (var columnName in Columns)
+                {
+                    if (!table.HasColumn(columnName))
+                    {
+                        result.IsValid = false;
+                        result.ErrorMessage = $"Column: {columnName} not found";
+                        hasAllColumns = false;
+                    }
+
+                    if (!hasAllColumns)
+                    {
+                        break;
+                    }
+                }
+
+                if (hasAllColumns)
+                {
+                    if (Columns.Count == Values.Count)
+                    {
+                        Participant p = database.GetParticipant(Participant.Location.IpAddress, Participant.Location.PortNumber);
+                        var row = table.GetNewRow(p.Id);
+                        foreach (var value in Values)
+                        {
+                            int valueIndex = Values.IndexOf(value);
+                            var col = table.GetColumn(Columns[valueIndex]);
+
+                            row.Row.AddValue(col.Id, value, col.Name, col.DataType);
+                        }
+                        table.AddRow(row);
+                        result.RowsAffected++;
+                        result.IsValid = true;
+                    }
+                    else
+                    {
+                        result.IsValid = false;
+                        result.ErrorMessage = "Column Value Count Mismatch";
+                    }
+                }
+            }
+            else
+            {
+                result.IsValid = false;
+                result.ErrorMessage = $"Table: {TableName} not found";
+            }
+        }
+        else
+        {
+            result.IsValid = false;
+            result.ErrorMessage = $"Database: {DatabaseName} not found";
+        }
+
+        return result;
     }
 
     public string GetResultText()

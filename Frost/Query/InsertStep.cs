@@ -31,7 +31,68 @@ public class InsertStep : IPlanStep
     public StepResult GetResult(Process process, string databaseName)
     {
         _process = process;
-        throw new NotImplementedException();
+        var result = new StepResult();
+        Table table = null;
+        if (_process.HasDatabase(DatabaseName))
+        {
+            var db = _process.GetDatabase(DatabaseName);
+            if (db.HasTable(TableName))
+            {
+                table = db.GetTable(TableName);
+                bool hasAllColumns = true;
+
+                foreach(var columnName in Columns)
+                {
+                    if (!table.HasColumn(columnName))
+                    {
+                        result.IsValid = false;
+                        result.ErrorMessage = $"Column: {columnName} not found";
+                        hasAllColumns = false;
+                    }
+
+                    if (!hasAllColumns)
+                    {
+                        break;
+                    }
+                }
+
+                if (hasAllColumns)
+                {
+                    if (Columns.Count == Values.Count)
+                    {
+                        var row = table.GetNewRowForLocal();
+                        foreach(var value in Values)
+                        {
+                            int valueIndex = Values.IndexOf(value);
+                            var col = table.GetColumn(Columns[valueIndex]);
+
+                           
+                            row.Row.AddValue(col.Id, value, col.Name, col.DataType);
+                        }
+                        table.AddRow(row);
+                        result.RowsAffected++;
+                        result.IsValid = true;
+                    }
+                    else
+                    {
+                        result.IsValid = false;
+                        result.ErrorMessage = "Column Value Count Mismatch";
+                    }
+                }
+            }
+            else
+            {
+                result.IsValid = false;
+                result.ErrorMessage = $"Table: {TableName} not found";
+            }
+        }
+        else
+        {
+            result.IsValid = false;
+            result.ErrorMessage = $"Database: {DatabaseName} not found";
+        }
+
+        return result;
     }
 
     public string GetResultText()
