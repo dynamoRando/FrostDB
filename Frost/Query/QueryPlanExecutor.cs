@@ -41,6 +41,7 @@ public class QueryPlanExecutor
         resultString += " ------------ " + Environment.NewLine;
         int totalRows = 0;
         int rows = 0;
+        int buildRows = 0;
         StepResult stepResult = null;
         plan.Steps.Reverse();
         foreach (var step in plan.Steps)
@@ -59,19 +60,26 @@ public class QueryPlanExecutor
                     rows = stepResult.RowsAffected;
                 }
             }
-            
+
             totalRows += rows;
             rowList.AddRange(stepResult.Rows);
         }
 
         if (!planFailed)
         {
-            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out totalRows));
+            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out buildRows));
             resultString += " ------------ " + Environment.NewLine;
             result.Message = "Succeeded";
             result.IsSuccessful = true;
             result.JsonData = resultString;
-            result.NumberOfRowsAffected = totalRows;
+            if (buildRows > 0)
+            {
+                result.NumberOfRowsAffected = buildRows;
+            }
+            else
+            {
+                result.NumberOfRowsAffected = totalRows;
+            }
         }
         else
         {
