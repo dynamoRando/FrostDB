@@ -114,6 +114,10 @@ namespace FrostDB
                 item.Participant = GetParticipant(GetParticipantString(input));
                 item.ParticipantString = GetParticipantString(input);
                 item.DatabaseName = databaseName;
+                if (item.Participant is null)
+                {
+                    item.Participant = new Participant(_process.GetLocation());
+                }
                 result = item;
             }
             else

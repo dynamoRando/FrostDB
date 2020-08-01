@@ -23,6 +23,7 @@ namespace FrostDB
             WhereClause = new WhereClause();
             ColumnNames = new List<string>();
             InsertValues = new List<InsertStatementGroup>();
+            Participant = new Participant();
         }
     }
 
