@@ -97,7 +97,18 @@ public class InsertStepRemote : IPlanStep
 
     public string GetResultText()
     {
-        throw new NotImplementedException();
+        string result = string.Empty;
+        result += $"For remote participant {Participant.Location.IpAddress}:{Participant.Location.PortNumber.ToString()} " + Environment.NewLine;
+        result += $"Insert into Database:Table - {DatabaseName} : {TableName}" + Environment.NewLine;
+
+        foreach (var value in Values)
+        {
+            var intPos = Values.IndexOf(value);
+            var columnName = Columns[intPos];
+            result += $"Inserting into column {columnName} value: {value}" + Environment.NewLine;
+        }
+
+        return result;
     }
     #endregion
 

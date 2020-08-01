@@ -42,6 +42,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.EnterTable_name(context);
         _statement.Tables.Add(context.GetText());
     }
+    
     public SelectStatement GetStatementAsSelect()
     {
         return _statement as SelectStatement;

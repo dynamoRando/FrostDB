@@ -41,7 +41,7 @@ public class InsertStep : IPlanStep
                 table = db.GetTable(TableName);
                 bool hasAllColumns = true;
 
-                foreach(var columnName in Columns)
+                foreach (var columnName in Columns)
                 {
                     if (!table.HasColumn(columnName))
                     {
@@ -61,12 +61,12 @@ public class InsertStep : IPlanStep
                     if (Columns.Count == Values.Count)
                     {
                         var row = table.GetNewRowForLocal();
-                        foreach(var value in Values)
+                        foreach (var value in Values)
                         {
                             int valueIndex = Values.IndexOf(value);
                             var col = table.GetColumn(Columns[valueIndex]);
 
-                           
+
                             row.Row.AddValue(col.Id, value, col.Name, col.DataType);
                         }
                         table.AddRow(row);
@@ -97,7 +97,17 @@ public class InsertStep : IPlanStep
 
     public string GetResultText()
     {
-        throw new NotImplementedException();
+        string result = string.Empty;
+        result += $"Insert into Database:Table - {DatabaseName} : {TableName}" + Environment.NewLine;
+
+        foreach (var value in Values)
+        {
+            var intPos = Values.IndexOf(value);
+            var columnName = Columns[intPos];
+            result += $"Inserting into column {columnName} value: {value}" + Environment.NewLine;
+        }
+
+        return result;
     }
     #endregion
 

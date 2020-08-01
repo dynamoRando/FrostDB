@@ -47,7 +47,7 @@ namespace FrostDB
             }
 
             var databaseName = GetDatabaseName(databaseStatement);
-            var statement = GetStatement(commandStatement);
+            var statement = GetStatement(commandStatement, databaseName);
             
             var plan = _planGenerator.GeneratePlan(statement, databaseName);
             
@@ -83,7 +83,7 @@ namespace FrostDB
 
             return databaseName;
         }
-        private IStatement GetStatement(string input)
+        private IStatement GetStatement(string input, string databaseName)
         {
             IStatement result;
             var sqlStatement = string.Empty;
@@ -112,6 +112,7 @@ namespace FrostDB
                 var item = loader.Statement as InsertStatement;
                 item.Participant = GetParticipant(GetParticipantString(input));
                 item.ParticipantString = GetParticipantString(input);
+                item.DatabaseName = databaseName;
                 result = item;
             }
             else
