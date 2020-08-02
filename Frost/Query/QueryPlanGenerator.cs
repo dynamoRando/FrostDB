@@ -38,8 +38,17 @@ namespace FrostDB
 
             if (statement is InsertStatement)
             {
-                var insert = statement as InsertStatement;
                 plan = new InsertQueryPlanGenerator(_process).GeneratePlan((statement as InsertStatement));
+            }
+
+            if (statement is UpdateStatement)
+            {
+                plan = new UpdateQueryPlanGenerator(_process).GeneratePlan((statement as UpdateStatement));
+            }
+
+            if (statement is DeleteStatement)
+            {
+                plan = new DeleteQueryPlanGenerator(_process).GeneratePlan((statement as DeleteStatement));
             }
 
             return plan;
