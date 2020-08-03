@@ -39,9 +39,55 @@ public class UpdateStep : IPlanStep
     }
     public StepResult GetResult(Process process, string databaseName)
     {
+        var result = new StepResult();
+        var resultRows = new List<Row>();
         // if we have an input step then we need to get the rows from the input step and then 
         // update those rows and save back to the database
-        throw new NotImplementedException();
+        if (HasInputStep)
+        {
+            var resultStep = InputStep.GetResult(_process, DatabaseName);
+            foreach (var row in resultStep.Rows)
+            {
+                foreach (var value in row.Values)
+                {
+                    if (value.ColumnName == ColumnName)
+                    {
+                        value.Value = Value;
+                    }
+                }
+
+                var reference = new RowReference();
+                reference.RowId = row.Id;
+
+                _process.GetDatabase(DatabaseName).GetTable(TableName).UpdateRow(reference, row.Values);
+            }
+            resultRows = resultStep.Rows;
+        }
+        else
+        {
+            var table = _process.GetDatabase(DatabaseName).GetTable(TableName);
+            var rows = table.GetAllRows();
+            foreach (var row in rows)
+            {
+                var reference = new RowReference();
+                reference.RowId = row.Id;
+
+                foreach (var value in row.Values)
+                {
+                    if (value.ColumnName == ColumnName)
+                    {
+                        value.Value = Value;
+                    }
+                }
+
+                table.UpdateRow(reference, row.Values);
+            }
+
+            resultRows = rows;
+        }
+
+        result.Rows = resultRows;
+        return result;
     }
 
     public string GetResultText()
