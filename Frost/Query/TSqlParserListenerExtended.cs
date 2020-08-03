@@ -256,7 +256,18 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     public override void EnterSearch_condition_list(TSqlParser.Search_condition_listContext context)
     {
-        Console.WriteLine(context.GetText());
+        if (IsStatementUpdate())
+        {
+            var statement = GetStatementAsUpdate();
+            if (statement.WhereClause is null)
+            {
+                statement.WhereClause = new WhereClause();
+            }
+
+            statement.WhereClause.WhereClauseText = context.GetText();
+
+        }
+        Debug.WriteLine(context.GetText());
     }
     // end update functions
 
