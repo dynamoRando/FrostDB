@@ -34,10 +34,17 @@ public class SelectQueryPlanGenerator
     #endregion
 
     #region Public Methods
+    // TO DO: refactor
     public QueryPlan GeneratePlan(SelectStatement statement)
     {
         _statement = statement;
         var plan = new QueryPlan();
+
+        if (statement.HasWhereClause)
+        {
+            var whereClauseGenerator = new WhereClausePlanGenerator(_process);
+            plan.Steps.AddRange(whereClauseGenerator.GetPlanSteps(statement.WhereClause));
+        }
 
         var endStatements = GetEndStatements(statement.WhereClause.Conditions);      
         var searchEndSteps = GetSearchParts(endStatements);
