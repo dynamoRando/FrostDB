@@ -32,6 +32,7 @@ namespace FrostDB
         #region Constructors
         public UpdateStatement()
         {
+            IsValid = true;
             Tables = new List<string>();
             WhereClause = new WhereClause();
             Elements = new List<UpdateStatementElement>();
