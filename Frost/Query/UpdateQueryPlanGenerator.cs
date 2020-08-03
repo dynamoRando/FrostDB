@@ -20,6 +20,7 @@ public class UpdateQueryPlanGenerator
     #region Public Methods
      public QueryPlan GeneratePlan(UpdateStatement statement)
      {
+         statement.ParseElements();
          throw new NotImplementedException();
      }
     #endregion

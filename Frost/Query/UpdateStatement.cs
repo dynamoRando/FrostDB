@@ -39,7 +39,16 @@ namespace FrostDB
         #region Public Methods
         public void ParseElements()
         {
+            foreach(var element in Elements)
+            {
+                var items = element.RawStringWithWhitespace.Split('=');
+                if (items.Length > 2)
+                {
+                    
+                }
+            }
 
+            throw new NotImplementedException();
         }
         #endregion
 
