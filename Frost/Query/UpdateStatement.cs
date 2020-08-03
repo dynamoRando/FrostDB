@@ -42,13 +42,13 @@ namespace FrostDB
             foreach(var element in Elements)
             {
                 var items = element.RawStringWithWhitespace.Split('=');
-                if (items.Length > 2)
+                if (items.Length == 2)
                 {
-                    
+                    element.ColumnName = items[0].Trim();
+                    element.Operator = "=";
+                    element.Value = items[1].Trim().Replace("'", string.Empty);
                 }
             }
-
-            throw new NotImplementedException();
         }
         #endregion
 
