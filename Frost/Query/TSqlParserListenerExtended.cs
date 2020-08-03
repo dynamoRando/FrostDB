@@ -296,8 +296,9 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             Interval i = new Interval(start, end);
             return _charStream.GetText(i);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine(ex.ToString());
             return string.Empty;
         }
     }
