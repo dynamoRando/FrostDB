@@ -2,14 +2,15 @@ using System;
 using FrostDB;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class UpdateQueryPlanGenerator
 {
     #region Private Fields
     private Process _process;
-    
+
     #endregion
-    
+
     #region Public Properties
     #endregion
 
@@ -21,14 +22,14 @@ public class UpdateQueryPlanGenerator
     #endregion
 
     #region Public Methods
-     public QueryPlan GeneratePlan(UpdateStatement statement)
-     {
-         var result = new QueryPlan();
-         statement.ParseElements();
-         result.Steps.AddRange(GetWhereClauseSteps(statement));
-         result.Steps.AddRange(GetUpdateSteps(statement));
-         return result;
-     }
+    public QueryPlan GeneratePlan(UpdateStatement statement)
+    {
+        var result = new QueryPlan();
+        statement.ParseElements();
+        result.Steps.AddRange(GetWhereClauseSteps(statement));
+        result.Steps.AddRange(GetUpdateSteps(statement));
+        return result;
+    }
     #endregion
 
     #region Private Methods
@@ -38,11 +39,20 @@ public class UpdateQueryPlanGenerator
     }
     private List<IPlanStep> GetWhereClauseSteps(UpdateStatement statement)
     {
+        var result = new List<IPlanStep>();
+
         if (statement.HasWhereClause)
         {
-            throw new NotImplementedException();
+            foreach (var condition in statement.WhereClause.Conditions)
+            {
+               var step = new SearchStep(condition);
+               step.DatabaseName = statement.DatabaseName;
+               statement.MaxStepLevel++;
+               step.Level = statement.MaxStepLevel;
+               result.Add(step);
+            }
         }
-        throw new NotImplementedException();
+        return result;
     }
     #endregion
 }

@@ -15,6 +15,7 @@ public class SearchStep : IPlanStep
     public Guid Id { get; set; }
     public int Level { get; set; }
     public StatementPart Part => _part;
+    public string DatabaseName {get; set;}
     #endregion
 
     #region Constructors
