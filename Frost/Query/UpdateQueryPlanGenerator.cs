@@ -8,7 +8,7 @@ public class UpdateQueryPlanGenerator
 {
     #region Private Fields
     private Process _process;
-
+    private int _level;
     #endregion
 
     #region Public Properties
@@ -18,6 +18,7 @@ public class UpdateQueryPlanGenerator
     public UpdateQueryPlanGenerator(Process process)
     {
         _process = process;
+        _level = 0;
     }
     #endregion
 
@@ -31,12 +32,27 @@ public class UpdateQueryPlanGenerator
         // generate the plan steps to find the rows that apply to a WHERE clause
         // and then either return those rows or take an action on them (DELETE, or UPDATE)
         result.Steps.AddRange(GetWhereClauseSteps(statement));
+        _level = GetMaxLevel(result.Steps);
         result.Steps.AddRange(GetUpdateSteps(statement));
         return result;
     }
     #endregion
 
     #region Private Methods
+    private int GetMaxLevel(List<IPlanStep> steps)
+    {
+        int maxLevel = 0;
+        foreach(var step in steps)
+        {
+            if (step.Level > maxLevel)
+            {
+                maxLevel = step.Level;
+            }
+        }
+
+        return maxLevel;
+    }
+    // TO DO: We need to figure out how to input the rows we wish to affect
     private List<IPlanStep> GetUpdateSteps(UpdateStatement statement)
     {
         var result = new List<IPlanStep>();
@@ -48,6 +64,8 @@ public class UpdateQueryPlanGenerator
             step.DatabaseName = element.DatabaseName;
             step.ColumnName = element.ColumnName;
             step.Value = element.Value;
+            _level++;
+            step.Level = _level;
             result.Add(step);
         }
 
@@ -59,14 +77,8 @@ public class UpdateQueryPlanGenerator
 
         if (statement.HasWhereClause)
         {
-            foreach (var condition in statement.WhereClause.Conditions)
-            {
-               var step = new SearchStep(condition);
-               step.DatabaseName = statement.DatabaseName;
-               statement.MaxStepLevel++;
-               step.Level = statement.MaxStepLevel;
-               result.Add(step);
-            }
+            var whereGenerator = new WhereClausePlanGenerator(_process, _level);
+            result.AddRange(whereGenerator.GetPlanSteps(statement.WhereClause));
         }
         return result;
     }
