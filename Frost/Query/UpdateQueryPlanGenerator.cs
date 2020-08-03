@@ -35,6 +35,8 @@ public class UpdateQueryPlanGenerator
     #region Private Methods
     private List<IPlanStep> GetUpdateSteps(UpdateStatement statement)
     {
+        var result = new List<IPlanStep>();
+
         throw new NotImplementedException();
     }
     private List<IPlanStep> GetWhereClauseSteps(UpdateStatement statement)
