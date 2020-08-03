@@ -15,6 +15,7 @@ namespace FrostDB
         public bool HasWhereClause => CheckIfHasWhereClause();
         public string RawStatement { get; set; }
         public WhereClause WhereClause { get; set; }
+        public List<UpdateStatementElement> Elements { get; set; }
         #endregion
 
         #region Protected Methods
@@ -28,6 +29,7 @@ namespace FrostDB
         {
             Tables = new List<string>();
             WhereClause = new WhereClause();
+            Elements = new List<UpdateStatementElement>();
         }
         #endregion
 

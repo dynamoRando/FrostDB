@@ -177,6 +177,12 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             var statement = GetStatementAsInsert();
             statement.Tables.Add(context.GetText());
         }
+
+        if (IsStatementUpdate())
+        {
+            var statement = GetStatementAsUpdate();
+            statement.Tables.Add(context.GetText());
+        }
     }
 
     public override void EnterColumn_name_list(TSqlParser.Column_name_listContext context)
@@ -227,12 +233,25 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     // begin update functions
     public override void EnterUpdate_statement(TSqlParser.Update_statementContext context)
     {
-        Console.WriteLine(context.GetText());
-    }
+        if (IsStatementUpdate())
+        {
+            var statement = GetStatementAsUpdate();
+            statement.RawStatement  = context.GetText();
+        }
 
+        Debug.WriteLine(context.GetText());
+    }
     public override void EnterUpdate_elem(TSqlParser.Update_elemContext context)
     {
-        Console.WriteLine(context.GetText());
+        if (IsStatementUpdate())
+        {
+            var statement = GetStatementAsUpdate();
+            var element = new UpdateStatementElement();
+            element.RawString = context.GetText();
+            statement.Elements.Add(element);
+        }
+
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterSearch_condition_list(TSqlParser.Search_condition_listContext context)
