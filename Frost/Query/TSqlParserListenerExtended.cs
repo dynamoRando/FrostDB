@@ -248,6 +248,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             var statement = GetStatementAsUpdate();
             var element = new UpdateStatementElement();
             element.RawString = context.GetText();
+            element.RawStringWithWhitespace = GetWhitespaceStringFromTokenInterval(context.SourceInterval);
             statement.Elements.Add(element);
         }
 

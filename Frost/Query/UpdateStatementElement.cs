@@ -8,6 +8,7 @@ public class UpdateStatementElement
 
     #region Public Properties
     public string RawString { get; set; }
+    public string RawStringWithWhitespace { get; set; }
     public string ColumnName { get; set; }
     public string TableName { get; set; }
     public string Operator { get; set; }
