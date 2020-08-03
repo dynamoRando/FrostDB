@@ -46,6 +46,19 @@ namespace FrostDB.Extensions
             }
         }
 
+        public static bool IsLocal(this Participant participant, Process process)
+        {
+            var config = process.GetConfiguration();
+            if (participant.Location.IpAddress == config.Address && participant.Location.PortNumber == config.DataServerPort)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool IsLocal(this Location location, Process process)
         {
             if (location.IpAddress == process.GetLocation().IpAddress && location.PortNumber == process.GetLocation().PortNumber)

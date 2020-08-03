@@ -78,7 +78,7 @@ namespace FrostDB
 
         public Database GetDatabase(string databaseName)
         {
-            return Databases.Where(d => d.Name == databaseName).FirstOrDefault();
+            return Databases.Where(d => d.Name.ToUpper() == databaseName.ToUpper()).FirstOrDefault();
         }
 
         public Database GetDatabase(Guid? guid)

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FrostDB;
+using FrostDB.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,7 @@ public class SelectQueryPlanGenerator
 {
     #region Private Fields
     SelectStatement _statement;
+    Process _process;
     int _level = 0;
     #endregion
 
@@ -22,6 +25,13 @@ public class SelectQueryPlanGenerator
     #endregion
 
     #region Constructors
+    public SelectQueryPlanGenerator()
+    {}
+
+    public SelectQueryPlanGenerator(Process process)
+    {
+        _process = process;
+    }
     #endregion
 
     #region Public Methods
@@ -30,18 +40,66 @@ public class SelectQueryPlanGenerator
         _statement = statement;
         var plan = new QueryPlan();
 
-        var endStatements = GetEndStatements(statement.Statements);
+        var endStatements = GetEndStatements(statement.WhereClause.Conditions);      
         var searchEndSteps = GetSearchParts(endStatements);
         var booleanSteps = GetBooleanSteps(searchEndSteps);
 
+        foreach(var step in booleanSteps)
+        {
+            SearchStep step1;
+            if (step.InputOne is SearchStep)
+            {
+                step1 = step.InputOne as SearchStep;
+                searchEndSteps.Remove(step1);
+            }
+
+            SearchStep step2;
+            if (step.InputTwo is SearchStep)
+            {
+                step2 = step.InputTwo as SearchStep;
+                searchEndSteps.Remove(step2);
+            }
+        }    
+
         plan.Steps.AddRange(searchEndSteps);
         plan.Steps.AddRange(booleanSteps);
+
+        // if there was no where clause, then we just want to search the table
+        // add 1 search step to search just the table for the columns needed
+        if (endStatements.Count == 0)
+        {
+            plan.Steps.Add(GetTableStep(statement));
+        }
+
+        // TO DO: We should make the final rows equal the columns in the SELECT statement
+        plan.Columns = statement.SelectList;
+
+        int maxStep = 0;
+        var columnOutput = new ColumnOutputStep();
+        foreach(var step in plan.Steps)
+        {
+            if (step.Level > maxStep)
+            {
+                maxStep = step.Level;
+            }
+        }
+
+        columnOutput.Level = maxStep + 1;
+        
 
         return plan;
     }
     #endregion
 
     #region Private Methods
+    private TableStep GetTableStep(SelectStatement statement)
+    {
+        var step = new TableStep(statement);
+        step.TableName = statement.Tables.First();
+        step.Columns.AddRange(statement.SelectList);
+
+        return step;
+    }
     private List<SearchStep> GetSearchParts(List<StatementPart> parts)
     {
         var result = new List<SearchStep>();
@@ -256,11 +314,27 @@ public class SelectQueryPlanGenerator
                     }
                 }
             }
+            else if (totalBools == 1)
+            {
+                boolStep = new BoolStep();
+                boolStep.InputOne = steps[0];
+                boolStep.InputTwo = steps[1];
+                if (stepGrandParentText.Contains(" AND "))
+                {
+                    boolStep.Boolean = "AND";
+                }
+                if (stepGrandParentText.Contains(" OR "))
+                {
+                    boolStep.Boolean = "OR";
+                }
+            }
         }
 
         // we are an outermost term
         // NAME = BRIAN
-        if (stepParentText.Equals(stepGrandParentText) && boolStep is null)
+        if (stepParentText.Equals(stepGrandParentText) && boolStep is null
+            && stepParentText != _statement.WhereClause.WhereClauseWithWhiteSpace
+            )
         {
             if (boolSteps.Count > 0)
             {
@@ -274,7 +348,7 @@ public class SelectQueryPlanGenerator
                     boolStep.Level = maxLevel++;
 
                     // need to find the boolean operator
-                    var text = _statement.WhereClauseWithWhiteSpace;
+                    var text = _statement.WhereClause.WhereClauseWithWhiteSpace;
                     foreach (var k in steps)
                     {
                         if (k.Part == step.Part)
@@ -303,6 +377,7 @@ public class SelectQueryPlanGenerator
             }
         }
 
+     
         if (boolStep != null)
         {
             DebugBoolStep(boolStep);

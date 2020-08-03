@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using FrostDB;
+using System.Reflection;
+using System.IO;
+using System.Linq;
 
 namespace FrostConsoleHarness
 {
     class Program
     {
+        static string HARNESS_CONFIG = "harness.config";
         static FrostInstanceManager Manager = new FrostInstanceManager();
         static ProcessConfigurator Configurator = new ProcessConfigurator();
 
@@ -32,6 +36,7 @@ namespace FrostConsoleHarness
             Console.WriteLine("(sh) - save current harness");
             Console.WriteLine("(c) - configure a new instance");
             Console.WriteLine("(k) - kill a existing instance");
+            Console.WriteLine("(x) - execute a harness config");
             Console.WriteLine("(e) - exit application");
 
             return Console.ReadLine();
@@ -59,9 +64,40 @@ namespace FrostConsoleHarness
                 case "sh":
                     SaveCurrentHarness();
                     break;
+                case "x":
+                    ExecuteHarnessConfig();
+                    break;
                 default:
                     // do nothing
                     break;
+            }
+        }
+
+        static void ExecuteHarnessConfig()
+        {
+            string location = Assembly.GetExecutingAssembly().Location;
+            var directory = new DirectoryInfo(System.IO.Path.GetDirectoryName(location));
+            var files = directory.GetFiles().ToList();
+
+            if (files.Any(f => f.Name == HARNESS_CONFIG))
+            {
+                var file = files.Where(f => f.Name == HARNESS_CONFIG).FirstOrDefault();
+
+                if (file != null)
+                {
+                    var text = File.ReadAllText(file.FullName);
+                    text = text.Replace(Environment.NewLine, string.Empty);
+                    var items = Configurator.LoadExistingHarness(text);
+                    Manager.AddInstances(items);
+                }
+                else
+                {
+                    Console.WriteLine($"harness.config was not found at: {location}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"harness.config was not found at: {location}");
             }
         }
 

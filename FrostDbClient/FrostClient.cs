@@ -75,6 +75,13 @@ namespace FrostDbClient
             return data.GetContentAs<FrostPromptPlan>();
         }
 
+        public FrostPromptResponse ExecuteCommandNew(string command)
+        {
+            var result = new FrostPromptResponse();
+            var data = SendMessage(BuildMessage(command, MessageConsoleAction.Prompt.Execute_Query, MessageActionType.Prompt));
+            return data.GetContentAs<FrostPromptResponse>();
+        }
+
         public FrostPromptResponse ExecuteCommand(string command)
         {
             var result = new FrostPromptResponse();

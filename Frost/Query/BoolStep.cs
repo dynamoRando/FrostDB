@@ -1,10 +1,18 @@
-﻿using System;
+﻿using FrostDB;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 
 public class BoolStep : IPlanStep
 {
+    #region Private Properties
+    private Process _process;
+    private string _databaseName;
+    #endregion
+
     #region Public Properties
     public Guid Id { get; set; }
     public int Level { get; set; }
@@ -24,9 +32,32 @@ public class BoolStep : IPlanStep
     #endregion
 
     #region Public Methods
-    public PlanResult GetResult()
+    public StepResult GetResult(Process process, string databaseName)
     {
-        throw new NotImplementedException();
+        _process = process;
+        _databaseName = databaseName;
+
+        var rows = new List<Row>();
+        var result = new StepResult();
+        
+        var result1 = InputOne.GetResult(process, databaseName);
+        var result2 = InputTwo.GetResult(process, databaseName);
+
+        if (Boolean.Equals("AND"))
+        {
+            // return rows where the condition is true for both parts
+            rows = result1.Rows.Intersect(result2.Rows).ToList();
+        }
+
+        if (Boolean.Equals("OR"))
+        {
+            // union returns both rows, removing duplicates
+            rows = result1.Rows.Union(result2.Rows).ToList();
+        }
+
+        result.Rows = rows;
+        result.IsValid = true;
+        return result;
     }
 
     public string GetResultText()
@@ -49,5 +80,7 @@ public class BoolStep : IPlanStep
     #endregion
 
     #region Private Methods
+   
+
     #endregion
 }
