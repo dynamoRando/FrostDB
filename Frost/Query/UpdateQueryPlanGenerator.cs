@@ -33,7 +33,7 @@ public class UpdateQueryPlanGenerator
         // and then either return those rows or take an action on them (DELETE, or UPDATE)
         result.Steps.AddRange(GetWhereClauseSteps(statement));
         _level = GetMaxLevel(result.Steps);
-        result.Steps.AddRange(GetUpdateSteps(statement));
+        result.Steps.AddRange(GetUpdateSteps(statement, result.Steps));
         return result;
     }
     #endregion
@@ -53,13 +53,19 @@ public class UpdateQueryPlanGenerator
         return maxLevel;
     }
     // TO DO: We need to figure out how to input the rows we wish to affect
-    private List<IPlanStep> GetUpdateSteps(UpdateStatement statement)
+    private List<IPlanStep> GetUpdateSteps(UpdateStatement statement, List<IPlanStep> existingSteps)
     {
         var result = new List<IPlanStep>();
 
         foreach(var element in statement.Elements)
         {
             var step = new UpdateStep();
+
+            if (statement.HasWhereClause)
+            {
+                step.InputStep = GetMaxStep(existingSteps);
+            }
+
             step.TableName = element.TableName;
             step.DatabaseName = element.DatabaseName;
             step.ColumnName = element.ColumnName;
@@ -81,6 +87,14 @@ public class UpdateQueryPlanGenerator
             result.AddRange(whereGenerator.GetPlanSteps(statement.WhereClause));
         }
         return result;
+    }
+
+    private IPlanStep GetMaxStep(List<IPlanStep> steps)
+    {
+        int level = 0;
+        level = GetMaxLevel(steps);
+
+        return steps.Where(s => s.Level == level).FirstOrDefault();
     }
     #endregion
 }
