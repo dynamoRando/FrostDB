@@ -1,7 +1,8 @@
 using System;
 using FrostDB;
 using System.Collections.Generic;
-
+using System.Linq;
+using FrostDB.Extensions;
 public class UpdateStep : IPlanStep
 {
     #region Private Fields
@@ -56,10 +57,7 @@ public class UpdateStep : IPlanStep
                     }
                 }
 
-                var reference = new RowReference();
-                reference.RowId = row.Id;
-
-                _process.GetDatabase(DatabaseName).GetTable(TableName).UpdateRow(reference, row.Values);
+                _process.GetDatabase(DatabaseName).GetTable(TableName).UpdateRow(row.ToReference(_process, TableName, DatabaseName), row.Values);
             }
             resultRows = resultStep.Rows;
         }
@@ -69,9 +67,6 @@ public class UpdateStep : IPlanStep
             var rows = table.GetAllRows();
             foreach (var row in rows)
             {
-                var reference = new RowReference();
-                reference.RowId = row.Id;
-
                 foreach (var value in row.Values)
                 {
                     if (value.ColumnName == ColumnName)
@@ -80,7 +75,7 @@ public class UpdateStep : IPlanStep
                     }
                 }
 
-                table.UpdateRow(reference, row.Values);
+                table.UpdateRow(row.ToReference(_process, TableName, DatabaseName), row.Values);
             }
 
             resultRows = rows;
