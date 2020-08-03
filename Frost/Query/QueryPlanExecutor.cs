@@ -93,6 +93,7 @@ public class QueryPlanExecutor
     #endregion
 
     #region Private Methods
+    // TO DO: should this be a "step"?
     private List<Row> GetFinalColumns(List<Row> input, List<string> columns, out int rowCount)
     {
         var result = new List<Row>();

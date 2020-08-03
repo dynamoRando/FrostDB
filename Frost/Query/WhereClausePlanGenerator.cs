@@ -1,5 +1,6 @@
 using FrostDB;
 using System;
+using System.Collections.Generic;
 
 public class WhereClausePlanGenerator
 {
@@ -23,6 +24,10 @@ public class WhereClausePlanGenerator
     #endregion
 
     #region Public Methods
+    public List<IPlanStep> GetPlanSteps(WhereClause clause)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 
     #region Private Methods
