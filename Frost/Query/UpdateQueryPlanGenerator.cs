@@ -26,6 +26,10 @@ public class UpdateQueryPlanGenerator
     {
         var result = new QueryPlan();
         statement.ParseElements();
+        // TO DO: We need to extract out from the Select Plan Generator 
+        // a generic WhereClausePlanGenerator because the behavior should be the same, i.e.
+        // generate the plan steps to find the rows that apply to a WHERE clause
+        // and then either return those rows or take an action on them (DELETE, or UPDATE)
         result.Steps.AddRange(GetWhereClauseSteps(statement));
         result.Steps.AddRange(GetUpdateSteps(statement));
         return result;
