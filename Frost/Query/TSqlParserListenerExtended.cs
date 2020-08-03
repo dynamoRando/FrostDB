@@ -42,7 +42,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.EnterTable_name(context);
         _statement.Tables.Add(context.GetText());
     }
-    
+
     public SelectStatement GetStatementAsSelect()
     {
         return _statement as SelectStatement;
@@ -236,7 +236,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         if (IsStatementUpdate())
         {
             var statement = GetStatementAsUpdate();
-            statement.RawStatement  = context.GetText();
+            statement.RawStatement = context.GetText();
         }
 
         Debug.WriteLine(context.GetText());
@@ -248,7 +248,13 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             var statement = GetStatementAsUpdate();
             var element = new UpdateStatementElement();
             element.RawString = context.GetText();
-            element.RawStringWithWhitespace = GetWhitespaceStringFromTokenInterval(context.SourceInterval);
+            
+            int a = context.Start.StartIndex;
+            int b = context.Stop.StopIndex;
+            Interval interval = new Interval(a, b);
+            _charStream = context.Start.InputStream;
+
+            element.RawStringWithWhitespace = _charStream.GetText(interval);
             statement.Elements.Add(element);
         }
 
