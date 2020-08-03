@@ -16,6 +16,7 @@ public class UpdateStatementElement
     public Table Table { get; set; }
     public Column Column { get; set; }
     public Database Database { get; set; }
+    public string DatabaseName {get; set;}
     #endregion
 
     #region Constructors

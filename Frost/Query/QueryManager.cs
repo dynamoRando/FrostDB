@@ -86,7 +86,7 @@ namespace FrostDB
         }
         private IStatement GetStatement(string input, string databaseName)
         {
-            IStatement result;
+            IStatement result = null;
             var sqlStatement = string.Empty;
 
             if (HasParticipant(input))
@@ -119,6 +119,12 @@ namespace FrostDB
                     item.Participant = new Participant(_process.GetLocation());
                 }
                 result = item;
+            }
+            else if (loader.Statement is UpdateStatement)
+            {
+                var item = loader.Statement as UpdateStatement;
+                item.DatabaseName = databaseName;
+                item.SetProcess(_process);
             }
             else
             {
