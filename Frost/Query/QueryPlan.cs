@@ -13,6 +13,7 @@ public class QueryPlan
     public bool IsValid { get; set; }
     public string ErrorMessage { get; set; }
     public List<string> Columns { get; set; }
+    public IStatement OriginalStatement { get; set; }
     #endregion
 
     #region Constructors

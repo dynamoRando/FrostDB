@@ -43,7 +43,11 @@ public class QueryPlanExecutor
         int rows = 0;
         int buildRows = 0;
         StepResult stepResult = null;
-        plan.Steps.Reverse();
+        if (!(plan.OriginalStatement is UpdateStatement))
+        {
+            plan.Steps.Reverse();
+        }
+
         foreach (var step in plan.Steps)
         {
             stepResult = ExecuteStep(step, plan.DatabaseName, out rows);

@@ -41,6 +41,7 @@ public class UpdateStep : IPlanStep
     public StepResult GetResult(Process process, string databaseName)
     {
         var result = new StepResult();
+        _process = process;
         var resultRows = new List<Row>();
         // if we have an input step then we need to get the rows from the input step and then 
         // update those rows and save back to the database

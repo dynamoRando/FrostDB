@@ -34,6 +34,7 @@ public class UpdateQueryPlanGenerator
         result.Steps.AddRange(GetWhereClauseSteps(statement));
         _level = GetMaxLevel(result.Steps);
         result.Steps.AddRange(GetUpdateSteps(statement, result.Steps));
+        result.OriginalStatement = statement;
         return result;
     }
     #endregion
