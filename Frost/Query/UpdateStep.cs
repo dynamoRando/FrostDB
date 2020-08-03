@@ -52,9 +52,9 @@ public class UpdateStep : IPlanStep
             {
                 foreach (var value in row.Values)
                 {
-                    if (value.ColumnName == ColumnName)
+                    if (value.ColumnName.ToUpper() == ColumnName.ToUpper())
                     {
-                        value.Value = Value;
+                        value.Value = Value.Replace("'", string.Empty);
                     }
                 }
 
