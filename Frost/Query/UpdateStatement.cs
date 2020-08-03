@@ -16,6 +16,8 @@ namespace FrostDB
         public string RawStatement { get; set; }
         public WhereClause WhereClause { get; set; }
         public List<UpdateStatementElement> Elements { get; set; }
+        public bool IsValid { get; set; }
+        public string ErrorMessage { get; set; }
         #endregion
 
         #region Protected Methods
@@ -30,10 +32,15 @@ namespace FrostDB
             Tables = new List<string>();
             WhereClause = new WhereClause();
             Elements = new List<UpdateStatementElement>();
+            ErrorMessage = string.Empty;
         }
         #endregion
 
         #region Public Methods
+        public void ParseElements()
+        {
+
+        }
         #endregion
 
         #region Private Methods

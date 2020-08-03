@@ -15,6 +15,8 @@ namespace FrostDB
         public bool HasWhereClause => CheckIfHasWhereClause();
         public List<string> Tables { get; set; }
         public WhereClause WhereClause { get; set; }
+        public bool IsValid { get; set; }
+        public string ErrorMessage { get; set; }
         #endregion
 
         #region Protected Methods

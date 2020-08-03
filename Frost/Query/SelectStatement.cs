@@ -13,6 +13,8 @@ public class SelectStatement : IStatement
     public List<string> Tables { get; set; }
     public WhereClause WhereClause { get; set; }
     public bool HasWhereClause => CheckIfHasWhereClause();
+    public bool IsValid {get; set;}
+    public string ErrorMessage {get; set;}
     #endregion
 
     #region Constructors
@@ -21,6 +23,7 @@ public class SelectStatement : IStatement
         SelectList = new List<string>();
         Tables = new List<string>();
         WhereClause = new WhereClause();
+        ErrorMessage = string.Empty;
     }
     #endregion
 

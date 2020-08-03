@@ -7,6 +7,7 @@ namespace FrostDB
 {
     public class InsertStatement : IStatement
     {
+        #region Public Properties
         public List<string> Tables { get; set; }
         public WhereClause WhereClause { get; set; }
         public string RawStatement { get; set; }
@@ -16,7 +17,11 @@ namespace FrostDB
         public string ParticipantString { get; set; }
         public Participant Participant { get; set; }
         public string DatabaseName { get; set; }
+        public bool IsValid {get; set;}
+        public string ErrorMessage {get; set;}
+        #endregion
 
+        #region Constructors
         public InsertStatement()
         {
             Tables = new List<string>();
@@ -24,7 +29,9 @@ namespace FrostDB
             ColumnNames = new List<string>();
             InsertValues = new List<InsertStatementGroup>();
             Participant = new Participant();
+            ErrorMessage = string.Empty;
         }
+        #endregion
     }
 
     public class InsertStatementGroup

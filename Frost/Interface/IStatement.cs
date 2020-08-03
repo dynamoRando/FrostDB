@@ -9,4 +9,6 @@ public interface IStatement
     bool HasWhereClause { get; }
     WhereClause WhereClause { get; set; }
     string RawStatement { get; set; }
+    bool IsValid { get; set; }
+    string ErrorMessage { get; set; }
 }
