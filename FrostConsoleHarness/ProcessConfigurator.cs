@@ -21,6 +21,18 @@ namespace FrostConsoleHarness
             return item;
         }
 
+        public List<FrostInstance> LoadExistingHarness(string harnessFile)
+        {
+            List<FrostInstance> item = new List<FrostInstance>();
+            if (File.Exists(harnessFile))
+            {
+                var fileText = File.ReadAllText(harnessFile);
+                item = JsonConvert.DeserializeObject<HarnessFile>(fileText).Instances;
+            }
+
+            return item;
+        }
+
         public void SaveCurrentHarness(List<FrostInstance> instances)
         {
             var fileLocation = Prompt.For("Enter config file location");

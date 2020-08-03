@@ -44,15 +44,29 @@ namespace FrostDB
                 case MessageConsoleAction.Prompt.Get_Plan:
                     result = HandleGetPlan(message);
                     break;
+                case MessageConsoleAction.Prompt.Execute_Query:
+                    result = HandleExecuteQuery(message);
+                    break;
                 default:
                     throw new NotImplementedException("Unknown Prompt type");
-                    break;
             }
             return result;
         }
         #endregion
 
         #region Private Methods
+        private IMessage HandleExecuteQuery(Message message)
+        {
+
+            string messageContent = string.Empty;
+
+            FrostPromptResponse response = new FrostPromptResponse();
+            response = _process.ExecuteQuery(message.Content);
+            Type type = response.GetType();
+            messageContent = JsonConvert.SerializeObject(response);
+
+            return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Prompt.Execute_Query_Response, type, message.Id, MessageActionType.Prompt);
+        }
         private IMessage HandleGetPlan(Message message)
         {
             string messageContent = string.Empty;

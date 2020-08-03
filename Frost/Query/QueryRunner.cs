@@ -8,6 +8,7 @@ using FrostCommon.Net;
 
 namespace FrostDB
 {
+    // this is deprecated; will be replaced by QueryPlanExecutor
     public class QueryRunner : IQueryRunner
     {
         #region Public Functions

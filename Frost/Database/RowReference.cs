@@ -104,6 +104,18 @@ namespace FrostDB
 
             }
 
+            foreach(var r in row.Values)
+            {
+                if (r.ColumnName is null)
+                {
+                    var column = _process.GetTable(_databaseId, _tableId).GetColumn(r.ColumnId);
+                    if (column != null)
+                    {
+                        r.ColumnName = column.Name;
+                    }
+                }
+            }
+
             return row;
         }
         #endregion

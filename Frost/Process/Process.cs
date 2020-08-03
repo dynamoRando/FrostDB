@@ -167,7 +167,7 @@ namespace FrostDB
 
         public bool HasDatabase(string databaseName)
         {
-            return Databases.Any(d => d.Name == databaseName);
+            return Databases.Any(d => d.Name.ToUpper() == databaseName.ToUpper());
         }
 
         public bool HasPartialDatabase(string databaseName)
@@ -228,7 +228,17 @@ namespace FrostDB
 
         public FrostPromptPlan GetPlan(string command)
         {
-            return _queryManager.GetPlan(command.ToUpper());
+            return _queryManager.GetPlanExplanation(command.ToUpper());
+        }
+
+        public FrostPromptResponse ExecuteQuery(string command)
+        {
+            FrostPromptResponse response = new FrostPromptResponse();
+            var cmd = command.ToUpper();
+            var plan = _queryManager.GetPlan(cmd);
+
+            var executor = new QueryPlanExecutor(this);
+            return executor.Execute(plan);
         }
 
         public FrostPromptResponse ExecuteCommand(string command)

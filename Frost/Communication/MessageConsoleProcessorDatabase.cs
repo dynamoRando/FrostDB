@@ -4,6 +4,7 @@ using FrostDB.Interface;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FrostDB
@@ -127,11 +128,24 @@ namespace FrostDB
 
             foreach (var c in info.Columns)
             {
+                // this is an identity column
+                if (c.Item2.ToString() == "System.Int64")
+                {
+                    continue;
+                }
                 var col = new Column(c.Item1, c.Item2);
                 columns.Add(col);
             }
 
             var table = new Table(info.TableName, columns, db.Id, _process);
+
+            // add any identity columns via the method rather than just straight adding column
+            if (info.Columns.Any(k => k.Item2.ToString() == "System.Int64"))
+            {
+                var item = info.Columns.Where(k => k.Item2.ToString() == "System.Int64").First();
+                table.AddAutoNumColumn(item.Item1);
+            }
+            
             db.AddTable(table);
             return result;
         }

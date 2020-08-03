@@ -7,7 +7,7 @@ using System.Text;
 namespace FrostDB
 {
     [Serializable]
-    public class Row : IRow, ISerializable
+    public class Row : IRow, ISerializable, IEquatable<Row>
     {
         #region Private Fields
         private Guid? _id;
@@ -41,6 +41,47 @@ namespace FrostDB
             info.AddValue("RowLastAccessed", LastAccessed, typeof(DateTime));
             info.AddValue("RowCreatedDate", CreatedDate, typeof(DateTime));
         }
+
+        public bool Equals(Row other)
+        {
+            bool isEqual = true;
+
+            if (other.Values.Count != this.Values.Count)
+            {
+                isEqual = false;
+            }
+
+            if (isEqual)
+            {
+                foreach (var value in other.Values)
+                {
+                    if (!isEqual)
+                    {
+                        break;
+                    }
+                    foreach (var thisvalue in this.Values)
+                    {
+                        if (isEqual)
+                        {
+                            if (value.ColumnName == thisvalue.ColumnName &&
+                            value.ColumnType == thisvalue.ColumnType)
+                            {
+                                if (value.Value.ToString() != thisvalue.Value.ToString())
+                                {
+                                    isEqual = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return isEqual;
+        }
         #endregion
 
         #region Protected Methods
@@ -69,6 +110,13 @@ namespace FrostDB
             _values = new List<RowValue>();
             _id = Guid.NewGuid();
             CreatedDate = DateTime.Now;
+        }
+
+        public Row(Guid? id)
+        {
+            _columnIds = new List<Guid?>();
+            _values = new List<RowValue>();
+            _id = id;
         }
 
         public Row(List<Guid?> columnIds) : this()

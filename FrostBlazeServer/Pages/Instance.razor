@@ -17,13 +17,14 @@
 </table>
 
 <p>
-<h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Connect and Load Databases"/>
-<select id="databaseNames" value="Item.SelectedDatabaseName" @onchange="GetTableNamesForDatabase" @onclick="OnDatabseClickCallback">
-    @foreach (var db in Item.DatabaseNames)
-    {
-        <option value="@db">@db</option>
-    }
-</select>
+    <h2>Databases</h2> <input type="button" @onclick="ConnectToInstance" value="Connect and Load Databases" />
+    <input type="button" @onclick="ConnectToInstanceDefault" value="Default Connect and Load Databases" />
+    <select id="databaseNames" value="Item.SelectedDatabaseName" @onchange="GetTableNamesForDatabase" @onclick="OnDatabseClickCallback">
+        @foreach (var db in Item.DatabaseNames)
+        {
+            <option value="@db">@db</option>
+        }
+    </select>
 </p>
 
 <p>
@@ -63,6 +64,34 @@
     {
         try
         {
+            Item.DatabaseNames.Clear();
+
+            var databases = Item.FrostClient.GetDatabases();
+
+            Item.DatabaseNames = databases;
+            Item.DatabaseNames.Sort();
+
+            Item.FrostClient.GetPartialDatabases();
+
+            var partialDatabases = Item.FrostClient.GetPartialDatabases();
+
+            Item.PartialDatabaseNames = partialDatabases;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+    }
+
+    private void ConnectToInstanceDefault()
+    {
+        try
+        {
+            Item.IPAddress = "127.0.0.1";
+            Item.ConsolePortNumber = 519;
+            Item.StudioPortNumber = 525;
+
             Item.DatabaseNames.Clear();
 
             var databases = Item.FrostClient.GetDatabases();

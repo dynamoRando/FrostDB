@@ -234,12 +234,12 @@ namespace FrostDB
 
         public Table GetTable(string tableName)
         {
-            return _tables.Where(t => t.Name == tableName).First();
+            return _tables.Where(t => t.Name.ToUpper() == tableName.ToUpper()).First();
         }
 
         public bool HasTable(string tableName)
         {
-            return _tables.Any(t => t.Name.Equals(tableName));
+            return _tables.Any(t => t.Name.ToUpper().Equals(tableName.ToUpper()));
         }
 
         public bool IsCooperative()
