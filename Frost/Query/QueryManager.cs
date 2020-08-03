@@ -125,6 +125,7 @@ namespace FrostDB
                 var item = loader.Statement as UpdateStatement;
                 item.DatabaseName = databaseName;
                 item.SetProcess(_process);
+                result = item as IStatement;
             }
             else
             {
