@@ -37,7 +37,17 @@ public class UpdateQueryPlanGenerator
     {
         var result = new List<IPlanStep>();
 
-        throw new NotImplementedException();
+        foreach(var element in statement.Elements)
+        {
+            var step = new UpdateStep();
+            step.TableName = element.TableName;
+            step.DatabaseName = element.DatabaseName;
+            step.ColumnName = element.ColumnName;
+            step.Value = element.Value;
+            result.Add(step);
+        }
+
+        return result;
     }
     private List<IPlanStep> GetWhereClauseSteps(UpdateStatement statement)
     {
