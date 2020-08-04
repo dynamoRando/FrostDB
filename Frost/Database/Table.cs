@@ -442,6 +442,8 @@ namespace FrostDB
                 _rows.Remove(reference);
             }
 
+            // need to trigger event so that we save the database back to disk
+
             throw new NotImplementedException("Need to figure out if we're allowed to delete remote rows");
         }
 
