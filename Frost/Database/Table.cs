@@ -444,8 +444,6 @@ namespace FrostDB
                 _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
             }
 
-            // need to trigger event so that we save the database back to disk
-
             throw new NotImplementedException("Need to figure out if we're allowed to delete remote rows");
         }
 
