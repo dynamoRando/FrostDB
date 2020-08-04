@@ -17,6 +17,8 @@ namespace FrostDB
         public string DatabaseName { get; set; }
         public IPlanStep InputStep { get; set; }
         public bool HasInputStep => CheckHasInputStep();
+        public bool ShouldDeleteAllRows { get; set; }
+        public List<Row> DeletedRows { get; set; }
         #endregion
 
         #region Protected Methods
@@ -29,6 +31,8 @@ namespace FrostDB
         public DeleteStep()
         {
             Id = Guid.NewGuid();
+            ShouldDeleteAllRows = false;
+            DeletedRows = new List<Row>();
         }
         #endregion
 
@@ -69,7 +73,19 @@ namespace FrostDB
 
         public string GetResultText()
         {
-            throw new NotImplementedException();
+            var result = string.Empty;
+
+            result += $"For database {DatabaseName} for table {TableName}" + Environment.NewLine;
+            if (HasInputStep)
+            {
+                result += $"Delete Rows In Where Clause" + Environment.NewLine;
+            }
+            else
+            {
+                result += $"Delete All Rows In Table" + Environment.NewLine;
+            }
+
+            return result;
         }
         #endregion
 

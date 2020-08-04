@@ -15,6 +15,7 @@ public class SelectStatement : IStatement
     public bool HasWhereClause => CheckIfHasWhereClause();
     public bool IsValid {get; set;}
     public string ErrorMessage {get; set;}
+    public string DatabaseName { get; set; }
     #endregion
 
     #region Constructors

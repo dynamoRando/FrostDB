@@ -3,6 +3,7 @@ using FrostDB;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FrostDB.Query;
 
 public class UpdateQueryPlanGenerator
 {
@@ -32,7 +33,7 @@ public class UpdateQueryPlanGenerator
         // generate the plan steps to find the rows that apply to a WHERE clause
         // and then either return those rows or take an action on them (DELETE, or UPDATE)
         result.Steps.AddRange(GetWhereClauseSteps(statement));
-        _level = GetMaxLevel(result.Steps);
+        _level = QueryPlanGeneratorUtility.GetMaxLevel(result.Steps);
         result.Steps.AddRange(GetUpdateSteps(statement, result.Steps));
         result.OriginalStatement = statement;
         return result;
@@ -40,19 +41,7 @@ public class UpdateQueryPlanGenerator
     #endregion
 
     #region Private Methods
-    private int GetMaxLevel(List<IPlanStep> steps)
-    {
-        int maxLevel = 0;
-        foreach(var step in steps)
-        {
-            if (step.Level > maxLevel)
-            {
-                maxLevel = step.Level;
-            }
-        }
-
-        return maxLevel;
-    }
+   
     // TO DO: We need to figure out how to input the rows we wish to affect
     private List<IPlanStep> GetUpdateSteps(UpdateStatement statement, List<IPlanStep> existingSteps)
     {
@@ -64,7 +53,7 @@ public class UpdateQueryPlanGenerator
 
             if (statement.HasWhereClause)
             {
-                step.InputStep = GetMaxStep(existingSteps);
+                step.InputStep = QueryPlanGeneratorUtility.GetMaxStep(existingSteps);
             }
 
             step.TableName = element.TableName;
@@ -90,12 +79,6 @@ public class UpdateQueryPlanGenerator
         return result;
     }
 
-    private IPlanStep GetMaxStep(List<IPlanStep> steps)
-    {
-        int level = 0;
-        level = GetMaxLevel(steps);
-
-        return steps.Where(s => s.Level == level).FirstOrDefault();
-    }
+  
     #endregion
 }

@@ -88,7 +88,15 @@ public class UpdateStep : IPlanStep
 
     public string GetResultText()
     {
-        throw new NotImplementedException();
+        var result = string.Empty;
+        result += $"For database {DatabaseName} for table {TableName}" + Environment.NewLine;
+        result += $"Update Column: {ColumnName} with Value: {Value}" + Environment.NewLine;
+        if (HasInputStep)
+        {
+            result += $"For Where Clause Condition" + Environment.NewLine;
+        }
+
+        return result;
     }
 
     #endregion

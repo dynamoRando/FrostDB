@@ -1,11 +1,13 @@
 using FrostDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DeleteQueryPlanGenerator
 {
     #region Private Fields
     private Process _process;
+    private QueryPlan _plan;
     int _level = 0;
     #endregion
 
@@ -22,11 +24,11 @@ public class DeleteQueryPlanGenerator
     #region Public Methods
     public QueryPlan GeneratePlan(DeleteStatement statement)
     {
-        var result = new QueryPlan();
-        result.Steps.AddRange(GetWhereClauseSteps(statement));
-        result.Steps.AddRange(GetDeleteSteps(statement));
+        _plan = new QueryPlan();
+        _plan.Steps.AddRange(GetWhereClauseSteps(statement));
+        _plan.Steps.AddRange(GetDeleteSteps(statement));
 
-        return result;
+        return _plan;
     }
     #endregion
 
@@ -35,9 +37,25 @@ public class DeleteQueryPlanGenerator
     {
         var result = new List<IPlanStep>();
 
-        // when creating delete steps, need to specify database name and table name
+        var step = new DeleteStep();
+        step.DatabaseName = statement.DatabaseName;
+        step.TableName = statement.Tables.First();
 
-        throw new NotImplementedException();
+        if (statement.HasWhereClause)
+        {
+            // need to delete only the rows in the where clause
+            step.InputStep = QueryPlanGeneratorUtility.GetMaxStep(_plan.Steps);
+            step.Level = step.InputStep.Level++;
+            var rows = step.InputStep.GetResult(_process, statement.DatabaseName).Rows;
+            step.DeletedRows = rows;
+        }
+        else
+        {
+            // delete everything
+            step.ShouldDeleteAllRows = true;
+        }
+
+        result.Add(step);
 
         return result;
     }
@@ -52,5 +70,6 @@ public class DeleteQueryPlanGenerator
 
         return result;
     }
+  
     #endregion
 }

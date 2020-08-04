@@ -49,6 +49,7 @@ namespace FrostDB
 
             var databaseName = GetDatabaseName(databaseStatement);
             var statement = GetStatement(commandStatement, databaseName);
+            statement.DatabaseName = databaseName;
             
             var plan = _planGenerator.GeneratePlan(statement, databaseName);
             
