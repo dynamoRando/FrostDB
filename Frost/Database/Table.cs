@@ -437,9 +437,11 @@ namespace FrostDB
         {
             _store.RemoveRow(rowId);
             var reference = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
+            var row = reference.Get(_process);
             if (reference != null)
             {
                 _rows.Remove(reference);
+                _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
             }
 
             // need to trigger event so that we save the database back to disk
