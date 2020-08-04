@@ -7,6 +7,7 @@ namespace FrostDB
     public class DeleteStep : IPlanStep
     {
         #region Private Fields
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -34,7 +35,36 @@ namespace FrostDB
         #region Public Methods
         public StepResult GetResult(Process process, string databaseName)
         {
-            throw new NotImplementedException();
+            _process = process;
+            var result = new StepResult();
+            var resultRows = new List<Row>();
+
+            // if we have an input step then we need to get the rows from the input step and then 
+            // delete these particular rows
+            if (HasInputStep)
+            {
+                var resultStep = InputStep.GetResult(_process, DatabaseName);
+                foreach (var row in resultStep.Rows)
+                {
+                    var table = _process.GetDatabase(DatabaseName).GetTable(TableName);
+                    foreach(var r in table.Rows)
+                    {
+                        table.RemoveRow(r.RowId);
+                    }
+                }
+                resultRows = resultStep.Rows;
+            }
+            else
+            {
+                // delete all rows in the table
+                var table = _process.GetDatabase(DatabaseName).GetTable(TableName);
+                var rows = table.GetAllRows();
+                table.RemoveAllRows();
+                resultRows = rows;
+            }
+
+            result.Rows = resultRows;
+            return result;
         }
 
         public string GetResultText()

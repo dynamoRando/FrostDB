@@ -35,6 +35,8 @@ public class DeleteQueryPlanGenerator
     {
         var result = new List<IPlanStep>();
 
+        // when creating delete steps, need to specify database name and table name
+
         throw new NotImplementedException();
 
         return result;

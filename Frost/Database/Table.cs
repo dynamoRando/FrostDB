@@ -441,6 +441,8 @@ namespace FrostDB
             {
                 _rows.Remove(reference);
             }
+
+            throw new NotImplementedException("Need to figure out if we're allowed to delete remote rows");
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
