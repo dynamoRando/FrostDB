@@ -435,16 +435,16 @@ namespace FrostDB
 
         public void RemoveRow(Guid? rowId)
         {
-            _store.RemoveRow(rowId);
             var reference = _rows.Where(r => r.RowId == rowId).FirstOrDefault();
             var row = reference.Get(_process);
             if (reference != null)
             {
                 _rows.Remove(reference);
+                _store.RemoveRow(rowId);
                 _process.EventManager.TriggerEvent(EventName.Row.Deleted, CreateRowDeletedEventArgs(row));
             }
 
-            throw new NotImplementedException("Need to figure out if we're allowed to delete remote rows");
+            // TO DO: Need to figure out if we're allowed to remove remote rows
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
