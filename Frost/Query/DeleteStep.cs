@@ -48,13 +48,10 @@ namespace FrostDB
             if (HasInputStep)
             {
                 var resultStep = InputStep.GetResult(_process, DatabaseName);
+                var table = _process.GetDatabase(DatabaseName).GetTable(TableName);
                 foreach (var row in resultStep.Rows)
                 {
-                    var table = _process.GetDatabase(DatabaseName).GetTable(TableName);
-                    foreach(var r in table.Rows)
-                    {
-                        table.RemoveRow(r.RowId);
-                    }
+                    table.RemoveRow(row.Id);
                 }
                 resultRows = resultStep.Rows;
             }
