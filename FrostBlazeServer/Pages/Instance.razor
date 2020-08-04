@@ -60,15 +60,18 @@
         }
     }
 
+    private const string SelectOneKeyword = "-- Select One --";
+
     private void ConnectToInstance()
     {
         try
         {
             Item.DatabaseNames.Clear();
+            Item.DatabaseNames.Add(SelectOneKeyword);
 
             var databases = Item.FrostClient.GetDatabases();
 
-            Item.DatabaseNames = databases;
+            Item.DatabaseNames.AddRange(databases);
             Item.DatabaseNames.Sort();
 
             Item.FrostClient.GetPartialDatabases();
@@ -93,10 +96,11 @@
             Item.StudioPortNumber = 525;
 
             Item.DatabaseNames.Clear();
+            Item.DatabaseNames.Add(SelectOneKeyword);
 
             var databases = Item.FrostClient.GetDatabases();
 
-            Item.DatabaseNames = databases;
+            Item.DatabaseNames.AddRange(databases);
             Item.DatabaseNames.Sort();
 
             Item.FrostClient.GetPartialDatabases();
@@ -115,6 +119,8 @@
     private async Task GetTableNamesForDatabase(ChangeEventArgs e)
     {
         Item.TableNames.Clear();
+        Item.TableNames.Add(SelectOneKeyword);
+
         Debug.WriteLine("GetTableNamesForDatabase");
         Debug.WriteLine(e.Value.ToString());
 
