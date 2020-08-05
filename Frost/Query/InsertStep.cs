@@ -16,6 +16,7 @@ public class InsertStep : IPlanStep
     public List<string> Values { get; set; }
     public string TableName { get; set; }
     public string DatabaseName { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors
@@ -24,6 +25,7 @@ public class InsertStep : IPlanStep
         Id = Guid.NewGuid();
         Columns = new List<string>();
         Values = new List<string>();
+        IsValid = true;
     }
     #endregion
 

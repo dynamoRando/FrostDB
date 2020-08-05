@@ -155,7 +155,11 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             part.StatementGrandParentWithWhiteSpace = GetWhitespaceStringFromTokenInterval(tokenInterval);
         }
 
-        part.ParseStatementPart();
+        if (!part.ParseStatementPart())
+        {
+            _statement.IsValid = false;
+        }
+
         _statement.WhereClause.Conditions.Add(part);
     }
 
@@ -286,8 +290,15 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     public override void EnterDelete_statement_from(TSqlParser.Delete_statement_fromContext context)
     {
-        Console.WriteLine(context.GetText());
+        var item = context.GetText();
+        Debug.WriteLine(item);
+        if (IsStatementDelete())
+        {
+            var statement = GetStatementAsDelete();
+            statement.Tables.Add(item);
+        }
     }
+
     // end delete functions
 
     #endregion

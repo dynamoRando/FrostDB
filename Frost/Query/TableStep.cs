@@ -17,6 +17,7 @@ namespace FrostDB
         public List<string> Columns { get; set; }
         public Guid Id { get; set; }
         public int Level { get; set; }
+        public bool IsValid { get; set; }
         #endregion
 
         #region Constructors
@@ -25,6 +26,7 @@ namespace FrostDB
             Id = Guid.NewGuid();
             Columns = new List<string>();
             _selectStatement = statement;
+            IsValid = true;
         }
         #endregion
 

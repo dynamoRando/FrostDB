@@ -38,6 +38,7 @@ namespace FrostDB
         #region Public Methods
         public QueryPlan GetPlan(string input)
         {
+            var plan = new QueryPlan();
             var items = input.Split(';');
             var databaseStatement = string.Empty;
             var commandStatement = string.Empty;
@@ -49,8 +50,18 @@ namespace FrostDB
 
             var databaseName = GetDatabaseName(databaseStatement);
             var statement = GetStatement(commandStatement, databaseName);
-            
-            var plan = _planGenerator.GeneratePlan(statement, databaseName);
+            statement.DatabaseName = databaseName;
+
+            if (!statement.IsValid)
+            {
+                var step = new SearchStep();
+                step.IsValid = false;
+                plan.Steps.Add(step);
+            }
+            else
+            {
+               plan = _planGenerator.GeneratePlan(statement, databaseName);
+            }
             
             return plan;
         }
@@ -125,6 +136,7 @@ namespace FrostDB
                 var item = loader.Statement as UpdateStatement;
                 item.DatabaseName = databaseName;
                 item.SetProcess(_process);
+                result = item as IStatement;
             }
             else
             {

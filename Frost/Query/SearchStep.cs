@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 public class SearchStep : IPlanStep
 {
     #region Private Fields
@@ -15,12 +14,16 @@ public class SearchStep : IPlanStep
     public Guid Id { get; set; }
     public int Level { get; set; }
     public StatementPart Part => _part;
+    public string DatabaseName { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors
     public SearchStep()
     {
         Id = Guid.NewGuid();
+        IsValid = true;
+
     }
     public SearchStep(StatementPart part) : this()
     {
@@ -194,7 +197,7 @@ public class SearchStep : IPlanStep
     private List<Row> CompareString(string operation, string value, Table table)
     {
         var result = new List<Row>();
-        string item = value.Replace("'", "").ToUpper();
+        string item = value.Replace("'", string.Empty).ToUpper();
 
         foreach (var row in table.Rows)
         {
@@ -205,7 +208,7 @@ public class SearchStep : IPlanStep
                 {
                     if (operation.Equals("="))
                     {
-                        if (Convert.ToString(value.Value).ToUpper() == item)
+                        if (Convert.ToString(value.Value).ToUpper().Replace("'", string.Empty) == item)
                         {
                             result.Add(rowdata);
                         }

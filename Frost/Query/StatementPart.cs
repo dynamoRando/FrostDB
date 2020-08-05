@@ -37,8 +37,10 @@ public class StatementPart
     #endregion
 
     #region Public Methods
-    public void ParseStatementPart()
+    public bool ParseStatementPart()
     {
+        var result = false;
+
         if (!string.IsNullOrEmpty(TextWithWhiteSpace))
         {
             var items = TextWithWhiteSpace.Split(' ').ToList();
@@ -47,8 +49,15 @@ public class StatementPart
                 StatementColumnName = items[0];
                 StatementOperator = items[1];
                 StatementValue = items[2];
+                result = true;
+            }
+            else
+            {
+                result = false;
             }
         }
+
+        return result;
     }
     #endregion
 

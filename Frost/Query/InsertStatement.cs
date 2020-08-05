@@ -30,6 +30,7 @@ namespace FrostDB
             InsertValues = new List<InsertStatementGroup>();
             Participant = new Participant();
             ErrorMessage = string.Empty;
+            IsValid = true;
         }
         #endregion
     }
