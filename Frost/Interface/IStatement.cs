@@ -11,4 +11,5 @@ public interface IStatement
     string RawStatement { get; set; }
     bool IsValid { get; set; }
     string ErrorMessage { get; set; }
+    public string DatabaseName { get; set; }
 }

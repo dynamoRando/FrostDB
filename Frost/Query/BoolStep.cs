@@ -20,6 +20,7 @@ public class BoolStep : IPlanStep
     public IPlanStep InputTwo { get; set; }
     public string Boolean { get; set; }
     public string BoolStepTextWithWhiteSpace { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors
@@ -28,6 +29,7 @@ public class BoolStep : IPlanStep
         BoolStepTextWithWhiteSpace = string.Empty;
         Boolean = string.Empty;
         Id = Guid.NewGuid();
+        IsValid = true;
     }
     #endregion
 

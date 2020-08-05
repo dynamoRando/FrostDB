@@ -15,6 +15,7 @@ public class SelectStatement : IStatement
     public bool HasWhereClause => CheckIfHasWhereClause();
     public bool IsValid {get; set;}
     public string ErrorMessage {get; set;}
+    public string DatabaseName { get; set; }
     #endregion
 
     #region Constructors
@@ -24,6 +25,7 @@ public class SelectStatement : IStatement
         Tables = new List<string>();
         WhereClause = new WhereClause();
         ErrorMessage = string.Empty;
+        IsValid = true;
     }
     #endregion
 

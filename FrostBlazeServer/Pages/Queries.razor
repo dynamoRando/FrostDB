@@ -66,6 +66,7 @@
     private string QueryText = string.Empty;
     private string QueryResult = string.Empty;
     private string QueryPlan = string.Empty;
+    private const string SelectOneKeyword = "-- Select One --";
     private void GetColumnInfoForTable(ChangeEventArgs e)
     {
         ColumnNames.Clear();
@@ -73,6 +74,11 @@
         Debug.WriteLine(e.Value.ToString());
 
         SelectedTableName = e.Value.ToString();
+
+        if (SelectedTableName.Equals(SelectOneKeyword))
+        {
+            return;
+        }
 
         TableInfo item = FrostService.FrostClient.GetTableInfo(FrostService.SelectedDatabaseName, SelectedTableName);
         if (item != null)

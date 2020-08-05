@@ -21,6 +21,7 @@ namespace FrostDB
         public bool IsValid { get; set; }
         public string ErrorMessage { get; set; }
         public string DatabaseName { get; set; }
+        public int MaxStepLevel { get; set; }
         #endregion
 
         #region Protected Methods
@@ -37,6 +38,7 @@ namespace FrostDB
             WhereClause = new WhereClause();
             Elements = new List<UpdateStatementElement>();
             ErrorMessage = string.Empty;
+            MaxStepLevel = 0;
         }
 
         public UpdateStatement(Process process) : this()

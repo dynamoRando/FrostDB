@@ -5,6 +5,7 @@ using FrostDB;
 using System;
 using System.Collections.Generic;
 using FrostLocation = FrostCommon.ConsoleMessages.LocationInfo;
+using System.Linq;
 
 namespace FrostDB.Extensions
 {
@@ -44,6 +45,12 @@ namespace FrostDB.Extensions
             {
                 return false;
             }
+        }
+
+        public static RowReference ToReference(this Row row, Process process, string tableName, string databaseName)
+        {
+            var table = process.GetDatabase(databaseName).GetTable(tableName);
+            return table.Rows.Where(r => r.RowId == row.Id).FirstOrDefault();
         }
 
         public static bool IsLocal(this Participant participant, Process process)

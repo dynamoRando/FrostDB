@@ -18,6 +18,7 @@ public class PlanStep : IPlanStep
     #region Public Properties
     public Guid Id { get; set; }
     public int Level { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Protected Methods
@@ -35,6 +36,7 @@ public class PlanStep : IPlanStep
         _operator = operation;
         _value = value;
         AssignDbObjects();
+        IsValid = true;
     }
     #endregion
 

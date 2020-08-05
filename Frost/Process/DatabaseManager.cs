@@ -67,6 +67,7 @@ namespace FrostDB
 
             return db;
         }
+
         public void AddDatabase(Database database)
         {
             if (!HasDatabase(database.Name))
