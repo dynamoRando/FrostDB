@@ -1,14 +1,14 @@
-﻿using FrostDB.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FrostDB
 {
-    public class StorageManager : IStorageManager
+    public class DbStorage
     {
         #region Private Fields
         private Process _process;
+        private Database _database;
         #endregion
 
         #region Public Properties
@@ -28,5 +28,6 @@ namespace FrostDB
 
         #region Private Methods
         #endregion
+
     }
 }
