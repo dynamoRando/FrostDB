@@ -42,6 +42,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public Database(Process process, IDbFill fill, IStorageManager storageManager)
+        {
+            throw new NotImplementedException();
+        }
+
         public Database(Process process)
         {
             _process = process;
