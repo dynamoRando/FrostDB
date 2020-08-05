@@ -31,6 +31,7 @@ namespace FrostDB
         {
             Tables = new List<string>();
             WhereClause = new WhereClause();
+            IsValid = true;
         }
         #endregion
 

@@ -155,7 +155,11 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             part.StatementGrandParentWithWhiteSpace = GetWhitespaceStringFromTokenInterval(tokenInterval);
         }
 
-        part.ParseStatementPart();
+        if (!part.ParseStatementPart())
+        {
+            _statement.IsValid = false;
+        }
+
         _statement.WhereClause.Conditions.Add(part);
     }
 

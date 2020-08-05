@@ -18,6 +18,7 @@ public class UpdateStep : IPlanStep
     public string DatabaseName { get; set; }
     public IPlanStep InputStep { get; set; }
     public bool HasInputStep => CheckHasInputStep();
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors
@@ -25,6 +26,7 @@ public class UpdateStep : IPlanStep
     {
         Id = Guid.NewGuid();
         Level = 0;
+        IsValid = true;
     }
     public UpdateStep(Process process) : this()
     {

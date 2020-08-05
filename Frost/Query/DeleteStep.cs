@@ -19,6 +19,7 @@ namespace FrostDB
         public bool HasInputStep => CheckHasInputStep();
         public bool ShouldDeleteAllRows { get; set; }
         public List<Row> DeletedRows { get; set; }
+        public bool IsValid { get; set; }
         #endregion
 
         #region Protected Methods
@@ -33,6 +34,7 @@ namespace FrostDB
             Id = Guid.NewGuid();
             ShouldDeleteAllRows = false;
             DeletedRows = new List<Row>();
+            IsValid = true;
         }
         #endregion
 

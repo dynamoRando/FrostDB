@@ -116,7 +116,7 @@
         }
     }
 
-    private async Task GetTableNamesForDatabase(ChangeEventArgs e)
+    private void GetTableNamesForDatabase(ChangeEventArgs e)
     {
         Item.TableNames.Clear();
         Item.TableNames.Add(SelectOneKeyword);
@@ -125,6 +125,11 @@
         Debug.WriteLine(e.Value.ToString());
 
         Item.SelectedDatabaseName = e.Value.ToString();
+
+        if (Item.SelectedDatabaseName.Equals(SelectOneKeyword))
+        {
+            return;
+        }
 
         var i = Item.FrostClient.GetDatabaseInfo(Item.SelectedDatabaseName);
         if (i.Tables.Count > 0)

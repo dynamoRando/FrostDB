@@ -14,13 +14,16 @@ public class SearchStep : IPlanStep
     public Guid Id { get; set; }
     public int Level { get; set; }
     public StatementPart Part => _part;
-    public string DatabaseName {get; set;}
+    public string DatabaseName { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors
     public SearchStep()
     {
         Id = Guid.NewGuid();
+        IsValid = true;
+
     }
     public SearchStep(StatementPart part) : this()
     {

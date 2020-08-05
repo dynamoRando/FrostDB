@@ -38,58 +38,69 @@ public class QueryPlanExecutor
         bool planFailed = false;
         var rowList = new List<Row>();
 
-        resultString += " ------------ " + Environment.NewLine;
-        int totalRows = 0;
-        int rows = 0;
-        int buildRows = 0;
-        StepResult stepResult = null;
-        if (!(plan.OriginalStatement is UpdateStatement))
+        if (!plan.IsValid)
         {
-            plan.Steps.Reverse();
-        }
-
-        foreach (var step in plan.Steps)
-        {
-            stepResult = ExecuteStep(step, plan.DatabaseName, out rows);
-            if (stepResult.IsValid == false)
-            {
-                planFailed = true;
-                resultString = stepResult.ErrorMessage;
-                break;
-            }
-            else
-            {
-                if (stepResult.RowsAffected > 0)
-                {
-                    rows = stepResult.RowsAffected;
-                }
-            }
-
-            totalRows += rows;
-            rowList.AddRange(stepResult.Rows);
-        }
-
-        if (!planFailed)
-        {
-            resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out buildRows));
             resultString += " ------------ " + Environment.NewLine;
-            result.Message = "Succeeded";
-            result.IsSuccessful = true;
-            result.JsonData = resultString;
-            if (buildRows > 0)
-            {
-                result.NumberOfRowsAffected = buildRows;
-            }
-            else
-            {
-                result.NumberOfRowsAffected = totalRows;
-            }
+            resultString += " Unable to parse statement" + Environment.NewLine;
+            resultString += " ------------ " + Environment.NewLine;
+            result.IsSuccessful = false;
+            result.Message = resultString;
         }
         else
         {
-            result.IsSuccessful = false;
-            result.Message = resultString;
-            result.NumberOfRowsAffected = 0;
+            resultString += " ------------ " + Environment.NewLine;
+            int totalRows = 0;
+            int rows = 0;
+            int buildRows = 0;
+            StepResult stepResult = null;
+            if (!(plan.OriginalStatement is UpdateStatement))
+            {
+                plan.Steps.Reverse();
+            }
+
+            foreach (var step in plan.Steps)
+            {
+                stepResult = ExecuteStep(step, plan.DatabaseName, out rows);
+                if (stepResult.IsValid == false)
+                {
+                    planFailed = true;
+                    resultString = stepResult.ErrorMessage;
+                    break;
+                }
+                else
+                {
+                    if (stepResult.RowsAffected > 0)
+                    {
+                        rows = stepResult.RowsAffected;
+                    }
+                }
+
+                totalRows += rows;
+                rowList.AddRange(stepResult.Rows);
+            }
+
+            if (!planFailed)
+            {
+                resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out buildRows));
+                resultString += " ------------ " + Environment.NewLine;
+                result.Message = "Succeeded";
+                result.IsSuccessful = true;
+                result.JsonData = resultString;
+                if (buildRows > 0)
+                {
+                    result.NumberOfRowsAffected = buildRows;
+                }
+                else
+                {
+                    result.NumberOfRowsAffected = totalRows;
+                }
+            }
+            else
+            {
+                result.IsSuccessful = false;
+                result.Message = resultString;
+                result.NumberOfRowsAffected = 0;
+            }
         }
 
         return result;

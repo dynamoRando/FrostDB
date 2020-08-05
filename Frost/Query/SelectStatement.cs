@@ -25,6 +25,7 @@ public class SelectStatement : IStatement
         Tables = new List<string>();
         WhereClause = new WhereClause();
         ErrorMessage = string.Empty;
+        IsValid = true;
     }
     #endregion
 

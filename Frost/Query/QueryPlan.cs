@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 public class QueryPlan
@@ -10,7 +11,7 @@ public class QueryPlan
     #region Public Properties
     public List<IPlanStep> Steps { get; set; }
     public string DatabaseName { get; set; }
-    public bool IsValid { get; set; }
+    public bool IsValid => IsPlanValid();
     public string ErrorMessage { get; set; }
     public List<string> Columns { get; set; }
     public IStatement OriginalStatement { get; set; }
@@ -28,5 +29,16 @@ public class QueryPlan
     #endregion
 
     #region Private Methods
+    private bool IsPlanValid()
+    {
+        if (Steps.Any(s => s.IsValid == false))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
     #endregion
 }

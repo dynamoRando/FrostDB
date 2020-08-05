@@ -17,6 +17,7 @@ public class InsertStepRemote : IPlanStep
     public List<string> Values { get; set; }
     public string TableName { get; set; }
     public string DatabaseName { get; set; }
+    public bool IsValid { get; set; }
     #endregion
 
     #region Constructors

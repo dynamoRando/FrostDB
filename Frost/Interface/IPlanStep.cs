@@ -9,4 +9,5 @@ public interface IPlanStep
     int Level { get; set; }
     StepResult GetResult(Process process, string databaseName);
     string GetResultText();
+    bool IsValid { get; set; }
 }
