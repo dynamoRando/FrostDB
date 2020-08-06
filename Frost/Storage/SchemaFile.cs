@@ -14,7 +14,8 @@ namespace FrostDB
         private string _schemaFileFolder;
         private string _databaseName;
         private string _fileText;
-        private DbSchema _schema;
+        private DbSchema _dbSchema;
+        private TableSchema _tableSchema;
         #endregion
 
         #region Public Properties
@@ -33,6 +34,7 @@ namespace FrostDB
             _schemaFileExtension = schemaFileFolder;
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
+            _dbSchema = new DbSchema();
         }
         #endregion
 
@@ -50,6 +52,8 @@ namespace FrostDB
         #region Private Methods
         private void LoadFile()
         {
+            _tableSchema = null;
+
             var file = Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
             var lines = File.ReadAllLines(file).ToList();
             lines.ForEach(l => ParseLine(l));
@@ -57,17 +61,29 @@ namespace FrostDB
 
         private void ParseLine(string line)
         {
+            if (line.StartsWith("version"))
+            {
+                ParseVersion(line);
+            }
             
             if (line.StartsWith("table"))
             {
-                var tableSchema = GetTableSchema(line);
+                if (_tableSchema is null)
+                {
+                    _tableSchema = new TableSchema();
+                }
+                else
+                {
+                    _dbSchema.Tables.Add(_tableSchema);
+                    _tableSchema = GetTableSchema(line);
+                }    
             }
             
             if (line.StartsWith("column"))
             {
                 var column = GetColumn(line);
+                _tableSchema.Columns.Add(column);
             }
-            throw new NotImplementedException();
         }
         private TableSchema GetTableSchema(string line)
         {
@@ -77,11 +93,11 @@ namespace FrostDB
             var items = line.Split(" ");
             {
                 Guid item;
-                if (Guid.TryParse(items[0], out item))
+                if (Guid.TryParse(items[1], out item))
                 {
                     result.TableId = item;
                 }
-                result.TableName = items[1];
+                result.TableName = items[2];
             }
 
             return result;
@@ -90,10 +106,25 @@ namespace FrostDB
         private Column GetColumn(string line)
         {
             // column columnid columnName columnDataType
-            throw new NotImplementedException();
+            Column result = null;
+            var items = line.Split(" ");
+            {
+                Guid item;
+                if (Guid.TryParse(items[1], out item))
+                {
+                    result = new Column(items[2], Type.GetType(items[3]), item);
+                }
+            }
+            return result;
+        }
+
+        private void ParseVersion(string line)
+        {
+            // version versionNumber
+            var items = line.Split(" ");
+            VersionNumber = Convert.ToInt32(items[1]);
         }
         #endregion
-
 
     }
 }
