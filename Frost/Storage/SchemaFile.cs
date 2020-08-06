@@ -53,6 +53,20 @@ namespace FrostDB
             var lines = File.ReadAllLines(file).ToList();
             throw new NotImplementedException();
         }
+
+        private void ParseLine(string line)
+        {
+            throw new NotImplementedException();
+        }
+        private TableSchema GetTableSchema(string line)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Column GetColumn(string line)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 

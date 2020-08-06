@@ -33,6 +33,13 @@ namespace FrostDB
             _type = type;
         }
 
+        public Column(string name, Type type, Guid? id)
+        {
+            _id = id;
+            _type = type;
+            _name = name;
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("ColumnId", Id.Value, typeof(Guid));
