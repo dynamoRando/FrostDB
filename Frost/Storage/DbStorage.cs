@@ -28,8 +28,9 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbStorage(Database database, string databaseDirectory)
+        public DbStorage(Process process, Database database, string databaseDirectory)
         {
+            _process = process;
             _database = database;
             _databaseFolderPath = databaseDirectory;
         }
