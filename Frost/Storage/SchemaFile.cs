@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace FrostDB
 {
@@ -11,6 +13,7 @@ namespace FrostDB
         private string _schemaFileExtension;
         private string _schemaFileFolder;
         private string _databaseName;
+        private string _fileText;
         #endregion
 
         #region Public Properties
@@ -44,6 +47,12 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void LoadFile()
+        {
+            var file = Path.Join(_schemaFileFolder, _databaseName) + "." + _schemaFileExtension;
+            var lines = File.ReadAllLines(file).ToList();
+            throw new NotImplementedException();
+        }
         #endregion
 
 
