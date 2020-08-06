@@ -49,7 +49,7 @@ namespace FrostDB
         #region Private Methods
         private void LoadFile()
         {
-            var file = Path.Join(_schemaFileFolder, _databaseName) + "." + _schemaFileExtension;
+            var file = Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
             var lines = File.ReadAllLines(file).ToList();
             throw new NotImplementedException();
         }
