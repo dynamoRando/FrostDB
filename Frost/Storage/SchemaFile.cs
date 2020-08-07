@@ -35,6 +35,7 @@ namespace FrostDB
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
             _dbSchema = new DbSchema();
+            LoadFile();
         }
         #endregion
 

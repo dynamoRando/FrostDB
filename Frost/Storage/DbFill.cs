@@ -7,5 +7,6 @@ namespace FrostDB
 {
     public class DbFill : IDbFill
     {
+        public DbSchema Schema { get; set; }
     }
 }

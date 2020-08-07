@@ -43,8 +43,16 @@ namespace FrostDB
         #region Public Methods
         public List<Database> GetDatabases()
         {
+            var result = new List<Database>();
             var databases = GetListOfDatabases();
-            throw new NotImplementedException();
+            foreach(var db in databases)
+            {
+                var storage = new DbStorage(_process);
+                var dbItem = storage.GetDatabase(db);
+                result.Add(dbItem);
+            }
+
+            return result;
         }
         #endregion
 

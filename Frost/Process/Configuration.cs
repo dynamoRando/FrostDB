@@ -25,6 +25,7 @@ namespace FrostDB
         public string ContractExtension { get; set ; }
         public string ContractFolder { get ; set; }
         public string DatabaseDirectoryFileName { get; set; }
+        public string SchemaFileExtension { get; set; }
         #endregion
 
         #region Events
