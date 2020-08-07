@@ -43,6 +43,7 @@ namespace FrostDB
         #region Public Methods
         public List<Database> GetDatabases()
         {
+            var databases = GetListOfDatabases();
             throw new NotImplementedException();
         }
         #endregion
@@ -57,8 +58,12 @@ namespace FrostDB
                 var items = File.ReadAllLines(file).ToList();
                 _directory = new DbDirectory(items);
             }
+            else
+            {
+                File.Create(file);
+            }
 
-            result.AddRange(_directory.GetOnlineDatabases);
+            result.AddRange(_directory.OnlineDatabases);
 
             return result;
         }

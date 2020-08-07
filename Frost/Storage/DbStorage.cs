@@ -4,6 +4,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Class used to maintain all the needed file structures supporting a database
+    /// </summary>
     public class DbStorage
     {
         #region Private Fields

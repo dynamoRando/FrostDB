@@ -6,11 +6,16 @@ using System.Linq;
 
 namespace FrostDB
 {
+    // shows if a database is online or offline
     public class DbDirectoryItem
     {
         public string DatabaseName { get; set; }
         public bool IsOnline { get; set; }
     }
+
+    /// <summary>
+    /// Maintains a list of databases that are online or offline
+    /// </summary>
     public class DbDirectory
     {
         #region Private Fields
@@ -35,7 +40,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public List<string> GetOnlineDatabases => Databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToList();
+        public List<string> OnlineDatabases => Databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToList();
         #endregion
 
         #region Private Methods
