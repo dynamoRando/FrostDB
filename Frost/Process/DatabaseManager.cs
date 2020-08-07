@@ -17,6 +17,7 @@ namespace FrostDB
         private IDatabaseFileMapper<Database, DataFile> _databaseFileMapper;
         private IDataManagerEventManager _dataEventManager;
         private Process _process;
+        private StorageManager _storageManager;
         #endregion
 
         #region Public Properties
@@ -30,6 +31,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public DatabaseManager(string databaseFolder, Process process)
+        {
+            _process = process;
+            _databaseFolder = databaseFolder;
+            _storageManager = new StorageManager(_process);
+        }
         public DatabaseManager(string databaseFolder,
             string databaseExtension,
             IDatabaseFileMapper<Database, DataFile> mapper,
@@ -107,6 +114,22 @@ namespace FrostDB
             File.Delete(_databaseFolder + @"\" + databaseName + _databaseExtension);
             var db = (Database)_process.GetDatabase(databaseName);
             _databases.Remove(db);
+        }
+
+        public int LoadDatabases2()
+        {
+            int count = 0;
+            string databaseFolderLocation = _process.Configuration.DatabaseFolder;
+
+            if (!Directory.Exists(databaseFolderLocation))
+            {
+                Directory.CreateDirectory(databaseFolderLocation);
+            }
+
+            var dbs = _storageManager.GetDatabases();
+            count = dbs.Count;
+
+            return count;
         }
 
         public int LoadDatabases(string databaseFolderLocation, string databaseExtension)

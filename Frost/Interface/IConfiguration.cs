@@ -14,5 +14,6 @@ namespace FrostDB.Interface
         string ContractExtension { get; set; }
         string ContractFolder { get; set; }
         Location GetLocation();
+        string DatabaseDirectoryFileName { get; set; }
     }
 }

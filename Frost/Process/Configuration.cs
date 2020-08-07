@@ -24,6 +24,7 @@ namespace FrostDB
         public string PartialDatabaseExtension { get; set; }
         public string ContractExtension { get; set ; }
         public string ContractFolder { get ; set; }
+        public string DatabaseDirectoryFileName { get; set; }
         #endregion
 
         #region Events

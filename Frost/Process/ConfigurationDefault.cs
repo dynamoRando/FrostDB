@@ -23,6 +23,7 @@ namespace FrostDB
         private string _contractFolder;
         private string _contractext;
         private string _partialDBextension;
+        private string _dbDirectoryFileName;
         #endregion
 
         #region Public Properties
@@ -37,6 +38,7 @@ namespace FrostDB
         public string ContractFolder => _contractFolder;
         public string ContractExtension => _contractext;
         public string PartialDatabaseExtension => _partialDBextension;
+        public string DatabaseDirectoryFileName => _dbDirectoryFileName;
         #endregion
 
         #region Events
@@ -77,6 +79,7 @@ namespace FrostDB
                 _consolePortNumber = 519;
                 _ipAddress = "127.0.0.1";
                 _partialDBextension = ".frostPart";
+                _dbDirectoryFileName = "frostDbDirectory.frostdir";
             }
             else if (_info.OS == OSPlatform.Linux)
             {
@@ -93,6 +96,7 @@ namespace FrostDB
                 _consolePortNumber = 519;
                 _ipAddress = "127.0.0.1";
                 _partialDBextension = ".frostPart";
+                _dbDirectoryFileName = "frostDbDirectory.frostdir";
             }
             else
             {
