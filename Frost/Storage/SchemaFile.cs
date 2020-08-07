@@ -39,6 +39,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public DbSchema GetDbSchema()
+        {
+            return _dbSchema;
+        }
         public bool IsValid()
         {
             throw new NotImplementedException();
