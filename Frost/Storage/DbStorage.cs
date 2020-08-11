@@ -51,8 +51,9 @@ namespace FrostDB
             // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
+            fill.PendingParticpants = _participants.GetPendingParticipants();
+            fill.AcceptedParticipants = _participants.GetAcceptedParticipants();
             
-
             return new Database(_process, fill, this);
         }
         #endregion
@@ -65,6 +66,32 @@ namespace FrostDB
 
             _schema = new SchemaFile(databaseFolder, schemaFileExtension, _databaseName);
             return _schema.GetDbSchema();
+        }
+
+        private List<Participant> GetAcceptedParticipants()
+        {
+            if (_schema is null)
+            {
+                LoadParticpantFile();
+            }
+
+            return _participants.GetAcceptedParticipants();
+        }
+
+        private List<Participant> GetPendingParticipants()
+        {
+            if (_schema is null)
+            {
+                LoadParticpantFile();
+            }
+
+            return _participants.GetPendingParticipants();
+        }
+
+        private void LoadParticpantFile()
+        {
+            var extension = _process.Configuration.ParticipantFileExtension;
+            _participants = new ParticipantFile(extension, _databaseFolderPath, _databaseName);
         }
         #endregion
 

@@ -16,5 +16,6 @@ namespace FrostDB.Interface
         Location GetLocation();
         string DatabaseDirectoryFileName { get; set; }
         string SchemaFileExtension { get; set; }
+        string ParticipantFileExtension { get; set; }
     }
 }

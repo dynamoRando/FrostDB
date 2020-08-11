@@ -11,5 +11,7 @@ namespace FrostDB
     public class DbFill : IDbFill
     {
         public DbSchema Schema { get; set; }
+        public List<Participant> AcceptedParticipants { get; set; }
+        public List<Participant> PendingParticpants { get; set; }
     }
 }

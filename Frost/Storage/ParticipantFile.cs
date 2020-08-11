@@ -42,12 +42,12 @@ namespace FrostDB
         #region Public Methods
         public List<Participant> GetAcceptedParticipants()
         {
-            throw new NotImplementedException();
+            return _accepted;
         }
 
         public List<Participant> GetPendingParticipants()
         {
-            throw new NotImplementedException();
+            return _pending;
         }
 
         public void Load()
@@ -114,7 +114,5 @@ namespace FrostDB
             VersionNumber = Convert.ToInt32(items[1]);
         }
         #endregion
-
-
     }
 }
