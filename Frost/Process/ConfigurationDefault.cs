@@ -26,6 +26,7 @@ namespace FrostDB
         private string _dbDirectoryFileName;
         private string _schemaFileExtension;
         private string _particpantFileExtension;
+        private string _dbAddressBookExtension;
         #endregion
 
         #region Public Properties
@@ -43,6 +44,7 @@ namespace FrostDB
         public string DatabaseDirectoryFileName => _dbDirectoryFileName;
         public string SchemaFileExtension => _schemaFileExtension;
         public string ParticpantFileExtension => _particpantFileExtension;
+        public string DatabaseAddressBookExtension => _dbAddressBookExtension;
         #endregion
 
         #region Events
@@ -86,6 +88,7 @@ namespace FrostDB
                 _dbDirectoryFileName = "frostDbDirectory.frostdir";
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
+                _dbAddressBookExtension = ".frostDbAddrDir";
             }
             else if (_info.OS == OSPlatform.Linux)
             {
@@ -105,6 +108,7 @@ namespace FrostDB
                 _dbDirectoryFileName = "frostDbDirectory.frostdir";
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
+                _dbAddressBookExtension = ".frostDbAddrDir";
             }
             else
             {

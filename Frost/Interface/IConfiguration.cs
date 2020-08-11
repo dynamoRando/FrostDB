@@ -17,5 +17,6 @@ namespace FrostDB.Interface
         string DatabaseDirectoryFileName { get; set; }
         string SchemaFileExtension { get; set; }
         string ParticipantFileExtension { get; set; }
+        string DbAddressBookExtension { get; set; }
     }
 }
