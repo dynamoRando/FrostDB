@@ -56,6 +56,11 @@ namespace FrostDB
 
             throw new NotImplementedException();
         }
+
+        private List<RowReference> GetRowsForTable(string tableName)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 
