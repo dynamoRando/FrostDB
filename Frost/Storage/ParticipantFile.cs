@@ -8,6 +8,9 @@ using FrostCommon;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Holds list of participants for this db that have accepted the database or are pending acceptance
+    /// </summary>
     public class ParticipantFile : IStorageFile
     {
         #region Private Fields

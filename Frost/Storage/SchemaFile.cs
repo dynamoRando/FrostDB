@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Contains the schema for a specified database
+    /// </summary>
     public class SchemaFile : IStorageFile
     {
         #region Private Fields
@@ -70,7 +73,7 @@ namespace FrostDB
             {
                 ParseVersion(line);
             }
-            
+
             if (line.StartsWith("table"))
             {
                 if (_tableSchema is null)
@@ -81,9 +84,9 @@ namespace FrostDB
                 {
                     _dbSchema.Tables.Add(_tableSchema);
                     _tableSchema = GetTableSchema(line);
-                }    
+                }
             }
-            
+
             if (line.StartsWith("column"))
             {
                 var column = GetColumn(line);

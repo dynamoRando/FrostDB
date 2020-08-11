@@ -5,9 +5,11 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Specifies for each row in this database if the information is local or if it is stored at a participant
+    /// </summary>
     public class DbAddressBook : IStorageFile
     {
-
         #region Private Fields
         private string _addressBookExtension;
         private string _addressBookFolder;
@@ -46,6 +48,14 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void ParseLines()
+        {
+            // table tableId
+            // rowId (local)
+            // rowId participantId
+
+            throw new NotImplementedException();
+        }
         #endregion
 
 
