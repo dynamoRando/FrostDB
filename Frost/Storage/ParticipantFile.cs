@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using FrostCommon;
 
 namespace FrostDB
 {
@@ -85,7 +86,25 @@ namespace FrostDB
 
         private void ParseParticipant(string line)
         {
-            throw new NotImplementedException();
+            var items = line.Split(" ");
+            // participant participantId ipaddress:portNumber true/false (accepted)
+            var ipaddressInfo = items[2].Split(":");
+            var ipaddress = ipaddressInfo[0];
+            var portNumber = ipaddressInfo[1];
+            var isAccepted = Convert.ToBoolean(items[3]);
+
+            Guid id = Guid.Parse(items[1]);
+            Location location = new Location(Guid.NewGuid(), ipaddress, Convert.ToInt32(portNumber), string.Empty);
+            var particpant = new Participant(id, location);
+
+            if (isAccepted)
+            {
+                _accepted.Add(particpant);
+            }
+            else
+            {
+                _pending.Add(particpant);
+            }
         }
 
         private void ParseVersion(string line)
