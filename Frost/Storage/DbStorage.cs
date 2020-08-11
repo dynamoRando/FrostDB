@@ -51,8 +51,8 @@ namespace FrostDB
             // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
-            fill.PendingParticpants = _participants.GetPendingParticipants();
-            fill.AcceptedParticipants = _participants.GetAcceptedParticipants();
+            fill.PendingParticpants = GetPendingParticipants();
+            fill.AcceptedParticipants = GetAcceptedParticipants();
             
             return new Database(_process, fill, this);
         }
