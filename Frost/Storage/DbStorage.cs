@@ -48,8 +48,10 @@ namespace FrostDB
         public Database GetDatabase(string databaseName)
         {
             _databaseName = databaseName;
+            // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
+            
 
             return new Database(_process, fill, this);
         }

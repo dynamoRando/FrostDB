@@ -75,6 +75,11 @@ namespace FrostDB
 
             return result;
         }
+
+        private SchemaFile GetSchemaFile(string databaseName)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }
