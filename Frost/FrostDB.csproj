@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BTreeCore\BTreeCore.csproj" />
     <ProjectReference Include="..\FrostCommon\FrostCommon.csproj" />
   </ItemGroup>
 
