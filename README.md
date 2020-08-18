@@ -40,18 +40,11 @@ A data port number is meant for Frost to Frost instance communication.
 
 A console port number is meant for the FrostForm.exe software to connect to so that you can administer your Frost instance.
 
-## FrostForm
-FrostForm.exe is a WinForm application meant to connect to your Frost instance. From here you can create databases, create tables, add participants, and execute queries.
-
-It will prompt for the IP Address of the Frost Console that is hosting Frost, the Console Port number to connection (mentioned previously and on the form is named 'Remote Port') as well as a 'Local Port' for the Frost instance to send messages back to.
-
-This was a hastily thrown together WinForm. I plan on either redoing it in the future, or redoing it in [Kivy](https://kivy.org/#home) if I get time.
-
 ## Other Items
 There are various other test projects I've included in the solution as well as general Frost Libaries.
 
-### FrostBlaze
-This was an experimental look at Microsoft's Blazor applications in an attempt to make the FrostForm component web-based and cross platform.
+### FrostBlazeServer
+This was an experimental look at Microsoft's Blazor applications in an attempt to make the FrostForm component web-based and cross platform. This is a server side Blazor implementation meant for administration of your FrostDB instance.
 
 ### FrostCommon
 A library meant to hold common objects that a Frost instance and affliated components will use for communication purposes.
@@ -61,9 +54,6 @@ The root libary that is Frost.
 
 ### FrostDbClient
 The client library meant to be used for developers to connect to Frost and perform various actions.
-
-### TestHarnessForm
-A WinForm I created to facilitate testing of various Frost components.
 
 # Random Thoughts
 There are various projects that are working on trying to solve ownership of user data, or at least tangentially. Off the top of my head I am aware of -
@@ -91,7 +81,7 @@ I'm not really a software developer. I'm learning this as I go along with this p
 
 I'm writing this software in my spare time. I'll welcome any feedback.
 
-This project is being constructed in Visual Studio Commmunity 2019 Preview. It is Windows centric, but not meant to be only Windows software; it's just what I was familiar with at the time. For the desktop portions, I am looking at re-writing them in something like [Kivy](https://kivy.org/#home). 
+This project is being constructed in Visual Studio Commmunity 2019 Preview. It is Windows centric, but not meant to be only Windows software.
 
 I would love for this project to be cross platform. It is currently being written in .NET Core 3.1, where applicable. It is in C#, though I had debated awhile back rebooting the project in Rust. Feel free to do so if you want!
 
