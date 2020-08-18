@@ -2,7 +2,7 @@
 A **proof of concept** implementation of an idea I had called a [Cooperative Database System](https://github.com/dynamoRando/CooperativeDatabaseSystems) or CDBS. This is an older paper I had with some of the inital concepts. I've worked to try and simplify these concepts for a minimum viable product in Frost.
 
 # License
-This project has been created with a GNU General Public License v3.0. See [file](https://github.com/dynamoRando/FrostDB/blob/master/LICENSE) for details.
+This project has been created with a GNU General Public License v3.0. See [file](https://github.com/dynamoRando/FrostDB/blob/master/LICENSE) for details. Some portions of the code have been incorporated from other Open Source Software projects. Those projects have had their README and respective licenses included in the repository where applicable.
 
 # What Is This About
 FrostDB is meant to be a friction-less as possible drop-in replacement for application developers to enable users of their applications to own their data. It takes a similiar approach as the SOLID project (https://solidproject.org/) but instead of leveraging open protocol standards, it is more database centric.
