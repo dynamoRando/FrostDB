@@ -113,13 +113,8 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.ExitSearch_condition(context);
         // this will set the full statement on the final exit
 
-        _dmlStatement.WhereClause.WhereClauseText = context.GetText();
-
-        int a = context.Start.StartIndex;
-        int b = context.Stop.StopIndex;
-        Interval interval = new Interval(a, b);
-        _charStream = context.Start.InputStream;
-        _dmlStatement.WhereClause.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
+        _dmlStatement.WhereClause.Text = context.GetText();
+        _dmlStatement.WhereClause.TextWithWhiteSpace = GetWhiteSpaceFormat(context);
     }
 
     public override void EnterSelect_statement([NotNull] TSqlParser.Select_statementContext context)
@@ -157,12 +152,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         part.Text = context.GetText();
         part.StatementOrigin = "EnterPredicate";
 
-        int a = context.Start.StartIndex;
-        int b = context.Stop.StopIndex;
-        Interval interval = new Interval(a, b);
-        _charStream = context.Start.InputStream;
-
-        part.TextWithWhiteSpace = _charStream.GetText(interval);
+        part.TextWithWhiteSpace = GetWhiteSpaceFormat(context);
 
         var parent = context.Parent.Parent;
         if (parent != null)
@@ -277,13 +267,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             var statement = GetStatementAsUpdate();
             var element = new UpdateStatementElement();
             element.RawString = context.GetText();
-            
-            int a = context.Start.StartIndex;
-            int b = context.Stop.StopIndex;
-            Interval interval = new Interval(a, b);
-            _charStream = context.Start.InputStream;
-
-            element.RawStringWithWhitespace = _charStream.GetText(interval);
+            element.RawStringWithWhitespace = GetWhiteSpaceFormat(context);
             statement.Elements.Add(element);
         }
 
@@ -300,7 +284,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
                 statement.WhereClause = new WhereClause();
             }
 
-            statement.WhereClause.WhereClauseText = context.GetText();
+            statement.WhereClause.Text = context.GetText();
 
         }
         Debug.WriteLine(context.GetText());

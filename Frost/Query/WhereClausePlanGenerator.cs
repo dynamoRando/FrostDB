@@ -275,7 +275,7 @@ public class WhereClausePlanGenerator
         // we are an outermost term
         // NAME = BRIAN
         if (stepParentText.Equals(stepGrandParentText) && boolStep is null
-            && stepParentText != _clause.WhereClauseWithWhiteSpace
+            && stepParentText != _clause.TextWithWhiteSpace
             )
         {
             if (boolSteps.Count > 0)
@@ -290,7 +290,7 @@ public class WhereClausePlanGenerator
                     boolStep.Level = maxLevel++;
 
                     // need to find the boolean operator
-                    var text = _clause.WhereClauseWithWhiteSpace;
+                    var text = _clause.TextWithWhiteSpace;
                     foreach (var k in steps)
                     {
                         if (k.Part == step.Part)

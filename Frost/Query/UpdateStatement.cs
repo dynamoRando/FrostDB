@@ -112,7 +112,7 @@ namespace FrostDB
 
         private bool CheckIfHasWhereClause()
         {
-            if (WhereClause.WhereClauseWithWhiteSpace.Length > 0)
+            if (WhereClause.TextWithWhiteSpace.Length > 0)
             {
                 return true;
             }
