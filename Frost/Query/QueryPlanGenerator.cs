@@ -22,6 +22,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public QueryPlan GeneratePlan(FrostIDDLStatement statement, string databaseName)
+        {
+            throw new NotImplementedException();
+        }
         public QueryPlan GeneratePlan(FrostIDMLStatement statement, string databaseName)
         {
             var plan = GeneratePlan(statement);

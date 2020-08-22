@@ -78,6 +78,16 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         return _dmlStatement as DeleteStatement;
     }
 
+    public CreateTableStatement GetStatementAsCreateTable()
+    {
+        return _ddlStatement as CreateTableStatement;
+    }
+
+    public bool IsStatementCreateTable()
+    {
+        return _ddlStatement is CreateTableStatement;
+    }
+
     public bool IsStatementInsert()
     {
         return _dmlStatement is InsertStatement;

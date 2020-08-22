@@ -49,18 +49,27 @@ namespace FrostDB
             }
 
             var databaseName = GetDatabaseName(databaseStatement);
-            var statement = GetStatement(commandStatement, databaseName);
-            statement.DatabaseName = databaseName;
 
-            if (!statement.IsValid)
+            if (IsDDLStatment(input))
             {
-                var step = new SearchStep();
-                step.IsValid = false;
-                plan.Steps.Add(step);
+                FrostIDDLStatement statement = GetDDLStatement(commandStatement, databaseName);
+                statement.DatabaseName = databaseName;
+                plan = _planGenerator.GeneratePlan(statement, databaseName);
             }
             else
             {
-                plan = _planGenerator.GeneratePlan(statement, databaseName);
+                FrostIDMLStatement statement = GetDMLStatement(commandStatement, databaseName);
+                statement.DatabaseName = databaseName;
+                if (!statement.IsValid)
+                {
+                    var step = new SearchStep();
+                    step.IsValid = false;
+                    plan.Steps.Add(step);
+                }
+                else
+                {
+                    plan = _planGenerator.GeneratePlan(statement, databaseName);
+                }
             }
 
             return plan;
@@ -96,19 +105,53 @@ namespace FrostDB
             return databaseName;
         }
 
-        private IParseTree GetStatementType(string input, TSqlParser parser)
+
+        private bool IsDDLStatment(string input)
         {
             if (input.Contains(QueryKeywords.CREATE_TABLE))
             {
-                return parser.ddl_clause();
+                return true;
             }
             else
             {
-                return parser.dml_clause();
+                return false;
             }
         }
 
-        private FrostIDMLStatement GetStatement(string input, string databaseName)
+        private FrostIDDLStatement GetDDLStatement(string input, string databaseName)
+        {
+            FrostIDDLStatement result = null;
+            TSqlParserListenerExtended loader;
+            var sqlStatement = string.Empty;
+
+            if (HasParticipant(input))
+            {
+                sqlStatement = RemoveParticipantKeyword(input);
+            }
+            else
+            {
+                sqlStatement = input;
+            }
+
+            AntlrInputStream inputStream = new AntlrInputStream(sqlStatement);
+            TSqlLexer lexer = new TSqlLexer(inputStream);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            TSqlParser parser = new TSqlParser(tokens);
+            var parseTree = parser.ddl_clause();
+            ParseTreeWalker walker = new ParseTreeWalker();
+            loader = new TSqlParserListenerExtended(GetDDLStatementType(sqlStatement), sqlStatement);
+            loader.TokenStream = tokens;
+            walker.Walk(loader, parseTree);
+
+            if (loader.IsStatementCreateTable())
+            {
+                result = loader.GetStatementAsCreateTable();
+            }
+
+            return result;
+        }
+
+        private FrostIDMLStatement GetDMLStatement(string input, string databaseName)
         {
             FrostIDMLStatement result = null;
             TSqlParserListenerExtended loader;
@@ -127,18 +170,9 @@ namespace FrostDB
             TSqlLexer lexer = new TSqlLexer(inputStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             TSqlParser parser = new TSqlParser(tokens);
-            var parseTree = GetStatementType(input, parser);
+            var parseTree = parser.dml_clause();
             ParseTreeWalker walker = new ParseTreeWalker();
-
-            if (parseTree is TSqlParser.Ddl_clauseContext)
-            {
-                loader = new TSqlParserListenerExtended(GetDDLStatementType(sqlStatement), sqlStatement);
-            }
-            else
-            {
-                loader = new TSqlParserListenerExtended(GetDMLStatementType(sqlStatement), sqlStatement);
-            }
-
+            loader = new TSqlParserListenerExtended(GetDMLStatementType(sqlStatement), sqlStatement);
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
 

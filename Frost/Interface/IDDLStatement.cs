@@ -6,6 +6,7 @@ namespace FrostDB
 {
     public interface FrostIDDLStatement
     {
+        public string DatabaseName { get; set; }
     }
 }
 
