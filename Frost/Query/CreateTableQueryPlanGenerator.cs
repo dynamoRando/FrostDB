@@ -29,7 +29,13 @@ namespace FrostDB
         #region Public Methods
         public QueryPlan GeneratePlan(CreateTableStatement statement)
         {
-            throw new NotImplementedException();
+            var step = new CreateTableStep();
+            step.Columns.AddRange(statement.ColumnNamesAndTypes);
+
+            var plan = new QueryPlan();
+            plan.Steps.Add(step);
+
+            return plan;
         }
         #endregion
 
