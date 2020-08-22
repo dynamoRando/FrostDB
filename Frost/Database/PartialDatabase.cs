@@ -79,6 +79,10 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void AddTable(Table2 table)
+        {
+            throw new NotImplementedException();
+        }
         public void AddTable(TableSchemaInfo schema)
         {
             if (!HasTable(schema.TableName))
