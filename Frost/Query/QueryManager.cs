@@ -111,6 +111,7 @@ namespace FrostDB
         private IStatement GetStatement(string input, string databaseName)
         {
             IStatement result = null;
+            TSqlParserListenerExtended loader;
             var sqlStatement = string.Empty;
 
             if (HasParticipant(input))
@@ -128,7 +129,16 @@ namespace FrostDB
             TSqlParser parser = new TSqlParser(tokens);
             var parseTree = GetStatementType(input, parser);
             ParseTreeWalker walker = new ParseTreeWalker();
-            TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(sqlStatement), sqlStatement);
+
+            if (parseTree is TSqlParser.Ddl_clauseContext)
+            {
+                loader = new TSqlParserListenerExtended(GetDDLStatementType(sqlStatement), sqlStatement);
+            }
+            else
+            {
+                loader = new TSqlParserListenerExtended(GetDMLStatementType(sqlStatement), sqlStatement);
+            }
+
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
 
@@ -159,7 +169,12 @@ namespace FrostDB
             return result;
         }
 
-        private IStatement GetStatementType(string input)
+        private IStatement GetDDLStatementType(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IStatement GetDMLStatementType(string input)
         {
             IStatement result = null;
             if (input.Contains(QueryKeywords.SELECT))
