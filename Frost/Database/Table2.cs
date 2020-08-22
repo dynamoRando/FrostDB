@@ -27,6 +27,7 @@ namespace FrostDB
 
         public Table2(Process process, TableSchema2 schema)
         {
+            // need to figure out what the new b-tree structure will look like
             throw new NotImplementedException();
         }
         #endregion
