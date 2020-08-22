@@ -6,6 +6,6 @@ namespace FrostDB
 {
     public class CreateTableStatement : IDDLStatement
     {
-      
+        public string DatabaseName { get; set; } 
     }
 }
