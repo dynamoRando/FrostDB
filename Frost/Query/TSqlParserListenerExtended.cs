@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Xml.XPath;
 
@@ -44,7 +45,17 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     public override void EnterTable_name([NotNull] TSqlParser.Table_nameContext context)
     {
         base.EnterTable_name(context);
-        _dmlStatement.Tables.Add(context.GetText());
+        if (_dmlStatement != null)
+        {
+            _dmlStatement.Tables.Add(context.GetText());
+        }
+        else
+        {
+            if (_ddlStatement is CreateTableStatement)
+            {
+                (_ddlStatement as CreateTableStatement).TableName = context.GetText();
+            }
+        }
     }
 
     public SelectStatement GetStatementAsSelect()
@@ -309,37 +320,56 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     public override void EnterCreate_table([NotNull] TSqlParser.Create_tableContext context)
     {
         base.EnterCreate_table(context);
-        Console.WriteLine(context.GetText());
+        var createTable = new CreateTableStatement();
+        createTable.RawStatement = context.GetText();
+        _ddlStatement = createTable;
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterData_type([NotNull] TSqlParser.Data_typeContext context)
     {
         base.EnterData_type(context);
-        Console.WriteLine(context.GetText());
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterColumn_definition([NotNull] TSqlParser.Column_definitionContext context)
     {
         base.EnterColumn_definition(context);
-        Console.WriteLine(context.GetText());
+        if (_ddlStatement != null)
+        {
+            if (_ddlStatement is CreateTableStatement)
+            {
+                (_ddlStatement as CreateTableStatement).ColumnNamesAndTypes.Add(GetWhiteSpaceFormat(context));
+            }
+        }
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterNull_notnull([NotNull] TSqlParser.Null_notnullContext context)
     {
         base.EnterNull_notnull(context);
-        Console.WriteLine(context.GetText());
+        Debug.WriteLine(context.GetText());
     }
 
     public override void EnterNull_or_default([NotNull] TSqlParser.Null_or_defaultContext context)
     {
         base.EnterNull_or_default(context);
-        Console.WriteLine(context.GetText());
+        Debug.WriteLine(context.GetText());
     }
 
     // end create table functions
     #endregion
 
     #region Private Properties
+    private string GetWhiteSpaceFormat(ParserRuleContext context)
+    {
+        int a = context.Start.StartIndex;
+        int b = context.Stop.StopIndex;
+        Interval interval = new Interval(a, b);
+        _charStream = context.Start.InputStream;
+
+        return _charStream.GetText(interval);
+    }
     private string GetWhitespaceStringFromTokenInterval(Interval interval)
     {
         try

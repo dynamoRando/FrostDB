@@ -9,6 +9,7 @@ namespace FrostDB
         public string DatabaseName { get; set; } 
         public List<string> ColumnNamesAndTypes { get; set; }
         public string RawStatement { get; set; }
+        public string TableName { get; set; }
 
         public CreateTableStatement()
         {
