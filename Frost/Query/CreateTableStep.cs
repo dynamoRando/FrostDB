@@ -35,7 +35,7 @@ namespace FrostDB
         public StepResult GetResult(Process process, string databaseName)
         {
             var result = new StepResult();
-            if (!process.HasDatabase(databaseName))
+            if (process.HasDatabase(databaseName))
             {
                 var db = process.GetDatabase(databaseName);
                 var columns = new List<ColumnSchema>();

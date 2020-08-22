@@ -83,6 +83,7 @@ namespace FrostDB
         {
             throw new NotImplementedException();
         }
+
         public void AddTable(TableSchemaInfo schema)
         {
             if (!HasTable(schema.TableName))
