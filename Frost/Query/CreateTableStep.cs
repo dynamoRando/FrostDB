@@ -33,7 +33,20 @@ namespace FrostDB
 
         public StepResult GetResult(Process process, string databaseName)
         {
-            throw new NotImplementedException();
+            var result = new StepResult();
+            if (!process.HasDatabase(databaseName))
+            {
+                var db = process.GetDatabase(databaseName);
+                var table = new Table(process);
+                throw new NotImplementedException();
+            }
+            else
+            {
+                result.IsValid = false;
+                result.ErrorMessage = $"{databaseName} was not found";
+            }
+
+            return result;
         }
 
         public string GetResultText()

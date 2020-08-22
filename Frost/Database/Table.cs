@@ -55,7 +55,6 @@ namespace FrostDB
         #region Constructors
         public Table(Process process)
         {
-
             _id = Guid.NewGuid();
             _store = new Store();
             _rows = new List<RowReference>();
