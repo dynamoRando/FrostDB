@@ -108,9 +108,9 @@ namespace FrostDB
             }
         }
 
-        private IStatement GetStatement(string input, string databaseName)
+        private IDMLStatement GetStatement(string input, string databaseName)
         {
-            IStatement result = null;
+            IDMLStatement result = null;
             TSqlParserListenerExtended loader;
             var sqlStatement = string.Empty;
 
@@ -159,7 +159,7 @@ namespace FrostDB
                 var item = loader.Statement as UpdateStatement;
                 item.DatabaseName = databaseName;
                 item.SetProcess(_process);
-                result = item as IStatement;
+                result = item as IDMLStatement;
             }
             else
             {
@@ -169,14 +169,14 @@ namespace FrostDB
             return result;
         }
 
-        private IStatement GetDDLStatementType(string input)
+        private IDMLStatement GetDDLStatementType(string input)
         {
             throw new NotImplementedException();
         }
 
-        private IStatement GetDMLStatementType(string input)
+        private IDMLStatement GetDMLStatementType(string input)
         {
-            IStatement result = null;
+            IDMLStatement result = null;
             if (input.Contains(QueryKeywords.SELECT))
             {
                 result = new SelectStatement();

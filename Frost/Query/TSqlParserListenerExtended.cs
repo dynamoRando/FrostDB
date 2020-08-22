@@ -12,14 +12,14 @@ using System.Xml.XPath;
 public class TSqlParserListenerExtended : TSqlParserBaseListener
 {
     #region Private Fields
-    IStatement _statement;
+    IDMLStatement _statement;
     ICharStream _charStream;
     private string _input;
     #endregion
 
     #region Constructors
     public TSqlParserListenerExtended() { }
-    public TSqlParserListenerExtended(IStatement statement, string input)
+    public TSqlParserListenerExtended(IDMLStatement statement, string input)
     {
         _statement = statement;
         _input = input;
@@ -33,7 +33,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     #region Public Properties
     public CommonTokenStream TokenStream { get; set; }
-    public IStatement Statement => _statement;
+    public IDMLStatement Statement => _statement;
     #endregion
 
     #region Public Methods

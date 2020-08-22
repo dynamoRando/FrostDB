@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class DeleteStatement : IStatement
+    public class DeleteStatement : IDMLStatement
     {
 
         #region Private Fields

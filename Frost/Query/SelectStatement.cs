@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-public class SelectStatement : IStatement
+public class SelectStatement : IDMLStatement
 {
     #region Public Properties
     public List<string> SelectList { get; set; }
