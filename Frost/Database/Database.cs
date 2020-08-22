@@ -26,6 +26,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public List<Table2> Tables2 { get; set; }
         public string Name => _name;
         public List<Table> Tables => _tables;
         public Guid? Id => _id;
@@ -49,6 +50,7 @@ namespace FrostDB
 
         public Database(Process process)
         {
+            Tables2 = new List<Table2>();
             _process = process;
             _id = Guid.NewGuid();
             _tables = new List<Table>();
@@ -225,6 +227,11 @@ namespace FrostDB
         public Table GetTable(Guid? tableId)
         {
             return _tables.Where(t => t.Id == tableId).First();
+        }
+
+        public void AddTable(Table2 table)
+        {
+            throw new NotImplementedException();
         }
 
         public void AddTable(Table table)

@@ -53,6 +53,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public Table(Process process, TableSchema2 schema)
+        {
+            throw new NotImplementedException();
+        }
         public Table(Process process)
         {
             _id = Guid.NewGuid();

@@ -14,6 +14,7 @@ namespace FrostDB
         public Guid Id { get; set; }
         public int Level { get; set; }
         public bool IsValid { get; set; }
+        public string TableName { get; set; }
         #endregion
 
         #region Protected Methods
@@ -37,7 +38,16 @@ namespace FrostDB
             if (!process.HasDatabase(databaseName))
             {
                 var db = process.GetDatabase(databaseName);
-                var table = new Table(process);
+                var columns = new List<ColumnSchema>();
+
+                foreach(var column in Columns)
+                {
+                    columns.Add(GetColumnSchema(column));
+                }
+
+                var schema = new TableSchema2(columns, TableName, databaseName);
+                var table = new Table2(process, schema);
+                db.AddTable(table);
                 throw new NotImplementedException();
             }
             else
@@ -59,6 +69,31 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private ColumnSchema GetColumnSchema(string text)
+        {
+            var result = new ColumnSchema();
+            var values = text.Split(" ");
+            if (values.Length == 3)
+            {
+                result.Name = values[0];
+                result.DataType = values[1];
+                if (values[2] == "NULL")
+                {
+                    result.IsNullable = true;
+                }
+                else if (values[2] == "NOT NULL")
+                {
+                    result.IsNullable = false;
+                }
+            }
+            else if (values.Length == 2)
+            {
+                result.Name = values[0];
+                result.DataType = values[1];
+                result.IsNullable = true;
+            }
+            return result;
+        }
         #endregion
 
     }

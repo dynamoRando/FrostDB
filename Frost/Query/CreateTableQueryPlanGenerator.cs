@@ -31,7 +31,7 @@ namespace FrostDB
         {
             var step = new CreateTableStep();
             step.Columns.AddRange(statement.ColumnNamesAndTypes);
-
+            step.TableName = statement.TableName;   
             var plan = new QueryPlan();
             plan.Steps.Add(step);
 
