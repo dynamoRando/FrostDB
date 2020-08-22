@@ -301,6 +301,38 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     // end delete functions
 
+    // create table functions
+    public override void EnterCreate_table([NotNull] TSqlParser.Create_tableContext context)
+    {
+        base.EnterCreate_table(context);
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterData_type([NotNull] TSqlParser.Data_typeContext context)
+    {
+        base.EnterData_type(context);
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterColumn_definition([NotNull] TSqlParser.Column_definitionContext context)
+    {
+        base.EnterColumn_definition(context);
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterNull_notnull([NotNull] TSqlParser.Null_notnullContext context)
+    {
+        base.EnterNull_notnull(context);
+        Console.WriteLine(context.GetText());
+    }
+
+    public override void EnterNull_or_default([NotNull] TSqlParser.Null_or_defaultContext context)
+    {
+        base.EnterNull_or_default(context);
+        Console.WriteLine(context.GetText());
+    }
+
+    // end create table functions
     #endregion
 
     #region Private Properties

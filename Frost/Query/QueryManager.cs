@@ -60,9 +60,9 @@ namespace FrostDB
             }
             else
             {
-               plan = _planGenerator.GeneratePlan(statement, databaseName);
+                plan = _planGenerator.GeneratePlan(statement, databaseName);
             }
-            
+
             return plan;
         }
 
@@ -95,6 +95,19 @@ namespace FrostDB
 
             return databaseName;
         }
+
+        private IParseTree GetStatementType(string input, TSqlParser parser)
+        {
+            if (input.Contains(QueryKeywords.CREATE_TABLE))
+            {
+                return parser.ddl_clause();
+            }
+            else
+            {
+                return parser.dml_clause();
+            }
+        }
+
         private IStatement GetStatement(string input, string databaseName)
         {
             IStatement result = null;
@@ -108,12 +121,12 @@ namespace FrostDB
             {
                 sqlStatement = input;
             }
-                        
+
             AntlrInputStream inputStream = new AntlrInputStream(sqlStatement);
             TSqlLexer lexer = new TSqlLexer(inputStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             TSqlParser parser = new TSqlParser(tokens);
-            var parseTree = parser.dml_clause();
+            var parseTree = GetStatementType(input, parser);
             ParseTreeWalker walker = new ParseTreeWalker();
             TSqlParserListenerExtended loader = new TSqlParserListenerExtended(GetStatementType(sqlStatement), sqlStatement);
             loader.TokenStream = tokens;
@@ -149,22 +162,22 @@ namespace FrostDB
         private IStatement GetStatementType(string input)
         {
             IStatement result = null;
-            if (input.Contains(QueryKeywords.Select))
+            if (input.Contains(QueryKeywords.SELECT))
             {
                 result = new SelectStatement();
             }
 
-            if (input.Contains(QueryKeywords.Update))      
+            if (input.Contains(QueryKeywords.UPDATE))
             {
                 result = new UpdateStatement();
             }
 
-            if (input.Contains(QueryKeywords.Insert))
+            if (input.Contains(QueryKeywords.INSERT))
             {
                 result = new InsertStatement();
             }
 
-            if (input.Contains(QueryKeywords.Delete))
+            if (input.Contains(QueryKeywords.DELETE))
             {
                 result = new DeleteStatement();
             }
@@ -175,10 +188,10 @@ namespace FrostDB
         private string GetParticipantString(string input)
         {
             string result = string.Empty;
-            if (input.Contains(QueryKeywords.For_Participant))
+            if (input.Contains(QueryKeywords.FOR_PARTICIPANT))
             {
-                int keywordIndex = input.IndexOf(QueryKeywords.For_Participant);
-                var participantString = input.Substring(keywordIndex + QueryKeywords.For_Participant.Length).Trim();
+                int keywordIndex = input.IndexOf(QueryKeywords.FOR_PARTICIPANT);
+                var participantString = input.Substring(keywordIndex + QueryKeywords.FOR_PARTICIPANT.Length).Trim();
                 result = participantString;
             }
 
@@ -190,7 +203,7 @@ namespace FrostDB
             var result = string.Empty;
             if (HasParticipant(input))
             {
-                var indexOfParticipant = input.IndexOf(QueryKeywords.For_Participant);
+                var indexOfParticipant = input.IndexOf(QueryKeywords.FOR_PARTICIPANT);
                 result = input.Substring(0, indexOfParticipant).Trim();
             }
 
@@ -199,7 +212,7 @@ namespace FrostDB
 
         private bool HasParticipant(string input)
         {
-            if (input.Contains(QueryKeywords.For_Participant))
+            if (input.Contains(QueryKeywords.FOR_PARTICIPANT))
             {
                 return true;
             }

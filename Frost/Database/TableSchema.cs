@@ -67,7 +67,6 @@ namespace FrostDB
         #region Private Methods
         private void Map(Table table)
         {
-            
             TableName = table.Name;
             TableId = table.Id;
             Columns = table.Columns;

@@ -173,10 +173,10 @@ namespace FrostDB
         private void ParseWhereClause(string statement)
         {
             // find the {} after the WHERE keyword
-            int whereClauseIndex = statement.IndexOf(QueryKeywords.Where);
+            int whereClauseIndex = statement.IndexOf(QueryKeywords.WHERE);
 
             // find the start position
-            int startPosition = whereClauseIndex + QueryKeywords.Where.Length;
+            int startPosition = whereClauseIndex + QueryKeywords.WHERE.Length;
 
             // get the string from the start position to the end of the string 
             string clause = statement.Substring(startPosition, statement.Length - startPosition);
@@ -221,7 +221,7 @@ namespace FrostDB
 
         private bool CheckHasWhereClause(string statement)
         {
-            if (statement.Contains(QueryKeywords.Where))
+            if (statement.Contains(QueryKeywords.WHERE))
             {
                 return true;
             }

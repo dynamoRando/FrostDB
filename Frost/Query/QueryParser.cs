@@ -83,7 +83,7 @@ namespace FrostDB
 
             var item = SetQueryType(statement);
 
-            if (database.Contains(QueryKeywords.Use))
+            if (database.Contains(QueryKeywords.USE))
             {
                 processHasDatabase = TryParseDatabase(commands[0], item);
             }
@@ -127,29 +127,29 @@ namespace FrostDB
 
         private IQuery SetQueryType(string statement)
         {
-            if (statement.Contains(QueryKeywords.Select, StringComparison.OrdinalIgnoreCase))
+            if (statement.Contains(QueryKeywords.SELECT, StringComparison.OrdinalIgnoreCase))
             {
                 return new SelectQuery(_process);
             }
 
-            if (statement.Contains(QueryKeywords.Insert, StringComparison.OrdinalIgnoreCase))
+            if (statement.Contains(QueryKeywords.INSERT, StringComparison.OrdinalIgnoreCase))
             {
                 return new InsertQuery(_process);
             }
 
-            if (statement.Contains(QueryKeywords.Update, StringComparison.OrdinalIgnoreCase))
+            if (statement.Contains(QueryKeywords.UPDATE, StringComparison.OrdinalIgnoreCase))
             {
                 return new UpdateQuery(_process);
             }
 
-            if (statement.Contains(QueryKeywords.Delete, StringComparison.OrdinalIgnoreCase))
+            if (statement.Contains(QueryKeywords.DELETE, StringComparison.OrdinalIgnoreCase))
             {
                 return new DeleteQuery(_process);
             }
 
             return null;
-
         }
+
         private bool TryParseDatabase(string useStatement, IQuery query)
         {
             var items = useStatement.Split(" ");
