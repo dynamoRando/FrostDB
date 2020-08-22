@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-public interface IDMLStatement
+public interface FrostIDMLStatement
 {
     List<string> Tables { get; set; }
     bool HasWhereClause { get; }

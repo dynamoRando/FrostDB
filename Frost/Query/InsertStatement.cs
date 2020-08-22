@@ -5,7 +5,7 @@ using FrostCommon;
 
 namespace FrostDB
 {
-    public class InsertStatement : IDMLStatement
+    public class InsertStatement : FrostIDMLStatement
     {
         #region Public Properties
         public List<string> Tables { get; set; }

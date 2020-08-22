@@ -108,9 +108,9 @@ namespace FrostDB
             }
         }
 
-        private IDMLStatement GetStatement(string input, string databaseName)
+        private FrostIDMLStatement GetStatement(string input, string databaseName)
         {
-            IDMLStatement result = null;
+            FrostIDMLStatement result = null;
             TSqlParserListenerExtended loader;
             var sqlStatement = string.Empty;
 
@@ -142,9 +142,9 @@ namespace FrostDB
             loader.TokenStream = tokens;
             walker.Walk(loader, parseTree);
 
-            if (loader.Statement is InsertStatement)
+            if (loader.DMLStatement is InsertStatement)
             {
-                var item = loader.Statement as InsertStatement;
+                var item = loader.DMLStatement as InsertStatement;
                 item.Participant = GetParticipant(GetParticipantString(input));
                 item.ParticipantString = GetParticipantString(input);
                 item.DatabaseName = databaseName;
@@ -154,29 +154,35 @@ namespace FrostDB
                 }
                 result = item;
             }
-            else if (loader.Statement is UpdateStatement)
+            else if (loader.DMLStatement is UpdateStatement)
             {
-                var item = loader.Statement as UpdateStatement;
+                var item = loader.DMLStatement as UpdateStatement;
                 item.DatabaseName = databaseName;
                 item.SetProcess(_process);
-                result = item as IDMLStatement;
+                result = item as FrostIDMLStatement;
             }
             else
             {
-                result = loader.Statement;
+                result = loader.DMLStatement;
             }
 
             return result;
         }
 
-        private IDMLStatement GetDDLStatementType(string input)
+        private FrostIDDLStatement GetDDLStatementType(string input)
         {
-            throw new NotImplementedException();
+            FrostIDDLStatement result = null;
+            if (input.Contains(QueryKeywords.CREATE_TABLE))
+            {
+                result = new CreateTableStatement();
+            }
+
+            return result;
         }
 
-        private IDMLStatement GetDMLStatementType(string input)
+        private FrostIDMLStatement GetDMLStatementType(string input)
         {
-            IDMLStatement result = null;
+            FrostIDMLStatement result = null;
             if (input.Contains(QueryKeywords.SELECT))
             {
                 result = new SelectStatement();

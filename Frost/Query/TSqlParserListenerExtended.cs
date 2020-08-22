@@ -12,75 +12,79 @@ using System.Xml.XPath;
 public class TSqlParserListenerExtended : TSqlParserBaseListener
 {
     #region Private Fields
-    IDMLStatement _statement;
+    FrostIDMLStatement _dmlStatement;
+    FrostIDDLStatement _ddlStatement;
     ICharStream _charStream;
     private string _input;
     #endregion
 
     #region Constructors
     public TSqlParserListenerExtended() { }
-    public TSqlParserListenerExtended(IDMLStatement statement, string input)
+    public TSqlParserListenerExtended(FrostIDMLStatement statement, string input)
     {
-        _statement = statement;
+        _dmlStatement = statement;
         _input = input;
     }
-    public TSqlParserListenerExtended(SelectStatement statement, string input)
+
+    public TSqlParserListenerExtended(FrostIDDLStatement statement, string input)
     {
-        _statement = statement;
+        _ddlStatement = statement;
         _input = input;
     }
+
     #endregion
 
     #region Public Properties
     public CommonTokenStream TokenStream { get; set; }
-    public IDMLStatement Statement => _statement;
+    public FrostIDMLStatement DMLStatement => _dmlStatement;
+    public FrostIDDLStatement DDLStatement => _ddlStatement;
     #endregion
 
     #region Public Methods
     public override void EnterTable_name([NotNull] TSqlParser.Table_nameContext context)
     {
         base.EnterTable_name(context);
-        _statement.Tables.Add(context.GetText());
+        _dmlStatement.Tables.Add(context.GetText());
     }
 
     public SelectStatement GetStatementAsSelect()
     {
-        return _statement as SelectStatement;
+        return _dmlStatement as SelectStatement;
     }
 
     public InsertStatement GetStatementAsInsert()
     {
-        return _statement as InsertStatement;
+        return _dmlStatement as InsertStatement;
     }
 
     public UpdateStatement GetStatementAsUpdate()
     {
-        return _statement as UpdateStatement;
+        return _dmlStatement as UpdateStatement;
     }
 
     public DeleteStatement GetStatementAsDelete()
     {
-        return _statement as DeleteStatement;
+        return _dmlStatement as DeleteStatement;
     }
 
     public bool IsStatementInsert()
     {
-        return _statement is InsertStatement;
+        return _dmlStatement is InsertStatement;
     }
 
     public bool IsStatementSelect()
     {
-        return _statement is SelectStatement;
+        return _dmlStatement is SelectStatement;
     }
 
     public bool IsStatementUpdate()
     {
-        return _statement is UpdateStatement;
+        return _dmlStatement is UpdateStatement;
     }
 
     public bool IsStatementDelete()
     {
-        return _statement is DeleteStatement;
+        return _dmlStatement is DeleteStatement;
     }
 
     public override void ExitSearch_condition([NotNull] TSqlParser.Search_conditionContext context)
@@ -88,19 +92,19 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.ExitSearch_condition(context);
         // this will set the full statement on the final exit
 
-        _statement.WhereClause.WhereClauseText = context.GetText();
+        _dmlStatement.WhereClause.WhereClauseText = context.GetText();
 
         int a = context.Start.StartIndex;
         int b = context.Stop.StopIndex;
         Interval interval = new Interval(a, b);
         _charStream = context.Start.InputStream;
-        _statement.WhereClause.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
+        _dmlStatement.WhereClause.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
     }
 
     public override void EnterSelect_statement([NotNull] TSqlParser.Select_statementContext context)
     {
         base.EnterSelect_statement(context);
-        _statement.RawStatement = context.GetText();
+        _dmlStatement.RawStatement = context.GetText();
     }
 
     public override void EnterSelect_list([NotNull] TSqlParser.Select_listContext context)
@@ -128,7 +132,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         Console.WriteLine(context.GetText());
 
         var part = new StatementPart();
-        part.StatementTableName = _statement.Tables.FirstOrDefault();
+        part.StatementTableName = _dmlStatement.Tables.FirstOrDefault();
         part.Text = context.GetText();
         part.StatementOrigin = "EnterPredicate";
 
@@ -157,10 +161,10 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
         if (!part.ParseStatementPart())
         {
-            _statement.IsValid = false;
+            _dmlStatement.IsValid = false;
         }
 
-        _statement.WhereClause.Conditions.Add(part);
+        _dmlStatement.WhereClause.Conditions.Add(part);
     }
 
     // begin insert functions

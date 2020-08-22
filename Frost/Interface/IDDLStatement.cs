@@ -4,7 +4,9 @@ using System.Text;
 
 namespace FrostDB
 {
-    public interface IDDLStatement
+    public interface FrostIDDLStatement
     {
     }
 }
+
+

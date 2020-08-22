@@ -22,14 +22,14 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public QueryPlan GeneratePlan(IDMLStatement statement, string databaseName)
+        public QueryPlan GeneratePlan(FrostIDMLStatement statement, string databaseName)
         {
             var plan = GeneratePlan(statement);
             plan.DatabaseName = databaseName;
             return plan;
         }
 
-        public QueryPlan GeneratePlan(IDMLStatement statement)
+        public QueryPlan GeneratePlan(FrostIDMLStatement statement)
         {
             var plan = new QueryPlan();
             if (statement is SelectStatement)

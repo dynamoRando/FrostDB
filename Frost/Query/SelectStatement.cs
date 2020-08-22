@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-public class SelectStatement : IDMLStatement
+public class SelectStatement : FrostIDMLStatement
 {
     #region Public Properties
     public List<string> SelectList { get; set; }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FrostDB
 {
-    public class UpdateStatement : IDMLStatement
+    public class UpdateStatement : FrostIDMLStatement
     {
 
         #region Private Fields
