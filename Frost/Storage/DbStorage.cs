@@ -15,7 +15,6 @@ namespace FrostDB
         private string _databaseFolderPath = string.Empty;
         private SchemaFile _schema;
         private DbDataFile _data;
-        private DbAddressBook _addressBook;
         private ParticipantFile _participants;
         private DbSecurityFile _security;
         private DbContractFile _contractFile;

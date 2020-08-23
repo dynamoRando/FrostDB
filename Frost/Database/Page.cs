@@ -15,6 +15,7 @@ namespace FrostDB
         private int _sizeOfDbId;
         private int _sizeOfTableId;
         private byte[] _data;
+        private bool _isLocal;
         #endregion
 
         #region Public Properties
