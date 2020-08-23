@@ -11,6 +11,7 @@ namespace FrostDB
     {
         #region Private Fields
         private List<Database> _databases;
+        private List<Database2> _database2;
         private string _databaseFolder;
         private string _databaseExtension;
         private IDataFileManager<DataFile> _dataFileManager;
@@ -22,6 +23,7 @@ namespace FrostDB
 
         #region Public Properties
         public List<Database> Databases => _databases;
+        public List<Database2> Databases2 => _database2;
         #endregion
 
         #region Protected Methods

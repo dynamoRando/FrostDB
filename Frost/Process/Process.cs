@@ -38,6 +38,7 @@ namespace FrostDB
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
         public List<Database> Databases => DatabaseManager.Databases;
+        public List<Database2> Databases2 => DatabaseManager.Databases2;
         public List<PartialDatabase> PartialDatabases => PartialDatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
@@ -163,6 +164,11 @@ namespace FrostDB
         public virtual IDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
+        }
+
+        public bool HasDatabase2(string databaseName)
+        {
+            return Databases2.Any(database => database.Name.ToUpper() == databaseName.ToUpper());
         }
 
         public bool HasDatabase(string databaseName)
