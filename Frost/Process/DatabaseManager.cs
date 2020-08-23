@@ -24,6 +24,7 @@ namespace FrostDB
         #region Public Properties
         public List<Database> Databases => _databases;
         public List<Database2> Databases2 => _database2;
+        public StorageManager StorageManager => _storageManager;
         #endregion
 
         #region Protected Methods

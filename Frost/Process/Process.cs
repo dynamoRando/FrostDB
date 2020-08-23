@@ -191,6 +191,16 @@ namespace FrostDB
             return Databases.Where(d => d.Name == databaseName).FirstOrDefault().Tables.Where(t => t.Id == tableId).First().Name;
         }
 
+        public Page GetPage(string databaseName, string tableName, int pageId)
+        {
+            return DatabaseManager.StorageManager.GetPage(databaseName, tableName, pageId);
+        }
+
+        public Page GetPage(int databaseId, int tableId, int pageId)
+        {
+            return DatabaseManager.StorageManager.GetPage(databaseId, tableId, pageId);
+        }
+
         public virtual void Startup()
         {
             LoadDatabases();

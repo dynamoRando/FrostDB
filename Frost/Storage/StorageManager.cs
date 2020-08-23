@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using FrostDB.Storage;
 
 namespace FrostDB
 {
@@ -13,6 +14,7 @@ namespace FrostDB
         private Process _process;
         private string _databaseFolder;
         private DbDirectory _directory;
+        private Pager _pager;
         #endregion
 
         #region Public Properties
@@ -32,6 +34,7 @@ namespace FrostDB
             {
                 _process = process;
                 _databaseFolder = _process.Configuration.DatabaseFolder;
+                _pager = new Pager(_process, _databaseFolder);
             }
             else
             {
@@ -41,6 +44,16 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public Page GetPage(string databaseName, string tableName, int pageId)
+        {
+            return _pager.GetPage(databaseName, tableName, pageId);
+        }
+
+        public Page GetPage(int databaseId, int tableId, int pageId)
+        {
+            return _pager.GetPage(databaseId, tableId, pageId);
+        }
+
         public List<Database> GetDatabases()
         {
             var result = new List<Database>();
