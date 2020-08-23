@@ -6,6 +6,6 @@ namespace FrostDB
 {
     public class DatabaseConstants
     {
-        public const int PAGE_SIZE = 4096;
+        public const int PAGE_SIZE = 8192;
     }
 }
