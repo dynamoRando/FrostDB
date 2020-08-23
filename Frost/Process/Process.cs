@@ -171,6 +171,11 @@ namespace FrostDB
             return Databases2.Any(database => database.Name.ToUpper() == databaseName.ToUpper());
         }
 
+        public Database2 GetDatabase2(string databaseName)
+        {
+            return Databases2.Where(d => d.Name == databaseName).FirstOrDefault();
+        }
+
         public bool HasDatabase(string databaseName)
         {
             return Databases.Any(d => d.Name.ToUpper() == databaseName.ToUpper());

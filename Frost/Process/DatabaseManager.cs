@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Linq;
+using MoreLinq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FrostDB
 {
@@ -63,6 +65,36 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public bool HasDatabase2(string databaseName)
+        {
+            return Databases2.Any(d => d.Name.ToUpper() == databaseName.ToUpper());
+        }
+
+        public bool HasDatabase2(int databaseId)
+        {
+            return Databases2.Any(d => d.DatabaseId == databaseId);
+        }
+
+        public Database2 GetDatabase2(string databaseName)
+        {
+            return Databases2.Where(d => d.Name == databaseName).FirstOrDefault();
+        }
+
+        public Database2 GetDatabase2(int databaseId)
+        {
+            return Databases2.Where(d => d.DatabaseId == databaseId).FirstOrDefault();
+        }
+
+        public int GetNextDatabaseId()
+        {
+            return GetMaxDatabaseId() + 1;
+        }
+
+        public int GetMaxDatabaseId()
+        {
+            return Databases2.MaxBy(d => d.DatabaseId).First().DatabaseId;
+        }
+
         public Database GetFullDatabase(string databaseName)
         {
             Database db = null;

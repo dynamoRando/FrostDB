@@ -33,17 +33,22 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Table2()
+        public Table2(Process process, string databaseName)
         {
+            _process = process;
+            _databaseName = databaseName;
             _btree = new BTreeDictionary<int, Page>();
+            _tableId = _process.GetDatabase2(_databaseName).GetNextTableId();
         }
 
-        public Table2(Process process, TableSchema2 schema) : this()
+        public Table2(Process process, TableSchema2 schema)
         {
+            _btree = new BTreeDictionary<int, Page>();
             _process = process;
             _name = schema.Name;
             _databaseName = schema.DatabaseName;
             _columns = schema.Columns;
+            _tableId = schema.TableId;
             // need to figure out what the new b-tree structure will look like
             // how to populate binary page data from disk to table object?
             throw new NotImplementedException();
