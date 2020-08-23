@@ -21,6 +21,9 @@ namespace FrostDB
         public string Name => _name;
         public string Database => _databaseName;
         public int TableId => _tableId;
+        // change this - placeholder idea to check to see if indexes exist on table to search for later
+        // ideally we'd check the database file to see if an index exists to return true/false
+        public bool HasIndexes { get; set; }
         #endregion
 
         #region Protected Methods
