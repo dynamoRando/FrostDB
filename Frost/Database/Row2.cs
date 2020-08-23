@@ -38,6 +38,8 @@ namespace FrostDB
         {
             _data = data;
             _columns = columns;
+            GetIsLocal();
+            GetParticipantId();
         }
         #endregion
 
@@ -45,6 +47,30 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private Guid GetParticipantId() 
+        {
+            var span = new Span<byte>(Data);
+            var bytes = span.Slice(SizeOfIsLocal, SizeOfParticipantId);
+            return new Guid(bytes);
+        }
+
+        private void SaveParticipant()
+        {
+            var data = ParticipantId.ToByteArray();
+            data.CopyTo(_data, SizeOfIsLocal);
+        }
+
+        private void SaveIsLocal()
+        {
+            var data = BitConverter.GetBytes(IsLocal);
+            data.CopyTo(_data, SizeOfIsLocal);
+        }
+        private bool GetIsLocal()
+        {
+            var span = new Span<Byte>(Data);
+            var bytes = span.Slice(0, SizeOfIsLocal);
+            return BitConverter.ToBoolean(bytes);
+        }
         #endregion
 
     }
