@@ -17,7 +17,7 @@ namespace FrostDB
         #region Public Properties
         public string Name => _name;
         public List<Table2> Tables => _tables;
-        public int DatabaseId => _databaseId
+        public int DatabaseId => _databaseId;
         #endregion
 
         #region Protected Methods
