@@ -7,7 +7,9 @@ namespace FrostDB
     public class Table2
     {
         #region Private Fields
-        Process _process;
+        private Process _process;
+        private BTreeDictionary<int, Page> _btree;
+        private int _maxPageId;
         #endregion
 
         #region Public Properties
@@ -22,10 +24,10 @@ namespace FrostDB
         #region Constructors
         public Table2()
         {
-
+            _btree = new BTreeDictionary<int, Page>();
         }
 
-        public Table2(Process process, TableSchema2 schema)
+        public Table2(Process process, TableSchema2 schema) : this()
         {
             // need to figure out what the new b-tree structure will look like
             throw new NotImplementedException();
