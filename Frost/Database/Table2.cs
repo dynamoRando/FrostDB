@@ -10,9 +10,15 @@ namespace FrostDB
         private Process _process;
         private BTreeDictionary<int, Page> _btree;
         private int _maxPageId;
+        private List<ColumnSchema> _columns;
+        private string _name;
+        private string _databaseName;
         #endregion
 
         #region Public Properties
+        public List<ColumnSchema> Columns => _columns;
+        public string Name => _name;
+        public string Database => _databaseName;
         #endregion
 
         #region Protected Methods
@@ -29,7 +35,12 @@ namespace FrostDB
 
         public Table2(Process process, TableSchema2 schema) : this()
         {
+            _process = process;
+            _name = schema.Name;
+            _databaseName = schema.DatabaseName;
+            _columns = schema.Columns;
             // need to figure out what the new b-tree structure will look like
+            // how to populate binary page data from disk to table object?
             throw new NotImplementedException();
         }
         #endregion
