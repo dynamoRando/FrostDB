@@ -14,14 +14,13 @@ namespace FrostDB
         #region Private Fields
         private byte[] _data;
         private bool _isLocal;
-        private int _sizeOfIsLocal;
         private Guid _participantId;
         private List<ColumnSchema> _columns;
         #endregion
 
         #region Public Properties
         public int SizeOfParticipantId => DatabaseConstants.PARTICIPANT_ID_SIZE;
-        public int SizeOfIsLocal => _sizeOfIsLocal;
+        public int SizeOfIsLocal => DatabaseConstants.SIZE_OF_IS_LOCAL;
         public byte[] Data => _data;
         public bool IsLocal => _isLocal;
         public Guid ParticipantId => _participantId;

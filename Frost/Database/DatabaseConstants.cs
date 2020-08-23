@@ -14,6 +14,10 @@ namespace FrostDB
         /// <summary>
         /// Size of a GUID is 16 bytes
         /// </summary>
-        public const int PARTICIPANT_ID_SIZE = 16; 
+        public const int PARTICIPANT_ID_SIZE = 16;
+        /// <summary>
+        /// Size of boolean flag for if a row is local or not
+        /// </summary>
+        public const int SIZE_OF_IS_LOCAL = 1;
     }
 }
