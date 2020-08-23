@@ -8,14 +8,17 @@ namespace FrostDB
     public class Page
     {
         /*
+         * Page Byte Array Layout:
          * PageId, TableId, DatabaseId
+         * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
          */
         #region Private Fields
         private int _sizeOfId;
         private int _sizeOfDbId;
         private int _sizeOfTableId;
         private byte[] _data;
-        private bool _isLocal;
+        private int _rowDataStart;
+        private int _rowDataEnd;
         #endregion
 
         #region Public Properties
@@ -26,6 +29,8 @@ namespace FrostDB
         public int SizeOfId => _sizeOfId;
         public int SizeOfDbId => _sizeOfDbId;
         public int SizeOfTableId => _sizeOfTableId;
+        public int RowDataStart => _rowDataStart;
+        public int RowDataEnd => _rowDataEnd;
         #endregion
 
         #region Protected Methods
