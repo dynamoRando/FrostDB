@@ -29,7 +29,7 @@ namespace FrostDB
         #region Constructors
         public Database2(Process process, string name)
         {
-            _process = _process;
+            _process = process;
             _name = name;
         }
 
