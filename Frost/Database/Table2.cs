@@ -13,12 +13,14 @@ namespace FrostDB
         private List<ColumnSchema> _columns;
         private string _name;
         private string _databaseName;
+        private int _tableId;
         #endregion
 
         #region Public Properties
         public List<ColumnSchema> Columns => _columns;
         public string Name => _name;
         public string Database => _databaseName;
+        public int TableId => _tableId;
         #endregion
 
         #region Protected Methods

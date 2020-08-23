@@ -10,11 +10,14 @@ namespace FrostDB
         private Process _process;
         private string _name;
         private List<Table2> _tables;
+        private int _maxTableId;
+        private int _databaseId;
         #endregion
 
         #region Public Properties
         public string Name => _name;
         public List<Table2> Tables => _tables;
+        public int DatabaseId => _databaseId
         #endregion
 
         #region Protected Methods
@@ -34,6 +37,7 @@ namespace FrostDB
         {
             _process = process;
             _name = fill.Schema2.DatabaseName;
+            FillTables(fill);
             throw new NotImplementedException();
         }
         #endregion
@@ -42,6 +46,17 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void FillTables(DbFill fill)
+        {
+            var schema = fill.Schema2;
+
+            foreach (var table in schema.Tables)
+            {
+                this.Tables.Add(new Table2(_process, table));
+            }
+
+            throw new NotImplementedException();
+        }
         #endregion
 
     }
