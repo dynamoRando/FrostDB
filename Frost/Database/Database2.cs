@@ -57,31 +57,59 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Determines if this database contains the specified tablename.
+        /// </summary>
+        /// <param name="tableName">The tablename to search for.</param>
+        /// <returns>True if database has the table.</returns>
         public bool HasTable(string tableName)
         {
             return Tables.Any(t => t.Name == tableName);
         }
 
+        /// <summary>
+        /// Determines if this database contains the specified tableId
+        /// </summary>
+        /// <param name="tableId">The tableId to search for.</param>
+        /// <returns>True if the database has the table.</returns>
         public bool HasTable(int tableId)
         {
             return Tables.Any(t => t.TableId == tableId);
         }
 
+        /// <summary>
+        /// Returns the table with the specified name.
+        /// </summary>
+        /// <param name="tableName">The tableName to get</param>
+        /// <returns>The table</returns>
         public Table2 GetTable(string tableName)
         {
             return Tables.Where(t => t.Name == tableName).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Returns the table with the specified id
+        /// </summary>
+        /// <param name="tableId">The tableId to get</param>
+        /// <returns>The table</returns>
         public Table2 GetTable(int tableId)
         {
             return Tables.Where(t => t.TableId == tableId).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Returns the highest numbered tableId in this database
+        /// </summary>
+        /// <returns>The max id</returns>
         public int GetMaxTableId()
         {
             return Tables.MaxBy(t => t.TableId).First().TableId;
         }
 
+        /// <summary>
+        /// Returns the next table Id in line. Used for adding new tables.
+        /// </summary>
+        /// <returns>The next table id in line.</returns>
         public int GetNextTableId()
         {
             return GetMaxTableId() + 1;
