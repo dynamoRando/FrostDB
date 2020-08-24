@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoreLinq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,6 +24,7 @@ namespace FrostDB
         public int TableId => _tableId;
         // change this - placeholder idea to check to see if indexes exist on table to search for later
         // ideally we'd check the database file to see if an index exists to return true/false
+        // if we have an index we can "jump" to the PageId of the corresponding value
         public bool HasIndexes { get; set; }
         #endregion
 
