@@ -58,6 +58,28 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns rows that match the conditions specified in the parameters.
+        /// </summary>
+        /// <param name="columnName">The column name to be searched.</param>
+        /// <param name="operation">The comparison operator (i.e. symbol for greater than, less than, etc.)</param>
+        /// <param name="value">The value you are searching for.</param>
+        /// <returns>A list of rows that match the given condition.</returns>
+        /// <remarks>This functionality is similar to what is in SearchStep.cs. I hoped to only search for a single condition
+        /// rather than passing a list of multiple conditions and trying to AND/OR them together.</remarks>
+        public List<Row2> GetRowsWithValue(string columnName, string operation, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns all rows of the table.
+        /// </summary>
+        /// <returns></returns>
+        public List<Row2> GetAllRows()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
