@@ -17,6 +17,9 @@ using System.IO;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// The root FrostDB process.
+    /// </summary>
     public class Process : IBaseProcess<IDatabase>
     {
         #region Private Fields

@@ -29,6 +29,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a brand new database with no tables.
+        /// </summary>
+        /// <param name="process">The FrostDB process.</param>
+        /// <param name="name">The name of the database.</param>
         public Database2(Process process, string name)
         {
             _process = process;
@@ -36,6 +41,11 @@ namespace FrostDB
             _databaseId = _process.DatabaseManager.GetNextDatabaseId();
         }
 
+        /// <summary>
+        /// Creates a database from a DBFill object. Used when booting up from disk.
+        /// </summary>
+        /// <param name="process">The FrostDB process.</param>
+        /// <param name="fill">A DBFill object (usually loaded from disk.)</param>
         public Database2(Process process, DbFill fill)
         {
             _process = process;
@@ -80,6 +90,10 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Adds the tables to the database with the passed in schema
+        /// </summary>
+        /// <param name="fill">A database fill object.</param>
         private void FillTables(DbFill fill)
         {
             var schema = fill.Schema2;
