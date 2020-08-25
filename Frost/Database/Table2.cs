@@ -79,6 +79,17 @@ namespace FrostDB
         /// rather than passing a list of multiple conditions and trying to AND/OR them together.</remarks>
         public List<Row2> GetRowsWithValue(string columnName, string operation, string value)
         {
+            var result = new List<Row2>();
+
+            if (HasIndexes)
+            {
+                // refer to the index tso that we can jump to the correct b-tree page
+            }
+            else
+            {
+                // we're going to scan every page in the b-tree
+            }
+
             throw new NotImplementedException();
         }
 
