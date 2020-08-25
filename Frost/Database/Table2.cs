@@ -20,7 +20,7 @@ namespace FrostDB
         #region Public Properties
         public List<ColumnSchema> Columns => _columns;
         public string Name => _name;
-        public string Database => _databaseName;
+        public string DatabaseName => _databaseName;
         public int TableId => _tableId;
         // change this - placeholder idea to check to see if indexes exist on table to search for later
         // ideally we'd check the database file to see if an index exists to return true/false
@@ -52,7 +52,7 @@ namespace FrostDB
         /// Constructs a table based on the specified TableSchema. Used when loading FrostDB from disk.
         /// </summary>
         /// <param name="process">The FrostDB process.</param>
-        /// <param name="schema">The table schema (loaded from disk.)</param>
+        /// <param name="schema">The table schema (loaded from disk, usually from a DBFill object.)</param>
         public Table2(Process process, TableSchema2 schema)
         {
             _btree = new BTreeDictionary<int, Page>();
@@ -97,7 +97,16 @@ namespace FrostDB
         /// <returns>A row form.</returns>
         public RowForm2 GetNewRow()
         {
-            throw new NotImplementedException();
+            var result = new RowForm2();
+            result.DatabaseName = DatabaseName;
+            result.TableName = Name;
+
+            foreach (var c in Columns)
+            {
+                result.Values.Add(new RowValue2 { Column = c });
+            }
+
+            return result;
         }
 
         /// <summary>

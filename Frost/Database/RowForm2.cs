@@ -13,8 +13,8 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
-        public int DatabaseId { get; set; }
-        public int TableId { get; set; }
+        public string DatabaseName { get; set; }
+        public string TableName { get; set; }
         public List<RowValue2> Values { get; set; }
         public Participant2 Participant { get; set; }
         public bool IsLocal { get; set; }
