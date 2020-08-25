@@ -85,8 +85,27 @@ namespace FrostDB
         /// <summary>
         /// Returns all rows of the table.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of rows in the table.</returns>
         public List<Row2> GetAllRows()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns an empty row form to be filled out with values to add back to the table.
+        /// </summary>
+        /// <returns>A row form.</returns>
+        public RowForm2 GetNewRow()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Adds a row to the table based on the information in the passed in form.
+        /// </summary>
+        /// <param name="rowForm">A row form.</param>
+        /// <returns></returns>
+        public bool AddRow(RowForm2 rowForm)
         {
             throw new NotImplementedException();
         }
