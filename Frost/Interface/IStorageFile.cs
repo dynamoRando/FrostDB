@@ -9,6 +9,5 @@ namespace FrostDB.Interface
     {
         int VersionNumber { get; set; }
         bool IsValid();
-        void Load();
     }
 }

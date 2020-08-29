@@ -58,6 +58,16 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Saves the specified schema to disk
+        /// </summary>
+        /// <param name="schema">The current database schema</param>
+        public void Save(DbSchema schema)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Returns the database schema from the file (for this database)
         /// </summary>
@@ -86,11 +96,28 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Checks the version number of this file. If it is not set, it will default to Version 1
+        /// </summary>
+        private void SetVersionNumberIfBlank()
+        {
+            if (VersionNumber == 0)
+            {
+                VersionNumber = StorageFileVersions.SCHEMA_FILE_VERSION_1;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new Schema file for this database
+        /// </summary>
         private void CreateFile()
         {
-            using (var file = File.Create(FileName()))
+            SetVersionNumberIfBlank();
+
+            using (var file = new StreamWriter(FileName()))
             {
-                
+                file.WriteLine("version " + VersionNumber.ToString());
             }
         }
 
@@ -150,6 +177,12 @@ namespace FrostDB
                 _tableSchema.Columns.Add(column);
             }
         }
+
+        /// <summary>
+        /// Creates a new table schema from the text line
+        /// </summary>
+        /// <param name="line">The line from the file</param>
+        /// <returns>A table schema object</returns>
         private static TableSchema GetTableSchema(string line)
         {
             // table tableId tableName

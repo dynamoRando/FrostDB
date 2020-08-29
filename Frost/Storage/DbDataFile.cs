@@ -1,6 +1,7 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace FrostDB
@@ -10,6 +11,11 @@ namespace FrostDB
     /// </summary>
     public class DbDataFile : IStorageFile
     {
+        /*
+         * version int
+         * <binary page data>
+         */
+
         #region Private Fields
         private string _dataFileExtension;
         private string _dataFileFolder;
@@ -41,13 +47,37 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public void Load()
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Creates the data file for this database on disk.
+        /// </summary>
+        private void CreateFile()
+        {
+            using (var file = File.Create(FileName()))
+            {
+
+            }
+        }
+        /// <summary>
+        /// Checks if the database file exists, otherwise false.
+        /// </summary>
+        /// <returns>True if file exists, otherwise false.</returns>
+        private bool DoesFileExist()
+        {
+            return File.Exists(FileName());
+        }
+
+        /// <summary>
+        /// Returns the data file name for this database.
+        /// </summary>
+        /// <returns>Returns the data file name for this database.</returns>
+        private string FileName()
+        {
+            return Path.Combine(_dataFileFolder, _databaseName + "." + _dataFileExtension);
+        }
         #endregion
 
 
