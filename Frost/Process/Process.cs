@@ -300,9 +300,9 @@ namespace FrostDB
             return _contractManager.GetContractsFromDisk().Where(c => c.IsAccepted == false).ToList();
         }
 
-        public Configuration GetConfiguration()
+        public FrostConfiguration GetConfiguration()
         {
-            return (Configuration)this.Configuration;
+            return (FrostConfiguration)this.Configuration;
         }
 
         public IDatabase GetDatabase(Guid? databaseId)

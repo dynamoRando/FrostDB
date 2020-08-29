@@ -7,9 +7,9 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class ConfigurationManager : IManager, IConfigurationManager<Configuration>
+    public class ConfigurationManager : IManager, IConfigurationManager<FrostConfiguration>
     {
-        public void SaveConfiguration(Configuration config)
+        public void SaveConfiguration(FrostConfiguration config)
         {
             var seralizer = new JsonSerializer();
 
@@ -20,10 +20,10 @@ namespace FrostDB
             }
         }
 
-        public Configuration LoadConfiguration(string configFileLocation)
+        public FrostConfiguration LoadConfiguration(string configFileLocation)
         {
             var json = File.ReadAllText(configFileLocation);
-            return JsonConvert.DeserializeObject<Configuration>(json);
+            return JsonConvert.DeserializeObject<FrostConfiguration>(json);
         }
     }
 }

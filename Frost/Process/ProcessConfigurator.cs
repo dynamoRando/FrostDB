@@ -8,12 +8,12 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class ProcessConfigurator : IProcessConfigurator<Configuration>
+    public class ProcessConfigurator : IProcessConfigurator<FrostConfiguration>
     {
         #region Private Fields
         private IProcessInfo _info;
         private IConfigurationDefault _default;
-        private IConfigurationManager<Configuration> _configManager;
+        private IConfigurationManager<FrostConfiguration> _configManager;
         #endregion
 
         #region Public Properties
@@ -32,9 +32,9 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public virtual Configuration GetConfiguration()
+        public virtual FrostConfiguration GetConfiguration()
         {
-            var config = new Configuration();
+            var config = new FrostConfiguration();
 
             if (_default.ConfigFileExists())
             {
@@ -49,9 +49,9 @@ namespace FrostDB
             return config;
         }
 
-        public virtual Configuration GetConfiguration(string rootDirectory)
+        public virtual FrostConfiguration GetConfiguration(string rootDirectory)
         {
-            var config = new Configuration();
+            var config = new FrostConfiguration();
             var filePath = rootDirectory + @"\" + @"frost.config";
 
             if (File.Exists(filePath))
@@ -67,12 +67,12 @@ namespace FrostDB
             return config;
         }
 
-        public void SaveConfiguration(Configuration configuration)
+        public void SaveConfiguration(FrostConfiguration configuration)
         {
             _configManager.SaveConfiguration(configuration);
         }
 
-        public void SetDefaultValues(Configuration config)
+        public void SetDefaultValues(FrostConfiguration config)
         {
             config.DatabaseFolder = _default.DatabaseFolder;
             config.FileLocation = _default.ConfigurationFileLocation;
@@ -87,7 +87,7 @@ namespace FrostDB
             config.ConsoleServerPort = _default.ConsolePortNumber;
         }
 
-        public void SetDefaultValues(Configuration config, string rootDirectory)
+        public void SetDefaultValues(FrostConfiguration config, string rootDirectory)
         {
             config.DatabaseFolder = Path.Combine(rootDirectory, "dbs");
             config.FileLocation = Path.Combine(rootDirectory, "frost.config");
