@@ -8,6 +8,9 @@ using FrostDB.Enum;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Specifies the default values for FrostDB
+    /// </summary>
     public class ConfigurationDefault : IConfigurationDefault
     {
         #region Private Fields
@@ -28,25 +31,93 @@ namespace FrostDB
         private string _particpantFileExtension;
         private string _dbAddressBookExtension;
         private string _dbFrostBinaryExtension;
+        private string _frostSystemFolder;
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// The default location for "frost.config"
+        /// </summary>
         public string ConfigurationFileLocation => _configFileLocation;
+
+        /// <summary>
+        /// The location of the "dbs" folder (where database files will be stored)
+        /// </summary>
         public string DatabaseFolder => _dbFolder;
+
+        /// <summary>
+        /// (old) The file extension for databases
+        /// </summary>
         public string DatabaseExtension => _dbext;
+
+        /// <summary>
+        /// The name of this Process 
+        /// </summary>
         public string Name => _name;
+
+        /// <summary>
+        /// The IP Address of this Frost process
+        /// </summary>
         public string IPAddress => _ipAddress;
+
+        /// <summary>
+        /// The data port number for this Frost process. This port is used for FrostDb to FrostDb communication.
+        /// </summary>
         public int DataPortNumber => _dataPortNumber;
+
+        /// <summary>
+        /// The console port number for this Frost process. This port is used for Client to FrostDb communication.
+        /// </summary>
         public int ConsolePortNumber => _consolePortNumber;
+
+        /// <summary>
+        /// The root path for where this Frost process is located
+        /// </summary>
         public string AppPath => _appPath;
+
+        /// <summary>
+        /// The contract folder location where contracts will be stored
+        /// </summary>
         public string ContractFolder => _contractFolder;
+
+        /// <summary>
+        /// The file extension for contract files. These are contracts that a participant has accepted for various 
+        /// databases.
+        /// </summary>
         public string ContractExtension => _contractext;
+
+        /// <summary>
+        /// (old) The file extension for partial databases
+        /// </summary>
         public string PartialDatabaseExtension => _partialDBextension;
+
+        /// <summary>
+        /// (new) The filename for "frostDbDirectory.frostdir" - the file that holds all the databases this FrostDb
+        /// Process is hosting. This file specifies if databases are online or offline.
+        /// </summary>
         public string DatabaseDirectoryFileName => _dbDirectoryFileName;
+
+        /// <summary>
+        /// (new) The file extension for holding database schema information (".frostSchema")
+        /// </summary>
         public string SchemaFileExtension => _schemaFileExtension;
+
+        /// <summary>
+        /// (new) The file extension for holding participants of a database (".frostParticpants"). This file
+        /// contains their IPAddress and Port Number and if they are pending or accepted of a database's contract.
+        /// </summary>
         public string ParticpantFileExtension => _particpantFileExtension;
-        public string DatabaseAddressBookExtension => _dbAddressBookExtension;
+
+        /// <summary>
+        /// (new) The file extension for the actual binary data file containing database information
+        /// </summary>
         public string FrostBinaryDataExtension => _dbFrostBinaryExtension;
+
+        /// <summary>
+        /// (new) The location for the Frost system folder. This folder holds various system databases and information.
+        /// </summary>
+        public string FrostSystemFolder => _frostSystemFolder;
         #endregion
 
         #region Events
@@ -74,11 +145,8 @@ namespace FrostDB
         {
             if (_info.OS == OSPlatform.Windows)
             {
-                //_configFileLocation = _appPath + @"\frost.config";
                 _configFileLocation = Path.Combine(_appPath, "frost.config");
-                //_dbFolder = _appPath + @"\dbs\";
                 _dbFolder = Path.Combine(_appPath, "dbs");
-                //_contractFolder = _appPath + @"\contracts\";
                 _contractFolder = Path.Combine(_appPath, "contracts");
                 _dbext = ".frost";
                 _contractext = ".frostContract";
@@ -92,14 +160,12 @@ namespace FrostDB
                 _particpantFileExtension = ".frostParticpants";
                 _dbAddressBookExtension = ".frostDbAddrDir";
                 _dbFrostBinaryExtension = ".frostDbData";
+                _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
             else if (_info.OS == OSPlatform.Linux)
             {
-                //_configFileLocation = _appPath + @"/frost.config";
                 _configFileLocation = Path.Combine(_appPath, "frost.config");
-                //_dbFolder = _appPath + @"/dbs/";
                 _dbFolder = Path.Combine(_appPath, "dbs");
-                //_contractFolder = _appPath + @"/contracts/";
                 _contractFolder = Path.Combine(_appPath, "contracts");
                 _dbext = ".frost";
                 _contractext = ".frostContract";
@@ -113,6 +179,7 @@ namespace FrostDB
                 _particpantFileExtension = ".frostParticpants";
                 _dbAddressBookExtension = ".frostDbAddrDir";
                 _dbFrostBinaryExtension = ".frostDbData";
+                _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
             else
             {

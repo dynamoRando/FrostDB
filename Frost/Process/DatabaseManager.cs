@@ -95,21 +95,6 @@ namespace FrostDB
             return Databases2.MaxBy(d => d.DatabaseId).First().DatabaseId;
         }
 
-        public Database GetFullDatabase(string databaseName)
-        {
-            Database db = null;
-
-            Databases.ForEach(database =>
-            {
-                if ((database is Database) && (database.Name == databaseName))
-                {
-                    db = database as Database;
-                }
-            });
-
-            return db;
-        }
-
         public void AddDatabase(Database database)
         {
             if (!HasDatabase(database.Name))
@@ -132,11 +117,6 @@ namespace FrostDB
         public bool HasDatabase(string databaseName)
         {
             return Databases.Any(d => d.Name == databaseName);
-        }
-
-        public bool HasDatabase(Guid guid)
-        {
-            return Databases.Any(d => d.Id == guid);
         }
 
         public void RemoveDatabase(Guid guid)

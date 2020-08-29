@@ -27,8 +27,8 @@ namespace FrostDB
         public string DatabaseDirectoryFileName { get; set; }
         public string SchemaFileExtension { get; set; }
         public string ParticipantFileExtension { get; set; }
-        public string DbAddressBookExtension { get; set; }
         public string FrostBinaryDataExtension { get; set; }
+        public string FrostSystemFolder { get; set; }
         #endregion
 
         #region Events

@@ -117,6 +117,7 @@ namespace FrostDB
         {
             return Configuration.GetLocation();
         }
+
         public virtual void AddDatabase(string databaseName)
         {
             DatabaseManager.AddDatabase(
