@@ -14,6 +14,7 @@ namespace FrostDB
         private List<Table2> _tables;
         private int _maxTableId;
         private int _databaseId;
+        private DbStorage _storage;
         #endregion
 
         #region Public Properties
@@ -39,6 +40,7 @@ namespace FrostDB
             _process = process;
             _name = name;
             _databaseId = _process.DatabaseManager.GetNextDatabaseId();
+            _storage = new DbStorage(_process);
         }
 
         /// <summary>
@@ -46,11 +48,12 @@ namespace FrostDB
         /// </summary>
         /// <param name="process">The FrostDB process.</param>
         /// <param name="fill">A DBFill object (usually loaded from disk.)</param>
-        public Database2(Process process, DbFill fill)
+        public Database2(Process process, DbFill fill, DbStorage storage)
         {
             _process = process;
             _name = fill.Schema2.DatabaseName;
             _databaseId = fill.Schema2.DatabaseId;
+            _storage = storage;
             FillTables(fill);
             throw new NotImplementedException();
         }

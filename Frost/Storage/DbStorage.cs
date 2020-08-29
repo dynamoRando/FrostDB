@@ -44,7 +44,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public Database GetDatabase(string databaseName)
+        public Database2 GetDatabase(string databaseName)
         {
             _databaseName = databaseName;
             // TO DO: Build the DB fill process
@@ -52,8 +52,10 @@ namespace FrostDB
             fill.Schema = GetSchema();
             fill.PendingParticpants = GetPendingParticipants();
             fill.AcceptedParticipants = GetAcceptedParticipants();
-            
-            return new Database(_process, fill, this);
+
+            throw new NotImplementedException();
+
+            return new Database2(_process, fill, this);
         }
         #endregion
 

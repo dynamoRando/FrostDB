@@ -8,6 +8,9 @@ using FrostDB;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Manages all disk related activites for FrostDb. DbStorage.cs is for all disk related actions for a specific db.
+    /// </summary>
     public class StorageManager : IStorageManager
     {
         #region Private Fields
@@ -28,6 +31,7 @@ namespace FrostDB
 
         #region Constructors
         public StorageManager() { }
+
         public StorageManager(Process process)
         {
             if (process != null)
@@ -44,20 +48,47 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Creates the appropriate disk files for a new database hosted by this Frost process
+        /// </summary>
+        /// <param name="database"></param>
+        public void AddNewDatabase(Database2 database)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a page from disk or cache for the specified parameters
+        /// </summary>
+        /// <param name="databaseName">The database name</param>
+        /// <param name="tableName">The table name</param>
+        /// <param name="pageId">The page Id</param>
+        /// <returns>A page from cache or disk</returns>
         public Page GetPage(string databaseName, string tableName, int pageId)
         {
             return _pager.GetPage(databaseName, tableName, pageId);
         }
 
+        /// <summary>
+        /// Returns a page from disk or cache for the specified parameter
+        /// </summary>
+        /// <param name="databaseId">The datababse id</param>
+        /// <param name="tableId">The table id</param>
+        /// <param name="pageId">The page id</param>
+        /// <returns>A page from cache or disk</returns>
         public Page GetPage(int databaseId, int tableId, int pageId)
         {
             return _pager.GetPage(databaseId, tableId, pageId);
         }
 
-        public List<Database> GetDatabases()
+        /// <summary>
+        /// Gets a list of databases from disk
+        /// </summary>
+        /// <returns>A list of databases</returns>
+        public List<Database2> GetDatabases()
         {
-            var result = new List<Database>();
-            var databases = GetListOfDatabases();
+            var result = new List<Database2>();
+            var databases = GetListOfOnlineDatabases();
             foreach(var db in databases)
             {
                 var storage = new DbStorage(_process);
@@ -70,7 +101,11 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private List<string> GetListOfDatabases()
+        /// <summary>
+        /// Returns the list of databases that this Process hosts that are online
+        /// </summary>
+        /// <returns>A string list of online databases</returns>
+        private List<string> GetListOfOnlineDatabases()
         {
             var result = new List<string>();
             var file = Path.Combine(_databaseFolder, _process.Configuration.DatabaseDirectoryFileName);

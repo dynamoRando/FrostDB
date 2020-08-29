@@ -13,7 +13,7 @@ namespace FrostDB
     {
         #region Private Fields
         private List<Database> _databases;
-        private List<Database2> _database2;
+        private List<Database2> _databases2;
         private string _databaseFolder;
         private string _databaseExtension;
         private IDataFileManager<DataFile> _dataFileManager;
@@ -25,7 +25,7 @@ namespace FrostDB
 
         #region Public Properties
         public List<Database> Databases => _databases;
-        public List<Database2> Databases2 => _database2;
+        public List<Database2> Databases2 => _databases2;
         public StorageManager StorageManager => _storageManager;
         #endregion
 
@@ -104,6 +104,22 @@ namespace FrostDB
             }
         }
 
+        public void AddDatabase2(Database2 database)
+        {
+            if (database != null)
+            {
+                if (!HasDatabase2(database.Name))
+                {
+                    _databases2.Add(database);
+                    _storageManager.AddNewDatabase(database);
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException("Database was null");
+            }
+        }
+
         public Database GetDatabase(string databaseName)
         {
             return Databases.Where(d => d.Name.ToUpper() == databaseName.ToUpper()).FirstOrDefault();
@@ -131,6 +147,10 @@ namespace FrostDB
             _databases.Remove(db);
         }
 
+        /// <summary>
+        /// Loads all databases from disk (used in Frost process startup)
+        /// </summary>
+        /// <returns>A list of databases</returns>
         public int LoadDatabases2()
         {
             int count = 0;
@@ -142,7 +162,7 @@ namespace FrostDB
             }
 
             var dbs = _storageManager.GetDatabases();
-            _databases.AddRange(dbs);
+            _databases2.AddRange(dbs);
             count = dbs.Count;
 
             return count;
