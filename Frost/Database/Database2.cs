@@ -21,6 +21,7 @@ namespace FrostDB
         public string Name => _name;
         public List<Table2> Tables => _tables;
         public int DatabaseId => _databaseId;
+        public DbStorage Storage => _storage;
         #endregion
 
         #region Protected Methods
@@ -40,7 +41,7 @@ namespace FrostDB
             _process = process;
             _name = name;
             _databaseId = _process.DatabaseManager.GetNextDatabaseId();
-            _storage = new DbStorage(_process);
+            _storage = new DbStorage(_process, name);
         }
 
         /// <summary>

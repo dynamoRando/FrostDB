@@ -54,7 +54,7 @@ namespace FrostDB
         /// <param name="database"></param>
         public void AddNewDatabase(Database2 database)
         {
-            throw new NotImplementedException();
+            database.Storage.CreateFiles();
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace FrostDB
             var databases = GetListOfOnlineDatabases();
             foreach(var db in databases)
             {
-                var storage = new DbStorage(_process);
+                var storage = new DbStorage(_process, db);
                 var dbItem = storage.GetDatabase(db);
                 result.Add(dbItem);
             }

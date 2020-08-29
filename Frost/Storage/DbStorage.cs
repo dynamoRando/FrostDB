@@ -31,9 +31,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbStorage(Process process)
+        public DbStorage(Process process, string databaseName)
         {
             _process = process;
+            _databaseName = databaseName;
         }
         public DbStorage(Process process, Database database, string databaseDirectory)
         {
@@ -44,6 +45,22 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Creates the appropriate files on disk for a new database.
+        /// </summary>
+        public void CreateFiles()
+        {
+            var databaseFolder = _process.Configuration.DatabaseFolder;
+            var schemaFileExtension = _process.Configuration.SchemaFileExtension;
+            _schema = new SchemaFile(databaseFolder, schemaFileExtension, _databaseName);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a populated database object by reading all files on disk.
+        /// </summary>
+        /// <param name="databaseName">The name of the database to get</param>
+        /// <returns>A database object</returns>
         public Database2 GetDatabase(string databaseName)
         {
             _databaseName = databaseName;
@@ -52,8 +69,6 @@ namespace FrostDB
             fill.Schema = GetSchema();
             fill.PendingParticpants = GetPendingParticipants();
             fill.AcceptedParticipants = GetAcceptedParticipants();
-
-            throw new NotImplementedException();
 
             return new Database2(_process, fill, this);
         }

@@ -126,7 +126,7 @@ namespace FrostDB
 
         public virtual void AddDatabase2(string databaseName)
         {
-            throw new NotImplementedException();
+            DatabaseManager.AddDatabase2(new Database2(this, databaseName));
         }
 
         public virtual void AddPartialDatabase(string databaseName)

@@ -32,32 +32,89 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new schema file for the specified database 
+        /// </summary>
+        /// <param name="schemaFileFolder">The location of the schema file folder for the Frost process</param>
+        /// <param name="fileExtension">The filename extension for schema files</param>
+        /// <param name="databaseName">The name of the database</param>
         public SchemaFile(string schemaFileFolder, string fileExtension, string databaseName)
         {
             _schemaFileExtension = schemaFileFolder;
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
             _dbSchema = new DbSchema();
-            LoadFile();
+
+            if (DoesFileExist())
+            {
+                LoadFile();
+            }
+            else
+            {
+                CreateFile();
+            }
+            
         }
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns the database schema from the file (for this database)
+        /// </summary>
+        /// <returns>Database schema for this database.</returns>
         public DbSchema GetDbSchema()
         {
             return _dbSchema;
         }
+
+        /// <summary>
+        /// Validates the file format of the schema file.
+        /// </summary>
+        /// <returns>True if the file format is correct, otherwise false.</returns>
         public bool IsValid()
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Loads the schema file for this database from disk.
+        /// </summary>
         public void Load()
         {
-            throw new NotImplementedException();
+            LoadFile();
         }
         #endregion
 
         #region Private Methods
+        private void CreateFile()
+        {
+            using (var file = File.Create(FileName()))
+            {
+                
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if the Schema file exists for this database.
+        /// </summary>
+        /// <returns>True if the schema file exists, otherwise false.</returns>
+        private bool DoesFileExist()
+        {
+            return File.Exists(FileName());
+        }
+
+        /// <summary>
+        /// Returns the schema filename for this database.
+        /// </summary>
+        /// <returns>Returns the schema filename for this database.</returns>
+        private string FileName()
+        {
+            return Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
+        }
+
+        /// <summary>
+        /// Loads the schema file from disk into memory for this database
+        /// </summary>
         private void LoadFile()
         {
             _tableSchema = null;
@@ -93,7 +150,7 @@ namespace FrostDB
                 _tableSchema.Columns.Add(column);
             }
         }
-        private TableSchema GetTableSchema(string line)
+        private static TableSchema GetTableSchema(string line)
         {
             // table tableId tableName
             var result = new TableSchema();
@@ -111,7 +168,7 @@ namespace FrostDB
             return result;
         }
 
-        private Column GetColumn(string line)
+        private static Column GetColumn(string line)
         {
             // column columnid columnName columnDataType
             Column result = null;

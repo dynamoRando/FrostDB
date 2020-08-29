@@ -5,9 +5,11 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Represents the binary data for this database on disk.
+    /// </summary>
     public class DbDataFile : IStorageFile
     {
-
         #region Private Fields
         private string _dataFileExtension;
         private string _dataFileFolder;
