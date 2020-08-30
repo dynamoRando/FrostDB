@@ -37,9 +37,6 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-      
-
-
         /// <summary>
         /// Gets a page from cache or disk based on the page address
         /// </summary>
