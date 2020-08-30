@@ -9,7 +9,7 @@ using FrostCommon;
 namespace FrostDB
 {
     /// <summary>
-    /// Holds list of participants for this db that have accepted the database or are pending acceptance
+    /// Holds list of participants for this db that have accepted/pending acceptance of the db contract
     /// </summary>
     public class ParticipantFile : IStorageFile
     {
@@ -53,19 +53,22 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns a list of participants that have accepted the contract for this database
+        /// </summary>
+        /// <returns>The list of accepted participants</returns>
         public List<Participant2> GetAcceptedParticipants()
         {
             return _accepted;
         }
 
+        /// <summary>
+        /// Returns a list of pending participants where a contract has been sent but not accecpted/rejected
+        /// </summary>
+        /// <returns>The list of pending participants</returns>
         public List<Participant2> GetPendingParticipants()
         {
             return _pending;
-        }
-
-        public void Load()
-        {
-            throw new NotImplementedException();
         }
 
         public bool IsValid()
@@ -127,6 +130,10 @@ namespace FrostDB
             lines.ForEach(l => ParseLine(l));
         }
 
+        /// <summary>
+        /// Parses a line from the participant file
+        /// </summary>
+        /// <param name="line">A line from the file</param>
         private void ParseLine(string line)
         {
             // version versionNumber
@@ -169,6 +176,10 @@ namespace FrostDB
             }
         }
 
+        /// <summary>
+        /// Parses the version information from a line in the participant file
+        /// </summary>
+        /// <param name="line">The line to parse version information from</param>
         private void ParseVersion(string line)
         {
             // version versionNumber

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FrostDB
 {
@@ -11,13 +10,15 @@ namespace FrostDB
     {
         #region Private Fields
         private Process _process;
-        private Database _database;
+        private Database2 _database;
         private string _databaseFolderPath = string.Empty;
         private SchemaFile _schema;
         private DbDataFile _data;
         private ParticipantFile _participants;
         private DbSecurityFile _security;
         private DbContractFile _contractFile;
+        private DbDataIndexFile _indexFile;
+        private DbXactFile _xactFile;
         private string _databaseName;
         #endregion
 
@@ -36,7 +37,7 @@ namespace FrostDB
             _process = process;
             _databaseName = databaseName;
         }
-        public DbStorage(Process process, Database database, string databaseDirectory)
+        public DbStorage(Process process, Database2 database, string databaseDirectory)
         {
             _process = process;
             _database = database;

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Stores the contract information for this database on disk
+    /// </summary>
     public class DbContractFile : IStorageFile
     {
         #region Private Fields

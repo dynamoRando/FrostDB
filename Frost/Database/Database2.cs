@@ -6,6 +6,9 @@ using MoreLinq;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// A FrostDb Database
+    /// </summary>
     public class Database2
     {
         #region Private Fields

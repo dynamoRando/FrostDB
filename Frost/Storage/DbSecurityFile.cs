@@ -5,6 +5,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Stores the users and their permissions for the database on disk
+    /// </summary>
     public class DbSecurityFile : IStorageFile
     {
         #region Private Fields
