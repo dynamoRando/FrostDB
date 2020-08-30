@@ -75,7 +75,7 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private DbSchema GetSchema()
+        private DbSchema2 GetSchema()
         {
             var databaseFolder = _process.Configuration.DatabaseFolder;
             var schemaFileExtension = _process.Configuration.SchemaFileExtension;

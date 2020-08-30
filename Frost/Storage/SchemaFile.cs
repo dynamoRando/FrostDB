@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace FrostDB
 {
@@ -17,8 +18,8 @@ namespace FrostDB
         private string _schemaFileFolder;
         private string _databaseName;
         private string _fileText;
-        private DbSchema _dbSchema;
-        private TableSchema _tableSchema;
+        private DbSchema2 _dbSchema;
+        private TableSchema2 _tableSchema;
         #endregion
 
         #region Public Properties
@@ -43,7 +44,7 @@ namespace FrostDB
             _schemaFileExtension = schemaFileFolder;
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
-            _dbSchema = new DbSchema();
+            _dbSchema = new DbSchema2();
 
             if (DoesFileExist())
             {
@@ -53,7 +54,7 @@ namespace FrostDB
             {
                 CreateFile();
             }
-            
+
         }
         #endregion
 
@@ -63,16 +64,29 @@ namespace FrostDB
         /// Saves the specified schema to disk
         /// </summary>
         /// <param name="schema">The current database schema</param>
-        public void Save(DbSchema schema)
+        public void Save(DbSchema2 schema)
         {
-            throw new NotImplementedException();
+            using (var file = new StreamWriter(FileName()))
+            {
+                file.WriteLine("version " + VersionNumber.ToString());
+                foreach (var table in schema.Tables)
+                {
+                    // table tableId tableName
+                    file.WriteLine($"table {table.TableId.ToString()} {table.Name}");
+                    foreach (var column in table.Columns)
+                    {
+                        // column columnName columnDataType
+                        file.WriteLine($"column {column.Name} {column.DataType}");
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Returns the database schema from the file (for this database)
         /// </summary>
         /// <returns>Database schema for this database.</returns>
-        public DbSchema GetDbSchema()
+        public DbSchema2 GetDbSchema()
         {
             return _dbSchema;
         }
@@ -162,7 +176,7 @@ namespace FrostDB
             {
                 if (_tableSchema is null)
                 {
-                    _tableSchema = new TableSchema();
+                    _tableSchema = GetTableSchema(line);
                 }
                 else
                 {
@@ -183,35 +197,25 @@ namespace FrostDB
         /// </summary>
         /// <param name="line">The line from the file</param>
         /// <returns>A table schema object</returns>
-        private static TableSchema GetTableSchema(string line)
+        private TableSchema2 GetTableSchema(string line)
         {
             // table tableId tableName
-            var result = new TableSchema();
-
+            TableSchema2 result;
             var items = line.Split(" ");
             {
-                Guid item;
-                if (Guid.TryParse(items[1], out item))
-                {
-                    result.TableId = item;
-                }
-                result.TableName = items[2];
+                result = new TableSchema2(Convert.ToInt32(items[1]), items[2], _dbSchema.DatabaseName);
             }
 
             return result;
         }
 
-        private static Column GetColumn(string line)
+        private static ColumnSchema GetColumn(string line)
         {
-            // column columnid columnName columnDataType
-            Column result = null;
+            // column columnName columnDataType
+            ColumnSchema result = null;
             var items = line.Split(" ");
             {
-                Guid item;
-                if (Guid.TryParse(items[1], out item))
-                {
-                    result = new Column(items[2], Type.GetType(items[3]), item);
-                }
+                result = new ColumnSchema(items[1], items[2]);
             }
             return result;
         }

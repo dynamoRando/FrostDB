@@ -4,6 +4,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// A step for creating a new table in a database
+    /// </summary>
     public class CreateTableStep : IPlanStep
     {
         #region Private Fields
@@ -37,7 +40,7 @@ namespace FrostDB
             var result = new StepResult();
             if (process.HasDatabase(databaseName))
             {
-                var db = process.GetDatabase(databaseName);
+                var db = process.GetDatabase2(databaseName);
                 var columns = new List<ColumnSchema>();
 
                 foreach(var column in Columns)
@@ -45,7 +48,7 @@ namespace FrostDB
                     columns.Add(GetColumnSchema(column));
                 }
 
-                var schema = new TableSchema2(columns, TableName, databaseName);
+                var schema = new TableSchema2(columns, db.GetNextTableId(), TableName, databaseName);
                 var table = new Table2(process, schema);
                 db.AddTable(table);
                 throw new NotImplementedException();

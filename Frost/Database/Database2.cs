@@ -52,8 +52,8 @@ namespace FrostDB
         public Database2(Process process, DbFill fill, DbStorage storage)
         {
             _process = process;
-            _name = fill.Schema2.DatabaseName;
-            _databaseId = fill.Schema2.DatabaseId;
+            _name = fill.Schema.DatabaseName;
+            _databaseId = fill.Schema.DatabaseId;
             _storage = storage;
             FillTables(fill);
             throw new NotImplementedException();
@@ -61,6 +61,24 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Adds a table to the database based on the passed in table schema
+        /// </summary>
+        /// <param name="schema">The table schema</param>
+        public void AddTable(TableSchema2 schema)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Adds a table to the database 
+        /// </summary>
+        /// <param name="table">The table to be added</param>
+        public void AddTable(Table2 table)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Determines if this database contains the specified tablename.
         /// </summary>
@@ -128,7 +146,7 @@ namespace FrostDB
         /// <param name="fill">A database fill object.</param>
         private void FillTables(DbFill fill)
         {
-            var schema = fill.Schema2;
+            var schema = fill.Schema;
 
             foreach (var table in schema.Tables)
             {

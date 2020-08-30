@@ -27,12 +27,13 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public TableSchema2(string name, string databaseName) 
+        public TableSchema2(int id, string name, string databaseName) 
         {
             _name = name;
             _databaseName = databaseName;
+            _tableId = id;
         }
-        public TableSchema2(List<ColumnSchema> columns, string name, string databaseName) : this(name, databaseName)
+        public TableSchema2(List<ColumnSchema> columns, int id, string name, string databaseName) : this(id, name, databaseName)
         {
             _columns = columns;
         }
