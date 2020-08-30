@@ -4,9 +4,11 @@ using System.Text;
 
 namespace FrostCommon
 {
+    /// <summary>
+    /// Represents a location on the network
+    /// </summary>
     public class Location2
     {
-
         #region Private Fields
         #endregion
 
@@ -16,6 +18,12 @@ namespace FrostCommon
         #endregion
 
         #region Constructors
+        public Location2() { }
+        public Location2(string ipAddress, int portNumber)
+        {
+            IpAddress = ipAddress;
+            PortNumber = portNumber;
+        }
         #endregion
 
         #region Public Methods

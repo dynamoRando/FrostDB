@@ -17,8 +17,8 @@ namespace FrostDB
         private string _participantFileExtension;
         private string _participantFileFolder;
         private string _databaseName;
-        private List<Participant> _accepted;
-        private List<Participant> _pending;
+        private List<Participant2> _accepted;
+        private List<Participant2> _pending;
         #endregion
 
         #region Public Properties
@@ -37,18 +37,28 @@ namespace FrostDB
             _participantFileExtension = extension;
             _participantFileFolder = folder;
             _databaseName = databaseName;
-            _accepted = new List<Participant>();
-            _pending = new List<Participant>();
+            _accepted = new List<Participant2>();
+            _pending = new List<Participant2>();
+            
+            if (DoesFileExist())
+            {
+                LoadFile();
+            }
+            else
+            {
+                CreateFile();
+            }
+
         }
         #endregion
 
         #region Public Methods
-        public List<Participant> GetAcceptedParticipants()
+        public List<Participant2> GetAcceptedParticipants()
         {
             return _accepted;
         }
 
-        public List<Participant> GetPendingParticipants()
+        public List<Participant2> GetPendingParticipants()
         {
             return _pending;
         }
@@ -65,10 +75,55 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Creates a new Schema file for this database
+        /// </summary>
+        private void CreateFile()
+        {
+            SetVersionNumberIfBlank();
+
+            using (var file = new StreamWriter(FileName()))
+            {
+                file.WriteLine("version " + VersionNumber.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks the version number of this file. If it is not set, it will default to Version 1
+        /// </summary>
+        private void SetVersionNumberIfBlank()
+        {
+            if (VersionNumber == 0)
+            {
+                VersionNumber = StorageFileVersions.PARTICIPANT_FILE_VERSION_1;
+            }
+        }
+
+        /// <summary>
+        /// Returns the filename for the participant file for this database
+        /// </summary>
+        /// <returns>The filename</returns>
+        private string FileName()
+        {
+            return Path.Combine(_participantFileFolder, _databaseName + "." + _participantFileExtension);
+        }
+
+        /// <summary>
+        /// Determines if the participant file exists on disk
+        /// </summary>
+        /// <returns>True if participant file exists for this database, otherwise false</returns>
+        private bool DoesFileExist()
+        {
+            return File.Exists(FileName());
+        }
+
+        /// <summary>
+        /// Loads the participant file from disk
+        /// </summary>
         private void LoadFile()
         {
-            var file = Path.Combine(_participantFileFolder, _databaseName + "." + _participantFileExtension);
-            var lines = File.ReadAllLines(file).ToList();
+            var lines = File.ReadAllLines(FileName()).ToList();
             lines.ForEach(l => ParseLine(l));
         }
 
@@ -87,6 +142,10 @@ namespace FrostDB
             }
         }
 
+        /// <summary>
+        /// Parses a line from disk for participant information
+        /// </summary>
+        /// <param name="line">The line from the participant file</param>
         private void ParseParticipant(string line)
         {
             var items = line.Split(" ");
@@ -97,8 +156,8 @@ namespace FrostDB
             var isAccepted = Convert.ToBoolean(items[3]);
 
             Guid id = Guid.Parse(items[1]);
-            Location location = new Location(Guid.NewGuid(), ipaddress, Convert.ToInt32(portNumber), string.Empty);
-            var particpant = new Participant(id, location);
+            Location2 location = new Location2(ipaddress, Convert.ToInt32(portNumber));
+            var particpant = new Participant2(id, location);
 
             if (isAccepted)
             {

@@ -89,9 +89,9 @@ namespace FrostDB
             return _schema.GetDbSchema();
         }
 
-        private List<Participant> GetAcceptedParticipants()
+        private List<Participant2> GetAcceptedParticipants()
         {
-            if (_schema is null)
+            if (_participants is null)
             {
                 LoadParticpantFile();
             }
@@ -99,9 +99,9 @@ namespace FrostDB
             return _participants.GetAcceptedParticipants();
         }
 
-        private List<Participant> GetPendingParticipants()
+        private List<Participant2> GetPendingParticipants()
         {
-            if (_schema is null)
+            if (_participants is null)
             {
                 LoadParticpantFile();
             }
