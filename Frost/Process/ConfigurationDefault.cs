@@ -29,7 +29,6 @@ namespace FrostDB
         private string _dbDirectoryFileName;
         private string _schemaFileExtension;
         private string _particpantFileExtension;
-        private string _dbAddressBookExtension;
         private string _dbFrostBinaryExtension;
         private string _frostSystemFolder;
         #endregion
@@ -158,7 +157,6 @@ namespace FrostDB
                 _dbDirectoryFileName = "frostDbDirectory.frostdir";
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
-                _dbAddressBookExtension = ".frostDbAddrDir";
                 _dbFrostBinaryExtension = ".frostDbData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
@@ -177,7 +175,6 @@ namespace FrostDB
                 _dbDirectoryFileName = "frostDbDirectory.frostdir";
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
-                _dbAddressBookExtension = ".frostDbAddrDir";
                 _dbFrostBinaryExtension = ".frostDbData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
