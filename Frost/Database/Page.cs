@@ -69,6 +69,15 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns all the values held in the page based on the specified schema
+        /// </summary>
+        /// <param name="schema">The table schema</param>
+        /// <returns>A list of values</returns>
+        public List<Row2> GetValues(TableSchema2 schema)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods

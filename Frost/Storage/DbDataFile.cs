@@ -52,6 +52,15 @@ namespace FrostDB
             throw new NotImplementedException(); 
         }
 
+        /// <summary>
+        /// Returns the first page from the data file from disk
+        /// </summary>
+        /// <returns>The first page from file</returns>
+        public Page GetAPage()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsValid()
         {
             throw new NotImplementedException();

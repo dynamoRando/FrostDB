@@ -45,7 +45,7 @@ namespace FrostDB
             _process = process;
             _name = name;
             _databaseId = _process.DatabaseManager.GetNextDatabaseId();
-            _storage = new DbStorage(_process, name);
+            _storage = new DbStorage(_process, name, _databaseId);
         }
 
         /// <summary>
@@ -173,10 +173,10 @@ namespace FrostDB
         {
             var schema = new DbSchema2(_databaseId, _name);
 
-            _tables.ForEach(table => 
+            _tables.ForEach(table =>
             {
                 var tableSchema = new TableSchema2(table.TableId, table.Name, _name, _databaseId);
-                table.Columns.ForEach(column => 
+                table.Columns.ForEach(column =>
                 {
                     var columnSchema = new ColumnSchema(column.Name, column.DataType);
                     tableSchema.Columns.Add(columnSchema);

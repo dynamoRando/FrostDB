@@ -172,6 +172,11 @@ namespace FrostDB
                 ParseVersion(line);
             }
 
+            if (line.StartsWith("database"))
+            {
+                ParseDatabase(line);
+            }
+
             if (line.StartsWith("table"))
             {
                 if (_tableSchema is null)
@@ -225,6 +230,14 @@ namespace FrostDB
             // version versionNumber
             var items = line.Split(" ");
             VersionNumber = Convert.ToInt32(items[1]);
+        }
+
+        private void ParseDatabase(string line)
+        {
+            //database id (int) name
+            var items = line.Split(" ");
+            _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
+            _dbSchema.DatabaseName = items[2];
         }
         #endregion
 

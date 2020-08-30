@@ -10,7 +10,6 @@ namespace FrostDB
     {
         #region Private Fields
         private Process _process;
-        private Database2 _database;
         private string _databaseFolderPath = string.Empty;
         private SchemaFile _schema;
         private DbDataFile _data;
@@ -20,6 +19,7 @@ namespace FrostDB
         private DbDataIndexFile _indexFile;
         private DbXactFile _xactFile;
         private string _databaseName;
+        private int _databaseId;
         #endregion
 
         #region Public Properties
@@ -32,16 +32,17 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public DbStorage(Process process, string databaseName, int databaseId)
+        {
+            _process = process;
+            _databaseName = databaseName;
+            _databaseId = databaseId;
+        }
+
         public DbStorage(Process process, string databaseName)
         {
             _process = process;
             _databaseName = databaseName;
-        }
-        public DbStorage(Process process, Database2 database, string databaseDirectory)
-        {
-            _process = process;
-            _database = database;
-            _databaseFolderPath = databaseDirectory;
         }
         #endregion
 
@@ -62,7 +63,7 @@ namespace FrostDB
         /// <returns>A page from the disk</returns>
         public Page GetAPage()
         {
-            throw new NotImplementedException();
+            return _data.GetAPage();
         }
 
         /// <summary>
@@ -102,6 +103,7 @@ namespace FrostDB
             // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
+            _databaseId = fill.Schema.DatabaseId;
             fill.PendingParticpants = GetPendingParticipants();
             fill.AcceptedParticipants = GetAcceptedParticipants();
 

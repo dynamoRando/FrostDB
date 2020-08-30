@@ -11,11 +11,16 @@ namespace FrostDB
         private Process _process;
         private BTreeDictionary<int, Page> _btree;
         private int _maxPageId;
+        private TableSchema2 _schema;
         private List<ColumnSchema> _columns;
         private string _name;
         private string _databaseName;
         private int _tableId;
         private int _databaseId;
+
+        // this is an in memory conversion from the pages and should be destructive
+        // i.e. always destroyed and rebuilt from the pager
+        private List<Row2> _rows;
         #endregion
 
         #region Public Properties
@@ -45,11 +50,13 @@ namespace FrostDB
         {
             _btree = new BTreeDictionary<int, Page>();
             _process = process;
+            _schema = schema;
             _name = schema.Name;
             _databaseName = schema.DatabaseName;
             _columns = schema.Columns;
             _tableId = schema.TableId;
             _databaseId = schema.DatabaseId;
+            _rows = new List<Row2>();
             // need to figure out what the new b-tree structure will look like
             // how to populate binary page data from disk to table object?
             throw new NotImplementedException();
@@ -76,11 +83,29 @@ namespace FrostDB
             }
             else
             {
-                
                 // we're going to scan every page in the b-tree
+
+                // populate the tree with the 1st page from pager
+                CheckAndPrimeTree();
+
+                // convert the pages in the tree to rows
+                result.AddRange(GetRowsFromTree());
+                
+
+                // need to scan the list of rows to see if any of the values match the parameters specified
+
+                // if not, we need to go back to the pager and get more pages until we've pulled all pages 
+                // all pages meaning keep going to cache, then disk, until we've got all pages in memory or 
+                // until we satisfy our search condition
+
+                // logic flaw - what if all the rows meet our search condition? either way
+                // we must traverse all pages for the table to ensure we have all rows
+
+                throw new NotImplementedException();
+               
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
         /// <summary>
@@ -122,6 +147,34 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Converts all the pages in the tree to row items
+        /// </summary>
+        /// <returns>A list of rows</returns>
+        private List<Row2> GetRowsFromTree()
+        {
+            _rows.Clear();
+
+            // from the tree, convert to a list of rows
+            _btree.ForEach(item =>
+            {
+                _rows.AddRange(item.Value.GetValues(_schema));
+            });
+
+            return _rows;
+        }
+
+        /// <summary>
+        /// If the tree is empty, pull the first page out from the pager
+        /// </summary>
+        private void CheckAndPrimeTree()
+        {
+            if (_btree.Count == 0)
+            {
+                var page = _process.GetDatabase2(_databaseId).Storage.GetAPage();
+                _btree.Add(new KeyValuePair<int, Page>(page.Address.PageId, page));
+            }
+        }
         #endregion
 
     }
