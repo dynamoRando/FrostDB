@@ -36,19 +36,6 @@ namespace FrostDB
 
         #region Constructors
         /// <summary>
-        /// Constructs a brand new table with the specified table name. Used when adding a new table to a database.
-        /// </summary>
-        /// <param name="process">The FrostDB Process.</param>
-        /// <param name="databaseName">The database that this table is attached to.</param>
-        public Table2(Process process, string databaseName)
-        {
-            _process = process;
-            _databaseName = databaseName;
-            _btree = new BTreeDictionary<int, Page>();
-            _tableId = _process.GetDatabase2(_databaseName).GetNextTableId();
-        }
-
-        /// <summary>
         /// Constructs a table based on the specified TableSchema. Used when loading FrostDB from disk.
         /// </summary>
         /// <param name="process">The FrostDB process.</param>
