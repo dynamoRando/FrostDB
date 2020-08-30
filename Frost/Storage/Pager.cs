@@ -34,16 +34,40 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Gets a page from cache or disk based on the page address
+        /// </summary>
+        /// <param name="address">The page address</param>
+        /// <returns>A page from cache or disk</returns>
         public Page GetPage(PageAddress address)
         {
             return GetPageFromCacheOrDisk(address);
         }
 
+        /// <summary>
+        /// Gets a page from cache or disk based on the specified parameters
+        /// </summary>
+        /// <param name="databaseName">The database name</param>
+        /// <param name="tableName">The table name</param>
+        /// <param name="pageId">The page Id</param>
+        /// <returns>A page from cache or disk</returns>
         public Page GetPage(string databaseName, string tableName, int pageId)
         {
-            throw new NotImplementedException();
+            var db = _process.GetDatabase2(databaseName);
+            var dbId = db.DatabaseId;
+            var table = db.GetTable(tableName);
+            var tableId = table.TableId;
+
+            return GetPage(dbId, tableId, pageId);
         }
 
+        /// <summary>
+        /// Gets a page from cache or disk based on the specified parameters
+        /// </summary>
+        /// <param name="databaseId">The database id</param>
+        /// <param name="tableId">The table id</param>
+        /// <param name="pageId">The page id</param>
+        /// <returns>A page from cache or disk</returns>
         public Page GetPage(int databaseId, int tableId, int pageId)
         {
             return GetPageFromCacheOrDisk(new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = pageId });
