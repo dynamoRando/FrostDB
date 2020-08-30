@@ -42,6 +42,16 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Reads the Db Data File for the next available page that is not already in the specified list of addresses
+        /// </summary>
+        /// <param name="excludeAddresses">The list of page addreses to exclude</param>
+        /// <returns>A page from disk</returns>
+        public Page GetNextPage(List<PageAddress> excludeAddresses)
+        {
+            throw new NotImplementedException(); 
+        }
+
         public bool IsValid()
         {
             throw new NotImplementedException();

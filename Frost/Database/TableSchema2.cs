@@ -10,6 +10,7 @@ namespace FrostDB
         private List<ColumnSchema> _columns;
         private string _name;
         private string _databaseName;
+        private int _databaseId;
         private int _tableId;
         #endregion
 
@@ -18,6 +19,7 @@ namespace FrostDB
         public string DatabaseName => _databaseName;
         public List<ColumnSchema> Columns => _columns;
         public int TableId => _tableId;
+        public int DatabaseId => _databaseId;
         #endregion
 
         #region Protected Methods
@@ -27,13 +29,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public TableSchema2(int id, string name, string databaseName) 
+        public TableSchema2(int id, string name, string databaseName, int databaseId) 
         {
             _name = name;
             _databaseName = databaseName;
             _tableId = id;
+            _databaseId = databaseId;
         }
-        public TableSchema2(List<ColumnSchema> columns, int id, string name, string databaseName) : this(id, name, databaseName)
+        public TableSchema2(List<ColumnSchema> columns, int id, string name, string databaseName, int databaseId) : this(id, name, databaseName, databaseId)
         {
             _columns = columns;
         }

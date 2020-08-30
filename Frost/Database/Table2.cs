@@ -15,6 +15,7 @@ namespace FrostDB
         private string _name;
         private string _databaseName;
         private int _tableId;
+        private int _databaseId;
         #endregion
 
         #region Public Properties
@@ -48,6 +49,7 @@ namespace FrostDB
             _databaseName = schema.DatabaseName;
             _columns = schema.Columns;
             _tableId = schema.TableId;
+            _databaseId = schema.DatabaseId;
             // need to figure out what the new b-tree structure will look like
             // how to populate binary page data from disk to table object?
             throw new NotImplementedException();
@@ -70,10 +72,11 @@ namespace FrostDB
 
             if (HasIndexes)
             {
-                // refer to the index tso that we can jump to the correct b-tree page
+                // refer to the index so that we can jump to the correct b-tree page
             }
             else
             {
+                
                 // we're going to scan every page in the b-tree
             }
 

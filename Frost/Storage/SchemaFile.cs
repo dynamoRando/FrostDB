@@ -203,7 +203,7 @@ namespace FrostDB
             TableSchema2 result;
             var items = line.Split(" ");
             {
-                result = new TableSchema2(Convert.ToInt32(items[1]), items[2], _dbSchema.DatabaseName);
+                result = new TableSchema2(Convert.ToInt32(items[1]), items[2], _dbSchema.DatabaseName, _dbSchema.DatabaseId);
             }
 
             return result;

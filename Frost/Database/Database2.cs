@@ -175,7 +175,7 @@ namespace FrostDB
 
             _tables.ForEach(table => 
             {
-                var tableSchema = new TableSchema2(table.TableId, table.Name, _name);
+                var tableSchema = new TableSchema2(table.TableId, table.Name, _name, _databaseId);
                 table.Columns.ForEach(column => 
                 {
                     var columnSchema = new ColumnSchema(column.Name, column.DataType);

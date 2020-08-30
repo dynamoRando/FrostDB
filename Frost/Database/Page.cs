@@ -19,6 +19,7 @@ namespace FrostDB
         private byte[] _data;
         private int _rowDataStart;
         private int _rowDataEnd;
+        private PageAddress _address;
         #endregion
 
         #region Public Properties
@@ -31,6 +32,7 @@ namespace FrostDB
         public int SizeOfTableId => _sizeOfTableId;
         public int RowDataStart => _rowDataStart;
         public int RowDataEnd => _rowDataEnd;
+        public PageAddress Address => _address;
         #endregion
 
         #region Protected Methods
@@ -50,6 +52,8 @@ namespace FrostDB
             Id = GetId();
             TableId = GetTableId();
             DbId = GetDbId();
+
+            _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
         }
 
         public Page(byte[] data, int id, int tableId, int dbId)
@@ -57,6 +61,8 @@ namespace FrostDB
             Id = id;
             TableId = tableId;
             DbId = dbId;
+
+            _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
 
             _data = data;
         }

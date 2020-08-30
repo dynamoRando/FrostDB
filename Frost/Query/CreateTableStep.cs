@@ -48,7 +48,7 @@ namespace FrostDB
                     columns.Add(GetColumnSchema(column));
                 }
 
-                var schema = new TableSchema2(columns, db.GetNextTableId(), TableName, databaseName);
+                var schema = new TableSchema2(columns, db.GetNextTableId(), TableName, databaseName, db.DatabaseId);
                 var table = new Table2(process, schema);
                 db.AddTable(table);
                 throw new NotImplementedException();

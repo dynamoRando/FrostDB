@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FrostDB
 {
     /// <summary>
-    /// Responsible for returning pages from disk
+    /// Responsible for returning pages from disk or cache. Also responsible for I/O operations on pages
     /// </summary>
     public class Pager
     {
@@ -13,6 +14,7 @@ namespace FrostDB
         private Process _process;
         private string _databaseFolder;
         private Dictionary<PageAddress, Page> _cache;
+        private List<PageAddress> _addresses;
         #endregion
 
         #region Public Properties
@@ -30,10 +32,14 @@ namespace FrostDB
             _process = process;
             _databaseFolder = databaseFolder;
             _cache = new Dictionary<PageAddress, Page>();
+            _addresses = new List<PageAddress>();
         }
         #endregion
 
         #region Public Methods
+      
+
+
         /// <summary>
         /// Gets a page from cache or disk based on the page address
         /// </summary>
@@ -75,6 +81,12 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void AddToCache(Page page)
+        {
+            _cache.Add(page.Address, page);
+            _addresses.Add(page.Address);
+        }
+
         private Page GetPageFromCacheOrDisk(PageAddress address)
         {
             Page page = null;
@@ -85,6 +97,7 @@ namespace FrostDB
             else
             {
                 page = GetPageFromDisk(address);
+                AddToCache(page);
             }
 
             return page;
@@ -92,7 +105,10 @@ namespace FrostDB
 
         private Page GetPageFromDisk(PageAddress address)
         {
-            throw new NotImplementedException();
+            var addresses = _addresses.
+                Where(address => address.DatabaseId == address.DatabaseId && address.TableId == address.TableId).ToList();
+
+            return _process.GetDatabase2(address.DatabaseId).Storage.GetNextPage(addresses);
         }
         #endregion
 

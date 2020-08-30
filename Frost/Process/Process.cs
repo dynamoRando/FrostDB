@@ -185,6 +185,11 @@ namespace FrostDB
             return Databases2.Where(d => d.Name == databaseName).FirstOrDefault();
         }
 
+        public Database2 GetDatabase2(int databaseId)
+        {
+            return Databases2.Where(d => d.DatabaseId == databaseId).FirstOrDefault();
+        }
+
         public bool HasDatabase(string databaseName)
         {
             return Databases.Any(d => d.Name.ToUpper() == databaseName.ToUpper());
@@ -213,6 +218,11 @@ namespace FrostDB
         public Page GetPage(int databaseId, int tableId, int pageId)
         {
             return DatabaseManager.StorageManager.GetPage(databaseId, tableId, pageId);
+        }
+
+        public List<Page> GetPages(int databaseId, int tableId, List<Page> excludePages)
+        {
+            throw new NotImplementedException();
         }
 
         public virtual void Startup()

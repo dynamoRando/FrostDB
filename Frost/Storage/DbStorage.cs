@@ -46,6 +46,35 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Searches the Db Data File for the specified Page
+        /// </summary>
+        /// <param name="address">The page address</param>
+        /// <returns>The page with the specified address</returns>
+        public Page GetPageFromDisk(PageAddress address)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets a page from the disk for this database
+        /// </summary>
+        /// <returns>A page from the disk</returns>
+        public Page GetAPage()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets a page from disk that is not found in the specified exclusion list
+        /// </summary>
+        /// <param name="excludeList">A list of pages that are already in cache</param>
+        /// <returns>A page</returns>
+        public Page GetNextPage(List<PageAddress> excludeList)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SaveSchema(DbSchema2 schema)
         {
             throw new NotImplementedException();
