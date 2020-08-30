@@ -45,6 +45,11 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void SaveSchema(DbSchema2 schema)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates the appropriate files on disk for a new database.
         /// </summary>

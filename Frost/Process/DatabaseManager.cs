@@ -116,7 +116,7 @@ namespace FrostDB
             }
             else
             {
-                throw new ArgumentNullException("Database was null");
+                throw new ArgumentNullException(nameof(database));
             }
         }
 

@@ -4,9 +4,11 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Represents the schema of a database
+    /// </summary>
     public class DbSchema2
     {
-
         #region Private Fields
         #endregion
 
@@ -23,6 +25,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public DbSchema2(int id, string databaseName)
+        {
+            DatabaseId = id;
+            DatabaseName = databaseName;
+        }
+
         public DbSchema2()
         {
             Tables = new List<TableSchema2>();

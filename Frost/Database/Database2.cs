@@ -15,6 +15,7 @@ namespace FrostDB
         private int _maxTableId;
         private int _databaseId;
         private DbStorage _storage;
+        private DbSchema2 _schema;
         #endregion
 
         #region Public Properties
@@ -55,6 +56,7 @@ namespace FrostDB
             _name = fill.Schema.DatabaseName;
             _databaseId = fill.Schema.DatabaseId;
             _storage = storage;
+            _schema = fill.Schema;
             FillTables(fill);
             throw new NotImplementedException();
         }
@@ -67,7 +69,9 @@ namespace FrostDB
         /// <param name="schema">The table schema</param>
         public void AddTable(TableSchema2 schema)
         {
-            throw new NotImplementedException();
+            var table = new Table2(_process, schema);
+            _tables.Add(table);
+            HandleAddTable(table.Name);
         }
 
         /// <summary>
@@ -76,7 +80,15 @@ namespace FrostDB
         /// <param name="table">The table to be added</param>
         public void AddTable(Table2 table)
         {
-            throw new NotImplementedException();
+            if (table != null)
+            {
+                _tables.Add(table);
+                HandleAddTable(table.Name);
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(table));
+            }
         }
 
         /// <summary>
@@ -140,6 +152,38 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Performs related actions needed when adding a table to the database
+        /// </summary>
+        private void HandleAddTable(string tableName)
+        {
+            UpdateSchema();
+            _storage.SaveSchema(_schema);
+            _process.Log.Debug($"{tableName} was added to database {_name}");
+        }
+
+        /// <summary>
+        /// Updates the local schema reference based on the current tables and columns in memory
+        /// </summary>
+        private void UpdateSchema()
+        {
+            var schema = new DbSchema2(_databaseId, _name);
+
+            _tables.ForEach(table => 
+            {
+                var tableSchema = new TableSchema2(table.TableId, table.Name, _name);
+                table.Columns.ForEach(column => 
+                {
+                    var columnSchema = new ColumnSchema(column.Name, column.DataType);
+                    tableSchema.Columns.Add(columnSchema);
+                });
+                schema.Tables.Add(tableSchema);
+            });
+
+            _schema = schema;
+        }
+
         /// <summary>
         /// Adds the tables to the database with the passed in schema
         /// </summary>
