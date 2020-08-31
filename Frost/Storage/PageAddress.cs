@@ -12,6 +12,7 @@ namespace FrostDB
         public int DatabaseId { get; set; }
         public int TableId { get; set; }
         public int PageId { get; set; }
+        public BTreeAddress TreeAddress => new BTreeAddress { DatabaseId = this.DatabaseId, TableId = this.TableId };
 
         public bool Equals(PageAddress other)
         {

@@ -5,9 +5,9 @@ using System.Text;
 namespace FrostDB
 {
     /// <summary>
-    /// Used to identify which table a B-Tree belongs to
+    /// Used to identify which table a B-Tree belongs to. Contains DatabaseId and TableId
     /// </summary>
-    class BTreeAddress : IEquatable<BTreeAddress>
+    public class BTreeAddress : IEquatable<BTreeAddress>
     {
         public int DatabaseId { get; set;}
         public int TableId { get; set; }

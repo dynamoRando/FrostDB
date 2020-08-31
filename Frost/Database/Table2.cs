@@ -11,7 +11,6 @@ namespace FrostDB
     {
         #region Private Fields
         private Process _process;
-        private TreeDictionary<int, Page> _btree;
         private int _maxPageId;
         private TableSchema2 _schema;
         private List<ColumnSchema> _columns;
@@ -26,6 +25,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public TableSchema2 Schema => _schema;
         public List<ColumnSchema> Columns => _columns;
         public string Name => _name;
         public string DatabaseName => _databaseName;
@@ -50,7 +50,6 @@ namespace FrostDB
         /// <param name="schema">The table schema (loaded from disk, usually from a DBFill object.)</param>
         public Table2(Process process, TableSchema2 schema)
         {
-            _btree = new TreeDictionary<int, Page>();
             _process = process;
             _schema = schema;
             _name = schema.Name;
@@ -85,29 +84,10 @@ namespace FrostDB
             }
             else
             {
-                // we're going to scan every page in the b-tree
 
-                // populate the tree with the 1st page from pager
-                CheckAndPrimeTree();
-
-                // convert the pages in the tree to rows
-                result.AddRange(GetRowsFromTree());
-                
-
-                // need to scan the list of rows to see if any of the values match the parameters specified
-
-                // if not, we need to go back to the pager and get more pages until we've pulled all pages 
-                // all pages meaning keep going to cache, then disk, until we've got all pages in memory or 
-                // until we satisfy our search condition
-
-                // logic flaw - what if all the rows meet our search condition? either way
-                // we must traverse all pages for the table to ensure we have all rows
-
-                throw new NotImplementedException();
-               
             }
 
-            return result;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -149,33 +129,9 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Converts all the pages in the tree to row items
-        /// </summary>
-        /// <returns>A list of rows</returns>
-        private List<Row2> GetRowsFromTree()
+        private List<Row2> GetRowsFromPager()
         {
-            _rows.Clear();
-
-            // from the tree, convert to a list of rows
-            _btree.ForEach(item =>
-            {
-                _rows.AddRange(item.Value.GetValues(_schema));
-            });
-
-            return _rows;
-        }
-
-        /// <summary>
-        /// If the tree is empty, pull the first page out from the pager
-        /// </summary>
-        private void CheckAndPrimeTree()
-        {
-            if (_btree.Count == 0)
-            {
-                var page = _process.GetDatabase2(_databaseId).Storage.GetAPage();
-                _btree.Add(page.Address.PageId, page);
-            }
+            return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
         }
         #endregion
 

@@ -57,28 +57,9 @@ namespace FrostDB
             database.Storage.CreateFiles();
         }
 
-        /// <summary>
-        /// Returns a page from disk or cache for the specified parameters
-        /// </summary>
-        /// <param name="databaseName">The database name</param>
-        /// <param name="tableName">The table name</param>
-        /// <param name="pageId">The page Id</param>
-        /// <returns>A page from cache or disk</returns>
-        public Page GetPage(string databaseName, string tableName, int pageId)
+        public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
-            return _pager.GetPage(databaseName, tableName, pageId);
-        }
-
-        /// <summary>
-        /// Returns a page from disk or cache for the specified parameter
-        /// </summary>
-        /// <param name="databaseId">The datababse id</param>
-        /// <param name="tableId">The table id</param>
-        /// <param name="pageId">The page id</param>
-        /// <returns>A page from cache or disk</returns>
-        public Page GetPage(int databaseId, int tableId, int pageId)
-        {
-            return _pager.GetPage(databaseId, tableId, pageId);
+            return _pager.GetAllRows(treeAddress);
         }
 
         /// <summary>

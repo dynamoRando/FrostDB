@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using C5;
+using MoreLinq;
 
 namespace FrostDB
 {
@@ -13,7 +16,7 @@ namespace FrostDB
         #region Private Fields
         private Process _process;
         private string _databaseFolder;
-        private Dictionary<PageAddress, Page> _cache;
+        private ConcurrentDictionary<BTreeAddress, BTreeContainer> _cache;
         private List<PageAddress> _addresses;
         #endregion
 
@@ -31,81 +34,38 @@ namespace FrostDB
         {
             _process = process;
             _databaseFolder = databaseFolder;
-            _cache = new Dictionary<PageAddress, Page>();
+            _cache = new ConcurrentDictionary<BTreeAddress, BTreeContainer>();
             _addresses = new List<PageAddress>();
         }
         #endregion
 
         #region Public Methods
-        /// <summary>
-        /// Gets a page from cache or disk based on the page address
-        /// </summary>
-        /// <param name="address">The page address</param>
-        /// <returns>A page from cache or disk</returns>
-        public Page GetPage(PageAddress address)
+        public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
-            return GetPageFromCacheOrDisk(address);
-        }
+            var result = new List<Row2>();
+            TableSchema2 schema = _process.GetDatabase2(treeAddress.DatabaseId).GetTable(treeAddress.TableId).Schema;
 
-        /// <summary>
-        /// Gets a page from cache or disk based on the specified parameters
-        /// </summary>
-        /// <param name="databaseName">The database name</param>
-        /// <param name="tableName">The table name</param>
-        /// <param name="pageId">The page Id</param>
-        /// <returns>A page from cache or disk</returns>
-        public Page GetPage(string databaseName, string tableName, int pageId)
-        {
-            var db = _process.GetDatabase2(databaseName);
-            var dbId = db.DatabaseId;
-            var table = db.GetTable(tableName);
-            var tableId = table.TableId;
+            BTreeContainer container = GetContainer(treeAddress);
+            if (container.State == BTreeContainerState.Ready)
+            {
+                TreeDictionary<int, Page> tree = container.Tree;
+                tree.ForEach(item =>
+                {
+                    List<Row2> rows = item.Value.GetValues(schema);
+                    result.AddRange(rows);
+                });
+            }
 
-            return GetPage(dbId, tableId, pageId);
-        }
-
-        /// <summary>
-        /// Gets a page from cache or disk based on the specified parameters
-        /// </summary>
-        /// <param name="databaseId">The database id</param>
-        /// <param name="tableId">The table id</param>
-        /// <param name="pageId">The page id</param>
-        /// <returns>A page from cache or disk</returns>
-        public Page GetPage(int databaseId, int tableId, int pageId)
-        {
-            return GetPageFromCacheOrDisk(new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = pageId });
+            return result;
         }
         #endregion
 
         #region Private Methods
-        private void AddToCache(Page page)
+        private BTreeContainer GetContainer(BTreeAddress treeAddress)
         {
-            _cache.Add(page.Address, page);
-            _addresses.Add(page.Address);
-        }
-
-        private Page GetPageFromCacheOrDisk(PageAddress address)
-        {
-            Page page = null;
-            if (_cache.ContainsKey(address))
-            {
-                _cache.TryGetValue(address, out page);
-            }
-            else
-            {
-                page = GetPageFromDisk(address);
-                AddToCache(page);
-            }
-
-            return page;
-        }
-
-        private Page GetPageFromDisk(PageAddress address)
-        {
-            var addresses = _addresses.
-                Where(address => address.DatabaseId == address.DatabaseId && address.TableId == address.TableId).ToList();
-
-            return _process.GetDatabase2(address.DatabaseId).Storage.GetNextPage(addresses);
+            BTreeContainer container = null;
+            _cache.TryGetValue(treeAddress, out container);
+            return container;
         }
         #endregion
 
