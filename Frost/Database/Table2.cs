@@ -1,7 +1,9 @@
-﻿using MoreLinq;
+﻿using C5;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 
 namespace FrostDB
 {
@@ -9,7 +11,7 @@ namespace FrostDB
     {
         #region Private Fields
         private Process _process;
-        private BTreeDictionary<int, Page> _btree;
+        private TreeDictionary<int, Page> _btree;
         private int _maxPageId;
         private TableSchema2 _schema;
         private List<ColumnSchema> _columns;
@@ -48,7 +50,7 @@ namespace FrostDB
         /// <param name="schema">The table schema (loaded from disk, usually from a DBFill object.)</param>
         public Table2(Process process, TableSchema2 schema)
         {
-            _btree = new BTreeDictionary<int, Page>();
+            _btree = new TreeDictionary<int, Page>();
             _process = process;
             _schema = schema;
             _name = schema.Name;
@@ -172,7 +174,7 @@ namespace FrostDB
             if (_btree.Count == 0)
             {
                 var page = _process.GetDatabase2(_databaseId).Storage.GetAPage();
-                _btree.Add(new KeyValuePair<int, Page>(page.Address.PageId, page));
+                _btree.Add(page.Address.PageId, page);
             }
         }
         #endregion
