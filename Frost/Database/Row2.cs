@@ -41,6 +41,7 @@ namespace FrostDB
         {
             _data = data;
             _columns = columns;
+            GetRowId();
             GetIsLocal();
             GetParticipantId();
         }
@@ -96,6 +97,7 @@ namespace FrostDB
             var data = BitConverter.GetBytes(IsLocal);
             data.CopyTo(_data, GetIsLocalOffset());
         }
+
         private bool GetIsLocal()
         {
             var span = new Span<Byte>(Data);
