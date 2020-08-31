@@ -40,6 +40,11 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns all rows for the specified table (via tree address)
+        /// </summary>
+        /// <param name="treeAddress">The tree's address (dbId, tableId)</param>
+        /// <returns>All rows for the table</returns>
         public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
             var result = new List<Row2>();
