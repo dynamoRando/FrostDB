@@ -4,6 +4,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Represents various properties of a column in a table
+    /// </summary>
     public class ColumnSchema
     {
         #region Private Fields

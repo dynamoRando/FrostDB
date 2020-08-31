@@ -19,6 +19,9 @@ namespace FrostDB
         /// Size of boolean flag for if a row is local or not
         /// </summary>
         public const int SIZE_OF_IS_LOCAL = 1;
+        /// <summary>
+        /// Size of the Row Id (int32)
+        /// </summary>
         public const int SIZE_OF_ROW_ID = 4;
     }
 }
