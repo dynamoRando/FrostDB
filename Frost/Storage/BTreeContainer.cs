@@ -60,7 +60,7 @@ namespace FrostDB
                 SetContainerState(BTreeContainerState.Ready);
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
         /// <summary>

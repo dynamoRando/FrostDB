@@ -4,6 +4,9 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// Holds information for rows to be updated in a table
+    /// </summary>
     class RowUpdate
     {
         public TableSchema2 Table { get; set; }
