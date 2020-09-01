@@ -19,6 +19,7 @@ namespace FrostDB
         private DbSecurityFile _security;
         private DbContractFile _contractFile;
         private DbDataIndexFile _indexFile;
+        // probably need a lock object around the xact file
         private DbXactFile _xactFile;
         private string _databaseName;
         private int _databaseId;
