@@ -50,15 +50,14 @@ namespace FrostDB
             var result = new List<Row2>();
             TableSchema2 schema = _process.GetDatabase2(treeAddress.DatabaseId).GetTable(treeAddress.TableId).Schema;
 
-            BTreeContainer container = GetContainer(treeAddress);
-            if (container.State == BTreeContainerState.Ready)
+            if (CacheHasContainer(treeAddress))
             {
-                TreeDictionary<int, Page> tree = container.Tree;
-                tree.ForEach(item =>
-                {
-                    List<Row2> rows = item.Value.GetValues(schema);
-                    result.AddRange(rows);
-                });
+                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema));
+            }
+            else
+            {
+                AddContainerToCache(treeAddress);
+                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema));
             }
 
             return result;
@@ -66,7 +65,42 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private BTreeContainer GetContainer(BTreeAddress treeAddress)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        private void AddContainerToCache(BTreeAddress address)
+        {
+            BTreeContainer container = GetContainerFromDisk(address);
+            _cache.TryAdd(address, container);
+        }
+
+        /// <summary>
+        /// Tries to load a container from disk file
+        /// </summary>
+        /// <param name="address">The address of the container to get</param>
+        /// <returns>A container from disk</returns>
+        private BTreeContainer GetContainerFromDisk(BTreeAddress address)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Checks the cache for the specified container
+        /// </summary>
+        /// <param name="address">The address of the container</param>
+        /// <returns>True if the cache has the container, otherwise false</returns>
+        private bool CacheHasContainer(BTreeAddress address)
+        {
+            return _cache.ContainsKey(address);
+        }
+
+        /// <summary>
+        /// Retrives a container from the cachel
+        /// </summary>
+        /// <param name="treeAddress">The address of the container</param>
+        /// <returns>The container</returns>
+        private BTreeContainer GetContainerFromCache(BTreeAddress treeAddress)
         {
             BTreeContainer container = null;
             _cache.TryGetValue(treeAddress, out container);

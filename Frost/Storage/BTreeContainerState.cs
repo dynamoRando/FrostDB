@@ -10,7 +10,6 @@ namespace FrostDB
     public enum BTreeContainerState
     {
         Ready,
-        ReadDirty,
         LockedForUpdate,
         LockedForInsert,
         LockedForDelete

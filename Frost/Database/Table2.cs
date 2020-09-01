@@ -96,7 +96,7 @@ namespace FrostDB
         /// <returns>A list of rows in the table.</returns>
         public List<Row2> GetAllRows()
         {
-            throw new NotImplementedException();
+            return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
         }
 
         /// <summary>
@@ -129,10 +129,6 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private List<Row2> GetRowsFromPager()
-        {
-            return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
-        }
         #endregion
 
     }
