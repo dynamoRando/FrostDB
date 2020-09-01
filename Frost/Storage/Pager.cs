@@ -51,12 +51,12 @@ namespace FrostDB
 
             if (CacheHasContainer(treeAddress))
             {
-                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema));
+                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema, false));
             }
             else
             {
                 AddContainerToCache(treeAddress, database.Storage);
-                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema));
+                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema, false));
             }
 
             return result;

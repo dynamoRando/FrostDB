@@ -21,7 +21,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
-        public BTreeContainerState State => _state;
+        public BTreeContainerState State => GetContainerState();
         public BTreeAddress Address => _address;
         #endregion
 
@@ -53,7 +53,7 @@ namespace FrostDB
         {
             bool result = false;
 
-            if (_state == BTreeContainerState.Ready)
+            if (GetContainerState() == BTreeContainerState.Ready)
             {
                 SetContainerState(BTreeContainerState.LockedForUpdate);
 
@@ -76,18 +76,31 @@ namespace FrostDB
         /// Returns all rows from this tree in this container
         /// </summary>
         /// <param name="schema">The table schema to convert the rows to</param>
+        /// <param name="dirtyRead">true if unprotected read, otherwise false</param>
         /// <returns>A list of rows</returns>
-        public List<Row2> GetAllRows(TableSchema2 schema)
+        public List<Row2> GetAllRows(TableSchema2 schema, bool dirtyRead)
         {
             var result = new List<Row2>();
 
-            lock (_treeLock)
+            if (dirtyRead)
             {
-                _tree.ForEach(item =>
+                TreeDictionary<int, Page> item = _tree.DeepCopy();
+                item.ForEach(i =>
                 {
-                    List<Row2> rows = item.Value.GetValues(schema);
+                    List<Row2> rows = i.Value.GetValues(schema);
                     result.AddRange(rows);
                 });
+            }
+            else
+            {
+                lock (_treeLock)
+                {
+                    _tree.ForEach(item =>
+                    {
+                        List<Row2> rows = item.Value.GetValues(schema);
+                        result.AddRange(rows);
+                    });
+                }
             }
 
             return result;
@@ -95,6 +108,13 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private BTreeContainerState GetContainerState()
+        {
+            lock (_stateLock)
+            {
+                return _state;
+            }
+        }
         private Page GetFirstPageFromDisk()
         {
             throw new NotImplementedException();
