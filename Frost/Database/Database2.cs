@@ -11,6 +11,22 @@ namespace FrostDB
     /// </summary>
     public class Database2
     {
+        /*
+         * This database object will return tables and rows and is responsible for holding the
+         *  - schmea
+         *  - contract
+         *  - list of participants
+         *  - users and security
+         *  
+         *  This object does not actually hold any binary data. That information is handled by the Pager object (cache) and 
+         *  the backing DbStorage object (to get data from disk). Those in turn, manage table data for the database in a TreeDictionary object,
+         *  which is contained in a BTreeContainer used to control read/write access to the tree.
+         *  
+         *  In essense, the actual binary data for the database (in the tables) is contained in Binary Trees (in a TreeDictionary).
+         *  Everything else is contained in this database object.
+         *  
+         */
+
         #region Private Fields
         private Process _process;
         private string _name;

@@ -1,4 +1,5 @@
 ﻿using FrostDB.Interface;
+using FrostDB.Storage;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,8 @@ namespace FrostDB
         private string _dataFileExtension;
         private string _dataFileFolder;
         private string _databaseName;
+        private DbDataDirectoryFile _dataDirectory;
+        private string _dataDirectoryExtension;
         #endregion
 
         #region Public Properties
@@ -33,11 +36,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbDataFile(string extension, string folder, string databaseName)
+        public DbDataFile(string extension, string folder, string databaseName, string dataDirectoryExtension)
         {
             _dataFileExtension = extension;
             _dataFileFolder = folder;
             _databaseName = databaseName;
+            _dataDirectoryExtension = dataDirectoryExtension;
+
+            _dataDirectory = new DbDataDirectoryFile(this, folder, databaseName, _dataDirectoryExtension);
         }
         #endregion
 

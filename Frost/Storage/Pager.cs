@@ -17,7 +17,6 @@ namespace FrostDB
         private Process _process;
         private string _databaseFolder;
         private ConcurrentDictionary<BTreeAddress, BTreeContainer> _cache;
-        private List<PageAddress> _addresses;
         #endregion
 
         #region Public Properties
@@ -35,7 +34,6 @@ namespace FrostDB
             _process = process;
             _databaseFolder = databaseFolder;
             _cache = new ConcurrentDictionary<BTreeAddress, BTreeContainer>();
-            _addresses = new List<PageAddress>();
         }
         #endregion
 
@@ -84,10 +82,7 @@ namespace FrostDB
         private BTreeContainer GetContainerFromDisk(BTreeAddress address, DbStorage storage)
         {
             var tree = new TreeDictionary<int, Page>();
-            var container = new BTreeContainer(address, tree, storage);
-
-            // need to populate the first page from disk in the tree
-            throw new NotImplementedException();
+            return new BTreeContainer(address, tree, storage);
         }
 
         /// <summary>

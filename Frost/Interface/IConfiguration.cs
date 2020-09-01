@@ -18,6 +18,7 @@ namespace FrostDB.Interface
         string SchemaFileExtension { get; set; }
         string ParticipantFileExtension { get; set; }
         string FrostBinaryDataExtension { get; set; }
+        string FrostBinaryDataDirectoryExtension { get; set; }
         string FrostSystemFolder { get; set; }
     }
 }

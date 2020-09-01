@@ -30,6 +30,7 @@ namespace FrostDB
         private string _schemaFileExtension;
         private string _particpantFileExtension;
         private string _dbFrostBinaryExtension;
+        private string _dbFrostBinaryDataDirectoryExtension;
         private string _frostSystemFolder;
         #endregion
 
@@ -114,6 +115,11 @@ namespace FrostDB
         public string FrostBinaryDataExtension => _dbFrostBinaryExtension;
 
         /// <summary>
+        /// (new) The file extension for the page/line number directory for the binary data file
+        /// </summary>
+        public string FrostBinaryDataDirectoryExtension => _dbFrostBinaryDataDirectoryExtension;
+
+        /// <summary>
         /// (new) The location for the Frost system folder. This folder holds various system databases and information.
         /// </summary>
         public string FrostSystemFolder => _frostSystemFolder;
@@ -158,6 +164,7 @@ namespace FrostDB
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
                 _dbFrostBinaryExtension = ".frostDbData";
+                _dbFrostBinaryDataDirectoryExtension = ".frostDbDirData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
             else if (_info.OS == OSPlatform.Linux)
@@ -176,6 +183,7 @@ namespace FrostDB
                 _schemaFileExtension = ".frostSchema";
                 _particpantFileExtension = ".frostParticpants";
                 _dbFrostBinaryExtension = ".frostDbData";
+                _dbFrostBinaryDataDirectoryExtension = ".frostDbDirData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
             }
             else

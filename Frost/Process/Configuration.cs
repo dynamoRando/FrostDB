@@ -92,6 +92,11 @@ namespace FrostDB
         public string FrostBinaryDataExtension { get; set; }
 
         /// <summary>
+        /// (new) The file extension for the page/line number directory for the binary data file
+        /// </summary>
+        public string FrostBinaryDataDirectoryExtension { get; set; }
+
+        /// <summary>
         /// (new) The location for the Frost system folder. This folder holds various system databases and information.
         /// </summary>
         public string FrostSystemFolder { get; set; }

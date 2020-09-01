@@ -7,7 +7,7 @@ using System.Text;
 namespace FrostDB
 {
     /// <summary>
-    /// Class that holds the address of a tree as well as the tree itself and the tree's state (future)
+    /// Holds the address of a tree, the tree itself, and the tree's state (future)
     /// </summary>
     class BTreeContainer
     {
@@ -88,6 +88,10 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private Page GetFirstPageFromDisk()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 

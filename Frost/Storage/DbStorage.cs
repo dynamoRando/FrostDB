@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FrostDB.Storage;
+using System;
 using System.Collections.Generic;
 
 namespace FrostDB
@@ -13,6 +14,7 @@ namespace FrostDB
         private string _databaseFolderPath = string.Empty;
         private SchemaFile _schema;
         private DbDataFile _data;
+        private DbDataDirectoryFile _dataDirectory;
         private ParticipantFile _participants;
         private DbSecurityFile _security;
         private DbContractFile _contractFile;
