@@ -17,6 +17,7 @@ namespace FrostDB
         TreeDictionary<int, Page> _tree;
         BTreeContainerState _state;
         BTreeAddress _address;
+        DbStorage _storage;
         #endregion
 
         #region Public Properties
@@ -26,10 +27,11 @@ namespace FrostDB
 
         #region Constructors
         public BTreeContainer() { }
-        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree)
+        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage)
         {
             _tree = tree;
             _address = address;
+            _storage = storage;
         }
         #endregion
 

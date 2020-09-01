@@ -48,7 +48,8 @@ namespace FrostDB
         public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
             var result = new List<Row2>();
-            TableSchema2 schema = _process.GetDatabase2(treeAddress.DatabaseId).GetTable(treeAddress.TableId).Schema;
+            Database2 database = _process.GetDatabase2(treeAddress.DatabaseId);
+            TableSchema2 schema = database.GetTable(treeAddress.TableId).Schema;
 
             if (CacheHasContainer(treeAddress))
             {
@@ -56,7 +57,7 @@ namespace FrostDB
             }
             else
             {
-                AddContainerToCache(treeAddress);
+                AddContainerToCache(treeAddress, database.Storage);
                 result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema));
             }
 
@@ -69,9 +70,9 @@ namespace FrostDB
         /// 
         /// </summary>
         /// <param name="address"></param>
-        private void AddContainerToCache(BTreeAddress address)
+        private void AddContainerToCache(BTreeAddress address, DbStorage storage)
         {
-            BTreeContainer container = GetContainerFromDisk(address);
+            BTreeContainer container = GetContainerFromDisk(address, storage);
             _cache.TryAdd(address, container);
         }
 
@@ -80,8 +81,12 @@ namespace FrostDB
         /// </summary>
         /// <param name="address">The address of the container to get</param>
         /// <returns>A container from disk</returns>
-        private BTreeContainer GetContainerFromDisk(BTreeAddress address)
+        private BTreeContainer GetContainerFromDisk(BTreeAddress address, DbStorage storage)
         {
+            var tree = new TreeDictionary<int, Page>();
+            var container = new BTreeContainer(address, tree, storage);
+
+            // need to populate the first page from disk in the tree
             throw new NotImplementedException();
         }
 
