@@ -24,6 +24,34 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// This method is a stub.
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
+        public bool WriteTransactionForUpdate(List<RowUpdate> rows)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <returns></returns>
+        public bool WriteTransactionForInsert()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <returns></returns>
+        public bool WriteTransactionForDelete()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsValid()
         {
             throw new NotImplementedException();

@@ -49,6 +49,33 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
+        public bool WriteTransactionForUpdate(List<RowUpdate> rows)
+        {
+            _xactFile.WriteTransactionForUpdate(rows);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <returns></returns>
+        public bool WriteTransactionForInsert()
+        {
+            _xactFile.WriteTransactionForInsert();
+            throw new NotImplementedException();
+        }
+
+        public bool WriteTransactionForDelete()
+        {
+            _xactFile.WriteTransactionForDelete();
+            throw new NotImplementedException();
+        }
+        
         public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
             return _process.DatabaseManager.StorageManager.GetAllRows(treeAddress);

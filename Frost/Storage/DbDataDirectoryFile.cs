@@ -8,8 +8,8 @@ namespace FrostDB.Storage
 
     class DbDataDirectoryFileItem
     {
-        public int LineNumber { get; set; }
         public int PageNumber { get; set; }
+        public int LineNumber { get; set; }
     }
 
     /// <summary>
@@ -17,6 +17,8 @@ namespace FrostDB.Storage
     /// </summary>
     class DbDataDirectoryFile : IStorageFile
     {
+
+        // page number, line number
         #region Private Fields
         private DbDataFile _dataFile;
         private string _extension;

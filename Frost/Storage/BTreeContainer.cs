@@ -56,6 +56,8 @@ namespace FrostDB
             if (_state == BTreeContainerState.Ready)
             {
                 SetContainerState(BTreeContainerState.LockedForUpdate);
+                // write to the transaction log first
+                _storage.WriteTransactionForUpdate(rows);
 
                 // using the values passed in, update the tree
 
