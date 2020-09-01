@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace FrostDB
 {
@@ -14,6 +15,7 @@ namespace FrostDB
         private string _xactFileExtension;
         private string _xactFileFileFolder;
         private string _databaseName;
+        private ReaderWriterLockSlim _locker;
         #endregion
 
         #region Public Properties
@@ -21,6 +23,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        public DbXactFile()
+        {
+            _locker = new ReaderWriterLockSlim();
+        }
         #endregion
 
         #region Public Methods
@@ -31,7 +37,9 @@ namespace FrostDB
         /// <returns></returns>
         public bool WriteTransactionForUpdate(List<RowUpdate> rows)
         {
+            _locker.EnterWriteLock();
             throw new NotImplementedException();
+            _locker.ExitWriteLock();
         }
 
         /// <summary>
