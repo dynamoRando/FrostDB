@@ -8,7 +8,7 @@ namespace FrostDB
     {
         /*
          * Row Byte Array Layout:
-         * RowId SizeOfRow IsLocal {ParticipantId}
+         * RowId SizeOfRow IsLocal {ParticipantId | RowData}
          * RowId SizeOfRow IsLocal - preamble (used in inital load of the Row)
          * 
          * if IsLocal == true, then need to request the rest of the byte array
