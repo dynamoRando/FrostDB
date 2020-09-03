@@ -30,13 +30,14 @@ namespace FrostDB
         /// </summary>
         public bool IsNullable { get; set; }
         /// <summary>
-        /// The size of the column in bytes
+        /// The max size of the column in bytes. This is fixed for fixed size columns, but variable for VAR types
         /// </summary>
         public int Size { get; set; }
         /// <summary>
-        /// The byte offset of the column in relation <strong>to the order in the row</strong>
+        /// The order in which this column appears in the byte array. This != ordinal, which is how the table perceives the columns to be ordered.
         /// </summary>
-        public int Offset { get; set; }
+        public int Order { get; set; }
+        public bool IsVariableLength => isVariableLengthColumn();
         #endregion
 
         #region Constructors
@@ -53,6 +54,21 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private bool isVariableLengthColumn()
+        {
+            if (DataType.StartsWith("VARCHAR") || 
+                DataType.StartsWith("NVARCHAR") ||
+                DataType.StartsWith("NUMERIC") || 
+                DataType.StartsWith("DECIMAL"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         #endregion
 
 
