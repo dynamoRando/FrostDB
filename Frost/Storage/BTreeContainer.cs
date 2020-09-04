@@ -87,7 +87,7 @@ namespace FrostDB
                 TreeDictionary<int, Page> item = _tree.DeepCopy();
                 item.ForEach(i =>
                 {
-                    List<Row2> rows = i.Value.GetValues(schema);
+                    List<Row2> rows = i.Value.GetRows(schema);
                     result.AddRange(rows);
                 });
             }
@@ -97,7 +97,7 @@ namespace FrostDB
                 {
                     _tree.ForEach(item =>
                     {
-                        List<Row2> rows = item.Value.GetValues(schema);
+                        List<Row2> rows = item.Value.GetRows(schema);
                         result.AddRange(rows);
                     });
                 }

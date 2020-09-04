@@ -9,7 +9,7 @@ namespace FrostDB
     {
         /*
          * Page Byte Array Layout:
-         * PageId, TableId, DatabaseId TotalBytesUsed
+         * PageId, TableId, DatabaseId TotalBytesUsed - this is the page preamble
          * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
          */
         #region Private Fields
@@ -29,6 +29,7 @@ namespace FrostDB
         public int SizeOfDbId => DatabaseConstants.SIZE_OF_DB_ID;
         public int SizeOfTableId => DatabaseConstants.SIZE_OF_TABLE_ID;
         public int SizeOfBytesUsed => DatabaseConstants.SIZE_OF_TOTAL_BYTES_USED;
+        public int SizeOfPagePreamble => DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
         public int RowDataStart => _rowDataStart;
         public int RowDataEnd => _rowDataEnd;
         public PageAddress Address => _address;
@@ -69,11 +70,21 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
-        /// Returns all the values held in the page based on the specified schema
+        /// Returns all the rows held in the page based on the specified schema
         /// </summary>
         /// <param name="schema">The table schema</param>
-        /// <returns>A list of values</returns>
-        public List<Row2> GetValues(TableSchema2 schema)
+        /// <returns>A list of rows</returns>
+        public List<Row2> GetRows(TableSchema2 schema)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets a row in the page based on the specified id
+        /// </summary>
+        /// <param name="id">The Id of the row</param>
+        /// <returns>The row</returns>
+        public Row2 GetRow(int id)
         {
             throw new NotImplementedException();
         }
