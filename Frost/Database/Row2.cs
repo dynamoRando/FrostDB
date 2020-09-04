@@ -8,8 +8,8 @@ namespace FrostDB
     {
         /*
          * Row Byte Array Layout:
-         * RowId IsLocal SizeOfRow {ParticipantId | RowData}
-         * RowId IsLocal SizeOfRow - preamble (used in inital load of the Row)
+         * RowId IsLocal {{SizeOfRow | ParticipantId} | RowData}
+         * RowId IsLocal - preamble (used in inital load of the Row)
          * 
          * if IsLocal == true, then need to request the rest of the byte array
          * 
@@ -40,8 +40,7 @@ namespace FrostDB
         public int SizeOfIsLocal => DatabaseConstants.SIZE_OF_IS_LOCAL;
         public int SizeOfRowId => DatabaseConstants.SIZE_OF_ROW_ID;
         public int SizeOfRowSize => DatabaseConstants.SIZE_OF_ROW_SIZE;
-        public byte[] Data => _data;
-        public int RowSize => _rowSize;
+        public int RowSize => GetRowSize();
         public bool IsLocal => _isLocal;
         public Guid ParticipantId => _participantId;
         #endregion
@@ -71,11 +70,21 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private int GetRowSize()
+        {
+            if (IsLocal)
+            {
+                return _rowSize;
+            }
+            else
+            {
+                return SizeOfParticipantId;
+            }
+        }
         private void ParsePreamble()
         {
             GetRowId();
             GetIsLocal();
-            GetSizeOfRow();
         }
 
         private void ParseLocalRow()
@@ -95,8 +104,7 @@ namespace FrostDB
 
         private int GetSizeOfRowOffSet()
         {
-            //RowId IsLocal SizeOfRow { ParticipantId | RowData}
-            return SizeOfRowId + SizeOfIsLocal;
+            return 0;
         }
 
         private int GetIsLocalOffset()
@@ -106,9 +114,17 @@ namespace FrostDB
 
         private int GetSizeOfRow()
         {
-            var span = new Span<Byte>(_preamble);
-            var bytes = span.Slice(GetSizeOfRowOffSet(), SizeOfRowSize);
-            return BitConverter.ToInt32(bytes);
+            if (IsLocal)
+            {
+                var span = new Span<Byte>(_data);
+                var bytes = span.Slice(GetSizeOfRowOffSet(), SizeOfRowSize);
+                return BitConverter.ToInt32(bytes);
+            }
+            else
+            {
+                return DatabaseConstants.PARTICIPANT_ID_SIZE;
+
+            }
         }
 
         private int GetParticipantOffset()
@@ -131,7 +147,7 @@ namespace FrostDB
 
         private Guid GetParticipantId() 
         {
-            var span = new Span<byte>(Data);
+            var span = new Span<byte>(_data);
             var bytes = span.Slice(GetParticipantOffset(), SizeOfParticipantId);
             return new Guid(bytes);
         }
@@ -144,8 +160,16 @@ namespace FrostDB
 
         private void SetSizeOfRow()
         {
-            var data = BitConverter.GetBytes(RowSize);
-            data.CopyTo(_preamble, GetSizeOfRowOffSet());
+            if (IsLocal)
+            {
+                _rowSize = ComputeRowSize();
+                var data = BitConverter.GetBytes(RowSize);
+                data.CopyTo(_data, GetSizeOfRowOffSet());
+            }
+            else
+            {
+                // we do not need to save the RowSize value bc it is the same as the length of a participant id (a guid)
+            }
         }
 
         private void SetIsLocal()
@@ -159,6 +183,13 @@ namespace FrostDB
             var span = new Span<Byte>(_preamble);
             var bytes = span.Slice(GetIsLocalOffset(), SizeOfIsLocal);
             return BitConverter.ToBoolean(bytes);
+        }
+
+        private int ComputeRowSize()
+        {
+            _rowSize = 0;
+            // need to compute the size of the row, starting with fixed size columns, then variable columns
+            throw new NotImplementedException();
         }
         #endregion
 
