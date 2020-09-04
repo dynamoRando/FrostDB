@@ -8,8 +8,8 @@ namespace FrostDB
     {
         /*
          * Row Byte Array Layout:
-         * RowId SizeOfRow IsLocal {ParticipantId | RowData}
-         * RowId SizeOfRow IsLocal - preamble (used in inital load of the Row)
+         * RowId IsLocal SizeOfRow {ParticipantId | RowData}
+         * RowId IsLocal SizeOfRow - preamble (used in inital load of the Row)
          * 
          * if IsLocal == true, then need to request the rest of the byte array
          * 
@@ -74,8 +74,8 @@ namespace FrostDB
         private void ParsePreamble()
         {
             GetRowId();
-            GetSizeOfRow();
             GetIsLocal();
+            GetSizeOfRow();
         }
 
         private void ParseLocalRow()
@@ -95,12 +95,13 @@ namespace FrostDB
 
         private int GetSizeOfRowOffSet()
         {
-            return SizeOfRowId;
+            //RowId IsLocal SizeOfRow { ParticipantId | RowData}
+            return SizeOfRowId + SizeOfIsLocal;
         }
 
         private int GetIsLocalOffset()
         {
-            return SizeOfRowId + SizeOfRowSize;
+            return SizeOfRowId;
         }
 
         private int GetSizeOfRow()

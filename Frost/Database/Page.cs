@@ -121,7 +121,7 @@ namespace FrostDB
             return BitConverter.ToInt32(idBytes);
         }
 
-        private void SaveTableId()
+        private void SetTableId()
         {
             var idData = BitConverter.GetBytes(TableId);
             idData.CopyTo(_data, GetTableOffset());
@@ -134,12 +134,12 @@ namespace FrostDB
             return BitConverter.ToInt32(idBytes);
         }
 
-        private void SaveDbId()
+        private void SetDbId()
         {
             var idData = BitConverter.GetBytes(DbId);
             idData.CopyTo(_data, GetDbOffset());
         }
-        private void SaveId()
+        private void SetId()
         {
             var idData = BitConverter.GetBytes(Id);
             idData.CopyTo(_data, 0);
@@ -150,6 +150,12 @@ namespace FrostDB
             var idSpan = new Span<byte>(Data);
             var idBytes = idSpan.Slice(0, SizeOfId);
             return BitConverter.ToInt32(idBytes);
+        }
+
+        private void SetTotalBytesUsed()
+        {
+            // needs to count all the rows (get the premables and get size from each)
+            throw new NotImplementedException();
         }
         #endregion
 
