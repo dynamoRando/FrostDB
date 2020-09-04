@@ -13,7 +13,7 @@ namespace FrostDB
          * 
          * if IsLocal == true, then need to request the rest of the byte array
          * 
-         * if IsLocal == false, then need to request the rest of the bte array, i.e. the size of the ParticipantId
+         * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
          * 
          * SizeOfRow is the size of the rest of the row in bytes minus the preamble. 
          * For a remote row, this is just the size of the ParticipantId (a guid)

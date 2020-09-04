@@ -9,13 +9,10 @@ namespace FrostDB
     {
         /*
          * Page Byte Array Layout:
-         * PageId, TableId, DatabaseId
+         * PageId, TableId, DatabaseId TotalBytesUsed
          * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
          */
         #region Private Fields
-        private int _sizeOfId;
-        private int _sizeOfDbId;
-        private int _sizeOfTableId;
         private byte[] _data;
         private int _rowDataStart;
         private int _rowDataEnd;
@@ -26,10 +23,12 @@ namespace FrostDB
         public int Id { get; set; }
         public int TableId { get; set; }
         public int DbId { get; set; }
+        public int TotalBytesUsed { get; set; }
         public byte[] Data => _data;
-        public int SizeOfId => _sizeOfId;
-        public int SizeOfDbId => _sizeOfDbId;
-        public int SizeOfTableId => _sizeOfTableId;
+        public int SizeOfId => DatabaseConstants.SIZE_OF_PAGE_ID;
+        public int SizeOfDbId => DatabaseConstants.SIZE_OF_DB_ID;
+        public int SizeOfTableId => DatabaseConstants.SIZE_OF_TABLE_ID;
+        public int SizeOfBytesUsed => DatabaseConstants.SIZE_OF_TOTAL_BYTES_USED;
         public int RowDataStart => _rowDataStart;
         public int RowDataEnd => _rowDataEnd;
         public PageAddress Address => _address;
@@ -81,54 +80,64 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private int GetTotalBytesUsedOffset()
+        {
+            return SizeOfId + SizeOfTableId + SizeOfDbId;
+        }
         private int GetDbOffset()
         {
-            return _sizeOfId + _sizeOfTableId;
+            //PageId, TableId, DatabaseId TotalBytesUsed
+            return SizeOfId + SizeOfTableId;
         }
 
         private int GetTableOffset()
         {
-            return _sizeOfId;
+            //PageId, TableId, DatabaseId TotalBytesUsed
+            return SizeOfId;
+        }
+
+        private int GetTotalBytesUsed()
+        {
+            var span = new Span<byte>(Data);
+            var bytes = span.Slice(GetTotalBytesUsedOffset(), SizeOfBytesUsed);
+            return BitConverter.ToInt32(bytes);
         }
 
         private int GetTableId()
         {
             var idSpan = new Span<byte>(Data);
-            var idBytes = idSpan.Slice(GetTableOffset(), _sizeOfTableId);
+            var idBytes = idSpan.Slice(GetTableOffset(), SizeOfTableId);
             return BitConverter.ToInt32(idBytes);
         }
 
         private void SaveTableId()
         {
             var idData = BitConverter.GetBytes(TableId);
-            _sizeOfTableId = idData.Length;
             idData.CopyTo(_data, GetTableOffset());
         }
 
         private int GetDbId()
         {
             var idSpan = new Span<byte>(Data);
-            var idBytes = idSpan.Slice(GetDbOffset(), _sizeOfDbId);
+            var idBytes = idSpan.Slice(GetDbOffset(), SizeOfDbId);
             return BitConverter.ToInt32(idBytes);
         }
 
         private void SaveDbId()
         {
             var idData = BitConverter.GetBytes(DbId);
-            _sizeOfDbId = idData.Length;
             idData.CopyTo(_data, GetDbOffset());
         }
         private void SaveId()
         {
             var idData = BitConverter.GetBytes(Id);
-            _sizeOfId = idData.Length;
             idData.CopyTo(_data, 0);
         }
 
         private int GetId()
         {
             var idSpan = new Span<byte>(Data);
-            var idBytes = idSpan.Slice(0, _sizeOfId);
+            var idBytes = idSpan.Slice(0, SizeOfId);
             return BitConverter.ToInt32(idBytes);
         }
         #endregion

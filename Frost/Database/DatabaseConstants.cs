@@ -34,5 +34,26 @@ namespace FrostDB
         /// the size of a Row preamble (rowId + sizeOfRow + sizeOfIsLocal)
         /// </summary>
         public const int SIZE_OF_ROW_PREAMBLE = SIZE_OF_ROW_ID + SIZE_OF_ROW_SIZE + SIZE_OF_IS_LOCAL;
+        /// <summary>
+        /// Size of Page Id (in Page preamble) - an integer
+        /// </summary>
+        public const int SIZE_OF_PAGE_ID = SIZE_OF_INT;
+        /// <summary>
+        /// Size of of Table Id (in Page preamble) - an intgeer
+        /// </summary>
+        public const int SIZE_OF_TABLE_ID = SIZE_OF_INT;
+        /// <summary>
+        /// Size of Database Id (in page preamble) - an integer
+        /// </summary>
+        public const int SIZE_OF_DB_ID = SIZE_OF_INT;
+        /// <summary>
+        /// Size of  Bytes used (in page preamble) - an integer
+        /// </summary>
+        public const int SIZE_OF_TOTAL_BYTES_USED = SIZE_OF_INT;
+        /// <summary>
+        /// The total size of a page preamble
+        /// </summary>
+        public const int SIZE_OF_PAGE_PREAMBLE = SIZE_OF_PAGE_ID + SIZE_OF_TABLE_ID + SIZE_OF_DB_ID + SIZE_OF_TOTAL_BYTES_USED;
+
     }
 }
