@@ -43,6 +43,8 @@ namespace FrostConsoleHarness
                 Instance.LoadPartialDatabases();
                 Instance.StartRemoteServer();
                 Instance.StartConsoleServer();
+
+                Instance.LoadDatabases2();
             }
         }
     }

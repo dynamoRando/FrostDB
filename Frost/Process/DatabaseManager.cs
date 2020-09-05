@@ -42,6 +42,7 @@ namespace FrostDB
             _databaseFolder = databaseFolder;
             _storageManager = new StorageManager(_process);
         }
+
         public DatabaseManager(string databaseFolder,
             string databaseExtension,
             IDatabaseFileMapper<Database, DataFile> mapper,
@@ -60,6 +61,8 @@ namespace FrostDB
 
             _databases = new List<Database>();
             _process = process;
+
+            _storageManager = new StorageManager(_process);
 
         }
         #endregion

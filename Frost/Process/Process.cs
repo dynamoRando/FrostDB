@@ -170,6 +170,11 @@ namespace FrostDB
             return DatabaseManager.LoadDatabases(Configuration.DatabaseFolder, Configuration.DatabaseExtension);
         }
 
+        public virtual int LoadDatabases2()
+        {
+            return DatabaseManager.LoadDatabases2();
+        }
+
         public virtual IDatabase GetDatabase(string databaseName)
         {
             return DatabaseManager.GetDatabase(databaseName);
@@ -221,6 +226,8 @@ namespace FrostDB
             LoadPartialDatabases();
             StartRemoteServer();
             StartConsoleServer();
+
+            LoadDatabases2();
         }
 
         public virtual void UpdateContractInformation(ContractInfo info)
