@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace FrostDB
@@ -28,7 +29,12 @@ namespace FrostDB
         #region Public Methods
         public StepResult GetResult(Process process, string databaseName)
         {
-            throw new NotImplementedException();
+            var result = new StepResult();
+            process.AddDatabase2(databaseName);
+            result.IsValid = true;
+            result.RowsAffected = 0;
+            result.Rows = new List<Row>();
+            return result;
         }
 
         public string GetResultText()

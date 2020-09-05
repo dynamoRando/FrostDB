@@ -108,25 +108,53 @@ public class QueryPlanExecutor
     {
         if (plan.Steps.Any(step => step is CreateTableStep))
         {
-            var createTable = plan.Steps.FirstOrDefault() as CreateTableStep;
-            string databaseName = plan.DatabaseName;
-            Database2 db = _process.GetDatabase2(databaseName);
-
-            throw new NotImplementedException();
+            HandleCreateTable(plan, ref resultString, ref planFailed);
         }
 
         if (plan.Steps.Any(step => step is CreateDatabaseStep))
         {
-            throw new NotImplementedException();
+            HandleCreateDatabase(plan, ref resultString, ref planFailed);
         }
+    }
 
-        throw new NotImplementedException();
+    private void HandleCreateDatabase(QueryPlan plan, ref string resultString, ref bool planFailed)
+    {
+        foreach(var step in plan.Steps)
+        {
+            if (step is CreateDatabaseStep)
+            {
+                CreateDatabaseStep cd = step as CreateDatabaseStep;
+                StepResult result = cd.GetResult(_process, cd.DatabaseName);
+                if (result.IsValid)
+                {
+                    resultString += $"Database {cd.DatabaseName} created";
+                    planFailed = false;
+                }
+            }
+        }
+    }
+
+    private void HandleCreateTable(QueryPlan plan, ref string resultString, ref bool planFailed)
+    {
+        foreach (var step in plan.Steps)
+        {
+            if (step is CreateTableStep)
+            {
+                CreateTableStep ct = step as CreateTableStep;
+                StepResult result = ct.GetResult(_process, plan.DatabaseName);
+                if (result.IsValid)
+                {
+                    resultString += $"Table {ct.TableName} created";
+                    planFailed = false;
+                }
+            }
+        }
     }
 
     private void HandleDMLPlan(QueryPlan plan, ref string resultString, ref bool planFailed, List<Row> rowList, ref int rows, ref int totalRows)
     {
         resultString += " ------------ " + Environment.NewLine;
-        
+
         StepResult stepResult = null;
         if (!(plan.OriginalStatement is UpdateStatement))
         {
