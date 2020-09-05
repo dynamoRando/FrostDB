@@ -53,7 +53,7 @@ namespace FrostDB
         /// <summary>
         /// The total size of a page preamble
         /// </summary>
-        public const int SIZE_OF_PAGE_PREAMBLE = SIZE_OF_PAGE_ID + SIZE_OF_TABLE_ID + SIZE_OF_DB_ID + SIZE_OF_TOTAL_BYTES_USED;
+        public const int SIZE_OF_PAGE_PREAMBLE = SIZE_OF_PAGE_ID + SIZE_OF_TOTAL_BYTES_USED;
 
     }
 }

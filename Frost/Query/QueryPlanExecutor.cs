@@ -6,6 +6,7 @@ using System.Text;
 using FrostDB;
 using FrostCommon;
 using FrostCommon.Net;
+using System.Data;
 
 public class QueryPlanExecutor
 {
@@ -37,63 +38,28 @@ public class QueryPlanExecutor
         var resultString = string.Empty;
         bool planFailed = false;
         var rowList = new List<Row>();
+        int rows = 0;
+        int buildRows = 0;
+        int totalRows = 0;
 
         if (!plan.IsValid)
         {
-            resultString += " ------------ " + Environment.NewLine;
-            resultString += " Unable to parse statement" + Environment.NewLine;
-            resultString += " ------------ " + Environment.NewLine;
-            result.IsSuccessful = false;
-            result.Message = resultString;
+            resultString = HandleInvalidPlan(result, resultString);
         }
         else
         {
-            resultString += " ------------ " + Environment.NewLine;
-            int totalRows = 0;
-            int rows = 0;
-            int buildRows = 0;
-            StepResult stepResult = null;
-            if (!(plan.OriginalStatement is UpdateStatement))
+            if (IsDDLPlan(plan))
             {
-                plan.Steps.Reverse();
+                HandleDDLPlan(plan, ref resultString, ref planFailed);
             }
-
-            foreach (var step in plan.Steps)
+            else
             {
-                stepResult = ExecuteStep(step, plan.DatabaseName, out rows);
-                if (stepResult.IsValid == false)
-                {
-                    planFailed = true;
-                    resultString = stepResult.ErrorMessage;
-                    break;
-                }
-                else
-                {
-                    if (stepResult.RowsAffected > 0)
-                    {
-                        rows = stepResult.RowsAffected;
-                    }
-                }
-
-                totalRows += rows;
-                rowList.AddRange(stepResult.Rows);
+                HandleDMLPlan(plan, ref resultString, ref planFailed, rowList, ref rows, ref totalRows);
             }
 
             if (!planFailed)
             {
-                resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out buildRows));
-                resultString += " ------------ " + Environment.NewLine;
-                result.Message = "Succeeded";
-                result.IsSuccessful = true;
-                result.JsonData = resultString;
-                if (buildRows > 0)
-                {
-                    result.NumberOfRowsAffected = buildRows;
-                }
-                else
-                {
-                    result.NumberOfRowsAffected = totalRows;
-                }
+                buildRows = HandleFailedDMLPlan(plan, result, ref resultString, rowList, totalRows);
             }
             else
             {
@@ -108,6 +74,78 @@ public class QueryPlanExecutor
     #endregion
 
     #region Private Methods
+    private int HandleFailedDMLPlan(QueryPlan plan, FrostPromptResponse result, ref string resultString, List<Row> rowList, int totalRows)
+    {
+        int buildRows;
+        resultString += BuildResponse(GetFinalColumns(rowList, plan.Columns, out buildRows));
+        resultString += " ------------ " + Environment.NewLine;
+        result.Message = "Succeeded";
+        result.IsSuccessful = true;
+        result.JsonData = resultString;
+        if (buildRows > 0)
+        {
+            result.NumberOfRowsAffected = buildRows;
+        }
+        else
+        {
+            result.NumberOfRowsAffected = totalRows;
+        }
+
+        return buildRows;
+    }
+
+    private static string HandleInvalidPlan(FrostPromptResponse result, string resultString)
+    {
+        resultString += " ------------ " + Environment.NewLine;
+        resultString += " Unable to parse statement" + Environment.NewLine;
+        resultString += " ------------ " + Environment.NewLine;
+        result.IsSuccessful = false;
+        result.Message = resultString;
+        return resultString;
+    }
+
+    private void HandleDDLPlan(QueryPlan plan, ref string resultString, ref bool planFailed)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleDMLPlan(QueryPlan plan, ref string resultString, ref bool planFailed, List<Row> rowList, ref int rows, ref int totalRows)
+    {
+        resultString += " ------------ " + Environment.NewLine;
+        
+        StepResult stepResult = null;
+        if (!(plan.OriginalStatement is UpdateStatement))
+        {
+            plan.Steps.Reverse();
+        }
+
+        foreach (var step in plan.Steps)
+        {
+            stepResult = ExecuteStep(step, plan.DatabaseName, out rows);
+            if (stepResult.IsValid == false)
+            {
+                planFailed = true;
+                resultString = stepResult.ErrorMessage;
+                break;
+            }
+            else
+            {
+                if (stepResult.RowsAffected > 0)
+                {
+                    rows = stepResult.RowsAffected;
+                }
+            }
+
+            totalRows += rows;
+            rowList.AddRange(stepResult.Rows);
+        }
+    }
+
+    private bool IsDDLPlan(QueryPlan plan)
+    {
+        return plan.Steps.Any(step => step is CreateTableStep);
+    }
+
     // TO DO: should this be a "step"?
     private List<Row> GetFinalColumns(List<Row> input, List<string> columns, out int rowCount)
     {
@@ -135,6 +173,7 @@ public class QueryPlanExecutor
         rowCount = z.Count;
         return z;
     }
+
     private StepResult ExecuteStep(IPlanStep step, string databaseName, out int rowCount)
     {
         var result = step.GetResult(_process, databaseName);
@@ -160,6 +199,5 @@ public class QueryPlanExecutor
         return results;
     }
     #endregion
-
 }
 

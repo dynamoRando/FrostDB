@@ -9,7 +9,7 @@ namespace FrostDB
     {
         /*
          * Page Byte Array Layout:
-         * PageId, TableId, DatabaseId TotalBytesUsed - this is the page preamble
+         * PageId TotalBytesUsed - this is the page preamble
          * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
          */
         #region Private Fields
@@ -46,14 +46,14 @@ namespace FrostDB
         {
             _data = new byte[DatabaseConstants.PAGE_SIZE];
         }
-        public Page(byte[] data)
+        public Page(byte[] data, int tableId, int databaseId)
         {
             _data = data;
+            TableId = tableId;
+            DbId = databaseId;
             Id = GetId();
-            TableId = GetTableId();
-            DbId = GetDbId();
 
-            _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
+            _address = new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = Id };
         }
 
         public Page(byte[] data, int id, int tableId, int dbId)

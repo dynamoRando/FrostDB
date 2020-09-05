@@ -32,6 +32,7 @@ namespace FrostDB
         private List<ColumnSchema> _columns;
         private int _rowId;
         private int _rowSize;
+        private PageAddress _pageAddress;
         #endregion
 
         #region Public Properties
@@ -43,6 +44,7 @@ namespace FrostDB
         public int RowSize => GetRowSize();
         public bool IsLocal => _isLocal;
         public Guid ParticipantId => _participantId;
+        public PageAddress PageAddress => _pageAddress;
         #endregion
 
         #region Protected Methods
@@ -59,6 +61,11 @@ namespace FrostDB
             _columns = columns;
 
             ParsePreamble();
+        }
+
+        public Row2(PageAddress pageAddress, byte[] preamble, List<ColumnSchema> columns) : this(preamble, columns)
+        {
+            _pageAddress = pageAddress;
         }
         #endregion
 
