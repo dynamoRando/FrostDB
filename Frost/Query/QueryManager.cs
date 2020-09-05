@@ -53,7 +53,7 @@ namespace FrostDB
             if (IsDDLStatment(input))
             {
                 FrostIDDLStatement statement = GetDDLStatement(commandStatement, databaseName);
-                statement.DatabaseName = databaseName;
+                statement.DatabaseName = databaseName ?? string.Empty;
                 plan = _planGenerator.GeneratePlan(statement, databaseName);
             }
             else
@@ -108,7 +108,7 @@ namespace FrostDB
 
         private bool IsDDLStatment(string input)
         {
-            if (input.Contains(QueryKeywords.CREATE_TABLE))
+            if (input.Contains(QueryKeywords.CREATE_TABLE) || input.Contains(QueryKeywords.CREATE_DATABASE))
             {
                 return true;
             }
@@ -146,6 +146,11 @@ namespace FrostDB
             if (loader.IsStatementCreateTable())
             {
                 result = loader.GetStatementAsCreateTable();
+            }
+
+            if (loader.IsStatementCreateDatabase())
+            {
+                result = loader.GetStatementAsCreateDatabase();
             }
 
             return result;
@@ -209,6 +214,11 @@ namespace FrostDB
             if (input.Contains(QueryKeywords.CREATE_TABLE))
             {
                 result = new CreateTableStatement();
+            }
+
+            if (input.Contains(QueryKeywords.CREATE_DATABASE))
+            {
+                result = new CreateDatabaseStatement();
             }
 
             return result;

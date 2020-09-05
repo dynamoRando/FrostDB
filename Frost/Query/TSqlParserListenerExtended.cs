@@ -83,6 +83,16 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         return _ddlStatement as CreateTableStatement;
     }
 
+    public CreateDatabaseStatement GetStatementAsCreateDatabase()
+    {
+        return _ddlStatement as CreateDatabaseStatement;
+    }
+
+    public bool IsStatementCreateDatabase()
+    {
+        return _ddlStatement is CreateDatabaseStatement;
+    }
+
     public bool IsStatementCreateTable()
     {
         return _ddlStatement is CreateTableStatement;
@@ -352,6 +362,22 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
     }
 
     // end create table functions
+
+    // begin create database functions
+    public override void EnterCreate_database([NotNull] TSqlParser.Create_databaseContext context)
+    {
+        base.EnterCreate_database(context);
+        Debug.WriteLine(context.GetText());
+
+        if (IsStatementCreateDatabase())
+        {
+            CreateDatabaseStatement statement = GetStatementAsCreateDatabase();
+            statement.RawTextWithWhitespace = GetWhiteSpaceFormat(context);
+            statement.DatabaseName = statement.RawTextWithWhitespace.Replace(QueryKeywords.CREATE_DATABASE, string.Empty).Trim();
+        }
+
+    }
+    // end create database functions
     #endregion
 
     #region Private Properties

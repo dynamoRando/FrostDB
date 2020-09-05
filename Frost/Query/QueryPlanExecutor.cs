@@ -106,6 +106,20 @@ public class QueryPlanExecutor
 
     private void HandleDDLPlan(QueryPlan plan, ref string resultString, ref bool planFailed)
     {
+        if (plan.Steps.Any(step => step is CreateTableStep))
+        {
+            var createTable = plan.Steps.FirstOrDefault() as CreateTableStep;
+            string databaseName = plan.DatabaseName;
+            Database2 db = _process.GetDatabase2(databaseName);
+
+            throw new NotImplementedException();
+        }
+
+        if (plan.Steps.Any(step => step is CreateDatabaseStep))
+        {
+            throw new NotImplementedException();
+        }
+
         throw new NotImplementedException();
     }
 
@@ -143,7 +157,8 @@ public class QueryPlanExecutor
 
     private bool IsDDLPlan(QueryPlan plan)
     {
-        return plan.Steps.Any(step => step is CreateTableStep);
+        return plan.Steps.Any(step => step is CreateTableStep) ||
+            plan.Steps.Any(step => step is CreateDatabaseStep);
     }
 
     // TO DO: should this be a "step"?

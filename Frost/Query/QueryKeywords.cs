@@ -20,5 +20,6 @@ namespace FrostDB
         public const string OR = "OR";
         public const string NOT = "NOT";
         public const string CREATE_TABLE = "CREATE TABLE";
+        public const string CREATE_DATABASE = "CREATE DATABASE";
     }
 }
