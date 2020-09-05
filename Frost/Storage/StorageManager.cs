@@ -70,7 +70,7 @@ namespace FrostDB
         {
             var result = new List<Database2>();
             var databases = GetListOfOnlineDatabases();
-            foreach(var db in databases)
+            foreach (var db in databases)
             {
                 var storage = new DbStorage(_process, db);
                 var dbItem = storage.GetDatabase(db);
@@ -89,6 +89,7 @@ namespace FrostDB
         private List<string> GetListOfOnlineDatabases()
         {
             var result = new List<string>();
+
             var file = Path.Combine(_databaseFolder, _process.Configuration.DatabaseDirectoryFileName);
             if (File.Exists(file))
             {
@@ -97,7 +98,13 @@ namespace FrostDB
             }
             else
             {
-                File.Create(file);
+                using (var fs = File.Create(file))
+                {
+                    fs.Flush();
+                }
+
+                var items = File.ReadAllLines(file).ToList();
+                _directory = new DbDirectory(items);
             }
 
             result.AddRange(_directory.OnlineDatabases);

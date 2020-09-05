@@ -46,6 +46,9 @@ namespace FrostDB
                 SaveConfiguration(config);
             }
 
+            SetDefaultValuesForNullItems(config);
+           
+
             return config;
         }
 
@@ -63,6 +66,8 @@ namespace FrostDB
                 SetDefaultValues(config, rootDirectory);
                 SaveConfiguration(config);
             }
+
+            SetDefaultValuesForNullItems(config);
 
             return config;
         }
@@ -85,6 +90,10 @@ namespace FrostDB
             config.ContractExtension = _default.ContractExtension;
             config.ContractFolder = _default.ContractFolder;
             config.ConsoleServerPort = _default.ConsolePortNumber;
+            config.DatabaseDirectoryFileName = _default.DatabaseDirectoryFileName;
+            config.FrostBinaryDataDirectoryExtension = _default.FrostBinaryDataDirectoryExtension;
+            config.FrostBinaryDataExtension = _default.FrostBinaryDataExtension;
+            config.FrostSystemFolder = _default.FrostSystemFolder;
         }
 
         public void SetDefaultValues(FrostConfiguration config, string rootDirectory)
@@ -105,7 +114,31 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SetDefaultValuesForNullItems(FrostConfiguration config)
+        {
+            if (string.IsNullOrEmpty(config.DatabaseDirectoryFileName))
+            {
+                config.DatabaseDirectoryFileName = _default.DatabaseDirectoryFileName;
+            }
 
+            if (string.IsNullOrEmpty(config.FrostBinaryDataDirectoryExtension))
+            {
+
+                config.FrostBinaryDataDirectoryExtension = _default.FrostBinaryDataDirectoryExtension;
+            }
+
+            if (string.IsNullOrEmpty(config.FrostBinaryDataExtension))
+            {
+                config.FrostBinaryDataExtension = _default.FrostBinaryDataExtension;
+            }
+
+            if (string.IsNullOrEmpty(config.FrostSystemFolder))
+            {
+                config.FrostSystemFolder = _default.FrostSystemFolder;
+            }
+
+            SaveConfiguration(config);
+        }
         #endregion
     }
 }

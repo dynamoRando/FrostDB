@@ -36,11 +36,13 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        // new constructor
         public DatabaseManager(string databaseFolder, Process process)
         {
             _process = process;
             _databaseFolder = databaseFolder;
             _storageManager = new StorageManager(_process);
+            _databases2 = new List<Database2>();
         }
 
         public DatabaseManager(string databaseFolder,
@@ -62,7 +64,9 @@ namespace FrostDB
             _databases = new List<Database>();
             _process = process;
 
+            // new
             _storageManager = new StorageManager(_process);
+            _databases2 = new List<Database2>();
 
         }
         #endregion
