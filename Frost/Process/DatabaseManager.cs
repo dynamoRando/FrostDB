@@ -99,7 +99,19 @@ namespace FrostDB
 
         public int GetMaxDatabaseId()
         {
-            return Databases2.MaxBy(d => d.DatabaseId).First().DatabaseId;
+            int result = 0;
+            Database2 db = Databases2.MaxBy(d => d.DatabaseId).FirstOrDefault();
+            
+            if (db is null)
+            {
+                result = 0;
+            }
+            else
+            {
+                result = db.DatabaseId;
+            }
+
+            return result;
         }
 
         public void AddDatabase(Database database)

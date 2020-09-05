@@ -41,7 +41,7 @@ namespace FrostDB
         /// <param name="databaseName">The name of the database</param>
         public SchemaFile(string schemaFileFolder, string fileExtension, string databaseName)
         {
-            _schemaFileExtension = schemaFileFolder;
+            _schemaFileFolder = schemaFileFolder;
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
             _dbSchema = new DbSchema2();
@@ -150,7 +150,7 @@ namespace FrostDB
         /// <returns>Returns the schema filename for this database.</returns>
         private string FileName()
         {
-            return Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
+            return Path.Combine(_schemaFileFolder, _databaseName + _schemaFileExtension);
         }
 
         /// <summary>

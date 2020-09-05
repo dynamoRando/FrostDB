@@ -95,6 +95,15 @@ namespace FrostDB
             var databaseFolder = _process.Configuration.DatabaseFolder;
             var schemaFileExtension = _process.Configuration.SchemaFileExtension;
             _schema = new SchemaFile(databaseFolder, schemaFileExtension, _databaseName);
+            
+            // create data file
+            // create data directory file
+            // need to add database to the data directory file
+            // need to create the participant file
+            // need to create a database security file
+            // need to create a contract file to hold the contracts for this database
+            // need to create an index file tocrate the indexes that this database has 
+            // need to create a transaction file for this database
             throw new NotImplementedException();
         }
 

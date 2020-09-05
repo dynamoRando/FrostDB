@@ -137,6 +137,11 @@ namespace FrostDB
                 config.FrostSystemFolder = _default.FrostSystemFolder;
             }
 
+            if (string.IsNullOrEmpty(config.SchemaFileExtension))
+            {
+                config.SchemaFileExtension = _default.SchemaFileExtension;
+            }
+
             SaveConfiguration(config);
         }
         #endregion
