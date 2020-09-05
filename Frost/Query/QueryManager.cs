@@ -53,7 +53,15 @@ namespace FrostDB
             if (IsDDLStatment(input))
             {
                 FrostIDDLStatement statement = GetDDLStatement(commandStatement, databaseName);
-                statement.DatabaseName = databaseName ?? string.Empty;
+
+                if (string.IsNullOrEmpty(statement.DatabaseName))
+                {
+                    statement.DatabaseName = databaseName;
+                }
+                else
+                {
+                    databaseName = statement.DatabaseName;
+                }
                 plan = _planGenerator.GeneratePlan(statement, databaseName);
             }
             else
