@@ -95,6 +95,10 @@ namespace FrostDB
             var databaseFolder = _process.Configuration.DatabaseFolder;
             var schemaFileExtension = _process.Configuration.SchemaFileExtension;
             _schema = new SchemaFile(databaseFolder, schemaFileExtension, _databaseName);
+
+            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,
+                _process.Configuration.FrostBinaryDataDirectoryExtension);
+
             
             // create data file
             // create data directory file

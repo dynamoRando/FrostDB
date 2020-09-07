@@ -44,6 +44,15 @@ namespace FrostDB
             _dataDirectoryExtension = dataDirectoryExtension;
 
             _dataDirectory = new DbDataDirectoryFile(this, folder, databaseName, _dataDirectoryExtension);
+
+            if (DoesFileExist())
+            {
+                LoadFileData();
+            }
+            else
+            {
+                CreateFile();
+            }
         }
         #endregion
 
@@ -75,15 +84,21 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void LoadFileData()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Creates the data file for this database on disk.
         /// </summary>
         private void CreateFile()
         {
-            using (var file = File.Create(FileName()))
-            {
+            SetVersionNumberIfBlank();
 
+            using (var file = new StreamWriter(FileName()))
+            {
+                file.WriteLine("version " + VersionNumber.ToString());
             }
         }
         /// <summary>
@@ -101,10 +116,17 @@ namespace FrostDB
         /// <returns>Returns the data file name for this database.</returns>
         private string FileName()
         {
-            return Path.Combine(_dataFileFolder, _databaseName + "." + _dataFileExtension);
+            return Path.Combine(_dataFileFolder, _databaseName + _dataFileExtension);
+        }
+
+        private void SetVersionNumberIfBlank()
+        {
+            if (VersionNumber == 0)
+            {
+                VersionNumber = StorageFileVersions.DATA_FILE_VERSION_1;
+            }
         }
         #endregion
-
 
     }
 }
