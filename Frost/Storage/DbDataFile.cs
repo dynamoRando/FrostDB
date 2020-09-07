@@ -45,11 +45,7 @@ namespace FrostDB
 
             _dataDirectory = new DbDataDirectoryFile(this, folder, databaseName, _dataDirectoryExtension);
 
-            if (DoesFileExist())
-            {
-                LoadFileData();
-            }
-            else
+            if (!DoesFileExist())
             {
                 CreateFile();
             }
@@ -84,6 +80,8 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        // TO DO: Need to decide what to do here. Should we load just the first page?
         private void LoadFileData()
         {
             throw new NotImplementedException();
