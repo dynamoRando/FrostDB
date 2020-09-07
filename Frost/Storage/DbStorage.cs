@@ -93,14 +93,13 @@ namespace FrostDB
         public void CreateFiles()
         {
             var databaseFolder = _process.Configuration.DatabaseFolder;
-            var schemaFileExtension = _process.Configuration.SchemaFileExtension;
-            _schema = new SchemaFile(databaseFolder, schemaFileExtension, _databaseName);
-
+            
+            _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName);
             _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,
-                _process.Configuration.FrostBinaryDataDirectoryExtension);
+                _process.Configuration.FrostBinaryDataExtension);
+            _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
 
             
-            // create data file
             // create data directory file
             // need to add database to the data directory file
             // need to create the participant file

@@ -1,6 +1,7 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace FrostDB.Storage
@@ -41,6 +42,12 @@ namespace FrostDB.Storage
             _extension = extension;
 
             Lines = new List<DbDataDirectoryFileItem>();
+
+            // need to check if file is on disk and it not, create it
+            if (!DoesFileExist())
+            {
+                CreateFile();
+            }
         }
 
         #endregion
@@ -53,6 +60,33 @@ namespace FrostDB.Storage
         #endregion
 
         #region Private Methods
+        private void CreateFile()
+        {
+            SetVersionNumberIfBlank();
+
+            using (var file = new StreamWriter(FileName()))
+            {
+                file.WriteLine("version " + VersionNumber.ToString());
+            }
+        }
+
+        private bool DoesFileExist()
+        {
+            return File.Exists(FileName());
+        }
+
+        private string FileName()
+        {
+            return Path.Combine(_folder, _databaseName + _extension);
+        }
+
+        private void SetVersionNumberIfBlank()
+        {
+            if (VersionNumber == 0)
+            {
+                VersionNumber = StorageFileVersions.DATA_DIRECTORY_FILE_VERSION;
+            }
+        }
         #endregion
     }
 }
