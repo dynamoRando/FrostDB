@@ -55,6 +55,7 @@ namespace FrostDB
         public void AddNewDatabase(Database2 database)
         {
             database.Storage.CreateFiles();
+            _directory.AddDatabaseToDirectory(database, true);
         }
 
         public List<Row2> GetAllRows(BTreeAddress treeAddress)

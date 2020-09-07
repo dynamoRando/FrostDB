@@ -40,6 +40,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void AddDatabaseToDirectory(Database2 database, bool isOnline)
+        {
+            // need to write to disk the new database and it's online status
+
+            throw new NotImplementedException();
+        }
         public List<string> OnlineDatabases => Databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToList();
         #endregion
 

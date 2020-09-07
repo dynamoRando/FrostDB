@@ -76,7 +76,7 @@ namespace FrostDB
             _xactFile.WriteTransactionForDelete();
             throw new NotImplementedException();
         }
-        
+
         public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
             return _process.DatabaseManager.StorageManager.GetAllRows(treeAddress);
@@ -93,16 +93,13 @@ namespace FrostDB
         public void CreateFiles()
         {
             var databaseFolder = _process.Configuration.DatabaseFolder;
-            
+
             _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName);
             _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,
                 _process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
+            _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
 
-            
-            // create data directory file
-            // need to add database to the data directory file
-            // need to create the participant file
             // need to create a database security file
             // need to create a contract file to hold the contracts for this database
             // need to create an index file tocrate the indexes that this database has 
