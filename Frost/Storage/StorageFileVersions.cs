@@ -13,5 +13,6 @@ namespace FrostDB
         public const int DATA_SECURITY_FILE_VERSION_1 = 1;
         public const int DATA_CONTRACT_FILE_VERSION_1 = 1;
         public const int DATA_INDEX_FILE_VERSION_1 = 1;
+        public const int DATA_XACT_FILE_VERSION_1 = 1;
     }
 }

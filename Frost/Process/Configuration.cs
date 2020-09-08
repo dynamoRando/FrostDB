@@ -110,6 +110,11 @@ namespace FrostDB
         /// (new) The file extension for holding indexes of a database.
         /// </summary>
         public string FrostDbIndexFileExtension { get; set; }
+
+        /// <summary>
+        /// (new) The xact file for a db
+        /// </summary>
+        public string FrostDbXactFileExtension { get; set; }
         #endregion
 
         #region Events

@@ -95,15 +95,15 @@ namespace FrostDB
             var databaseFolder = _process.Configuration.DatabaseFolder;
 
             _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName);
-            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,
-                _process.Configuration.FrostBinaryDataExtension);
+            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,_process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
             _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
             _contractFile = new DbContractFile(_process.Configuration.ContractExtension, databaseFolder, _databaseName);
             _indexFile = new DbDataIndexFile(_process.Configuration.FrostDbIndexFileExtension, databaseFolder, _databaseName);
+            _xactFile = new DbXactFile(_process.Configuration.FrostDbXactFileExtension, databaseFolder, _databaseName);
 
-            // need to create a transaction file for this database
+            // is this all the files that we need?
             throw new NotImplementedException();
         }
 

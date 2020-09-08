@@ -34,6 +34,7 @@ namespace FrostDB
         private string _frostSystemFolder;
         private string _frostSecurityFileExtension;
         private string _frostDbIndexFileExtension;
+        private string _frostDbXactFileExtension;
         #endregion
 
         #region Public Properties
@@ -135,6 +136,11 @@ namespace FrostDB
         /// (new) The file that holdes the indexes for the db
         /// </summary>
         public string FrostDbIndexFileExtension => _frostDbIndexFileExtension;
+
+        /// <summary>
+        /// (new) The xact file for a database
+        /// </summary>
+        public string FrostDbXactFileExtension => _frostDbXactFileExtension;
         #endregion
 
         #region Events
@@ -180,6 +186,7 @@ namespace FrostDB
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
                 _frostSecurityFileExtension = ".frostDbSecurity";
                 _frostDbIndexFileExtension = ".frostDbIndexes";
+                _frostDbXactFileExtension = ".frostDbXact";
             }
             else if (_info.OS == OSPlatform.Linux)
             {
@@ -201,6 +208,8 @@ namespace FrostDB
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
                 _frostSecurityFileExtension = ".frostDbSecurity";
                 _frostDbIndexFileExtension = ".frostDbIndexes";
+                _frostDbXactFileExtension = ".frostDbXact";
+
             }
             else
             {

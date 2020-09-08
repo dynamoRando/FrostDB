@@ -25,5 +25,6 @@ namespace FrostDB.Interface
         string FrostSystemFolder { get; }
         string FrostSecurityFileExtension { get; }
         string FrostDbIndexFileExtension { get; }
+        string FrostDbXactFileExtension { get; }
     }
 }
