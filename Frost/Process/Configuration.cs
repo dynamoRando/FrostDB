@@ -105,6 +105,11 @@ namespace FrostDB
         /// (new) The file extension for a db security file. Contains users and permissions, etc.
         /// </summary>
         public string FrostSecurityFileExtension { get; set; }
+
+        /// <summary>
+        /// (new) The file extension for holding indexes of a database.
+        /// </summary>
+        public string FrostDbIndexFileExtension { get; set; }
         #endregion
 
         #region Events

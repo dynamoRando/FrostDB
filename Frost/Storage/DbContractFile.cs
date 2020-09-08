@@ -1,12 +1,13 @@
 ﻿using FrostDB.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace FrostDB
 {
     /// <summary>
-    /// Stores the contract information for this database on disk
+    /// Stores the contract information for this database on disk. Supersedes the old contract format style. (seralized C# object)
     /// </summary>
     public class DbContractFile : IStorageFile
     {
@@ -32,6 +33,11 @@ namespace FrostDB
             _contractFileExtension = extension;
             _contractFileFolder = folder;
             _databaseName = databaseName;
+
+            if (!DoesFileExist())
+            {
+                CreateFile();
+            }
         }
         #endregion
 
@@ -48,6 +54,48 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Checks the version number of this file. If it is not set, it will default to Version 1
+        /// </summary>
+        private void SetVersionNumberIfBlank()
+        {
+            if (VersionNumber == 0)
+            {
+                VersionNumber = StorageFileVersions.DATA_CONTRACT_FILE_VERSION_1;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new Schema file for this database
+        /// </summary>
+        private void CreateFile()
+        {
+            SetVersionNumberIfBlank();
+
+            using (var file = new StreamWriter(FileName()))
+            {
+                file.WriteLine("version " + VersionNumber.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if the Schema file exists for this database.
+        /// </summary>
+        /// <returns>True if the schema file exists, otherwise false.</returns>
+        private bool DoesFileExist()
+        {
+            return File.Exists(FileName());
+        }
+
+        /// <summary>
+        /// Returns the schema filename for this database.
+        /// </summary>
+        /// <returns>Returns the schema filename for this database.</returns>
+        private string FileName()
+        {
+            return Path.Combine(_contractFileFolder, _databaseName + _contractFileExtension);
+        }
         #endregion
 
 

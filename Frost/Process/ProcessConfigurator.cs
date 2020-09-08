@@ -147,6 +147,11 @@ namespace FrostDB
                 config.FrostSecurityFileExtension = _default.FrostSecurityFileExtension;
             }
 
+            if (string.IsNullOrEmpty(config.FrostDbIndexFileExtension))
+            {
+                config.FrostDbIndexFileExtension = _default.FrostDbIndexFileExtension;
+            }
+
             SaveConfiguration(config);
         }
         #endregion

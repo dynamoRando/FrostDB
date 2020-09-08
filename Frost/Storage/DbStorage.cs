@@ -100,9 +100,9 @@ namespace FrostDB
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
             _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
+            _contractFile = new DbContractFile(_process.Configuration.ContractExtension, databaseFolder, _databaseName);
+            _indexFile = new DbDataIndexFile(_process.Configuration.FrostDbIndexFileExtension, databaseFolder, _databaseName);
 
-            // need to create a contract file to hold the contracts for this database
-            // need to create an index file tocrate the indexes that this database has 
             // need to create a transaction file for this database
             throw new NotImplementedException();
         }
