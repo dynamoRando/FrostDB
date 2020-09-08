@@ -100,6 +100,11 @@ namespace FrostDB
         /// (new) The location for the Frost system folder. This folder holds various system databases and information.
         /// </summary>
         public string FrostSystemFolder { get; set; }
+
+        /// <summary>
+        /// (new) The file extension for a db security file. Contains users and permissions, etc.
+        /// </summary>
+        public string FrostSecurityFileExtension { get; set; }
         #endregion
 
         #region Events

@@ -32,6 +32,7 @@ namespace FrostDB
         private string _dbFrostBinaryExtension;
         private string _dbFrostBinaryDataDirectoryExtension;
         private string _frostSystemFolder;
+        private string _frostSecurityFileExtension;
         #endregion
 
         #region Public Properties
@@ -123,6 +124,11 @@ namespace FrostDB
         /// (new) The location for the Frost system folder. This folder holds various system databases and information.
         /// </summary>
         public string FrostSystemFolder => _frostSystemFolder;
+
+        /// <summary>
+        /// (new) The security file extension for a db. Contains users and permissions.
+        /// </summary>
+        public string FrostSecurityFileExtension => _frostSecurityFileExtension;
         #endregion
 
         #region Events
@@ -166,6 +172,7 @@ namespace FrostDB
                 _dbFrostBinaryExtension = ".frostDbData";
                 _dbFrostBinaryDataDirectoryExtension = ".frostDbDirData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
+                _frostSecurityFileExtension = ".frostDbSecurity";
             }
             else if (_info.OS == OSPlatform.Linux)
             {
@@ -185,6 +192,7 @@ namespace FrostDB
                 _dbFrostBinaryExtension = ".frostDbData";
                 _dbFrostBinaryDataDirectoryExtension = ".frostDbDirData";
                 _frostSystemFolder = Path.Combine(_appPath, "sys");
+                _frostSecurityFileExtension = ".frostDbSecurity";
             }
             else
             {

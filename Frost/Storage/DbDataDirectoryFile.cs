@@ -84,7 +84,7 @@ namespace FrostDB.Storage
         {
             if (VersionNumber == 0)
             {
-                VersionNumber = StorageFileVersions.DATA_DIRECTORY_FILE_VERSION;
+                VersionNumber = StorageFileVersions.DATA_DIRECTORY_FILE_VERSION_1;
             }
         }
         #endregion

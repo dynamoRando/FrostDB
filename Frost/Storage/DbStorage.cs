@@ -99,8 +99,8 @@ namespace FrostDB
                 _process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
+            _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
 
-            // need to create a database security file
             // need to create a contract file to hold the contracts for this database
             // need to create an index file tocrate the indexes that this database has 
             // need to create a transaction file for this database
