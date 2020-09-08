@@ -40,13 +40,39 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Adds the database to the Frost system Db directory file
+        /// </summary>
+        /// <param name="database">The database object</param>
+        /// <param name="isOnline">True if the database is online, otherwise false</param>
         public void AddDatabaseToDirectory(Database2 database, bool isOnline)
         {
             // need to write to disk the new database and it's online status
 
             throw new NotImplementedException();
         }
+
         public List<string> OnlineDatabases => Databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToList();
+
+        /// <summary>
+        /// Attempts to take a database offline and updates the Frost system Db directory file
+        /// </summary>
+        /// <param name="databaseName">The name of the database to take offline</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool TakeDatabaseOffline(string databaseName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///  Attempts to bring a database online and updates the Frost system Db directory file
+        /// </summary>
+        /// <param name="databaseName">The name of the database to bring online</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool BringDatabaseOnline(string databaseName)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods
