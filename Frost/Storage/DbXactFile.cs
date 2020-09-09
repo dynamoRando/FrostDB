@@ -75,7 +75,7 @@ namespace FrostDB
                 item.Append(" Insert ");
                 item.Append(" <data> ");
 
-                row.Values.ForEach(value => 
+                row.Values.ForEach(value =>
                 {
                     item.Append($"{value.Column.Name} ");
                     item.Append($"{value.Value} ");
