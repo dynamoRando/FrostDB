@@ -47,16 +47,58 @@ namespace FrostDB
         public bool WriteTransactionForUpdate(List<RowUpdate> rows)
         {
             _locker.EnterWriteLock();
-            throw new NotImplementedException();
+            //write to file
             _locker.ExitWriteLock();
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// This method is a stub
         /// </summary>
         /// <returns></returns>
-        public bool WriteTransactionForInsert()
+        public bool WriteTransactionForInsert(RowInsert row)
         {
+            bool isSuccessful;
+
+            if (DoesFileExist())
+            {
+                _locker.EnterWriteLock();
+
+                // to do - need to come up with xact file format
+                // xact tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
+
+                var item = new StringBuilder();
+
+                item.Append("xact ");
+                item.Append(row.Table.TableId.ToString());
+                item.Append(" false ");
+                item.Append(" Insert ");
+                item.Append(" <data> ");
+
+                row.Values.ForEach(value => 
+                {
+                    item.Append($"{value.Column.Name} ");
+                    item.Append($"{value.Value} ");
+                });
+
+                item.Append(" <data> ");
+
+                using (var file = File.AppendText(FileName()))
+                {
+                    file.WriteLine(item.ToString());
+                    file.Flush();
+                }
+
+                _locker.ExitWriteLock();
+
+                isSuccessful = true;
+            }
+            else
+            {
+                isSuccessful = false;
+            }
+
+            // to do - is this right?
             throw new NotImplementedException();
         }
 

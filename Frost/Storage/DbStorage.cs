@@ -67,7 +67,7 @@ namespace FrostDB
         /// <returns></returns>
         public bool WriteTransactionForInsert(RowInsert row)
         {
-            _xactFile.WriteTransactionForInsert();
+            _xactFile.WriteTransactionForInsert(row);
             throw new NotImplementedException();
         }
 
