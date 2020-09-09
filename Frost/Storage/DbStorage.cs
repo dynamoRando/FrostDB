@@ -62,12 +62,19 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// This method is a stub
+        /// Handles adding a row to this table for this database. Will write to xact log, btree, and other files/structures as needed.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="row">The row to add</param>
+        /// <returns>True if successful, otherwise false.</returns>
         public bool WriteTransactionForInsert(RowInsert row)
         {
-            _xactFile.WriteTransactionForInsert(row);
+            bool isSuccessful;
+
+            if (_xactFile.WriteTransactionForInsert(row))
+            {
+                // TO DO: Need to update b-tree, indexes, etc.
+            }
+
             throw new NotImplementedException();
         }
 

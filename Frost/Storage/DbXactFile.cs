@@ -53,9 +53,10 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// This method is a stub
+        /// Attempts to write to the xact log for this database the row to be inserted. Will insert the xact as un-reconciled.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="row">The row to be inserted.</param>
+        /// <returns>True if successful, otherwise false.</returns>
         public bool WriteTransactionForInsert(RowInsert row)
         {
             bool isSuccessful;

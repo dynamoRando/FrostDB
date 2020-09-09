@@ -155,9 +155,7 @@ namespace FrostDB
         {
             RowInsert rowToInsert = new RowInsert { Table = this.Schema, Values = rowForm.Values };
 
-            GetDatabase().Storage.WriteTransactionForInsert(rowToInsert);
-
-            throw new NotImplementedException();
+            return GetDatabase().Storage.WriteTransactionForInsert(rowToInsert);
         }
 
         /// <summary>
