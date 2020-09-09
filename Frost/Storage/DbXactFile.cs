@@ -72,8 +72,8 @@ namespace FrostDB
                 item.Append("xact ");
                 item.Append(row.Table.TableId.ToString());
                 item.Append(" false ");
-                item.Append(" Insert ");
-                item.Append(" <data> ");
+                item.Append("Insert ");
+                item.Append("<data> ");
 
                 row.Values.ForEach(value =>
                 {
@@ -81,7 +81,7 @@ namespace FrostDB
                     item.Append($"{value.Value} ");
                 });
 
-                item.Append(" <data> ");
+                item.Append(" <data>");
 
                 using (var file = File.AppendText(FileName()))
                 {
