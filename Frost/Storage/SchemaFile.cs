@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace FrostDB
 {
@@ -20,6 +21,7 @@ namespace FrostDB
         private string _fileText;
         private DbSchema2 _dbSchema;
         private TableSchema2 _tableSchema;
+        private ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         #endregion
 
         #region Public Properties
@@ -66,6 +68,8 @@ namespace FrostDB
         /// <param name="schema">The current database schema</param>
         public void Save(DbSchema2 schema)
         {
+            _locker.EnterWriteLock();
+
             using (var file = new StreamWriter(FileName()))
             {
                 file.WriteLine("version " + VersionNumber.ToString());
@@ -80,6 +84,8 @@ namespace FrostDB
                     }
                 }
             }
+
+            _locker.ExitWriteLock();
         }
 
         /// <summary>

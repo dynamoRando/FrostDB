@@ -2,6 +2,7 @@
 using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 
@@ -124,11 +125,59 @@ namespace FrostDB
         /// <returns></returns>
         public bool AddRow(RowForm2 rowForm)
         {
-            throw new NotImplementedException();
+            bool isSuccessful;
+
+            if (rowForm is null)
+            {
+                throw new ArgumentNullException(nameof(rowForm));
+            }
+
+            if (rowForm.IsLocal)
+            {
+                isSuccessful = AddRowLocally(rowForm);
+            }
+            else
+            {
+                isSuccessful = AddRowRemotely(rowForm);
+            }
+
+            return isSuccessful;
         }
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Adds a row to this FrostDb instance
+        /// </summary>
+        /// <param name="rowForm">The row data to add</param>
+        /// <returns>True if successful, otherwise false</returns>
+        private bool AddRowLocally(RowForm2 rowForm)
+        {
+            RowInsert rowToInsert = new RowInsert { Table = this.Schema, Values = rowForm.Values };
+
+            GetDatabase().Storage.WriteTransactionForInsert(rowToInsert);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Adds a row to a remote FrostDb instance
+        /// </summary>
+        /// <param name="rowForm">The row data to add</param>
+        /// <returns>True if successful, otherwise false</returns>
+        private bool AddRowRemotely(RowForm2 rowForm)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns the database that this table belongs to
+        /// </summary>
+        /// <returns>The database this table belongs to</returns>
+        private Database2 GetDatabase()
+        {
+            return _process.GetDatabase2(_databaseId);
+        }
         #endregion
 
     }

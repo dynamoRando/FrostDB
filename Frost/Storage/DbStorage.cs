@@ -65,7 +65,7 @@ namespace FrostDB
         /// This method is a stub
         /// </summary>
         /// <returns></returns>
-        public bool WriteTransactionForInsert()
+        public bool WriteTransactionForInsert(RowInsert row)
         {
             _xactFile.WriteTransactionForInsert();
             throw new NotImplementedException();
@@ -82,9 +82,13 @@ namespace FrostDB
             return _process.DatabaseManager.StorageManager.GetAllRows(treeAddress);
         }
 
+        /// <summary>
+        /// Updates the schema file on disk
+        /// </summary>
+        /// <param name="schema">The schema to save to disk</param>
         public void SaveSchema(DbSchema2 schema)
         {
-            throw new NotImplementedException();
+            _schema.Save(schema);
         }
 
         /// <summary>
