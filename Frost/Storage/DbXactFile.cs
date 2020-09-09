@@ -53,7 +53,7 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Attempts to write to the xact log for this database the row to be inserted. Will insert the xact as un-reconciled.
+        /// Attempts to write to the xact log for this database the row to be inserted. Will insert the xact as un-reconciled. This method is blocking.
         /// </summary>
         /// <param name="row">The row to be inserted.</param>
         /// <returns>True if successful, otherwise false.</returns>

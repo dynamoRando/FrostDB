@@ -62,7 +62,7 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Handles adding a row to this table for this database. Will write to xact log, btree, and other files/structures as needed.
+        /// Handles adding a row to this table for this database. Will write to xact log, btree, and other files/structures as needed. This method is blocking.
         /// </summary>
         /// <param name="row">The row to add</param>
         /// <returns>True if successful, otherwise false.</returns>
@@ -70,6 +70,7 @@ namespace FrostDB
         {
             bool isSuccessful;
 
+            // note: is this the correct way to handle blocking? each object blocks for itself. should this block as one unit?
             if (_xactFile.WriteTransactionForInsert(row))
             {
                 // TO DO: Need to update b-tree, indexes, etc.
