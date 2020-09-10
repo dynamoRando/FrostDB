@@ -20,6 +20,7 @@ namespace FrostDB
         public List<ColumnSchema> Columns => _columns;
         public int TableId => _tableId;
         public int DatabaseId => _databaseId;
+        public BTreeAddress BTreeAddress => new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId };
         #endregion
 
         #region Protected Methods

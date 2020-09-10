@@ -73,11 +73,17 @@ namespace FrostDB
             // note: is this the correct way to handle blocking? each object blocks for itself. should this block as one unit?
             if (_xactFile.WriteTransactionForInsert(row))
             {
+
                 // TO DO: Need to update b-tree, indexes, etc.
-                Table2 table = GetTable(row.Table.DatabaseId, row.Table.TableId);
-                if (table.HasIndexes)
+
+                if (UpdateBTreeForInsert(row))
+                { 
+
+                }
+
+                if (UpdateIndexesForInsert(row))
                 {
-                    // need to update indexes if appropriate
+
                 }
             }
 
@@ -112,7 +118,7 @@ namespace FrostDB
             var databaseFolder = _process.Configuration.DatabaseFolder;
 
             _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName);
-            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName,_process.Configuration.FrostBinaryDataExtension);
+            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
             _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
@@ -144,6 +150,37 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Updates the db indexes if applicable for a row insert
+        /// </summary>
+        /// <param name="row">The row to b inserted</param>
+        /// <returns>True if successful, otherwise false</returns>
+        private bool UpdateIndexesForInsert(RowInsert row)
+        {
+
+            Table2 table = GetTable(row.Table.BTreeAddress);
+            if (table.HasIndexes)
+            {
+                // need to update indexes if appropriate
+            }
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Updates the b-tree for this row for an insert action. This will also update the data file and db data directory file if possible.
+        /// </summary>
+        /// <param name="insert">The row to be added</param>
+        /// <returns>True if successful, otherwise false</returns>
+        private bool UpdateBTreeForInsert(RowInsert insert)
+        {
+            return _process.DatabaseManager.StorageManager.InsertRow(insert);
+        }
+
+        /// <summary>
+        /// Returns the schema for this database
+        /// </summary>
+        /// <returns>A Db schema</returns>
         private DbSchema2 GetSchema()
         {
             var databaseFolder = _process.Configuration.DatabaseFolder;
@@ -153,6 +190,10 @@ namespace FrostDB
             return _schema.GetDbSchema();
         }
 
+        /// <summary>
+        /// Returns the list of accepted participants for this db
+        /// </summary>
+        /// <returns>A list of accepted participants</returns>
         private List<Participant2> GetAcceptedParticipants()
         {
             if (_participants is null)
@@ -163,6 +204,11 @@ namespace FrostDB
             return _participants.GetAcceptedParticipants();
         }
 
+
+        /// <summary>
+        /// Returns a list of participants that are pending acceptance of the db contract
+        /// </summary>
+        /// <returns>A list of pending participants</returns>
         private List<Participant2> GetPendingParticipants()
         {
             if (_participants is null)
@@ -173,6 +219,10 @@ namespace FrostDB
             return _participants.GetPendingParticipants();
         }
 
+
+        /// <summary>
+        /// Loads the participant file from disk
+        /// </summary>
         private void LoadParticpantFile()
         {
             var extension = _process.Configuration.ParticipantFileExtension;
@@ -198,6 +248,16 @@ namespace FrostDB
         private Table2 GetTable(int databaseId, int tableId)
         {
             return _process.GetDatabase2(databaseId).GetTable(tableId);
+        }
+
+        /// <summary>
+        /// Gets a table based on the specified BTreeAddress
+        /// </summary>
+        /// <param name="address">The address of the table</param>
+        /// <returns>The table</returns>
+        private Table2 GetTable(BTreeAddress address)
+        {
+            return GetTable(address.DatabaseId, address.TableId);
         }
         #endregion
 

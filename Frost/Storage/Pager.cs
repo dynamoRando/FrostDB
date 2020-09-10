@@ -39,6 +39,26 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Attempts to insert a row into a btree
+        /// </summary>
+        /// <param name="insert">The row to insert</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool InsertRow(RowInsert insert)
+        {
+            if (insert == null)
+            {
+                throw new ArgumentNullException(nameof(insert));
+            }
+
+            if (_cache.ContainsKey(insert.Table.BTreeAddress))
+            {
+                // try to get the tree and update it
+            }
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Returns all rows for the specified table (via tree address)
         /// </summary>
         /// <param name="treeAddress">The tree's address (dbId, tableId)</param>

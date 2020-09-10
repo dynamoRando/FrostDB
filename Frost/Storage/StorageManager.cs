@@ -49,6 +49,16 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Attempts to insert a row into a btree
+        /// </summary>
+        /// <param name="insert">The row to insert</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool InsertRow(RowInsert insert)
+        {
+            return _pager.InsertRow(insert);
+        }
+
+        /// <summary>
         /// Creates the appropriate disk files for a new database hosted by this Frost process
         /// </summary>
         /// <param name="database"></param>
