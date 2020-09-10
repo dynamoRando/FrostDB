@@ -74,6 +74,11 @@ namespace FrostDB
             if (_xactFile.WriteTransactionForInsert(row))
             {
                 // TO DO: Need to update b-tree, indexes, etc.
+                Table2 table = GetTable(row.Table.DatabaseId, row.Table.TableId);
+                if (table.HasIndexes)
+                {
+                    // need to update indexes if appropriate
+                }
             }
 
             throw new NotImplementedException();
@@ -172,6 +177,27 @@ namespace FrostDB
         {
             var extension = _process.Configuration.ParticipantFileExtension;
             _participants = new ParticipantFile(extension, _databaseFolderPath, _databaseName);
+        }
+
+        /// <summary>
+        /// Gets a database based on the specified id
+        /// </summary>
+        /// <param name="databaseId">The dbId to get</param>
+        /// <returns>The database</returns>
+        private Database2 GetDatabase(int databaseId)
+        {
+            return _process.GetDatabase2(databaseId);
+        }
+
+        /// <summary>
+        /// Gets a table based on the specified dbId and tableId
+        /// </summary>
+        /// <param name="databaseId">The db Id to get</param>
+        /// <param name="tableId">The table Id to get</param>
+        /// <returns>The table</returns>
+        private Table2 GetTable(int databaseId, int tableId)
+        {
+            return _process.GetDatabase2(databaseId).GetTable(tableId);
         }
         #endregion
 
