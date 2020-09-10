@@ -53,6 +53,7 @@ namespace FrostDB
             if (_cache.ContainsKey(insert.Table.BTreeAddress))
             {
                 // try to get the tree and update it
+                // the container should update the btree, the data file, and the data directory file only
             }
 
             throw new NotImplementedException();

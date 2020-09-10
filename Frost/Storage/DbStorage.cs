@@ -85,6 +85,8 @@ namespace FrostDB
                 {
 
                 }
+
+                _xactFile.MarkInsertXactAsReconciled(row);
             }
 
             throw new NotImplementedException();

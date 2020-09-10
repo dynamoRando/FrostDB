@@ -72,11 +72,12 @@ namespace FrostDB
                 _locker.EnterWriteLock();
 
                 // to do - need to come up with xact file format
-                // xact tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
+                // xact xactId tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
 
                 var item = new StringBuilder();
 
                 item.Append("xact ");
+                item.Append($"{row.XactId.ToString()} ");
                 item.Append(row.Table.TableId.ToString());
                 item.Append(" false ");
                 item.Append("Insert ");
@@ -119,6 +120,16 @@ namespace FrostDB
         }
 
         public bool IsValid()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Marks a insert xaction as reconciled in the file
+        /// </summary>
+        /// <param name="row">The row that was to be inserted</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool MarkInsertXactAsReconciled(RowInsert row)
         {
             throw new NotImplementedException();
         }

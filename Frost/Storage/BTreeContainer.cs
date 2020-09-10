@@ -49,6 +49,29 @@ namespace FrostDB
             }
         }
 
+        public bool TryInsertRow(RowInsert row)
+        {
+            bool result = false;
+
+            if (GetContainerState() == BTreeContainerState.Ready)
+            {
+                SetContainerState(BTreeContainerState.LockedForInsert);
+
+                lock (_treeLock)
+                {
+                    // note, don't need to write transaction for insert because the table already called DbStorage to do it
+                    // need to go ahead and update the tree and also the data file and db directory file
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// This method is a stub.
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
         public bool TryUpdateRows(List<RowUpdate> rows)
         {
             bool result = false;
@@ -59,6 +82,9 @@ namespace FrostDB
 
                 lock (_treeLock)
                 {
+                    // note: is this pattern below correct? In Table2 we already updated the xact log for insert.
+                    // should the container not worry about the xact log? and only care about the data file and data db directory?
+
                     // write to the transaction log first
                     _storage.WriteTransactionForUpdate(rows);
 
