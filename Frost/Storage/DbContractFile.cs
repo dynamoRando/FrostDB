@@ -28,6 +28,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a contract file for the specified database that holds the data agreement between a db host and its participants
+        /// </summary>
+        /// <param name="extension">The file extension</param>
+        /// <param name="folder">The folder in which the file is held</param>
+        /// <param name="databaseName">The name of the database</param>
         public DbContractFile(string extension, string folder, string databaseName)
         {
             _contractFileExtension = extension;

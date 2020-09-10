@@ -24,6 +24,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a transaction log file for the specified db
+        /// </summary>
+        /// <param name="fileFolder">The folder in which the xact file is held</param>
+        /// <param name="fileExtension">The file extension for the xact file</param>
+        /// <param name="databaseName">The name of the database</param>
         public DbXactFile(string fileFolder, string fileExtension, string databaseName)
         {
             _xactFileFileFolder = fileFolder;

@@ -28,6 +28,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a file that holds the users, roles, permissions for a database
+        /// </summary>
+        /// <param name="extension">The file extension for the security file</param>
+        /// <param name="folder">The folder in which the file is held</param>
+        /// <param name="databaseName">The name of the database for this file</param>
         public DbSecurityFile(string extension, string folder, string databaseName)
         {
             _securityFileExtension = extension;

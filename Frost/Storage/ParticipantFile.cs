@@ -32,6 +32,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a file that holds the participants for a db that are pending or have accepted
+        /// </summary>
+        /// <param name="extension">The file extension for the participant file</param>
+        /// <param name="folder">The folder which participant files are held</param>
+        /// <param name="databaseName">The name of the database for this participant file</param>
         public ParticipantFile(string extension, string folder, string databaseName)
         {
             _participantFileExtension = extension;

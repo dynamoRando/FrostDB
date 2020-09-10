@@ -36,6 +36,13 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a data file holding the actual binary data on disk for the db
+        /// </summary>
+        /// <param name="extension">The file extension for the binary file</param>
+        /// <param name="folder">The folder in which the dbs are held</param>
+        /// <param name="databaseName">The name of the database</param>
+        /// <param name="dataDirectoryExtension">The name of the db directory file extension</param>
         public DbDataFile(string extension, string folder, string databaseName, string dataDirectoryExtension)
         {
             _dataFileExtension = extension;

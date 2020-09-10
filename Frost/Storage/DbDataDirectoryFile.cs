@@ -34,6 +34,13 @@ namespace FrostDB.Storage
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a file holding the page id and line number in the binrary data file.
+        /// </summary>
+        /// <param name="dataFile">The actual binary data file of the db</param>
+        /// <param name="folder">The folder in which dbs are held</param>
+        /// <param name="databaseName">The name of the database</param>
+        /// <param name="extension">The file extension for data directory files</param>
         public DbDataDirectoryFile(DbDataFile dataFile, string folder, string databaseName, string extension)
         {
             _dataFile = dataFile;

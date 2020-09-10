@@ -22,6 +22,12 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a file that contains the indexes that a database may have
+        /// </summary>
+        /// <param name="extension">The file extension</param>
+        /// <param name="folder">The folder in which the index file is held</param>
+        /// <param name="databaseName">The name of the db</param>
         public DbDataIndexFile(string extension, string folder, string databaseName)
         {
             _indexFileExtension = extension;
