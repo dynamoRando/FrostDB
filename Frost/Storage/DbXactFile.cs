@@ -1,5 +1,6 @@
 ﻿using FrostDB.Interface;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -17,6 +18,7 @@ namespace FrostDB
         private string _xactFileFileFolder;
         private string _databaseName;
         private ReaderWriterLockSlim _locker;
+        private ConcurrentDictionary<Guid, Guid> _openXactList;
         #endregion
 
         #region Public Properties
@@ -36,6 +38,7 @@ namespace FrostDB
             _xactFileExtension = fileExtension;
             _databaseName = databaseName;
             _locker = new ReaderWriterLockSlim();
+            _openXactList = new ConcurrentDictionary<Guid, Guid>();
 
             if (!DoesFileExist())
             {
@@ -67,9 +70,16 @@ namespace FrostDB
         {
             bool isSuccessful;
 
+            if (_openXactList.ContainsKey(row.XactId))
+            {
+                throw new InvalidOperationException("The transaction is already in progress");
+            }
+
             if (DoesFileExist())
             {
                 _locker.EnterWriteLock();
+
+                _openXactList.TryAdd(row.XactId, row.XactId);
 
                 // to do - need to come up with xact file format
                 // xact xactId tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
@@ -131,6 +141,17 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool MarkInsertXactAsReconciled(RowInsert row)
         {
+
+            _locker.EnterWriteLock();
+
+            // TO DO: Need to actually update the file.
+
+
+            // remove the xaction from the pending open transactions
+            Guid value;
+            _openXactList.TryRemove(row.XactId, out value);
+
+            _locker.ExitWriteLock();
             throw new NotImplementedException();
         }
         #endregion
