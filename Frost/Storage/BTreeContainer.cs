@@ -78,7 +78,7 @@ namespace FrostDB
                     if (_tree.Count == 0)
                     {
                         var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId);
-
+                        page.AddRow(row);
                     }
 
                     // need to convert an RowInsert object to a Row2 object (a byte array)

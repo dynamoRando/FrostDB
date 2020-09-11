@@ -9,7 +9,8 @@ namespace FrostDB
     {
         public static byte[] ToByteArray(this RowInsert row, Process process)
         {
-            
+            row.Values.Sort(RowValue2.SortByBinaryLayout());
+
             throw new NotImplementedException();
         }
 

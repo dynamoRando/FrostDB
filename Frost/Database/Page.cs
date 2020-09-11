@@ -81,6 +81,16 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Attempts to add a row to this page and then reconcile the xact on disk
+        /// </summary>
+        /// <param name="row">The row to be added</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool AddRow(RowInsert row)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Returns all the rows held in the page based on the specified schema
         /// </summary>
         /// <param name="schema">The table schema</param>
