@@ -87,6 +87,8 @@ namespace FrostDB
 
                     // need to go ahead and update the tree and also the data file and db directory file
                 }
+
+                SetContainerState(BTreeContainerState.Ready);
             }
 
             return result;
