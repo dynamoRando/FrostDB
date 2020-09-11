@@ -49,6 +49,11 @@ namespace FrostDB
             }
         }
 
+        /// <summary>
+        /// Tries to add the row data to the btree and also update the data file and db directory data file on disk
+        /// </summary>
+        /// <param name="row">The row to be added</param>
+        /// <returns>True if the operation was successful, otherwise false</returns>
         public bool TryInsertRow(RowInsert row)
         {
             bool result = false;
@@ -59,7 +64,11 @@ namespace FrostDB
 
                 lock (_treeLock)
                 {
-                    // note, don't need to write transaction for insert because the table already called DbStorage to do it
+                    if (!_storage.IsOpenXact(row.XactId))
+                    {
+                        _storage.WriteTransactionForInsert(row);
+                    }
+
                     // need to go ahead and update the tree and also the data file and db directory file
                 }
             }

@@ -9,13 +9,17 @@ namespace FrostDB
     /// </summary>
     public class RowUpdate
     {
+        private Guid _xactId;
+
         public TableSchema2 Table { get; set; }
         public int RowId { get; set; }
         public List<RowValue2> Values { get; set; }
+        public Guid XactId => _xactId;
 
         public RowUpdate()
         {
             Values = new List<RowValue2>();
+            _xactId = Guid.NewGuid();
         }
     }
 }

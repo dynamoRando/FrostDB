@@ -52,6 +52,13 @@ namespace FrostDB
 
             if (_cache.ContainsKey(insert.Table.BTreeAddress))
             {
+                BTreeContainer container;
+                if (_cache.TryGetValue(insert.Table.BTreeAddress, out container))
+                {
+                    container.TryInsertRow(insert);
+                }
+
+
                 // try to get the tree and update it
                 // the container should update the btree, the data file, and the data directory file only
             }

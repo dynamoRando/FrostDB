@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -49,12 +50,31 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Determines if the xact specified has not been reconciled with the data file
+        /// </summary>
+        /// <param name="id">The id of the xact</param>
+        /// <returns>True if the xact has not been reconciled, otherwise false</returns>
+        public bool IsOpenXact(Guid id)
+        {
+            return _openXactList.ContainsKey(id);
+        }
+
+        /// <summary>
         /// This method is a stub.
         /// </summary>
         /// <param name="rows"></param>
         /// <returns></returns>
         public bool WriteTransactionForUpdate(List<RowUpdate> rows)
         {
+
+            foreach (var row in rows)
+            {
+                if (IsOpenXact(row.XactId))
+                {
+                    throw new InvalidOperationException($"xact {row.XactId.ToString()} is already in progress");
+                }
+            }
+
             _locker.EnterWriteLock();
             //write to file
             _locker.ExitWriteLock();
@@ -70,9 +90,9 @@ namespace FrostDB
         {
             bool isSuccessful;
 
-            if (_openXactList.ContainsKey(row.XactId))
+            if (IsOpenXact(row.XactId))
             {
-                throw new InvalidOperationException("The transaction is already in progress");
+                throw new InvalidOperationException($"xact {row.XactId.ToString()} is already in progress");
             }
 
             if (DoesFileExist())
@@ -141,7 +161,7 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool MarkInsertXactAsReconciled(RowInsert row)
         {
-
+            bool isSuccessful;
             _locker.EnterWriteLock();
 
             // TO DO: Need to actually update the file.
@@ -149,7 +169,7 @@ namespace FrostDB
 
             // remove the xaction from the pending open transactions
             Guid value;
-            _openXactList.TryRemove(row.XactId, out value);
+            isSuccessful = _openXactList.TryRemove(row.XactId, out value);
 
             _locker.ExitWriteLock();
             throw new NotImplementedException();

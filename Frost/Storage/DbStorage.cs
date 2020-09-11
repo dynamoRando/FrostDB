@@ -51,6 +51,16 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Determines if the xact id is currently in progress and unreconciled
+        /// </summary>
+        /// <param name="id">The id of the transaction</param>
+        /// <returns>True if the xact is unreconciled, otherwise false</returns>
+        public bool IsOpenXact(Guid id)
+        {
+            return _xactFile.IsOpenXact(id);
+        }
+
+        /// <summary>
         /// This method is a stub
         /// </summary>
         /// <param name="rows"></param>
