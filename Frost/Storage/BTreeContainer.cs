@@ -57,7 +57,7 @@ namespace FrostDB
         public bool TryInsertRow(RowInsert row)
         {
 
-            if (row.Table.TableId != _address.TableId && row.Table.DatabaseId != _address.DatabaseId)
+            if (row.Table.TableId != _address.TableId || row.Table.DatabaseId != _address.DatabaseId)
             {
                 throw new InvalidOperationException("attempted to add row to incorrect btree");
             }
