@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 namespace FrostDB
 {
     public class Table2
@@ -132,7 +131,7 @@ namespace FrostDB
                 throw new ArgumentNullException(nameof(rowForm));
             }
 
-            if (rowForm.IsLocal)
+            if (rowForm.IsLocal(_process))
             {
                 isSuccessful = AddRowLocally(rowForm);
             }

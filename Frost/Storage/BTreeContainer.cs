@@ -56,6 +56,12 @@ namespace FrostDB
         /// <returns>True if the operation was successful, otherwise false</returns>
         public bool TryInsertRow(RowInsert row)
         {
+
+            if (row.Table.TableId != _address.TableId && row.Table.DatabaseId != _address.DatabaseId)
+            {
+                throw new InvalidOperationException("attempted to add row to incorrect btree");
+            }
+
             bool result = false;
 
             if (GetContainerState() == BTreeContainerState.Ready)
@@ -68,6 +74,16 @@ namespace FrostDB
                     {
                         _storage.WriteTransactionForInsert(row);
                     }
+
+                    if (_tree.Count == 0)
+                    {
+                        var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId);
+
+                    }
+
+                    // need to convert an RowInsert object to a Row2 object (a byte array)
+
+
 
                     // need to go ahead and update the tree and also the data file and db directory file
                 }
@@ -153,6 +169,29 @@ namespace FrostDB
         private Page GetFirstPageFromDisk()
         {
             throw new NotImplementedException();
+        }
+
+        private int GetNextPageId()
+        {
+            lock (_treeLock)
+            {
+                if (_tree.Count == 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    int maxValue = 0;
+                    foreach (var page in _tree.Values)
+                    {
+                        if (page.Id > maxValue)
+                        {
+                            maxValue = page.Id;
+                        }
+                    }
+                    return maxValue + 1;
+                }
+            }
         }
         #endregion
 

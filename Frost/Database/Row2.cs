@@ -54,7 +54,16 @@ namespace FrostDB
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates an empty Row2 object with no values set
+        /// </summary>
         public Row2() { }
+
+        /// <summary>
+        /// Constructs a Row2 object based on the binary preamble and the specified column schema. The column schema will be used to parse the row binary data.
+        /// </summary>
+        /// <param name="preamble">The binrary preamble</param>
+        /// <param name="columns">The column schema of the row</param>
         public Row2(byte[] preamble, List<ColumnSchema> columns)
         {
             _preamble = preamble;
@@ -63,6 +72,12 @@ namespace FrostDB
             ParsePreamble();
         }
 
+        /// <summary>
+        /// Constructs a Row2 object along with setting it's page address. 
+        /// </summary>
+        /// <param name="pageAddress">The page address of the row</param>
+        /// <param name="preamble">The binary preamble of the row</param>
+        /// <param name="columns">The column schema of the row</param>
         public Row2(PageAddress pageAddress, byte[] preamble, List<ColumnSchema> columns) : this(preamble, columns)
         {
             _pageAddress = pageAddress;
@@ -70,9 +85,25 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Sets the row data from a byte array. This data does not include the row-preamble.
+        /// </summary>
+        /// <param name="data">The byte array representing the row data.</param>
         public void SetRowData(byte[] data)
         {
             _data = data;
+        }
+
+        /// <summary>
+        /// Returns the entire row in byte format: the preamble + the row data
+        /// </summary>
+        /// <returns>A byte array representing the entire row data</returns>
+        public byte[] GetRowInBytes()
+        {
+            byte[] result = new byte[_preamble.Length + _data.Length];
+            Array.Copy(_preamble, result, _preamble.Length);
+            Array.Copy(_data, 0, result, _preamble.Length, _data.Length);
+            return result;
         }
         #endregion
 

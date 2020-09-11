@@ -42,10 +42,31 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Page() 
+        /// <summary>
+        /// Constructs a brand new binary Page object with a size based on the DatabaseConstants file. Use this constructor when creating
+        /// a brand new page (i.e. not loading from disk)
+        /// </summary>
+        /// <param name="id">The id of this page</param>
+        /// <param name="tableId">The table id that this page belongs to</param>
+        /// <param name="dbId">The database id that this page belongs to</param>
+        public Page(int id, int tableId, int dbId) 
         {
+            Id = id;
+            TableId = tableId;
+            DbId = dbId;
+
+            _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
+
             _data = new byte[DatabaseConstants.PAGE_SIZE];
         }
+
+        /// <summary>
+        /// Cosntructs a binary Page object with the specified binrary data array, and sets the TableId and the Database Id for the page.
+        /// Use this constructor when loading the binary data from disk.
+        /// </summary>
+        /// <param name="data">The binrary data</param>
+        /// <param name="tableId">The table id that this page belongs to</param>
+        /// <param name="databaseId">The db id that this page belongs to</param>
         public Page(byte[] data, int tableId, int databaseId)
         {
             _data = data;
@@ -56,16 +77,6 @@ namespace FrostDB
             _address = new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = Id };
         }
 
-        public Page(byte[] data, int id, int tableId, int dbId)
-        {
-            Id = id;
-            TableId = tableId;
-            DbId = dbId;
-
-            _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
-
-            _data = data;
-        }
         #endregion
 
         #region Public Methods

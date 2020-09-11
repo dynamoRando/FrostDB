@@ -14,6 +14,7 @@ namespace FrostDB
         public TableSchema2 Table { get; set; }
         public List<RowValue2> Values { get; set; }
         public Guid XactId => _xactId;
+        public Guid? ParticipantId { get; set; }
 
         public RowInsert()
         {
