@@ -76,7 +76,7 @@ namespace FrostDB
         /// </summary>
         /// <param name="row">The row to add</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public bool WriteTransactionForInsert(RowInsert row)
+        public bool  WriteTransactionForInsert(RowInsert row)
         {
             bool isSuccessful;
 
