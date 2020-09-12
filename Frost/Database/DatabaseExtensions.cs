@@ -51,7 +51,7 @@ namespace FrostDB
         /// <param name="row">The row insert parameter to be sorted</param>
         public static void OrderByByteFormat(this RowInsert row)
         {
-            row.Values.OrderBy(v => v.Column.IsVariableLength).ThenBy(v => v.Column.Ordinal);
+            row.Values.OrderByByteFormat();
         }
 
         public static byte[] ToByteArray(this RowInsert row, Process process)
