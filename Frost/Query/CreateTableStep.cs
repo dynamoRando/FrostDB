@@ -42,10 +42,12 @@ namespace FrostDB
             {
                 var db = process.GetDatabase2(databaseName);
                 var columns = new List<ColumnSchema>();
+                int i = 1;
 
                 foreach(var column in Columns)
                 {
-                    columns.Add(GetColumnSchema(column));
+                    columns.Add(GetColumnSchema(column, i));
+                    i++;
                 }
 
                 var schema = new TableSchema2(columns, db.GetNextTableId(), TableName, databaseName, db.DatabaseId);
@@ -72,9 +74,11 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private ColumnSchema GetColumnSchema(string text)
+        private ColumnSchema GetColumnSchema(string text, int ordinal)
         {
             var result = new ColumnSchema();
+            result.Ordinal = ordinal;
+
             var values = text.Split(" ");
             if (values.Length == 3)
             {

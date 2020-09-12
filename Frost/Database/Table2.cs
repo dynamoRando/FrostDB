@@ -105,16 +105,7 @@ namespace FrostDB
         /// <returns>A row form.</returns>
         public RowForm2 GetNewRow()
         {
-            var result = new RowForm2();
-            result.DatabaseName = DatabaseName;
-            result.TableName = Name;
-
-            foreach (var c in Columns)
-            {
-                result.Values.Add(new RowValue2 { Column = c });
-            }
-
-            return result;
+            return new RowForm2(DatabaseName, Name, Columns);
         }
 
         /// <summary>
