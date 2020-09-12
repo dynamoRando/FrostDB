@@ -17,6 +17,7 @@ namespace FrostDB
         private int _rowDataStart;
         private int _rowDataEnd;
         private PageAddress _address;
+        private BTreeContainer _container;
         #endregion
 
         #region Public Properties
@@ -49,7 +50,7 @@ namespace FrostDB
         /// <param name="id">The id of this page</param>
         /// <param name="tableId">The table id that this page belongs to</param>
         /// <param name="dbId">The database id that this page belongs to</param>
-        public Page(int id, int tableId, int dbId) 
+        public Page(int id, int tableId, int dbId)
         {
             Id = id;
             TableId = tableId;
@@ -80,13 +81,22 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void SetContainer(BTreeContainer container)
+        {
+            _container = container;
+        }
+
         /// <summary>
         /// Attempts to add a row to this page and then reconcile the xact on disk
         /// </summary>
         /// <param name="row">The row to be added</param>
         /// <returns>True if successful, otherwise false</returns>
-        public bool AddRow(RowInsert row)
+        public bool AddRow(RowInsert row, int rowId)
         {
+            row.OrderByByteFormat();
+
+            // need to convert RowInsert object to basically a Row2 object in binary format and then add it to the Page's byte array.
+
             throw new NotImplementedException();
         }
 

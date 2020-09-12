@@ -54,14 +54,6 @@ namespace FrostDB
             row.Values.OrderByByteFormat();
         }
 
-        public static byte[] ToByteArray(this RowInsert row, Process process)
-        {
-            row.OrderByByteFormat();
-            
-
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Compares the Process Id against the RowForm's Participant Id. If they are the same, it means this row should be saved to this FrostDb Process.
         /// </summary>

@@ -9,7 +9,7 @@ namespace FrostDB
     /// <summary>
     /// Holds the address of a tree, the tree itself, and the tree's state (future)
     /// </summary>
-    class BTreeContainer
+    public class BTreeContainer
     {
         #region Private Fields
         private readonly object _treeLock = new object();
@@ -37,6 +37,16 @@ namespace FrostDB
 
 
         #region Public Methods
+        /// <summary>
+        /// Tries to get the max row id from the tree
+        /// </summary>
+        /// <returns>The max row id</returns>
+        public int GetMaxRowId()
+        {
+            // get the max page from the tree, and then iterate thru the page backwards to get the max row id
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Sets the state of the container
         /// </summary>
@@ -78,7 +88,7 @@ namespace FrostDB
                     if (_tree.Count == 0)
                     {
                         var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId);
-                        page.AddRow(row);
+                        page.AddRow(row, GetMaxRowId() + 1);
                     }
 
                     // need to convert an RowInsert object to a Row2 object (a byte array)
