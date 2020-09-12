@@ -143,7 +143,7 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         private bool AddRowLocally(RowForm2 rowForm)
         {
-            RowInsert rowToInsert = new RowInsert { Table = this.Schema, Values = rowForm.Values };
+            RowInsert rowToInsert = new RowInsert(rowForm.Values, this.Schema, rowForm.Participant.Id, !rowForm.IsLocal(_process));
 
             return GetDatabase().Storage.WriteTransactionForInsert(rowToInsert);
         }

@@ -60,7 +60,8 @@ namespace FrostDB
         public Row2() { }
 
         /// <summary>
-        /// Constructs a Row2 object based on the binary preamble and the specified column schema. The column schema will be used to parse the row binary data.
+        /// Constructs a Row2 object based on the binary preamble and the specified column schema. The column schema will be used to 
+        /// parse the row binary data.
         /// </summary>
         /// <param name="preamble">The binrary preamble</param>
         /// <param name="columns">The column schema of the row</param>

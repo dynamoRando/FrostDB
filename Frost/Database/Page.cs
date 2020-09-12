@@ -59,6 +59,8 @@ namespace FrostDB
             _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
 
             _data = new byte[DatabaseConstants.PAGE_SIZE];
+
+            SetPreamble();
         }
 
         /// <summary>
@@ -76,6 +78,8 @@ namespace FrostDB
             Id = GetId();
 
             _address = new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = Id };
+
+            SetPreamble();
         }
 
         #endregion
@@ -93,11 +97,20 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool AddRow(RowInsert row, int rowId)
         {
+            bool result;
             row.OrderByByteFormat();
 
-            // need to convert RowInsert object to basically a Row2 object in binary format and then add it to the Page's byte array.
+            byte[] rowIdData = BitConverter.GetBytes(rowId);
+            byte[] isLocal = BitConverter.GetBytes(!row.IsReferenceInsert);
+            byte[] preamble = new byte[DatabaseConstants.SIZE_OF_ROW_PREAMBLE];
+            Array.Copy(rowIdData, preamble, rowIdData.Length);
+            Array.Copy(isLocal, 0, preamble, rowIdData.Length, isLocal.Length);
 
-            throw new NotImplementedException();
+            var rowBinary = new Row2(_address, preamble, row.Table.Columns);
+            rowBinary.SetRowData(row.ToBinaryFormat());
+            result = AddRowBinaryData(rowBinary.GetRowInBytes());
+
+            return result;
         }
 
         /// <summary>
@@ -122,6 +135,12 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        private void SetPreamble()
+        {
+            SetId();
+            SetTotalBytesUsed();
+        }
+
         private int GetTotalBytesUsedOffset()
         {
             return SizeOfId + SizeOfTableId + SizeOfDbId;
@@ -186,6 +205,11 @@ namespace FrostDB
         private void SetTotalBytesUsed()
         {
             // needs to count all the rows (get the premables and get size from each)
+            throw new NotImplementedException();
+        }
+
+        private bool AddRowBinaryData(byte[] rowData)
+        {
             throw new NotImplementedException();
         }
         #endregion
