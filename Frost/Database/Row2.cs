@@ -87,7 +87,7 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
-        /// Sets the row data from a byte array. This data does not include the row-preamble.
+        /// Sets the row data from a byte array. This data does not include the row preamble.
         /// </summary>
         /// <param name="data">The byte array representing the row data.</param>
         public void SetRowData(byte[] data)
