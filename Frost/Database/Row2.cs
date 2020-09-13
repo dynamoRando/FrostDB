@@ -93,6 +93,7 @@ namespace FrostDB
         public void SetRowData(byte[] data)
         {
             _data = data;
+            SetSizeOfRow();
         }
 
         /// <summary>

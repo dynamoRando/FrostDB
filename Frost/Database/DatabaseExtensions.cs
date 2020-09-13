@@ -12,6 +12,7 @@ namespace FrostDB
         #region Public Methods
         /// <summary>
         /// Returns the data in binary format and order for the list of values. This will not include a row preamble.
+        /// Includes the size of variable columns as a prefix in between each column.
         /// </summary>
         /// <returns>Row values in a binary array</returns>
         public static byte[] ToBinaryFormat(this List<RowValue2> values)
@@ -42,6 +43,11 @@ namespace FrostDB
                 if (value.Column.DataType.Contains("BIT"))
                 {
                     data = DatabaseBinaryConverter.BooleanToBinary(value.Value);
+                }
+
+                if (value.Column.IsVariableLength)
+                {
+                    data = AddLengthPrefix(data);
                 }
 
                 list.Add(data);
@@ -144,6 +150,19 @@ namespace FrostDB
                 totalOffset += item.Length;
                 Array.Copy(item, 0, destinationArray, totalOffset, item.Length);
             }
+        }
+        /// <summary>
+        /// Adds a size prefix to the array (an int32)
+        /// </summary>
+        /// <param name="data">The array to get the size of</param>
+        /// <returns>A new array with the size prefix added</returns>
+        private static byte[] AddLengthPrefix(byte[] data)
+        {
+            int dataLength = data.Length;
+            byte[] dataLengthBytes = BitConverter.GetBytes(dataLength);
+            Array.Resize<byte>(ref data, dataLength + DatabaseConstants.SIZE_OF_INT);
+            Array.Copy(dataLengthBytes, 0, data, DatabaseConstants.SIZE_OF_INT, dataLength);
+            return data;
         }
         #endregion
     }
