@@ -9,6 +9,49 @@ namespace FrostDB
 {
     static class DatabaseExtensions
     {
+        #region Public Methods
+        /// <summary>
+        /// Returns the data in binary format and order for the list of values. This will not include a row preamble.
+        /// </summary>
+        /// <returns>Row values in a binary array</returns>
+        public static byte[] ToBinaryFormat(this List<RowValue2> values)
+        {
+            values.OrderByByteFormat();
+
+            byte[] result;
+            byte[] data = null;
+            var list = new List<byte[]>();
+
+            foreach (var value in values)
+            {
+                if (value.Column.DataType.Contains("CHAR"))
+                {
+                    data = DatabaseBinaryConverter.ConvertForString(value.Value, value.Column.DataType);
+                }
+
+                if (value.Column.DataType.Contains("DECIMAL") || value.Column.DataType.Contains("NUMERIC"))
+                {
+                    data = DatabaseBinaryConverter.ConvertForDecimal(value.Value, value.Column.DataType);
+                }
+
+                if (value.Column.DataType.Contains("DATETIME"))
+                {
+                    data = DatabaseBinaryConverter.ConvertForDateTime(value.Value);
+                }
+
+                if (value.Column.DataType.Contains("BIT"))
+                {
+                    data = DatabaseBinaryConverter.ConvertForBoolean(value.Value);
+                }
+
+                list.Add(data);
+            }
+
+            result = new byte[GetBinaryArraySize(list)];
+            CopyItemsToArray(ref list, ref result);
+
+            return result;
+        }
 
         /// <summary>
         /// Orders the columns by non-variable columns first, then by ordinal number
@@ -75,5 +118,42 @@ namespace FrostDB
 
             return (row.Participant.Id == process.Id);
         }
+
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Returns the total size of the arrays in the list
+        /// </summary>
+        /// <param name="items">A list of binary arrays</param>
+        /// <returns>The total size of the arrays in the list</returns>
+        private static int GetBinaryArraySize(List<byte[]> items)
+        {
+            int result = 0;
+
+            foreach (var item in items)
+            {
+                result += item.Length;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Copies the items in the list of binary arrays to the specified array
+        /// </summary>
+        /// <param name="arrays">A list of binary arrays</param>
+        /// <param name="destinationArray">The array to copy the items to</param>
+        private static void CopyItemsToArray(ref List<byte[]> arrays, ref byte[] destinationArray)
+        {
+            int totalOffset = 0;
+
+            foreach (var item in arrays)
+            {
+                totalOffset += item.Length;
+                Array.Copy(item, 0, destinationArray, totalOffset, item.Length);
+            }
+        }
+        #endregion
     }
 }

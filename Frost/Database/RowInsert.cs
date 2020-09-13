@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Text;
+using FrostDB.Extensions;
 
 namespace FrostDB
 {
@@ -61,17 +62,29 @@ namespace FrostDB
             _table = table;
             _participantId = participantId;
             _xactId = Guid.NewGuid();
+            SortByBinaryFormat();
         }
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns the data in binary format for this row. This does not include the row preamble.
+        /// </summary>
+        /// <returns>Row values in a binary array</returns>
         public byte[] ToBinaryFormat()
         {
-            throw new NotImplementedException();
+            return _values.ToBinaryFormat();
         }
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Sorts the values in this RowInsert object by binary order
+        /// </summary>
+        private void SortByBinaryFormat()
+        {
+            _values.OrderByByteFormat();
+        }
         #endregion
     }
 }

@@ -94,7 +94,8 @@ namespace FrostDB
         /// Attempts to add a row to this page and then reconcile the xact on disk
         /// </summary>
         /// <param name="row">The row to be added</param>
-        /// <returns>True if successful, otherwise false</returns>
+        /// <param name="rowId">The id for this row. This should be the next available rowId</param>
+        /// <returns>True if succesful, otherwise false</returns>
         public bool AddRow(RowInsert row, int rowId)
         {
             bool result;
@@ -208,6 +209,11 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Adds the row data to this page
+        /// </summary>
+        /// <param name="rowData">The binary data to be added</param>
+        /// <returns>True if successful, otherwise false</returns>
         private bool AddRowBinaryData(byte[] rowData)
         {
             throw new NotImplementedException();
