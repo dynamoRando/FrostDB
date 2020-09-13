@@ -68,6 +68,15 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Orders the values by non-variable columns first, then by the ordinal number
+        /// </summary>
+        /// <param name="row">The row insert parameter to be sorted</param>
+        public void OrderByByteFormat()
+        {
+            _values.OrderByByteFormat();
+        }
+
+        /// <summary>
         /// Returns the data in binary format for this row. This does not include the row preamble.
         /// </summary>
         /// <returns>Row values in a binary array</returns>

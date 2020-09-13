@@ -26,22 +26,22 @@ namespace FrostDB
             {
                 if (value.Column.DataType.Contains("CHAR"))
                 {
-                    data = DatabaseBinaryConverter.ConvertForString(value.Value, value.Column.DataType);
+                    data = DatabaseBinaryConverter.StringToBinary(value.Value, value.Column.DataType);
                 }
 
                 if (value.Column.DataType.Contains("DECIMAL") || value.Column.DataType.Contains("NUMERIC"))
                 {
-                    data = DatabaseBinaryConverter.ConvertForDecimal(value.Value, value.Column.DataType);
+                    data = DatabaseBinaryConverter.DecimalToBinary(value.Value, value.Column.DataType);
                 }
 
                 if (value.Column.DataType.Contains("DATETIME"))
                 {
-                    data = DatabaseBinaryConverter.ConvertForDateTime(value.Value);
+                    data = DatabaseBinaryConverter.DateTimeToBinary(value.Value);
                 }
 
                 if (value.Column.DataType.Contains("BIT"))
                 {
-                    data = DatabaseBinaryConverter.ConvertForBoolean(value.Value);
+                    data = DatabaseBinaryConverter.BooleanToBinary(value.Value);
                 }
 
                 list.Add(data);
@@ -86,15 +86,6 @@ namespace FrostDB
         public static void OrderByByteFormat(this List<RowValue2> values)
         {
             values.OrderBy(v => v.Column.IsVariableLength).ThenBy(v => v.Column.Ordinal);
-        }
-
-        /// <summary>
-        /// Orders the values by non-variable columns first, then by the ordinal number
-        /// </summary>
-        /// <param name="row">The row insert parameter to be sorted</param>
-        public static void OrderByByteFormat(this RowInsert row)
-        {
-            row.Values.OrderByByteFormat();
         }
 
         /// <summary>
