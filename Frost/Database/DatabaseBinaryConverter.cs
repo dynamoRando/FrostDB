@@ -67,7 +67,7 @@ namespace FrostDB
         public static byte[] BooleanToBinary(string value)
         {
             bool item;
-            if (value == "TRUE" || value.Equals("1"))
+            if (value.ToUpper() == "TRUE" || value.Equals("1"))
             {
                 item = true;
             }
