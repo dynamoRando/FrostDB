@@ -72,7 +72,7 @@ namespace FrostDB
 
             int i = 1;
 
-            foreach(var column in columns)
+            foreach (var column in columns)
             {
                 column.Order = i;
                 i++;
