@@ -41,6 +41,8 @@ namespace FrostDB
         public bool IsLocal => _preamble.IsLocal;
         public Guid ParticipantId => _participantId;
         public PageAddress PageAddress => _pageAddress;
+        public byte[] BinaryData => _data;
+        public RowPreamble Preamble => _preamble;
         #endregion
 
         #region Protected Methods
@@ -90,17 +92,12 @@ namespace FrostDB
             SetSizeOfRow();
         }
 
-        /// <summary>
-        /// Returns the entire row in byte format: the preamble + the row data
-        /// </summary>
-        /// <returns>A byte array representing the entire row data</returns>
-        public byte[] GetRowInBytes()
+        public void SetRowData(RowInsert row)
         {
-            byte[] result = new byte[_preamble.Length + _data.Length];
-            Array.Copy(_preamble.BinaryData, result, _preamble.Length);
-            Array.Copy(_data, 0, result, _preamble.Length, _data.Length);
-            return result;
+            
+            row.Values.ToBinaryFormat();
         }
+
         #endregion
 
         #region Private Methods
@@ -191,7 +188,7 @@ namespace FrostDB
         #endregion
     }
 
-    class RowPreamble
+    public class RowPreamble
     {
         #region Private Fields
         private byte[] _data;

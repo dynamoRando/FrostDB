@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Buffers;
+using Antlr4.Runtime.Atn;
 
 namespace FrostDB
 {
@@ -25,7 +27,6 @@ namespace FrostDB
         public int TableId { get; set; }
         public int DbId { get; set; }
         public int TotalBytesUsed { get; set; }
-        public byte[] Data => _data;
         public int SizeOfId => DatabaseConstants.SIZE_OF_PAGE_ID;
         public int SizeOfDbId => DatabaseConstants.SIZE_OF_DB_ID;
         public int SizeOfTableId => DatabaseConstants.SIZE_OF_TABLE_ID;
@@ -67,7 +68,7 @@ namespace FrostDB
         /// Cosntructs a binary Page object with the specified binrary data array, and sets the TableId and the Database Id for the page.
         /// Use this constructor when loading the binary data from disk.
         /// </summary>
-        /// <param name="data">The binrary data</param>
+        /// <param name="data">The binary data</param>
         /// <param name="tableId">The table id that this page belongs to</param>
         /// <param name="databaseId">The db id that this page belongs to</param>
         public Page(byte[] data, int tableId, int databaseId)
@@ -98,18 +99,35 @@ namespace FrostDB
         /// <returns>True if succesful, otherwise false</returns>
         public bool AddRow(RowInsert row, int rowId)
         {
-            bool result;
+            bool result = false;
             row.OrderByByteFormat();
 
             byte[] rowIdData = BitConverter.GetBytes(rowId);
             byte[] isLocal = BitConverter.GetBytes(!row.IsReferenceInsert);
-            byte[] preamble = new byte[DatabaseConstants.SIZE_OF_ROW_PREAMBLE];
+
+            // rent 1
+            byte[] preamble = ArrayPool<byte>.Shared.Rent(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+
             Array.Copy(rowIdData, preamble, rowIdData.Length);
             Array.Copy(isLocal, 0, preamble, rowIdData.Length, isLocal.Length);
 
-            var rowBinary = new Row2(_address, preamble, row.Table.Columns);
-            rowBinary.SetRowData(row.ToBinaryFormat());
-            result = AddRowBinaryData(rowBinary.GetRowInBytes());
+            // rent 2
+            byte[] rowData = ArrayPool<byte>.Shared.Rent(row.Size);
+            rowData = row.ToBinaryFormat(rowData);
+
+            // rent 3
+            byte[] totalRowData = ArrayPool<byte>.Shared.Rent(preamble.Length + rowData.Length);
+            Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
+            Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
+
+            // to do: add totalRowData to this Page's data
+
+            // to do: reconcile the xact on disk
+            
+            // return 1, 2, 3
+            ArrayPool<byte>.Shared.Return(preamble, true);
+            ArrayPool<byte>.Shared.Return(rowData, true);
+            ArrayPool<byte>.Shared.Return(totalRowData, true);
 
             return result;
         }
@@ -160,14 +178,14 @@ namespace FrostDB
 
         private int GetTotalBytesUsed()
         {
-            var span = new Span<byte>(Data);
+            var span = new Span<byte>(_data);
             var bytes = span.Slice(GetTotalBytesUsedOffset(), SizeOfBytesUsed);
             return BitConverter.ToInt32(bytes);
         }
 
         private int GetTableId()
         {
-            var idSpan = new Span<byte>(Data);
+            var idSpan = new Span<byte>(_data);
             var idBytes = idSpan.Slice(GetTableOffset(), SizeOfTableId);
             return BitConverter.ToInt32(idBytes);
         }
@@ -180,7 +198,7 @@ namespace FrostDB
 
         private int GetDbId()
         {
-            var idSpan = new Span<byte>(Data);
+            var idSpan = new Span<byte>(_data);
             var idBytes = idSpan.Slice(GetDbOffset(), SizeOfDbId);
             return BitConverter.ToInt32(idBytes);
         }
@@ -198,7 +216,7 @@ namespace FrostDB
 
         private int GetId()
         {
-            var idSpan = new Span<byte>(Data);
+            var idSpan = new Span<byte>(_data);
             var idBytes = idSpan.Slice(0, SizeOfId);
             return BitConverter.ToInt32(idBytes);
         }
@@ -209,15 +227,6 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Adds the row data to this page
-        /// </summary>
-        /// <param name="rowData">The binary data to be added</param>
-        /// <returns>True if successful, otherwise false</returns>
-        private bool AddRowBinaryData(byte[] rowData)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Text;
 using FrostDB.Extensions;
+using System.Buffers;
 
 namespace FrostDB
 {
@@ -39,6 +40,11 @@ namespace FrostDB
         /// The participant id for this insert (who is this insert for?)
         /// </summary>
         public Guid? ParticipantId => _participantId;
+
+        /// <summary>
+        /// Returns the binary size of the row
+        /// </summary>
+        public int Size => ComputeTotalSize();
 
         /// <summary>
         /// Indicates if the insert is referential only. This value is true if the row should save only the participant id 
@@ -84,6 +90,18 @@ namespace FrostDB
         {
             return _values.ToBinaryFormat();
         }
+
+        /// <summary>
+        /// Returns the data in binary format for this row. This method takes an array reference (usually passed in from ArrayPool)
+        /// </summary>
+        /// <param name="returnedArray">A source array reference (usually from ArrayPool)</param>
+        /// <returns>Row values in a binary array</returns>
+        public byte[] ToBinaryFormat(byte[] returnedArray)
+        {
+            // add the values to returnedArray
+            throw new NotImplementedException();
+            return returnedArray;
+        }
         #endregion
 
         #region Private Methods
@@ -93,6 +111,11 @@ namespace FrostDB
         private void SortByBinaryFormat()
         {
             _values.OrderByByteFormat();
+        }
+
+        private int ComputeTotalSize()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
