@@ -89,5 +89,15 @@ namespace FrostDB
             long item = BitConverter.ToInt64(bytes);
             return DateTime.FromBinary(item);
         }
+
+        /// <summary>
+        /// Converts a Guid to binary array
+        /// </summary>
+        /// <param name="guid">The guid to convert</param>
+        /// <returns>The binary representation of the GUID</returns>
+        public static byte[] GuidToBinary(Guid guid)
+        {
+            return guid.ToByteArray();
+        }
     }
 }

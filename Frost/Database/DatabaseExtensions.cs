@@ -25,31 +25,7 @@ namespace FrostDB
 
             foreach (var value in values)
             {
-                if (value.Column.DataType.Contains("CHAR"))
-                {
-                    data = DatabaseBinaryConverter.StringToBinary(value.Value, value.Column.DataType);
-                }
-
-                if (value.Column.DataType.Contains("DECIMAL") || value.Column.DataType.Contains("NUMERIC"))
-                {
-                    data = DatabaseBinaryConverter.DecimalToBinary(value.Value, value.Column.DataType);
-                }
-
-                if (value.Column.DataType.Contains("DATETIME"))
-                {
-                    data = DatabaseBinaryConverter.DateTimeToBinary(value.Value);
-                }
-
-                if (value.Column.DataType.Contains("BIT"))
-                {
-                    data = DatabaseBinaryConverter.BooleanToBinary(value.Value);
-                }
-
-                if (value.Column.IsVariableLength)
-                {
-                    data = AddLengthPrefix(data);
-                }
-
+                data = value.GetValueBinaryArrayWithSizePrefix();
                 list.Add(data);
             }
 
@@ -151,19 +127,7 @@ namespace FrostDB
                 Array.Copy(item, 0, destinationArray, totalOffset, item.Length);
             }
         }
-        /// <summary>
-        /// Adds a size prefix to the array (an int32)
-        /// </summary>
-        /// <param name="data">The array to get the size of</param>
-        /// <returns>A new array with the size prefix added</returns>
-        private static byte[] AddLengthPrefix(byte[] data)
-        {
-            int dataLength = data.Length;
-            byte[] dataLengthBytes = BitConverter.GetBytes(dataLength);
-            Array.Resize<byte>(ref data, dataLength + DatabaseConstants.SIZE_OF_INT);
-            Array.Copy(dataLengthBytes, 0, data, DatabaseConstants.SIZE_OF_INT, dataLength);
-            return data;
-        }
+
         #endregion
     }
 }

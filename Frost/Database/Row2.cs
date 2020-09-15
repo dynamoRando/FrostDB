@@ -94,7 +94,6 @@ namespace FrostDB
 
         public void SetRowData(RowInsert row)
         {
-            
             row.Values.ToBinaryFormat();
         }
 

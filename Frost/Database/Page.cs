@@ -111,19 +111,35 @@ namespace FrostDB
             Array.Copy(rowIdData, preamble, rowIdData.Length);
             Array.Copy(isLocal, 0, preamble, rowIdData.Length, isLocal.Length);
 
-            // rent 2
-            byte[] rowData = ArrayPool<byte>.Shared.Rent(row.Size);
-            rowData = row.ToBinaryFormat(rowData);
+            byte[] rowData = null;
+            if (row.IsReferenceInsert)
+            {
+                // need to save off the GUID id
+
+                // rent 2
+                rowData = ArrayPool<byte>.Shared.Rent(DatabaseConstants.PARTICIPANT_ID_SIZE);
+                row.ToBinaryFormat(ref rowData);
+            }
+            else
+            {
+                // need to save off the size of the row + all the actual row data
+
+                // rent 2
+                rowData = ArrayPool<byte>.Shared.Rent(row.Size + DatabaseConstants.SIZE_OF_INT);
+                row.ToBinaryFormat(ref rowData);
+            }
 
             // rent 3
             byte[] totalRowData = ArrayPool<byte>.Shared.Rent(preamble.Length + rowData.Length);
+
+            // combine the preamble and the row data together
             Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
             Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
 
             // to do: add totalRowData to this Page's data
 
             // to do: reconcile the xact on disk
-            
+
             // return 1, 2, 3
             ArrayPool<byte>.Shared.Return(preamble, true);
             ArrayPool<byte>.Shared.Return(rowData, true);

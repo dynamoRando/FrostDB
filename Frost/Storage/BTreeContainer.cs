@@ -89,11 +89,13 @@ namespace FrostDB
                     {
                         var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId);
                         page.AddRow(row, GetMaxRowId() + 1);
+                        _tree.Add(page.Id, page);
                     }
-
-                    // need to convert an RowInsert object to a Row2 object (a byte array)
-
-
+                    else
+                    {
+                        // need to find the next available Page in the tree that has room for the row
+                        // then add the row to that page
+                    }
 
                     // need to go ahead and update the tree and also the data file and db directory file
                 }

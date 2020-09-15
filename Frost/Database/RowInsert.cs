@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using FrostDB.Extensions;
 using System.Buffers;
+using Newtonsoft.Json.Converters;
 
 namespace FrostDB
 {
@@ -92,15 +93,37 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Returns the data in binary format for this row. This method takes an array reference (usually passed in from ArrayPool)
+        /// Returns the data in binary format for this row. This method takes an array reference (usually passed in from ArrayPool). 
+        /// This does not include the row preamble. If local, it will prefix with the size of the row.
         /// </summary>
         /// <param name="returnedArray">A source array reference (usually from ArrayPool)</param>
         /// <returns>Row values in a binary array</returns>
-        public byte[] ToBinaryFormat(byte[] returnedArray)
+        public void ToBinaryFormat(ref byte[] array)
         {
-            // add the values to returnedArray
-            throw new NotImplementedException();
-            return returnedArray;
+            if (!IsReferenceInsert)
+            {
+                Values.OrderByByteFormat();
+                int currentOffset = 0;
+                
+                // need to save off the total row size first before adding the row data
+                byte[] rowSizeArray = BitConverter.GetBytes(Size);
+                Array.Copy(rowSizeArray, 0, array, currentOffset, rowSizeArray.Length);
+                currentOffset += rowSizeArray.Length;
+
+                // add the row data
+                foreach (var value in Values)
+                {
+                    byte[] item = value.GetValueBinaryArrayWithSizePrefix();
+                    Array.Copy(item, 0, array, currentOffset, item.Length);
+                    currentOffset += item.Length;
+                }
+            }
+            else
+            {
+                // just save off the participant id (the GUID)
+                byte[] item = DatabaseBinaryConverter.GuidToBinary(ParticipantId.Value);
+                Array.Copy(item, 0, array, 0, item.Length);
+            }
         }
         #endregion
 
@@ -115,7 +138,15 @@ namespace FrostDB
 
         private int ComputeTotalSize()
         {
-            throw new NotImplementedException();
+            Values.OrderByByteFormat();
+            int totalSize = 0;
+
+            foreach (var value in Values)
+            {
+                totalSize += value.GetValueBinaryLength();
+            }
+
+            return totalSize;
         }
         #endregion
     }
