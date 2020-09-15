@@ -139,6 +139,7 @@ namespace FrostDB
             // to do: add totalRowData to this Page's data
 
             // to do: reconcile the xact on disk
+            throw new NotImplementedException();
 
             // return 1, 2, 3
             ArrayPool<byte>.Shared.Return(preamble, true);
