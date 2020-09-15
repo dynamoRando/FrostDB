@@ -4,6 +4,8 @@ using System.Text;
 
 namespace FrostDB
 {
+    // to do: is the purpose of this class to hold byte arrays? or is this class to hold the values for read/informational purposes?
+    // if the latter, it needs to have List<RowValues2> as a property and we do not need to initalize it with arrays.
     public class Row2
     {
         /*

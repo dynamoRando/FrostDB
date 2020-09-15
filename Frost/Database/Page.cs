@@ -7,6 +7,8 @@ using Antlr4.Runtime.Atn;
 
 namespace FrostDB
 {
+    // note: should the page be the only object that really works with byte[]? in other words, should this output only objects such as Row2?
+    // and intake only RowInsert / RowUpdate / RowDelete objects?
     public class Page
     {
         /*
@@ -180,20 +182,9 @@ namespace FrostDB
 
         private int GetTotalBytesUsedOffset()
         {
-            return SizeOfId + SizeOfTableId + SizeOfDbId;
-        }
-        private int GetDbOffset()
-        {
-            //PageId, TableId, DatabaseId TotalBytesUsed
-            return SizeOfId + SizeOfTableId;
-        }
-
-        private int GetTableOffset()
-        {
-            //PageId, TableId, DatabaseId TotalBytesUsed
             return SizeOfId;
         }
-
+      
         private int GetTotalBytesUsed()
         {
             var span = new Span<byte>(_data);
@@ -201,31 +192,6 @@ namespace FrostDB
             return BitConverter.ToInt32(bytes);
         }
 
-        private int GetTableId()
-        {
-            var idSpan = new Span<byte>(_data);
-            var idBytes = idSpan.Slice(GetTableOffset(), SizeOfTableId);
-            return BitConverter.ToInt32(idBytes);
-        }
-
-        private void SetTableId()
-        {
-            var idData = BitConverter.GetBytes(TableId);
-            idData.CopyTo(_data, GetTableOffset());
-        }
-
-        private int GetDbId()
-        {
-            var idSpan = new Span<byte>(_data);
-            var idBytes = idSpan.Slice(GetDbOffset(), SizeOfDbId);
-            return BitConverter.ToInt32(idBytes);
-        }
-
-        private void SetDbId()
-        {
-            var idData = BitConverter.GetBytes(DbId);
-            idData.CopyTo(_data, GetDbOffset());
-        }
         private void SetId()
         {
             var idData = BitConverter.GetBytes(Id);
