@@ -287,8 +287,11 @@ namespace FrostDB
 
                     // return 1
                     ReturnToPool(ref rowPreamble);
-                }                
-                throw new NotImplementedException();
+                }
+
+                _totalBytesUsed = runningTotalRowSize;
+                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
+                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
             }
         }
 
