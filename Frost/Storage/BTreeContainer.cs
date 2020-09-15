@@ -185,6 +185,10 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Returns the next page id in the tree
+        /// </summary>
+        /// <returns>The next page id in the tree</returns>
         private int GetNextPageId()
         {
             lock (_treeLock)
