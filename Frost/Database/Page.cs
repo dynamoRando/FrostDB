@@ -20,15 +20,24 @@ namespace FrostDB
         private byte[] _data;
         private int _rowDataStart;
         private int _rowDataEnd;
+        private int _id;
+        private int _tableId;
+        private int _dbId;
+        private int _totalBytesUsed;
+        private int _totalRows;
         private PageAddress _address;
         private BTreeContainer _container;
+        private TableSchema2 _schema;
         #endregion
 
         #region Public Properties
-        public int Id { get; set; }
-        public int TableId { get; set; }
-        public int DbId { get; set; }
-        public int TotalBytesUsed { get; set; }
+        public int Id => _id;
+        public int TableId => _tableId;
+        public int DbId => _dbId;
+        /// <summary>
+        /// How many bytes, excluding the page preamble, are dedicated to row data
+        /// </summary>
+        public int TotalBytesUsed => _totalBytesUsed;
         public int SizeOfId => DatabaseConstants.SIZE_OF_PAGE_ID;
         public int SizeOfDbId => DatabaseConstants.SIZE_OF_DB_ID;
         public int SizeOfTableId => DatabaseConstants.SIZE_OF_TABLE_ID;
@@ -53,17 +62,17 @@ namespace FrostDB
         /// <param name="id">The id of this page</param>
         /// <param name="tableId">The table id that this page belongs to</param>
         /// <param name="dbId">The database id that this page belongs to</param>
-        public Page(int id, int tableId, int dbId)
+        public Page(int id, int tableId, int dbId, TableSchema2 schema)
         {
-            Id = id;
-            TableId = tableId;
-            DbId = dbId;
-
+            _id = id;
+            _tableId = tableId;
+            _dbId = dbId;
             _address = new PageAddress { DatabaseId = DbId, TableId = TableId, PageId = Id };
-
             _data = new byte[DatabaseConstants.PAGE_SIZE];
+            _totalRows = 0;
+            _schema = schema;
 
-            SetPreamble();
+            SetPreamble(true);
         }
 
         /// <summary>
@@ -76,13 +85,13 @@ namespace FrostDB
         public Page(byte[] data, int tableId, int databaseId)
         {
             _data = data;
-            TableId = tableId;
-            DbId = databaseId;
-            Id = GetId();
+            _tableId = tableId;
+            _dbId = databaseId;
+            _id = GetId();
 
             _address = new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = Id };
 
-            SetPreamble();
+            SetPreamble(false);
         }
 
         #endregion
@@ -111,7 +120,7 @@ namespace FrostDB
             row.OrderByByteFormat();
 
             // rent 1
-            byte[] preamble = ArrayPool<byte>.Shared.Rent(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+            byte[] preamble = RentFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
             Row2.BuildRowPreamble(ref preamble, rowId, !row.IsReferenceInsert);
 
             byte[] rowData = null;
@@ -120,7 +129,7 @@ namespace FrostDB
                 // need to save off the GUID id
 
                 // rent 2
-                rowData = ArrayPool<byte>.Shared.Rent(DatabaseConstants.PARTICIPANT_ID_SIZE);
+                rowData = RentFromPool(DatabaseConstants.PARTICIPANT_ID_SIZE);
                 row.ToBinaryFormat(ref rowData);
             }
             else
@@ -128,12 +137,12 @@ namespace FrostDB
                 // need to save off the size of the row + all the actual row data
 
                 // rent 2
-                rowData = ArrayPool<byte>.Shared.Rent(row.Size + DatabaseConstants.SIZE_OF_INT);
+                rowData = RentFromPool(row.Size + DatabaseConstants.SIZE_OF_ROW_SIZE);
                 row.ToBinaryFormat(ref rowData);
             }
 
             // rent 3
-            byte[] totalRowData = ArrayPool<byte>.Shared.Rent(preamble.Length + rowData.Length);
+            byte[] totalRowData = RentFromPool(preamble.Length + rowData.Length);
 
             // combine the preamble and the row data together
             Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
@@ -141,13 +150,15 @@ namespace FrostDB
 
             // to do: add totalRowData to this Page's data
 
+            _totalRows++;
+
             // to do: reconcile the xact on disk
             throw new NotImplementedException();
 
             // return 1, 2, 3
-            ArrayPool<byte>.Shared.Return(preamble, true);
-            ArrayPool<byte>.Shared.Return(rowData, true);
-            ArrayPool<byte>.Shared.Return(totalRowData, true);
+            ReturnToPool(ref preamble);
+            ReturnToPool(ref rowData);
+            ReturnToPool(ref totalRowData);
 
             return result;
         }
@@ -174,17 +185,17 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private void SetPreamble()
+        private void SetPreamble(bool isBrandNewPage)
         {
             SetId();
-            SetTotalBytesUsed();
+            SetTotalBytesUsed(isBrandNewPage);
         }
 
         private int GetTotalBytesUsedOffset()
         {
             return SizeOfId;
         }
-      
+
         private int GetTotalBytesUsed()
         {
             var span = new Span<byte>(_data);
@@ -205,12 +216,101 @@ namespace FrostDB
             return BitConverter.ToInt32(idBytes);
         }
 
-        private void SetTotalBytesUsed()
+        private void SetTotalBytesUsed(bool isBrandNewPage)
         {
-            // needs to count all the rows (get the premables and get size from each)
-            throw new NotImplementedException();
+            if (isBrandNewPage)
+            {
+                _totalBytesUsed = 0;
+                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
+                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
+                _totalRows = 0;
+            }
+            else
+            {
+                var dataSpan = new Span<byte>(_data);
+
+                // how far are we in _data;
+                int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
+
+                // total size of all the rows we have parsed
+                int runningTotalRowSize = 0;
+
+                // size of the current row
+                int sizeOfRow = 0;
+
+
+                /*
+                * Page Byte Array Layout:
+                * PageId TotalBytesUsed - this is the page preamble
+                * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
+                */
+
+                /*
+                * Row Byte Array Layout:
+                * RowId IsLocal {{SizeOfRow | ParticipantId} | RowData}
+                * RowId IsLocal - preamble (used in inital load of the Row)
+                * 
+                * if IsLocal == true, then need to request the rest of the byte array
+                * 
+                * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
+                * 
+                * SizeOfRow is the size of the rest of the row in bytes minus the preamble. 
+                * For a remote row, this is just the size of the ParticipantId (a guid)
+                * For a local row, this is the total size of all the data
+                * 
+                * If IsLocal == true, format is as follows -
+                * [data_col1] [data_col2] [data_colX] - fixed size columns first
+                * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
+                */
+
+                while (currentOffset < DatabaseConstants.PAGE_SIZE)
+                {
+                    // rent 1
+                    byte[] rowPreamble = RentFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+                    Array.Copy(_data, currentOffset, rowPreamble, 0, DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+
+                    // to do: what about trash leftover bytes in the _data? i.e the final few bytes of _data that are not part of a whole row?
+                    var row = new Row2(rowPreamble, _schema.Columns);
+
+                    if (row.IsLocal)
+                    {
+                        currentOffset += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
+                        sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
+                    }
+                    else
+                    {
+                        sizeOfRow = DatabaseConstants.PARTICIPANT_ID_SIZE;
+                    }
+
+                    runningTotalRowSize += sizeOfRow;
+                    currentOffset += sizeOfRow;
+
+                    // return 1
+                    ReturnToPool(ref rowPreamble);
+                }                
+                throw new NotImplementedException();
+            }
         }
 
+        /// <summary>
+        /// Returns a byte array rented from the ArrayPool. You should make sure to return the array back to the pool when finished.
+        /// </summary>
+        /// <param name="arraySize">The size of the array to rent</param>
+        /// <returns>An array of specified size from the ArrayPool</returns>
+        private static byte[] RentFromPool(int arraySize)
+        {
+            return ArrayPool<byte>.Shared.Rent(arraySize);
+        }
+
+        /// <summary>
+        /// Returns a rented byte array to the ArrayPool
+        /// </summary>
+        /// <param name="array">The array to return to the ArrayPool</param>
+        /// <param name="shouldClean">True if the ArrayPool should clear the contents of the array before returning to the pool, otherwise false.</param>
+        private static void ReturnToPool(ref byte[] array, bool shouldClean = true)
+        {
+            ArrayPool<byte>.Shared.Return(array, shouldClean);
+        }
         #endregion
 
     }

@@ -14,7 +14,7 @@ namespace FrostDB
         /// Computes the total binary size of the values
         /// </summary>
         /// <param name="values">A list of row values</param>
-        /// <returns>The total binrary size of the values</returns>
+        /// <returns>The total binary size of the values</returns>
         public static int ComputeTotalSize(this List<RowValue2> values)
         {
             values.OrderByByteFormat();

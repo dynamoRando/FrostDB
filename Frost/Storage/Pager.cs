@@ -93,9 +93,10 @@ namespace FrostDB
 
         #region Private Methods
         /// <summary>
-        /// 
+        /// Adds a container to cache from disk
         /// </summary>
-        /// <param name="address"></param>
+        /// <param name="address">The address of this btree</param>
+        /// <param name="storage">The DbStorage object where the tree will be loaded from file</param>
         private void AddContainerToCache(BTreeAddress address, DbStorage storage)
         {
             BTreeContainer container = GetContainerFromDisk(address, storage);
@@ -110,7 +111,12 @@ namespace FrostDB
         private BTreeContainer GetContainerFromDisk(BTreeAddress address, DbStorage storage)
         {
             var tree = new TreeDictionary<int, Page>();
-            return new BTreeContainer(address, tree, storage);
+            TableSchema2 schema = _process.GetDatabase2(address.DatabaseId).GetTable(address.TableId).Schema;
+
+            // need to get the bytes from disk and build a new BTreeContainer for it
+            // if the disk file is empty, just return a new btree container
+            throw new NotImplementedException();
+            return new BTreeContainer(address, tree, storage, schema);
         }
 
         /// <summary>
