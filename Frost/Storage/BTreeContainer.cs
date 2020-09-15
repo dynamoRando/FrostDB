@@ -90,11 +90,14 @@ namespace FrostDB
                     if (_tree.Count == 0)
                     {
                         var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema);
-                        page.AddRow(row, GetMaxRowId() + 1);
-                        _tree.Add(page.Id, page);
+                        if (page.AddRow(row, GetMaxRowId() + 1))
+                        {
+                            _tree.Add(page.Id, page);
+                        };
                     }
                     else
                     {
+
                         // need to find the next available Page in the tree that has room for the row
                         // then add the row to that page
                     }

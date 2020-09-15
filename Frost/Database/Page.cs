@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Buffers;
 using Antlr4.Runtime.Atn;
+using log4net.Util;
 
 namespace FrostDB
 {
@@ -15,6 +16,7 @@ namespace FrostDB
          * Page Byte Array Layout:
          * PageId TotalBytesUsed - this is the page preamble
          * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
+         * <rowDataEnd == [rowId = -1, IsLocal = true]>
          */
         #region Private Fields
         private byte[] _data;
@@ -73,6 +75,7 @@ namespace FrostDB
             _schema = schema;
 
             SetPreamble(true);
+            InitalizeDataWithEndOfRowData();
         }
 
         /// <summary>
@@ -97,6 +100,16 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Determines if the next available row offset + the specified row length is less than the total page size
+        /// </summary>
+        /// <param name="rowLength">The length of the row you wish to insert</param>
+        /// <returns>True if there is room left on the page, otherwise false</returns>
+        public bool CanInsertRow(int lengthOfRow)
+        {
+            return CanInsertNewRow(lengthOfRow);
+        }
+
         public void SetContainer(BTreeContainer container)
         {
             _container = container;
@@ -149,8 +162,18 @@ namespace FrostDB
             Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
 
             // to do: add totalRowData to this Page's data
-
-            _totalRows++;
+            if (CanInsertNewRow(totalRowData.Length))
+            {
+                Array.Copy(totalRowData, 0, _data, GetNextAvailableRowOffset(), totalRowData.Length);
+                _totalBytesUsed += totalRowData.Length;
+                _totalRows++;
+                result = true;
+            }
+            else
+            {
+                // we need to add this row to the next page because we are out of room on this page
+                // throw exception here or... ?
+            }
 
             // to do: reconcile the xact on disk
             throw new NotImplementedException();
@@ -194,13 +217,6 @@ namespace FrostDB
         private int GetTotalBytesUsedOffset()
         {
             return SizeOfId;
-        }
-
-        private int GetTotalBytesUsed()
-        {
-            var span = new Span<byte>(_data);
-            var bytes = span.Slice(GetTotalBytesUsedOffset(), SizeOfBytesUsed);
-            return BitConverter.ToInt32(bytes);
         }
 
         private void SetId()
@@ -261,16 +277,24 @@ namespace FrostDB
                 * If IsLocal == true, format is as follows -
                 * [data_col1] [data_col2] [data_colX] - fixed size columns first
                 * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
+                * [ -1 preamble] - signals the end of row data (a preamble whose RowId == -1 and IsLocal == true)
                 */
 
+                // iterate over the page binary data until we find the end of data row identifier
                 while (currentOffset < DatabaseConstants.PAGE_SIZE)
                 {
                     // rent 1
                     byte[] rowPreamble = RentFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
-                    Array.Copy(_data, currentOffset, rowPreamble, 0, DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
 
-                    // to do: what about trash leftover bytes in the _data? i.e the final few bytes of _data that are not part of a whole row?
+                    // read the row preamble
+                    Array.Copy(_data, currentOffset, rowPreamble, 0, DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
                     var row = new Row2(rowPreamble, _schema.Columns);
+
+                    // check for end of data row identifier
+                    if (row.IsLocal && row.RowId == DatabaseConstants.END_OF_ROW_DATA_ID)
+                    {
+                        break;
+                    }
 
                     if (row.IsLocal)
                     {
@@ -282,6 +306,9 @@ namespace FrostDB
                         sizeOfRow = DatabaseConstants.PARTICIPANT_ID_SIZE;
                     }
 
+                    // add back the size of the row preamble in addition to the row data so that we know the total bytes used in the page
+                    sizeOfRow += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
+
                     runningTotalRowSize += sizeOfRow;
                     currentOffset += sizeOfRow;
 
@@ -290,6 +317,8 @@ namespace FrostDB
                 }
 
                 _totalBytesUsed = runningTotalRowSize;
+
+                // copy _totalBytesUsed to it's location in _data [in the Page preamble]
                 byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
                 Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
             }
@@ -313,6 +342,46 @@ namespace FrostDB
         private static void ReturnToPool(ref byte[] array, bool shouldClean = true)
         {
             ArrayPool<byte>.Shared.Return(array, shouldClean);
+        }
+
+        private void InitalizeDataWithEndOfRowData()
+        {
+            byte[] endOfRowId = BitConverter.GetBytes(DatabaseConstants.END_OF_ROW_DATA_ID);
+            byte[] isLocalId = BitConverter.GetBytes(true);
+            int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
+
+            // rent 1
+            byte[] endofDataPreamble = RentFromPool(endOfRowId.Length + isLocalId.Length);
+            Array.Copy(endOfRowId, endofDataPreamble, endOfRowId.Length);
+            Array.Copy(isLocalId, 0, endofDataPreamble, endOfRowId.Length, isLocalId.Length);
+
+            while (currentOffset < DatabaseConstants.PAGE_SIZE)
+            {
+                Array.Copy(endofDataPreamble, 0, _data, currentOffset, endofDataPreamble.Length);
+                currentOffset += endofDataPreamble.Length;
+            }
+
+            // return 1
+            ReturnToPool(ref endofDataPreamble);
+        }
+
+        /// <summary>
+        /// Computes the next available row location to insert based off of _totalBytesUsed + the size of the page preamble
+        /// </summary>
+        /// <returns>The index where a new row can be added</returns>
+        private int GetNextAvailableRowOffset()
+        {
+            return _totalBytesUsed + DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
+        }
+
+        /// <summary>
+        /// Determines if the next available row offset + the specified row length is less than the total page size
+        /// </summary>
+        /// <param name="rowLength">The length of the row you wish to insert</param>
+        /// <returns>True if there is room left on the page, otherwise false</returns>
+        private bool CanInsertNewRow(int rowLength)
+        {
+            return (rowLength + GetNextAvailableRowOffset() < DatabaseConstants.PAGE_SIZE);
         }
         #endregion
 

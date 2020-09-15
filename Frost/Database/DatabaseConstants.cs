@@ -9,6 +9,7 @@ namespace FrostDB
         public const int SIZE_OF_INT = 4;
         public const int SIZE_OF_BOOL = 1;
         public const int SIZE_OF_GUID = 16;
+        public const int END_OF_ROW_DATA_ID = -1;
 
         /// <summary>
         /// Size of Page is 8k

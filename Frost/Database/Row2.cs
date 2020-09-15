@@ -24,6 +24,7 @@ namespace FrostDB
          * If IsLocal == true, format is as follows -
          * [data_col1] [data_col2] [data_colX] - fixed size columns first
          * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
+         * [ -1 preamble] - signals the end of row data (a preamble whose RowId == -1 and IsLocal == true)
          */
 
         #region Private Fields
