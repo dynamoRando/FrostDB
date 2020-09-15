@@ -11,6 +11,24 @@ namespace FrostDB
     {
         #region Public Methods
         /// <summary>
+        /// Computes the total binary size of the values
+        /// </summary>
+        /// <param name="values">A list of row values</param>
+        /// <returns>The total binrary size of the values</returns>
+        public static int ComputeTotalSize(this List<RowValue2> values)
+        {
+            values.OrderByByteFormat();
+            int totalSize = 0;
+
+            foreach (var value in values)
+            {
+                totalSize += value.GetValueBinaryLength();
+            }
+
+            return totalSize;
+        }
+
+        /// <summary>
         /// Returns the data in binary format and order for the list of values. This will not include a row preamble.
         /// Includes the size of variable columns as a prefix in between each column.
         /// </summary>

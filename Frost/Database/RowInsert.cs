@@ -94,35 +94,20 @@ namespace FrostDB
 
         /// <summary>
         /// Returns the data in binary format for this row. This method takes an array reference (usually passed in from ArrayPool). 
+        /// This array must be sized correctly (use Size attribute + size of INT to account for row size prefix).
         /// This does not include the row preamble. If local, it will prefix with the size of the row.
         /// </summary>
-        /// <param name="returnedArray">A source array reference (usually from ArrayPool)</param>
+        /// <param name="returnedArray">A source array reference (usually from ArrayPool). This must be sized correctly (use Size attribute).</param>
         /// <returns>Row values in a binary array</returns>
         public void ToBinaryFormat(ref byte[] array)
         {
             if (!IsReferenceInsert)
             {
-                Values.OrderByByteFormat();
-                int currentOffset = 0;
-                
-                // need to save off the total row size first before adding the row data
-                byte[] rowSizeArray = BitConverter.GetBytes(Size);
-                Array.Copy(rowSizeArray, 0, array, currentOffset, rowSizeArray.Length);
-                currentOffset += rowSizeArray.Length;
-
-                // add the row data
-                foreach (var value in Values)
-                {
-                    byte[] item = value.GetValueBinaryArrayWithSizePrefix();
-                    Array.Copy(item, 0, array, currentOffset, item.Length);
-                    currentOffset += item.Length;
-                }
+                Row2.ValuesToBinaryFormat(ref array, Values);
             }
             else
             {
-                // just save off the participant id (the GUID)
-                byte[] item = DatabaseBinaryConverter.GuidToBinary(ParticipantId.Value);
-                Array.Copy(item, 0, array, 0, item.Length);
+                Row2.ParticpantToBinaryFormat(ref array, ParticipantId.Value);
             }
         }
         #endregion
@@ -139,14 +124,7 @@ namespace FrostDB
         private int ComputeTotalSize()
         {
             Values.OrderByByteFormat();
-            int totalSize = 0;
-
-            foreach (var value in Values)
-            {
-                totalSize += value.GetValueBinaryLength();
-            }
-
-            return totalSize;
+            return Values.ComputeTotalSize();
         }
         #endregion
     }

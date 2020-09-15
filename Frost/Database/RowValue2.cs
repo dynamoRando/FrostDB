@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -96,9 +97,15 @@ namespace FrostDB
         private static void AddLengthPrefix(ref byte[] data)
         {
             int dataLength = data.Length;
+            byte[] originalData = ArrayPool<byte>.Shared.Rent(dataLength);
+            data.CopyTo(originalData, 0);
+
             byte[] dataLengthBytes = BitConverter.GetBytes(dataLength);
             Array.Resize<byte>(ref data, dataLength + DatabaseConstants.SIZE_OF_INT);
-            Array.Copy(dataLengthBytes, 0, data, DatabaseConstants.SIZE_OF_INT, dataLength);
+            Array.Copy(dataLengthBytes, 0, data, 0, dataLengthBytes.Length);
+            Array.Copy(originalData, 0, data, DatabaseConstants.SIZE_OF_INT, originalData.Length);
+
+            ArrayPool<byte>.Shared.Return(originalData, true);
         }
         #endregion
 

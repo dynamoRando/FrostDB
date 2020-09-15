@@ -97,6 +97,57 @@ namespace FrostDB
             row.Values.ToBinaryFormat();
         }
 
+        /// <summary>
+        /// Copies the rowId and isLocalRow values to the supplied array. This essentially builds a row pre-amble.
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="rowId">The row id</param>
+        /// <param name="isLocalRow">True if this is a local row, otherwise false.  </param>
+        public static void BuildRowPreamble(ref byte[] array, int rowId, bool isLocalRow)
+        {
+            byte[] rowIdData = BitConverter.GetBytes(rowId);
+            byte[] isLocal = BitConverter.GetBytes(isLocalRow);
+
+            Array.Copy(rowIdData, array, rowIdData.Length);
+            Array.Copy(isLocal, 0, array, rowIdData.Length, isLocal.Length);
+        }
+
+        /// <summary>
+        /// Saves the list of values provided to the supplied array + the total size of the values. The array must be sized correctly (use ComputeTotalSize() of List of RowValue2 + size of an INT).
+        /// This will prefix the array with the total size of the values. This essentially builds a row body (not the pre-amble).
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="values">A list of RowValues to to save to the array</param>
+        public static void ValuesToBinaryFormat(ref byte[] array, List<RowValue2> values)
+        {
+            values.OrderByByteFormat();
+            int currentOffset = 0;
+
+            // prefix the array with the total size of all the values
+            byte[] rowSizeArray = BitConverter.GetBytes(values.ComputeTotalSize());
+            Array.Copy(rowSizeArray, 0, array, currentOffset, rowSizeArray.Length);
+            currentOffset += rowSizeArray.Length;
+
+            // add the row data
+            foreach (var value in values)
+            {
+                byte[] item = value.GetValueBinaryArrayWithSizePrefix();
+                Array.Copy(item, 0, array, currentOffset, item.Length);
+                currentOffset += item.Length;
+            }
+        }
+
+        /// <summary>
+        /// Saves the participantId to the supplied array.
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="participantId">The participant Id</param>
+        public static void ParticpantToBinaryFormat(ref byte[] array, Guid? participantId)
+        {
+            // just save off the participant id (the GUID)
+            byte[] item = DatabaseBinaryConverter.GuidToBinary(participantId.Value);
+            Array.Copy(item, 0, array, 0, item.Length);
+        }
         #endregion
 
         #region Private Methods

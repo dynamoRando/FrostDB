@@ -100,16 +100,17 @@ namespace FrostDB
         public bool AddRow(RowInsert row, int rowId)
         {
             bool result = false;
-            row.OrderByByteFormat();
 
-            byte[] rowIdData = BitConverter.GetBytes(rowId);
-            byte[] isLocal = BitConverter.GetBytes(!row.IsReferenceInsert);
+            if (row == null)
+            {
+                throw new ArgumentNullException(nameof(row));
+            }
+
+            row.OrderByByteFormat();
 
             // rent 1
             byte[] preamble = ArrayPool<byte>.Shared.Rent(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
-
-            Array.Copy(rowIdData, preamble, rowIdData.Length);
-            Array.Copy(isLocal, 0, preamble, rowIdData.Length, isLocal.Length);
+            Row2.BuildRowPreamble(ref preamble, rowId, !row.IsReferenceInsert);
 
             byte[] rowData = null;
             if (row.IsReferenceInsert)
