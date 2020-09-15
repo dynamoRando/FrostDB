@@ -100,6 +100,30 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public int GetMaxRowId()
+        {
+            var dataSpan = new Span<byte>(_data);
+            int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
+            int maxRowId = 0;
+
+            int rowId;
+            bool isLocal;
+
+            RowPreamble.Parse(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_PREAMBLE), out rowId, out isLocal);
+
+            while (currentOffset < DatabaseConstants.PAGE_SIZE)
+            {
+
+                if (rowId > maxRowId)
+                {
+                    maxRowId = rowId;
+                }
+                // parse the next rows, etc.
+            }
+
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Determines if the next available row offset + the specified row length is less than the total page size
         /// </summary>
@@ -283,20 +307,18 @@ namespace FrostDB
                 // iterate over the page binary data until we find the end of data row identifier
                 while (currentOffset < DatabaseConstants.PAGE_SIZE)
                 {
-                    // rent 1
-                    byte[] rowPreamble = RentFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+                    int rowId;
+                    bool isLocal;
 
-                    // read the row preamble
-                    Array.Copy(_data, currentOffset, rowPreamble, 0, DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
-                    var row = new Row2(rowPreamble, _schema.Columns);
+                    RowPreamble.Parse(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_PREAMBLE), out rowId, out isLocal);
 
                     // check for end of data row identifier
-                    if (row.IsLocal && row.RowId == DatabaseConstants.END_OF_ROW_DATA_ID)
+                    if (isLocal && rowId == DatabaseConstants.END_OF_ROW_DATA_ID)
                     {
                         break;
                     }
 
-                    if (row.IsLocal)
+                    if (isLocal)
                     {
                         currentOffset += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
                         sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
@@ -311,9 +333,6 @@ namespace FrostDB
 
                     runningTotalRowSize += sizeOfRow;
                     currentOffset += sizeOfRow;
-
-                    // return 1
-                    ReturnToPool(ref rowPreamble);
                 }
 
                 _totalBytesUsed = runningTotalRowSize;

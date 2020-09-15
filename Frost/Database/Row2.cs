@@ -72,6 +72,12 @@ namespace FrostDB
             _columns = columns;
         }
 
+        public Row2(Span<byte> preamble, List<ColumnSchema> columns)
+        {
+            _preamble = new RowPreamble(preamble);
+            _columns = columns;
+        }
+
         /// <summary>
         /// Constructs a Row2 object along with setting it's page address. 
         /// </summary>
@@ -98,6 +104,17 @@ namespace FrostDB
         public void SetRowData(RowInsert row)
         {
             row.Values.ToBinaryFormat();
+        }
+
+        /// <summary>
+        /// Takes the supplied binary array (representing a row body) and returns the corresponding list of values
+        /// </summary>
+        /// <param name="array">The binary array to parse values from</param>
+        /// <param name="isLocal">True if the row is local, otherwise false</param>
+        /// <param name="values">A list of values parsed from the array</param>
+        public static void BinaryToValues(Span<byte> array, bool isLocal, out List<RowValue2> values)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -262,9 +279,20 @@ namespace FrostDB
             _data = data;
             ParsePreamble();
         }
+
+        public RowPreamble(Span<byte> data)
+        {
+            _data = data.ToArray();
+            ParsePreamble();
+        }
         #endregion
 
         #region Public Methods
+        public static void Parse(Span<byte> data, out int rowId, out bool isLocal)
+        {
+            rowId = BitConverter.ToInt32(data);
+            isLocal = BitConverter.ToBoolean(data.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL));
+        }
         #endregion
 
         #region Private Methods

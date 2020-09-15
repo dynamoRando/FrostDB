@@ -45,8 +45,18 @@ namespace FrostDB
         /// <returns>The max row id</returns>
         public int GetMaxRowId()
         {
-            // get the max page from the tree, and then iterate thru the page backwards to get the max row id
-            throw new NotImplementedException();
+            if (_tree.Count == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                int maxPageId = _tree.FindMax().Key;
+                
+                Page maxPage;
+                _tree.Find(ref maxPageId, out maxPage);
+                return maxPage.GetMaxRowId();
+            }
         }
 
         /// <summary>
