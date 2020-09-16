@@ -340,12 +340,12 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Iterates over the page's _data and returns a list of corresponding Row2 objects
+        /// Iterates over the page's _data and returns a list of objects representing the page's _data as rows
         /// </summary>
-        /// <param name="rows"></param>
-        private List<Row2> IterateOverData()
+        /// <returns>A list of objects representing the rows of the page</returns>
+        private List<RowStruct> IterateOverData()
         {
-            var rows = new List<Row2>();
+            var rows = new List<RowStruct>();
             var dataSpan = new Span<byte>(_data);
             int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
 
@@ -376,14 +376,16 @@ namespace FrostDB
                     int rowSize; // this isn't really needed, but it's a required param of the method below
                     Row2.LocalRowBodyFromBinary(dataSpan.Slice(currentOffset, sizeOfRow), out rowSize, ref values, _schema.Columns);
 
-                    rows.Add(new Row2(rowId, isLocal, _schema.Columns, _process.Id.Value, values, sizeOfRow));
+                    //rows.Add(new Row2(rowId, isLocal, _schema.Columns, _process.Id.Value, values, sizeOfRow));
+                    rows.Add(new RowStruct { IsLocal = isLocal, RowId = rowId, ParticipantId = Guid.Empty, RowSize = sizeOfRow, Values = values });
                     currentOffset += sizeOfRow;
                 }
                 else
                 {
                     sizeOfRow = DatabaseConstants.PARTICIPANT_ID_SIZE;
                     Guid particpantId = DatabaseBinaryConverter.BinaryToGuid(dataSpan.Slice(currentOffset, sizeOfRow));
-                    rows.Add(new Row2(rowId, isLocal, particpantId, sizeOfRow, _schema.Columns));
+                    //rows.Add(new Row2(rowId, isLocal, particpantId, sizeOfRow, _schema.Columns));
+                    rows.Add(new RowStruct { IsLocal = isLocal, ParticipantId = particpantId, RowSize = sizeOfRow, RowId = rowId, Values = null });
                     currentOffset += sizeOfRow;
                 }
             }
