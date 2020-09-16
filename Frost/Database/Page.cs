@@ -21,6 +21,7 @@ namespace FrostDB
          * <rowDataEnd == [rowId = -1, IsLocal = true]>
          */
         #region Private Fields
+        // consider locks around _data
         private byte[] _data;
         private int _rowDataStart;
         private int _rowDataEnd;
@@ -28,6 +29,7 @@ namespace FrostDB
         private int _tableId;
         private int _dbId;
         private int _totalBytesUsed;
+        // consider wrapping _totalRows around a lock, and having get/set private functions. Consider saving the value back to _data every time it is modified.
         private int _totalRows;
         private PageAddress _address;
         private BTreeContainer _container;
