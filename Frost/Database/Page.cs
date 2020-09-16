@@ -340,7 +340,7 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Iterates over the page's _data and populates the supplied list with Row2 objects
+        /// Iterates over the page's _data and returns a list of corresponding Row2 objects
         /// </summary>
         /// <param name="rows"></param>
         private List<Row2> IterateOverData()
