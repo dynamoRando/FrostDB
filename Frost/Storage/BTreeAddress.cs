@@ -7,7 +7,7 @@ namespace FrostDB
     /// <summary>
     /// Used to identify which table a B-Tree belongs to. Contains DatabaseId and TableId
     /// </summary>
-    public class BTreeAddress : IEquatable<BTreeAddress>
+    public struct BTreeAddress : IEquatable<BTreeAddress>
     {
         public int DatabaseId { get; set;}
         public int TableId { get; set; }
@@ -37,7 +37,7 @@ namespace FrostDB
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as BTreeAddress);
+            return Equals(obj, this);
         }
 
         public static bool operator ==(BTreeAddress lhs, BTreeAddress rhs)

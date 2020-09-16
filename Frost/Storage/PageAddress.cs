@@ -7,7 +7,7 @@ namespace FrostDB
     /// <summary>
     /// Represents a specific Page Address: DatabaseId, TableId, PageId
     /// </summary>
-    public class PageAddress : IEquatable<PageAddress>
+    public struct PageAddress : IEquatable<PageAddress>
     {
         public int DatabaseId { get; set; }
         public int TableId { get; set; }
@@ -39,7 +39,7 @@ namespace FrostDB
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as PageAddress);
+            return Equals(obj, this);
         }
 
         public static bool operator ==(PageAddress lhs, PageAddress rhs)

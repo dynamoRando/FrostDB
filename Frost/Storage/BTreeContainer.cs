@@ -19,6 +19,7 @@ namespace FrostDB
         BTreeAddress _address;
         DbStorage _storage;
         TableSchema2 _schema;
+        Process _process;
         #endregion
 
         #region Public Properties
@@ -28,12 +29,13 @@ namespace FrostDB
 
         #region Constructors
         public BTreeContainer() { }
-        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema)
+        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema, Process process)
         {
             _tree = tree;
             _address = address;
             _storage = storage;
             _schema = schema;
+            _process = process;
         }
         #endregion
 
@@ -99,7 +101,7 @@ namespace FrostDB
 
                     if (_tree.Count == 0)
                     {
-                        var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema);
+                        var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema, _process);
                         if (page.AddRow(row, GetMaxRowId() + 1))
                         {
                             _tree.Add(page.Id, page);

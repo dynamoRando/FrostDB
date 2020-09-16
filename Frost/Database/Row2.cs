@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Text;
 
 namespace FrostDB
@@ -17,7 +18,7 @@ namespace FrostDB
          * 
          * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
          * 
-         * SizeOfRow is the size of the rest of the row in bytes minus the preamble. 
+         * SizeOfRow is the size of the rest of the row in bytes minus the preamble.  It includes the int32 byte size value itself.
          * For a remote row, this is just the size of the ParticipantId (a guid)
          * For a local row, this is the total size of all the data
          * 
@@ -34,6 +35,7 @@ namespace FrostDB
         private List<ColumnSchema> _columns;
         private int _rowSize;
         private PageAddress _pageAddress;
+        private List<RowValue2> _values;
         #endregion
 
         #region Public Properties
@@ -56,9 +58,38 @@ namespace FrostDB
 
         #region Constructors
         /// <summary>
-        /// Creates an empty Row2 object with no values set
+        /// Constructs a full blown Row2 object from supplied values (does not try to parse from binary array)
         /// </summary>
-        public Row2() { }
+        /// <param name="rowId">The row id</param>
+        /// <param name="isLocal">If the row is local or remote</param>
+        /// <param name="columns">The column schema</param>
+        /// <param name="participantId">The participant id</param>
+        /// <param name="values">A list of row values</param>
+        /// <param name="rowSize">The byte size of the data (does not include the preamble)</param>
+        public Row2(int rowId, bool isLocal, List<ColumnSchema> columns, Guid participantId, List<RowValue2> values, int rowSize)
+        {
+            _preamble = new RowPreamble(rowId, isLocal);
+            _columns = columns;
+            _participantId = participantId;
+            _values = values;
+            _rowSize = rowSize;
+        }
+
+        /// <summary>
+        /// Constructs a full blown Row2 object from supplied items withou the values (usually used for a reference row i.e. not local)
+        /// </summary>
+        /// <param name="rowId">The row id</param>
+        /// <param name="isLocal">If the row is local or remote</param>
+        /// <param name="columns">The column schema</param>
+        /// <param name="participantId">The participant id</param>
+        /// <param name="rowSize">The byte size of the data (does not include the preamble)</param>
+        public Row2(int rowId, bool isLocal, Guid participantId, int rowSize, List<ColumnSchema> columns)
+        {
+            _preamble = new RowPreamble(rowId, isLocal);
+            _columns = columns;
+            _participantId = participantId;
+            _rowSize = rowSize;
+        }
 
         /// <summary>
         /// Constructs a Row2 object based on the binary preamble and the specified column schema. The column schema will be used to 
@@ -107,13 +138,66 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Takes the supplied binary array (representing a row body) and returns the corresponding list of values
+        /// Converts a binary array to the body of a local row. The array should include the row size prefix.
         /// </summary>
-        /// <param name="array">The binary array to parse values from</param>
-        /// <param name="isLocal">True if the row is local, otherwise false</param>
-        /// <param name="values">A list of values parsed from the array</param>
-        public static void BinaryToValues(Span<byte> array, bool isLocal, out List<RowValue2> values)
+        /// <param name="span">The bytes to parse. Include the row size prefix in this array.</param>
+        /// <param name="sizeOfRow">The total size of the row (parsed from the bytes)</param>
+        /// <param name="values">A list of values parse from the array</param>
+        /// <param name="schema">The schema of the table</param>
+        public static void LocalRowBodyFromBinary(Span<byte> span, out int sizeOfRow, ref List<RowValue2> values, List<ColumnSchema> schema)
         {
+            int currentOffset = 0;
+            RowValue2 item = null;
+
+            if (values == null)
+            {
+                values = new List<RowValue2>();
+            }
+
+            schema.OrderByByteFormat();
+
+            sizeOfRow = BitConverter.ToInt32(span.Slice(0, DatabaseConstants.SIZE_OF_ROW_SIZE));
+
+            currentOffset += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+            foreach (var column in schema)
+            {
+                if (!column.IsVariableLength)
+                {
+                    item = column.Parse(span.Slice(currentOffset, column.Size));
+                    values.Add(item);
+                    currentOffset += column.Size;
+                }
+                else
+                {
+                    int sizeOfValue = DatabaseBinaryConverter.BinaryToInt(span.Slice(currentOffset, DatabaseConstants.SIZE_OF_INT));
+                    currentOffset += DatabaseConstants.SIZE_OF_INT;
+                    item = column.Parse(span.Slice(currentOffset, sizeOfValue));
+                    currentOffset += sizeOfValue;
+                }
+                
+            }
+
+
+            /*
+             * Row Byte Array Layout:
+             * RowId IsLocal {{SizeOfRow | ParticipantId} | RowData}
+             * RowId IsLocal - preamble (used in inital load of the Row)
+             * 
+             * if IsLocal == true, then need to request the rest of the byte array
+             * 
+             * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
+             * 
+             * SizeOfRow is the size of the rest of the row in bytes minus the preamble. 
+             * For a remote row, this is just the size of the ParticipantId (a guid)
+             * For a local row, this is the total size of all the data
+             * 
+             * If IsLocal == true, format is as follows -
+             * [data_col1] [data_col2] [data_colX] - fixed size columns first
+             * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
+             * [ -1 preamble] - signals the end of row data (a preamble whose RowId == -1 and IsLocal == true)
+             */
+
             throw new NotImplementedException();
         }
 
@@ -162,7 +246,7 @@ namespace FrostDB
         /// </summary>
         /// <param name="array">The array to save the values to</param>
         /// <param name="participantId">The participant Id</param>
-        public static void ParticpantToBinaryFormat(ref byte[] array, Guid? participantId)
+        public static void ParticipantToBinaryFormat(ref byte[] array, Guid? participantId)
         {
             // just save off the participant id (the GUID)
             byte[] item = DatabaseBinaryConverter.GuidToBinary(participantId.Value);
@@ -182,10 +266,10 @@ namespace FrostDB
                 return SizeOfParticipantId;
             }
         }
-      
+
         private void ParseLocalRow()
         {
-           // parse data based on column schema
+            // parse data based on column schema
         }
 
         private void ParseRemoteRow()
@@ -222,7 +306,7 @@ namespace FrostDB
             return 0;
         }
 
-        private Guid GetParticipantId() 
+        private Guid GetParticipantId()
         {
             var span = new ReadOnlySpan<byte>(_data);
             var bytes = span.Slice(GetParticipantOffset(), SizeOfParticipantId);
@@ -262,11 +346,13 @@ namespace FrostDB
     {
         #region Private Fields
         private byte[] _data;
+        private int _rowId;
+        private bool _isLocal;
         #endregion
 
         #region Public Properties
-        public int RowId => GetRowId();
-        public bool IsLocal => GetIsLocal();
+        public int RowId => _rowId;
+        public bool IsLocal => _isLocal;
         public int SizeOfIsLocal => DatabaseConstants.SIZE_OF_IS_LOCAL;
         public int SizeOfRowId => DatabaseConstants.SIZE_OF_ROW_ID;
         public byte[] BinaryData => _data;
@@ -285,6 +371,12 @@ namespace FrostDB
             _data = data.ToArray();
             ParsePreamble();
         }
+
+        public RowPreamble(int rowId, bool isLocal)
+        {
+            _rowId = rowId;
+            _isLocal = isLocal;
+        }
         #endregion
 
         #region Public Methods
@@ -296,14 +388,14 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private int GetRowId()
+        private void GetRowId()
         {
-            return BitConverter.ToInt32(_data, 0);
+            _rowId = BitConverter.ToInt32(_data, 0);
         }
 
-        private bool GetIsLocal()
+        private void GetIsLocal()
         {
-            return BitConverter.ToBoolean(new ReadOnlySpan<byte>(_data).Slice(GetIsLocalOffset(), SizeOfIsLocal));
+            _isLocal = BitConverter.ToBoolean(new ReadOnlySpan<byte>(_data).Slice(GetIsLocalOffset(), SizeOfIsLocal));
         }
 
         private void ParsePreamble()

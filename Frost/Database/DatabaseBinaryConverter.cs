@@ -80,6 +80,37 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Converts a binary array to int
+        /// </summary>
+        /// <param name="span">The binary array</param>
+        /// <returns>The int</returns>
+        public static int BinaryToInt(ReadOnlySpan<byte> span)
+        {
+            return BitConverter.ToInt32(span);
+        }
+
+        /// <summary>
+        /// Converts bytes to a boolean value
+        /// </summary>
+        /// <param name="span">The bytes</param>
+        /// <returns>The boolean value</returns>
+        public static bool BinaryToBoolean(ReadOnlySpan<byte> span)
+        {
+            return BitConverter.ToBoolean(span);
+        }
+
+        /// <summary>
+        /// Converts an array of bytes to a DateTime value
+        /// </summary>
+        /// <param name="bytes">The bytes to be parsed</param>
+        /// <returns>A DateTime object</returns>
+        public static DateTime BinaryToDateTime(ReadOnlySpan<byte> bytes)
+        {
+            long item = BitConverter.ToInt64(bytes);
+            return DateTime.FromBinary(item);
+        }
+
+        /// <summary>
         /// Converts an array of bytes to a DateTime value
         /// </summary>
         /// <param name="bytes">The bytes to be parsed</param>
@@ -98,6 +129,16 @@ namespace FrostDB
         public static byte[] GuidToBinary(Guid guid)
         {
             return guid.ToByteArray();
+        }
+
+        /// <summary>
+        /// Converts a byte array to a Guid
+        /// </summary>
+        /// <param name="span">The Guid binary array</param>
+        /// <returns>A Guid</returns>
+        public static Guid BinaryToGuid(Span<byte> span)
+        {
+            return new Guid(span);
         }
     }
 }

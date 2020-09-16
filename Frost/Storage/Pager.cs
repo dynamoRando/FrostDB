@@ -116,7 +116,7 @@ namespace FrostDB
             // need to get the bytes from disk and build a new BTreeContainer for it
             // if the disk file is empty, just return a new btree container
             throw new NotImplementedException();
-            return new BTreeContainer(address, tree, storage, schema);
+            return new BTreeContainer(address, tree, storage, schema, _process);
         }
 
         /// <summary>

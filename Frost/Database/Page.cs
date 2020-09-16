@@ -5,6 +5,8 @@ using System.Text;
 using System.Buffers;
 using Antlr4.Runtime.Atn;
 using log4net.Util;
+using System.Data;
+using System.Linq;
 
 namespace FrostDB
 {
@@ -30,6 +32,7 @@ namespace FrostDB
         private PageAddress _address;
         private BTreeContainer _container;
         private TableSchema2 _schema;
+        private Process _process;
         #endregion
 
         #region Public Properties
@@ -64,7 +67,7 @@ namespace FrostDB
         /// <param name="id">The id of this page</param>
         /// <param name="tableId">The table id that this page belongs to</param>
         /// <param name="dbId">The database id that this page belongs to</param>
-        public Page(int id, int tableId, int dbId, TableSchema2 schema)
+        public Page(int id, int tableId, int dbId, TableSchema2 schema, Process process)
         {
             _id = id;
             _tableId = tableId;
@@ -73,6 +76,7 @@ namespace FrostDB
             _data = new byte[DatabaseConstants.PAGE_SIZE];
             _totalRows = 0;
             _schema = schema;
+            _process = process;
 
             SetPreamble(true);
             InitalizeDataWithEndOfRowData();
@@ -267,75 +271,7 @@ namespace FrostDB
             }
             else
             {
-                var dataSpan = new Span<byte>(_data);
-
-                // how far are we in _data;
-                int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
-
-                // total size of all the rows we have parsed
-                int runningTotalRowSize = 0;
-
-                // size of the current row
-                int sizeOfRow = 0;
-
-
-                /*
-                * Page Byte Array Layout:
-                * PageId TotalBytesUsed - this is the page preamble
-                * <rowDataStart> [row] [row] [row] [row] <rowDataEnd>
-                */
-
-                /*
-                * Row Byte Array Layout:
-                * RowId IsLocal {{SizeOfRow | ParticipantId} | RowData}
-                * RowId IsLocal - preamble (used in inital load of the Row)
-                * 
-                * if IsLocal == true, then need to request the rest of the byte array
-                * 
-                * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
-                * 
-                * SizeOfRow is the size of the rest of the row in bytes minus the preamble. 
-                * For a remote row, this is just the size of the ParticipantId (a guid)
-                * For a local row, this is the total size of all the data
-                * 
-                * If IsLocal == true, format is as follows -
-                * [data_col1] [data_col2] [data_colX] - fixed size columns first
-                * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
-                * [ -1 preamble] - signals the end of row data (a preamble whose RowId == -1 and IsLocal == true)
-                */
-
-                // iterate over the page binary data until we find the end of data row identifier
-                while (currentOffset < DatabaseConstants.PAGE_SIZE)
-                {
-                    int rowId;
-                    bool isLocal;
-
-                    RowPreamble.Parse(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_PREAMBLE), out rowId, out isLocal);
-
-                    // check for end of data row identifier
-                    if (isLocal && rowId == DatabaseConstants.END_OF_ROW_DATA_ID)
-                    {
-                        break;
-                    }
-
-                    if (isLocal)
-                    {
-                        currentOffset += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
-                        sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
-                    }
-                    else
-                    {
-                        sizeOfRow = DatabaseConstants.PARTICIPANT_ID_SIZE;
-                    }
-
-                    // add back the size of the row preamble in addition to the row data so that we know the total bytes used in the page
-                    sizeOfRow += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
-
-                    runningTotalRowSize += sizeOfRow;
-                    currentOffset += sizeOfRow;
-                }
-
-                _totalBytesUsed = runningTotalRowSize;
+                _totalBytesUsed = IterateOverData().Sum(row => row.RowSize);
 
                 // copy _totalBytesUsed to it's location in _data [in the Page preamble]
                 byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
@@ -401,6 +337,57 @@ namespace FrostDB
         private bool CanInsertNewRow(int rowLength)
         {
             return (rowLength + GetNextAvailableRowOffset() < DatabaseConstants.PAGE_SIZE);
+        }
+
+        /// <summary>
+        /// Iterates over the page's _data and populates the supplied list with Row2 objects
+        /// </summary>
+        /// <param name="rows"></param>
+        private List<Row2> IterateOverData()
+        {
+            var rows = new List<Row2>();
+            var dataSpan = new Span<byte>(_data);
+            int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
+
+            while (currentOffset < DatabaseConstants.PAGE_SIZE)
+            {
+                int rowId;
+                bool isLocal;
+                int sizeOfRow;
+
+                RowPreamble.Parse(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_PREAMBLE), out rowId, out isLocal);
+
+                // check for end of data row identifier
+                if (isLocal && rowId == DatabaseConstants.END_OF_ROW_DATA_ID)
+                {
+                    break;
+                }
+
+                currentOffset += DatabaseConstants.SIZE_OF_ROW_PREAMBLE;
+
+                if (isLocal)
+                {
+                    var values = new List<RowValue2>();
+                    
+                    // we need the size of the row to parse how far along we should go in the array (span).
+                    // we will however not adjust the offset since the method LocalRowBodyFromBinary includes parsing the rowSize prefix (an int32 size (4 bytes)).
+
+                    sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
+                    int rowSize; // this isn't really needed, but it's a required param of the method below
+                    Row2.LocalRowBodyFromBinary(dataSpan.Slice(currentOffset, sizeOfRow), out rowSize, ref values, _schema.Columns);
+
+                    rows.Add(new Row2(rowId, isLocal, _schema.Columns, _process.Id.Value, values, sizeOfRow));
+                    currentOffset += sizeOfRow;
+                }
+                else
+                {
+                    sizeOfRow = DatabaseConstants.PARTICIPANT_ID_SIZE;
+                    Guid particpantId = DatabaseBinaryConverter.BinaryToGuid(dataSpan.Slice(currentOffset, sizeOfRow));
+                    rows.Add(new Row2(rowId, isLocal, particpantId, sizeOfRow, _schema.Columns));
+                    currentOffset += sizeOfRow;
+                }
+            }
+            return rows;
         }
         #endregion
 

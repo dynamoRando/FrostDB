@@ -107,7 +107,7 @@ namespace FrostDB
             }
             else
             {
-                Row2.ParticpantToBinaryFormat(ref array, ParticipantId.Value);
+                Row2.ParticipantToBinaryFormat(ref array, ParticipantId.Value);
             }
         }
         #endregion
