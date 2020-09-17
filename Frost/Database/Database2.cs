@@ -187,15 +187,18 @@ namespace FrostDB
         /// </summary>
         private void UpdateSchema()
         {
+            int colIndx = 0;
+
             var schema = new DbSchema2(_databaseId, _name);
 
             _tables.ForEach(table =>
             {
-                var tableSchema = new TableSchema2(table.TableId, table.Name, _name, _databaseId);
+                var tableSchema = new TableSchema2(table.TableId, table.Name, _name, _databaseId, table.Columns.Length);
                 table.Columns.ForEach(column =>
                 {
                     var columnSchema = new ColumnSchema(column.Name, column.DataType);
-                    tableSchema.Columns.Add(columnSchema);
+                    tableSchema.Columns[colIndx] = columnSchema;
+                    colIndx++;
                 });
                 schema.Tables.Add(tableSchema);
             });

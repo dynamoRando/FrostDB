@@ -451,7 +451,7 @@ namespace FrostDB
 
                 if (isLocal)
                 {
-                    var values = new List<RowValue2>();
+                    var values = new RowValue2[_schema.Columns.Length];
 
                     // we need the size of the row to parse how far along we should go in the array (span).
                     // we will however not adjust the offset since the method LocalRowBodyFromBinary includes parsing the rowSize prefix (an int32 size (4 bytes)).

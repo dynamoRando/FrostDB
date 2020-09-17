@@ -7,7 +7,7 @@ namespace FrostDB
     public class TableSchema2
     {
         #region Private Fields
-        private List<ColumnSchema> _columns;
+        private ColumnSchema[] _columns;
         private string _name;
         private string _databaseName;
         private int _databaseId;
@@ -17,7 +17,7 @@ namespace FrostDB
         #region Public Properties
         public string Name => _name;
         public string DatabaseName => _databaseName;
-        public List<ColumnSchema> Columns => _columns;
+        public ColumnSchema[] Columns => _columns;
         public int TableId => _tableId;
         public int DatabaseId => _databaseId;
         public BTreeAddress BTreeAddress => new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId };
@@ -30,14 +30,15 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public TableSchema2(int id, string name, string databaseName, int databaseId) 
+        public TableSchema2(int id, string name, string databaseName, int databaseId, int numOfColumns) 
         {
             _name = name;
             _databaseName = databaseName;
             _tableId = id;
             _databaseId = databaseId;
+            _columns = new ColumnSchema[numOfColumns];
         }
-        public TableSchema2(List<ColumnSchema> columns, int id, string name, string databaseName, int databaseId) : this(id, name, databaseName, databaseId)
+        public TableSchema2(ColumnSchema[] columns, int id, string name, string databaseName, int databaseId) : this(id, name, databaseName, databaseId, columns.Length)
         {
             _columns = columns;
         }

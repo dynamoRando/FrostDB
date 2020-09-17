@@ -13,7 +13,7 @@ namespace FrostDB
         private Process _process;
         private int _maxPageId;
         private TableSchema2 _schema;
-        private List<ColumnSchema> _columns;
+        private ColumnSchema[] _columns;
         private string _name;
         private string _databaseName;
         private int _tableId;
@@ -26,7 +26,7 @@ namespace FrostDB
 
         #region Public Properties
         public TableSchema2 Schema => _schema;
-        public List<ColumnSchema> Columns => _columns;
+        public ColumnSchema[] Columns => _columns;
         public string Name => _name;
         public string DatabaseName => _databaseName;
         public int TableId => _tableId;

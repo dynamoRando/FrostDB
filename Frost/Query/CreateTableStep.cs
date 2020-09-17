@@ -41,12 +41,14 @@ namespace FrostDB
             if (process.HasDatabase(databaseName))
             {
                 var db = process.GetDatabase2(databaseName);
-                var columns = new List<ColumnSchema>();
+                var columns = new ColumnSchema[Columns.Count];
                 int i = 1;
+                int x = 0;
 
                 foreach(var column in Columns)
                 {
-                    columns.Add(GetColumnSchema(column, i));
+                    columns[x] = GetColumnSchema(column, i);
+                    x++;
                     i++;
                 }
 

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using MoreLinq;
 
 namespace FrostDB
 {
@@ -15,6 +16,8 @@ namespace FrostDB
     public class SchemaFile : IStorageFile
     {
         #region Private Fields
+        private int _numOfColumns;
+        private int _currentColumn = 0;
         private string _schemaFileExtension;
         private string _schemaFileFolder;
         private string _databaseName;
@@ -167,8 +170,22 @@ namespace FrostDB
             _tableSchema = null;
 
             var file = Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
-            var lines = File.ReadAllLines(file).ToList();
-            lines.ForEach(l => ParseLine(l));
+            var lines = File.ReadAllLines(file);
+            _numOfColumns = GetNumOfColumnsInFile(lines);
+            Array.ForEach(lines, line => ParseLine(line));
+        }
+
+        private int GetNumOfColumnsInFile(string[] lines)
+        {
+            int totalColumns = 0;
+            foreach(var line in lines)
+            {
+                if (line.StartsWith("column"))
+                {
+                    totalColumns++;
+                }
+            }
+            return totalColumns;
         }
 
         private void ParseLine(string line)
@@ -199,7 +216,8 @@ namespace FrostDB
             if (line.StartsWith("column"))
             {
                 var column = GetColumn(line);
-                _tableSchema.Columns.Add(column);
+                _tableSchema.Columns[_currentColumn] = column;
+                _currentColumn++;
             }
         }
 
@@ -210,11 +228,11 @@ namespace FrostDB
         /// <returns>A table schema object</returns>
         private TableSchema2 GetTableSchema(string line)
         {
-            // table tableId tableName
+            // table tableId tableName numOfColumns
             TableSchema2 result;
             var items = line.Split(" ");
             {
-                result = new TableSchema2(Convert.ToInt32(items[1]), items[2], _dbSchema.DatabaseName, _dbSchema.DatabaseId);
+                result = new TableSchema2(Convert.ToInt32(items[1]), items[2], _dbSchema.DatabaseName, _dbSchema.DatabaseId, Convert.ToInt32(items[3]));
             }
 
             return result;

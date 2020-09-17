@@ -57,7 +57,7 @@ namespace FrostDB
         /// Orders the columns by non-variable columns first, then by ordinal number
         /// </summary>
         /// <param name="schema">The list of columns schema to be ordered</param>
-        public static void OrderByByteFormat(this List<ColumnSchema> columns)
+        public static void OrderByByteFormat(this ColumnSchema[] columns)
         {
             columns.OrderBy(column => column.IsVariableLength).ThenBy(column => column.Ordinal);
         }
@@ -66,7 +66,7 @@ namespace FrostDB
         /// Sets the order number based on byte format
         /// </summary>
         /// <param name="columns">The list of columns to set the order number for</param>
-        public static void SetOrderNumber(this List<ColumnSchema> columns)
+        public static void SetOrderNumber(this ColumnSchema[] columns)
         {
             columns.OrderByByteFormat();
 

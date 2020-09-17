@@ -144,15 +144,11 @@ namespace FrostDB
         /// <param name="sizeOfRow">The total size of the row (parsed from the bytes)</param>
         /// <param name="values">A list of values parse from the array</param>
         /// <param name="schema">The schema of the table</param>
-        public static void LocalRowBodyFromBinary(Span<byte> span, out int sizeOfRow, ref List<RowValue2> values, List<ColumnSchema> schema)
+        public static void LocalRowBodyFromBinary(Span<byte> span, out int sizeOfRow, ref RowValue2[] values, ColumnSchema[] schema)
         {
+            int colIdx = 0;
             int currentOffset = 0;
             RowValue2 item = null;
-
-            if (values == null)
-            {
-                values = new List<RowValue2>();
-            }
 
             schema.OrderByByteFormat();
 
@@ -165,7 +161,8 @@ namespace FrostDB
                 if (!column.IsVariableLength)
                 {
                     item = column.Parse(span.Slice(currentOffset, column.Size));
-                    values.Add(item);
+                    values[colIdx] = item;
+                    colIdx++;
                     currentOffset += column.Size;
                 }
                 else

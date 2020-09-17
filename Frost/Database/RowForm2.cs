@@ -14,7 +14,7 @@ namespace FrostDB
         #region Private Fields
         private string _tableName;
         private string _databaseName;
-        private List<ColumnSchema> _columns;
+        private ColumnSchema[] _columns;
         private List<RowValue2> _values;
         #endregion
 
@@ -23,11 +23,11 @@ namespace FrostDB
         public string TableName => _tableName;
         public List<RowValue2> Values => _values;
         public Participant2 Participant { get; set; }
-        public List<ColumnSchema> Columns => _columns;
+        public ColumnSchema[] Columns => _columns;
         #endregion
 
         #region Constructors
-        public RowForm2(string databaseName, string tableName, List<ColumnSchema> columns)
+        public RowForm2(string databaseName, string tableName, ColumnSchema[] columns)
         {
             _columns = columns;
             _databaseName = databaseName;
