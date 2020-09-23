@@ -28,7 +28,7 @@ namespace FrostDB
         private string _xactFileFileFolder;
         private string _databaseName;
         private ReaderWriterLockSlim _locker;
-        private ConcurrentDictionary<Guid, Guid> _openXactList;
+        private ConcurrentDictionary<Guid, Guid> _unreconciledXacts;
         #endregion
 
         #region Public Properties
@@ -48,7 +48,7 @@ namespace FrostDB
             _xactFileExtension = fileExtension;
             _databaseName = databaseName;
             _locker = new ReaderWriterLockSlim();
-            _openXactList = new ConcurrentDictionary<Guid, Guid>();
+            _unreconciledXacts = new ConcurrentDictionary<Guid, Guid>();
 
             if (!DoesFileExist())
             {
@@ -63,9 +63,9 @@ namespace FrostDB
         /// </summary>
         /// <param name="id">The id of the xact</param>
         /// <returns>True if the xact has not been reconciled, otherwise false</returns>
-        public bool IsOpenXact(Guid id)
+        public bool IsPendingReconciliation(Guid id)
         {
-            return _openXactList.ContainsKey(id);
+            return _unreconciledXacts.ContainsKey(id);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace FrostDB
 
             foreach (var row in rows)
             {
-                if (IsOpenXact(row.XactId))
+                if (IsPendingReconciliation(row.XactId))
                 {
                     throw new InvalidOperationException($"xact {row.XactId.ToString()} is already in progress");
                 }
@@ -99,7 +99,7 @@ namespace FrostDB
         {
             bool isSuccessful;
 
-            if (IsOpenXact(row.XactId))
+            if (IsPendingReconciliation(row.XactId))
             {
                 throw new InvalidOperationException($"xact {row.XactId.ToString()} is already in progress");
             }
@@ -108,7 +108,7 @@ namespace FrostDB
             {
                 _locker.EnterWriteLock();
 
-                _openXactList.TryAdd(row.XactId, row.XactId);
+                _unreconciledXacts.TryAdd(row.XactId, row.XactId);
 
                 // to do - need to come up with xact file format
                 // xact xactId tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
@@ -178,7 +178,7 @@ namespace FrostDB
 
             // remove the xaction from the pending open transactions
             Guid value;
-            isSuccessful = _openXactList.TryRemove(row.XactId, out value);
+            isSuccessful = _unreconciledXacts.TryRemove(row.XactId, out value);
 
             _locker.ExitWriteLock();
             throw new NotImplementedException();

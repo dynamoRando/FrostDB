@@ -88,7 +88,7 @@ namespace FrostDB
         /// <param name="schema">The table schema</param>
         public void AddTable(TableSchema2 schema)
         {
-            var table = new Table2(_process, schema);
+            var table = new Table2(_process, schema, this.Storage, _process.Cache);
             _tables.Add(table);
             HandleAddTable(table.Name);
         }
@@ -216,7 +216,7 @@ namespace FrostDB
 
             foreach (var table in schema.Tables)
             {
-                this.Tables.Add(new Table2(_process, table));
+                this.Tables.Add(new Table2(_process, table, this.Storage, _process.Cache));
             }
 
             throw new NotImplementedException();

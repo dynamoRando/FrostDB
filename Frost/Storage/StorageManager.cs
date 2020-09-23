@@ -17,7 +17,6 @@ namespace FrostDB
         private Process _process;
         private string _databaseFolder;
         private DbDirectory _directory;
-        private Pager _pager;
         #endregion
 
         #region Public Properties
@@ -38,7 +37,6 @@ namespace FrostDB
             {
                 _process = process;
                 _databaseFolder = _process.Configuration.DatabaseFolder;
-                _pager = new Pager(_process, _databaseFolder);
             }
             else
             {
@@ -49,16 +47,6 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
-        /// Attempts to insert a row into a btree
-        /// </summary>
-        /// <param name="insert">The row to insert</param>
-        /// <returns>True if successful, otherwise false</returns>
-        public bool InsertRow(RowInsert insert)
-        {
-            return _pager.InsertRow(insert);
-        }
-
-        /// <summary>
         /// Creates the appropriate disk files for a new database hosted by this Frost process
         /// </summary>
         /// <param name="database"></param>
@@ -66,11 +54,6 @@ namespace FrostDB
         {
             database.Storage.CreateFiles();
             _directory.AddDatabaseToDirectory(database, true);
-        }
-
-        public List<Row2> GetAllRows(BTreeAddress treeAddress)
-        {
-            return _pager.GetAllRows(treeAddress);
         }
 
         /// <summary>

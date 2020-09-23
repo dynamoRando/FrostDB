@@ -94,10 +94,9 @@ namespace FrostDB
 
                 lock (_treeLock)
                 {
-                    if (!_storage.IsOpenXact(row.XactId))
-                    {
-                        _storage.WriteTransactionForInsert(row);
-                    }
+                    // assume that we've already checked for this in Table2.cs
+                    // this is a design change where we will let the Structure (Database / Table) orchestrate the 
+                    // reconciliation between cache and disk
 
                     if (_tree.Count == 0)
                     {

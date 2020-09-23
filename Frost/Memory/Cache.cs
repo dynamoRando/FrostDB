@@ -9,13 +9,12 @@ using MoreLinq;
 namespace FrostDB
 {
     /// <summary>
-    /// Responsible for returning pages from disk or cache. Also responsible for I/O operations on pages
+    /// Responsible for maintaining in memory structures of databases
     /// </summary>
-    public class Pager
+    public class Cache
     {
         #region Private Fields
         private Process _process;
-        private string _databaseFolder;
         private ConcurrentDictionary<BTreeAddress, BTreeContainer> _cache;
         #endregion
 
@@ -29,10 +28,9 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public Pager(Process process, string databaseFolder)
+        public Cache(Process process)
         {
             _process = process;
-            _databaseFolder = databaseFolder;
             _cache = new ConcurrentDictionary<BTreeAddress, BTreeContainer>();
         }
         #endregion

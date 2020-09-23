@@ -7,6 +7,10 @@ using System.Text;
 
 namespace FrostDB
 {
+    /// <summary>
+    /// A database structure representing a SQL table. This structure does not actually hold any data, but instead coordinates actions
+    /// between cache (b-trees), storage (disk) and if applicable, network.
+    /// </summary>
     public class Table2
     {
         #region Private Fields
@@ -18,6 +22,8 @@ namespace FrostDB
         private string _databaseName;
         private int _tableId;
         private int _databaseId;
+        private DbStorage _storage;
+        private Cache _cache;
 
         // this is an in memory conversion from the pages and should be destructive
         // i.e. always destroyed and rebuilt from the pager
@@ -48,7 +54,9 @@ namespace FrostDB
         /// </summary>
         /// <param name="process">The FrostDB process.</param>
         /// <param name="schema">The table schema (loaded from disk, usually from a DBFill object.)</param>
-        public Table2(Process process, TableSchema2 schema)
+        /// <param name="dbStorage">The backing storage object for the database this table is attached to</param>
+        /// <param name="pager">The in memory cache for FrostDb</param>
+        public Table2(Process process, TableSchema2 schema, DbStorage dbStorage, Cache pager)
         {
             _process = process;
             _schema = schema;
@@ -58,6 +66,8 @@ namespace FrostDB
             _tableId = schema.TableId;
             _databaseId = schema.DatabaseId;
             _rows = new List<Row2>();
+            _storage = dbStorage;
+            _cache = pager;
             // need to figure out what the new b-tree structure will look like
             // how to populate binary page data from disk to table object?
             throw new NotImplementedException();
@@ -145,7 +155,18 @@ namespace FrostDB
         {
             RowInsert rowToInsert = new RowInsert(rowForm.Values, this.Schema, rowForm.Participant.Id, !rowForm.IsLocal(_process));
 
-            return GetDatabase().Storage.WriteTransactionForInsert(rowToInsert);
+            if (_storage.RecordTransactionInLog(rowToInsert))
+            {
+                if (_cache.InsertRow(rowToInsert))
+                {
+                    if (_storage.UpdateIndexes(rowToInsert))
+                    {
+                        _storage.MarkTransactionAsReconciledInLog(rowToInsert);
+                    }
+                }
+            }
+
+            throw new NotImplementedException();
         }
 
         /// <summary>

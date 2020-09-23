@@ -33,6 +33,7 @@ namespace FrostDB
         private ProcessLogger _log;
         private QueryParser _parser;
         private QueryManager _queryManager;
+        private Cache _cache;
         #endregion
 
         #region Public Properties
@@ -49,6 +50,7 @@ namespace FrostDB
         public ContractManager ContractManager => (ContractManager)_contractManager;
         public Network Network => _networkManager;
         public ProcessLogger Log => _log;
+        public Cache Cache => _cache;
         #endregion
 
         #region Events
@@ -395,6 +397,7 @@ namespace FrostDB
         private void SetupVersion2()
         {
             _dbManager2 = new DatabaseManager2(Configuration.DatabaseFolder, new StorageManager(this));
+            _cache = new Cache(this);
         }
 
         #endregion

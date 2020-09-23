@@ -51,13 +51,13 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
-        /// Determines if the xact id is currently in progress and unreconciled
+        /// Determines if the xact id is currently unreconciled
         /// </summary>
         /// <param name="id">The id of the transaction</param>
         /// <returns>True if the xact is unreconciled, otherwise false</returns>
-        public bool IsOpenXact(Guid id)
+        public bool IsPendingReconciliation(Guid id)
         {
-            return _xactFile.IsOpenXact(id);
+            return _xactFile.IsPendingReconciliation(id);
         }
 
         /// <summary>
@@ -71,35 +71,30 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Handles adding a row to this table for this database. Will write to xact log, btree, and other files/structures as needed. This method is blocking.
-        /// </summary>
-        /// <param name="row">The row to add</param>
-        /// <returns>True if successful, otherwise false.</returns>
-        public bool  WriteTransactionForInsert(RowInsert row)
+       
+        public bool UpdateIndexes(RowInsert row)
         {
-            bool isSuccessful;
+            return UpdateIndexesForInsert(row);
+        }
 
-            // note: is this the correct way to handle blocking? each object blocks for itself. should this block as one unit?
-            if (_xactFile.WriteTransactionForInsert(row))
-            {
+        /// <summary>
+        /// Records this insert action in the xact log. Will record it as unreconciled against cache.
+        /// </summary>
+        /// <param name="row">The row to record</param>
+        /// <returns>True if successful in writing to log, otherwise false</returns>
+        public bool RecordTransactionInLog(RowInsert row)
+        {
+            return _xactFile.WriteTransactionForInsert(row);
+        }
 
-                // TO DO: Need to update b-tree, indexes, etc.
-
-                if (UpdateBTreeForInsert(row))
-                { 
-
-                }
-
-                if (UpdateIndexesForInsert(row))
-                {
-
-                }
-
-                _xactFile.MarkInsertXactAsReconciled(row);
-            }
-
-            throw new NotImplementedException();
+        /// <summary>
+        /// Updates this insert action in the xact log that it has been reconciled against cache.
+        /// </summary>
+        /// <param name="row">The row that was reconciled</param>
+        /// <returns>True if successful in writing to log, otherwise false</returns>
+        public bool MarkTransactionAsReconciledInLog(RowInsert row)
+        {
+            return _xactFile.MarkInsertXactAsReconciled(row);
         }
 
         public bool WriteTransactionForDelete()
@@ -110,7 +105,7 @@ namespace FrostDB
 
         public List<Row2> GetAllRows(BTreeAddress treeAddress)
         {
-            return _process.DatabaseManager.StorageManager.GetAllRows(treeAddress);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -177,16 +172,6 @@ namespace FrostDB
             }
 
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Updates the b-tree for this row for an insert action. This will also update the data file and db data directory file if possible.
-        /// </summary>
-        /// <param name="insert">The row to be added</param>
-        /// <returns>True if successful, otherwise false</returns>
-        private bool UpdateBTreeForInsert(RowInsert insert)
-        {
-            return _process.DatabaseManager.StorageManager.InsertRow(insert);
         }
 
         /// <summary>
