@@ -55,7 +55,7 @@ namespace FrostDB
             else
             {
                 int maxPageId = _tree.FindMax().Key;
-                
+
                 Page maxPage;
                 _tree.Find(ref maxPageId, out maxPage);
                 return maxPage.GetMaxRowId();
@@ -181,10 +181,11 @@ namespace FrostDB
             {
                 TreeDictionary<int, Page> item = _tree.DeepCopy();
 
-                foreach(var x in item)
+                foreach (var x in item)
                 {
-                    ReadOnlySpan<RowStruct> rows = x.Value.GetRows(schema);
-                    rows.CopyTo(resultSpan);
+                    RowStruct[] rows = x.Value.GetRows(schema);
+                    i += rows.Length;
+                    Array.Copy(rows, 0, result, i, rows.Length);
                 }
             }
             else
@@ -193,8 +194,9 @@ namespace FrostDB
                 {
                     foreach (var item in _tree)
                     {
-                        ReadOnlySpan<RowStruct> rows = item.Value.GetRows(schema);
-                        rows.CopyTo(resultSpan);
+                        RowStruct[] rows = item.Value.GetRows(schema);
+                        i += rows.Length;
+                        Array.Copy(rows, 0, result, i, rows.Length);
                     }
                 }
             }

@@ -216,11 +216,11 @@ namespace FrostDB
         /// </summary>
         /// <param name="schema">The table schema</param>
         /// <returns>A list of rows</returns>
-        public ReadOnlySpan<RowStruct> GetRows(TableSchema2 schema)
+        public RowStruct[] GetRows(TableSchema2 schema)
         {
             var rows = new RowStruct[_totalRows];
             IterateOverData(ref rows);
-            return new ReadOnlySpan<RowStruct>(rows);
+            return rows;
         }
 
         /// <summary>
