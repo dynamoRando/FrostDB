@@ -8,6 +8,7 @@ using FrostCommon.ConsoleMessages;
 using System.Xml;
 using System.Reflection;
 using System.IO;
+using FrostDB.Processing;
 
 /*
  * May you do good and not evil.
@@ -26,6 +27,7 @@ namespace FrostDB
         private IContractManager _contractManager;
         private Network _networkManager;
         private DatabaseManager _dbManager;
+        private DatabaseManager2 _dbManager2;
         private PartialDatabaseManager _pdbManager;
         private EventManager _eventManager;
         private ProcessLogger _log;
@@ -388,6 +390,11 @@ namespace FrostDB
         private void SetupLogging()
         {
             _log = new ProcessLogger(this);
+        }
+
+        private void SetupVersion2()
+        {
+            _dbManager2 = new DatabaseManager2(Configuration.DatabaseFolder, new StorageManager(this));
         }
 
         #endregion

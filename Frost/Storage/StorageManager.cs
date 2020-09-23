@@ -77,15 +77,18 @@ namespace FrostDB
         /// Gets a list of databases from disk
         /// </summary>
         /// <returns>A list of databases</returns>
-        public List<Database2> GetDatabases()
+        public Database2[] GetDatabases()
         {
-            var result = new List<Database2>();
-            var databases = GetListOfOnlineDatabases();
+            var databases = GetOnlineDatabases();
+            Database2[] result = new Database2[databases.Length];
+            int i = 0;
+
             foreach (var db in databases)
             {
                 var storage = new DbStorage(_process, db);
                 var dbItem = storage.GetDatabase(db);
-                result.Add(dbItem);
+                result[i] = dbItem;
+                i++;
             }
 
             return result;
@@ -97,14 +100,12 @@ namespace FrostDB
         /// Returns the list of databases that this Process hosts that are online
         /// </summary>
         /// <returns>A string list of online databases</returns>
-        private List<string> GetListOfOnlineDatabases()
+        private string[] GetOnlineDatabases()
         {
-            var result = new List<string>();
-
             var file = Path.Combine(_databaseFolder, _process.Configuration.DatabaseDirectoryFileName);
             if (File.Exists(file))
             {
-                var items = File.ReadAllLines(file).ToList();
+                var items = File.ReadAllLines(file);
                 _directory = new DbDirectory(items);
             }
             else
@@ -114,13 +115,11 @@ namespace FrostDB
                     fs.Flush();
                 }
 
-                var items = File.ReadAllLines(file).ToList();
+                var items = File.ReadAllLines(file);
                 _directory = new DbDirectory(items);
             }
 
-            result.AddRange(_directory.OnlineDatabases);
-
-            return result;
+            return _directory.OnlineDatabases;
         }
 
         private SchemaFile GetSchemaFile(string databaseName)

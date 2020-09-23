@@ -182,7 +182,7 @@ namespace FrostDB
 
             var dbs = _storageManager.GetDatabases();
             _databases2.AddRange(dbs);
-            count = dbs.Count;
+            count = dbs.Length;
 
             return count;
         }

@@ -19,10 +19,10 @@ namespace FrostDB
     public class DbDirectory
     {
         #region Private Fields
+        private DbDirectoryItem[] _databases;
         #endregion
 
         #region Public Properties
-        public List<DbDirectoryItem> Databases { get; set; }
         #endregion
 
         #region Protected Methods
@@ -32,9 +32,9 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbDirectory(List<string> lines)
+        public DbDirectory(string[] lines)
         {
-            Databases = new List<DbDirectoryItem>();
+            _databases = new DbDirectoryItem[lines.Length];
             ParseLines(lines);
         }
         #endregion
@@ -52,7 +52,7 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public List<string> OnlineDatabases => Databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToList();
+        public string[] OnlineDatabases => GetOnlineDatabases();
 
         /// <summary>
         /// Attempts to take a database offline and updates the Frost system Db directory file
@@ -76,8 +76,11 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
-        private void ParseLines(List<string> lines)
+        private void ParseLines(string[] lines)
         {
+            _databases = new DbDirectoryItem[lines.Length];
+            int i = 0;
+
             // dbname, true/false (online, offline)
             foreach (var item in lines)
             {
@@ -87,8 +90,14 @@ namespace FrostDB
                 var d = new DbDirectoryItem();
                 d.DatabaseName = databaseName;
                 d.IsOnline = isOnline;
-                Databases.Add(d);
+                _databases[i] = d;
+                i++;
             }
+        }
+
+        private string[] GetOnlineDatabases()
+        {
+            return _databases.Where(d => d.IsOnline).Select(k => k.DatabaseName).ToArray();
         }
         #endregion
 
