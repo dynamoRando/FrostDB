@@ -9,6 +9,15 @@ using System.Threading;
 
 namespace FrostDB
 {
+    /*
+     * Note: need to make sure that I don't confuse myself. Beginning and Ending a Transaction is not the same
+     * as recording and reconciling a transaction.
+     * 
+     * Beginning and ending a transaction is an ACID property.
+     * 
+     * Recording and reconciling a transaction is the process by which you sync in-memory to disk.
+     */
+
     /// <summary>
     /// The database transaction file
     /// </summary>
