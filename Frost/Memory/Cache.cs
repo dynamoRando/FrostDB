@@ -69,9 +69,9 @@ namespace FrostDB
         /// </summary>
         /// <param name="treeAddress">The tree's address (dbId, tableId)</param>
         /// <returns>All rows for the table</returns>
-        public List<Row2> GetAllRows(BTreeAddress treeAddress)
+        public List<RowStruct> GetAllRows(BTreeAddress treeAddress)
         {
-            var result = new List<Row2>();
+            var result = new List<RowStruct>();
             Database2 database = _process.GetDatabase2(treeAddress.DatabaseId);
             TableSchema2 schema = database.GetTable(treeAddress.TableId).Schema;
 

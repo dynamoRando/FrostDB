@@ -54,6 +54,7 @@ namespace FrostDB
         public int RowDataStart => _rowDataStart;
         public int RowDataEnd => _rowDataEnd;
         public PageAddress Address => _address;
+        public int TotalRows => _totalRows;
         #endregion
 
         #region Protected Methods
@@ -215,9 +216,11 @@ namespace FrostDB
         /// </summary>
         /// <param name="schema">The table schema</param>
         /// <returns>A list of rows</returns>
-        public List<Row2> GetRows(TableSchema2 schema)
+        public ReadOnlySpan<RowStruct> GetRows(TableSchema2 schema)
         {
-            throw new NotImplementedException();
+            var rows = new RowStruct[_totalRows];
+            IterateOverData(ref rows);
+            return new ReadOnlySpan<RowStruct>(rows);
         }
 
         /// <summary>

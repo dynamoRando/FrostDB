@@ -2,6 +2,7 @@
 using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FrostDB
@@ -159,28 +160,42 @@ namespace FrostDB
         /// <param name="schema">The table schema to convert the rows to</param>
         /// <param name="dirtyRead">true if unprotected read, otherwise false</param>
         /// <returns>A list of rows</returns>
-        public List<Row2> GetAllRows(TableSchema2 schema, bool dirtyRead)
+        public RowStruct[] GetAllRows(TableSchema2 schema, bool dirtyRead)
         {
-            var result = new List<Row2>();
+            RowStruct[] result;
+            int totalRows = 0;
 
+            lock (_treeLock)
+            {
+                _tree.ForEach(item =>
+                {
+                    totalRows += item.Value.TotalRows;
+                });
+            }
+
+            result = new RowStruct[totalRows];
+            var resultSpan = new Span<RowStruct>(result);
+
+            int i = 0;
             if (dirtyRead)
             {
                 TreeDictionary<int, Page> item = _tree.DeepCopy();
-                item.ForEach(i =>
+
+                foreach(var x in item)
                 {
-                    List<Row2> rows = i.Value.GetRows(schema);
-                    result.AddRange(rows);
-                });
+                    ReadOnlySpan<RowStruct> rows = x.Value.GetRows(schema);
+                    rows.CopyTo(resultSpan);
+                }
             }
             else
             {
                 lock (_treeLock)
                 {
-                    _tree.ForEach(item =>
+                    foreach (var item in _tree)
                     {
-                        List<Row2> rows = item.Value.GetRows(schema);
-                        result.AddRange(rows);
-                    });
+                        ReadOnlySpan<RowStruct> rows = item.Value.GetRows(schema);
+                        rows.CopyTo(resultSpan);
+                    }
                 }
             }
 
