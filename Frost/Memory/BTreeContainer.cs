@@ -117,8 +117,8 @@ namespace FrostDB
 
                         if (_totalPages < _tree.Count())
                         {
-                            int bar = 0;
-                            var foo = _storage.GetPage(bar, _address);
+                            int nextPage = GetMaxPageId() + 1;
+                            Page page = _storage.GetPage(nextPage, _address);
 
                         }
 
@@ -236,11 +236,20 @@ namespace FrostDB
         /// <returns>The next page id in the tree</returns>
         private int GetNextPageId()
         {
+            return GetMaxPageId() + 1;
+        }
+
+        /// <summary>
+        /// Returns the maximum page id in the tree
+        /// </summary>
+        /// <returns>The maximum page id in the tree</returns>
+        private int GetMaxPageId()
+        {
             lock (_treeLock)
             {
                 if (_tree.Count == 0)
                 {
-                    return 1;
+                    return 0;
                 }
                 else
                 {
@@ -252,7 +261,7 @@ namespace FrostDB
                             maxValue = page.Id;
                         }
                     }
-                    return maxValue + 1;
+                    return maxValue;
                 }
             }
         }

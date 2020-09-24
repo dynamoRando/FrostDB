@@ -63,8 +63,7 @@ namespace FrostDB
 
         public Page GetPage(int id, BTreeAddress address)
         {
-            Page result = _data.GetPage(id, address);
-            throw new NotImplementedException();
+            return _data.GetPage(id, address);
         }
 
         /// <summary>
