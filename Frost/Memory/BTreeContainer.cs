@@ -21,22 +21,25 @@ namespace FrostDB
         DbStorage _storage;
         TableSchema2 _schema;
         Process _process;
+        private int _totalPages;
         #endregion
 
         #region Public Properties
         public BTreeContainerState State => GetContainerState();
         public BTreeAddress Address => _address;
+        public int TotalPages => _totalPages;
         #endregion
 
         #region Constructors
         public BTreeContainer() { }
-        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema, Process process)
+        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema, Process process, int totalPages)
         {
             _tree = tree;
             _address = address;
             _storage = storage;
             _schema = schema;
             _process = process;
+            _totalPages = totalPages;
         }
         #endregion
 
@@ -109,6 +112,15 @@ namespace FrostDB
                     }
                     else
                     {
+                        // this is scratch. Trying to work out how and when to get a page from disk.
+                        // basically, if there are more pages left on disk, pull them into memory.
+
+                        if (_totalPages < _tree.Count())
+                        {
+                            int bar = 0;
+                            var foo = _storage.GetPage(bar, _address);
+
+                        }
 
                         // need to find the next available Page in the tree that has room for the row
                         // then add the row to that page

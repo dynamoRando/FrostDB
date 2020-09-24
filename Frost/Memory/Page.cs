@@ -106,6 +106,10 @@ namespace FrostDB
             SetPreamble(false);
         }
 
+        public Page(byte[] data, BTreeAddress address) : this(data, address.TableId, address.DatabaseId)
+        {
+        }
+
         #endregion
 
         #region Public Methods

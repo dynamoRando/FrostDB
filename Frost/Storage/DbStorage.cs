@@ -23,6 +23,7 @@ namespace FrostDB
         private DbXactFile _xactFile;
         private string _databaseName;
         private int _databaseId;
+        private BTreeAddress _address;
         #endregion
 
         #region Public Properties
@@ -50,6 +51,31 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// This method is a stub.
+        /// </summary>
+        /// <returns>An array of pages.</returns>
+        public Page[] GetPages()
+        {
+            Page[] pages = _data.GetAllPages();
+            throw new NotImplementedException();
+        }
+
+        public Page GetPage(int id, BTreeAddress address)
+        {
+            Page result = _data.GetPage(id, address);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <returns>The total number of pages that are on file. Used to determine if the btree container needs to pull more pages from disk.</returns>
+        public int GetTotalNumberOfDataPages()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Determines if the xact id is currently unreconciled
         /// </summary>

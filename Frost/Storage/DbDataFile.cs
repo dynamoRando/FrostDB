@@ -61,6 +61,21 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Gets a page with the specified id from the data file on disk
+        /// </summary>
+        /// <param name="id">The page to get from disk</param>
+        /// <returns>A page object</returns>
+        public Page GetPage(int id, BTreeAddress address)
+        {
+
+            // do stuff to get the proper id specified
+            byte[] data = null;
+
+            var page = new Page(data, address);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Reads the Db Data File for the next available page that is not already in the specified list of addresses
         /// </summary>
         /// <param name="excludeAddresses">The list of page addreses to exclude</param>
@@ -84,6 +99,14 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// This method is a stub
+        /// </summary>
+        /// <returns>All the pages from the data file</returns>
+        public Page[] GetAllPages()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Private Methods

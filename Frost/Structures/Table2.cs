@@ -68,9 +68,6 @@ namespace FrostDB
             _rows = new List<Row2>();
             _storage = dbStorage;
             _cache = pager;
-            // need to figure out what the new b-tree structure will look like
-            // how to populate binary page data from disk to table object?
-            throw new NotImplementedException();
         }
         #endregion
 

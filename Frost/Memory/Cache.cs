@@ -111,10 +111,13 @@ namespace FrostDB
             var tree = new TreeDictionary<int, Page>();
             TableSchema2 schema = _process.GetDatabase2(address.DatabaseId).GetTable(address.TableId).Schema;
 
+            //Page[] pages = storage.GetPages();
+            int totalPages = storage.GetTotalNumberOfDataPages();
+
             // need to get the bytes from disk and build a new BTreeContainer for it
             // if the disk file is empty, just return a new btree container
             throw new NotImplementedException();
-            return new BTreeContainer(address, tree, storage, schema, _process);
+            return new BTreeContainer(address, tree, storage, schema, _process, totalPages);
         }
 
         /// <summary>
