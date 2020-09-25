@@ -21,25 +21,22 @@ namespace FrostDB
         DbStorage _storage;
         TableSchema2 _schema;
         Process _process;
-        private int _totalPages;
         #endregion
 
         #region Public Properties
         public BTreeContainerState State => GetContainerState();
         public BTreeAddress Address => _address;
-        public int TotalPages => _totalPages;
         #endregion
 
         #region Constructors
         public BTreeContainer() { }
-        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema, Process process, int totalPages)
+        public BTreeContainer(BTreeAddress address, TreeDictionary<int, Page> tree, DbStorage storage, TableSchema2 schema, Process process)
         {
             _tree = tree;
             _address = address;
             _storage = storage;
             _schema = schema;
             _process = process;
-            _totalPages = totalPages;
         }
         #endregion
 
@@ -115,9 +112,9 @@ namespace FrostDB
                         // this is scratch. Trying to work out how and when to get a page from disk.
                         // basically, if there are more pages left on disk, pull them into memory.
 
-                        if (_tree.Count() < _totalPages)
+                        if (!TreeIsFullyLoaded())
                         {
-                            int nextPage = GetMaxPageId() + 1;
+                            int nextPage = GetNextAvailablePageId();
                             Page page = _storage.GetPage(nextPage, _address);
 
                         }
@@ -231,18 +228,32 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Returns the next page id in the tree
+        /// Returns the next page id in the tree that's currently loaded. This does not return the 
+        /// next page id if attempting to create a new page - use GetNextPageId() instead.
         /// </summary>
         /// <returns>The next page id in the tree</returns>
-        private int GetNextPageId()
+        private int GetNextAvailablePageId()
         {
+            // TO DO: Is this a bug? Should we assume that page numbers are always sequential?
+            // what happens if we were to delete a page?
             return GetMaxPageId() + 1;
         }
 
         /// <summary>
-        /// Returns the maximum page id in the tree
+        /// Returns the next page id in the tree. Use if creating a new page to be added to the tree. For the next 
+        /// available page id in the currently loaded tree in memory, use GetNextAvailablePageId() instead.
         /// </summary>
-        /// <returns>The maximum page id in the tree</returns>
+        /// <returns></returns>
+        private int GetNextPageId()
+        {
+            return _storage.GetMaxPageIdFromFile();
+        }
+
+        /// <summary>
+        /// Returns the maximum page id in the currently loaded tree. Note that the tree may not have all pages
+        /// loaded from disk into memory (the tree).
+        /// </summary>
+        /// <returns>The maximum page id in the currently loaded tree</returns>
         private int GetMaxPageId()
         {
             lock (_treeLock)
@@ -264,6 +275,29 @@ namespace FrostDB
                     return maxValue;
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Compares the current tree page count against the number of stored pages
+        /// </summary>
+        /// <returns>Returns true if the in memory tree count is greater than or equal to the stored number
+        /// of pages on disk.</returns>
+        private bool TreeIsFullyLoaded()
+        {
+            lock (_treeLock)
+            {
+                return _tree.Count >= GetTotalPagesOnDisk();
+            }
+        }
+
+        /// <summary>
+        /// Checks the storage's data directory file for the number of pages it currently has stored on disk
+        /// </summary>
+        /// <returns>The current number of pages stored on disk</returns>
+        private int GetTotalPagesOnDisk()
+        {
+            return _storage.GetTotalNumberOfDataPages();
         }
         #endregion
 

@@ -73,12 +73,21 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Returns the max page Id from the data directory file
+        /// </summary>
+        /// <returns>The max page id from the data directory file</returns>
+        public int GetMaxPageIdFromFile()
+        {
+            return _dataDirectory.GetMaxPageIdInFile();
+        }
+
+        /// <summary>
         /// This method is a stub
         /// </summary>
         /// <returns>The total number of pages that are on file. Used to determine if the btree container needs to pull more pages from disk.</returns>
         public int GetTotalNumberOfDataPages()
         {
-            throw new NotImplementedException();
+            return _dataDirectory.TotalPages;
         }
 
         /// <summary>

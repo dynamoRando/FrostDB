@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FrostDB.Storage
@@ -60,6 +61,15 @@ namespace FrostDB.Storage
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns the max page id stored in the data directory file
+        /// </summary>
+        /// <returns>The max page id in the file</returns>
+        public int GetMaxPageIdInFile()
+        {
+            return Lines.Max(line => line.PageNumber);
+        }
+
         /// <summary>
         /// Returns the line number in the data file for the page id specified
         /// </summary>
