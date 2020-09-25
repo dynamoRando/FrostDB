@@ -61,6 +61,18 @@ namespace FrostDB.Storage
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Adds the specified page id and line number to the directory
+        /// </summary>
+        /// <param name="pageId">The page id being added</param>
+        /// <param name="lineNumber">The line number of the page in the data file</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool AddPage(int pageId, int lineNumber)
+        {
+            // need to save to disk and then also add to the collection
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Returns the max page id stored in the data directory file
         /// </summary>

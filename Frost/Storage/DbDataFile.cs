@@ -73,6 +73,32 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Attempts to add the page to the binary data file and updates the data directory file.
+        /// </summary>
+        /// <param name="page">The page to add</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool AddPage(Page page)
+        {
+            // to do: write the data to the file
+
+            // scratch; need to actually determine the line number of the page we added in the file
+            int lineNumber = 0;
+            _dataDirectory.AddPage(page.Id, lineNumber);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Attempts to update the specified page in the binary data file
+        /// </summary>
+        /// <param name="page">The page to update</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool UpdatePage(Page page)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Reads the Db Data File for the next available page that is not already in the specified list of addresses
         /// </summary>
         /// <param name="excludeAddresses">The list of page addreses to exclude</param>

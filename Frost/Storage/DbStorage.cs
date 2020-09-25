@@ -89,6 +89,9 @@ namespace FrostDB
         /// <returns>The page ids still on disk.</returns>
         public List<int> GetPagesLeftOnDisk(List<int> pagesInMemory)
         {
+            // note: doing the UNION of the Except function of both lists means that you are possibly
+            // expecting there to be pages in memory that haven't been yet saved to disk.
+            // this is a situation you should make sure never happens.
             var pagesOnDisk = _dataDirectory.Lines.Select(line => line.PageNumber);
             return pagesInMemory.Except(pagesOnDisk).Union(pagesOnDisk.Except(pagesInMemory)).ToList();
         }
@@ -205,6 +208,26 @@ namespace FrostDB
             fill.AcceptedParticipants = GetAcceptedParticipants();
 
             return new Database2(_process, fill, this);
+        }
+
+        /// <summary>
+        /// Adds the page to the data directory file and data file
+        /// </summary>
+        /// <param name="page">The page to add</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool AddPage(Page page)
+        {
+            return _data.AddPage(page);
+        }
+
+        /// <summary>
+        /// Attempts to reconcile the page against disk. (This may be throwaway).
+        /// </summary>
+        /// <param name="page">The page to reconcile.</param>
+        public void ReconcilePage(Page page)
+        {
+            // to do: Update the page on disk; and if the line number changes update the data directory.
+            throw new NotImplementedException();
         }
         #endregion
 

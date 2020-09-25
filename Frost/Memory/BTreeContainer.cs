@@ -105,6 +105,7 @@ namespace FrostDB
                         if (page.AddRow(row, GetMaxRowId() + 1))
                         {
                             AddPageToTree(page);
+                            AddPageToStorage(page);
                         };
                     }
                     else
@@ -127,6 +128,8 @@ namespace FrostDB
                             while (!page.CanInsertRow(row.Size));
 
                             page.AddRow(row, GetMaxRowId() + 1);
+
+                            ReconcilePageWithStorage(page);
 
                         }
 
@@ -336,6 +339,31 @@ namespace FrostDB
             {
                 _tree.Add(page.Id, page);
             }
+
+            // TO DO: Should we add the page to disk?
+        }
+
+        /// <summary>
+        /// Attempts to add the page to disk
+        /// </summary>
+        /// <param name="page">The page to be added</param>
+        /// <returns>True if successful, otherwise false</returns>
+        private bool AddPageToStorage(Page page)
+        {
+            return _storage.AddPage(page);
+        }
+        
+        /// <summary>
+        /// Attempts to reconcile the page's data in memory against what is in storage (this may be throwaway)
+        /// </summary>
+        /// <param name="page">The page to reconcile with storage</param>
+        private void ReconcilePageWithStorage(Page page)
+        {
+            if (page.IsPendingReconciliation)
+            {
+                _storage.ReconcilePage(page);
+            }
+            throw new NotImplementedException();
         }
 
         #endregion

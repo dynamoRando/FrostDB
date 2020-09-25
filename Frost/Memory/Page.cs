@@ -35,6 +35,7 @@ namespace FrostDB
         private BTreeContainer _container;
         private TableSchema2 _schema;
         private Process _process;
+        private List<Guid> _pendingXacts;
         #endregion
 
         #region Public Properties
@@ -55,6 +56,16 @@ namespace FrostDB
         public int RowDataEnd => _rowDataEnd;
         public PageAddress Address => _address;
         public int TotalRows => _totalRows;
+
+        /// <summary>
+        /// The list of xacts that were applied to this page
+        /// </summary>
+        public List<Guid> PendingXacts => _pendingXacts;
+
+        /// <summary>
+        /// Indicates that the page has xacts applied to it, thus needing to save the entire page to disk
+        /// </summary>
+        public bool IsPendingReconciliation => PendingReconciliation();
         #endregion
 
         #region Protected Methods
@@ -84,6 +95,8 @@ namespace FrostDB
 
             SetPreamble(true);
             InitalizeDataWithEndOfRowData();
+
+            _pendingXacts = new List<Guid>();
         }
 
         /// <summary>
@@ -104,6 +117,8 @@ namespace FrostDB
             _address = new PageAddress { DatabaseId = databaseId, TableId = tableId, PageId = Id };
 
             SetPreamble(false);
+
+            _pendingXacts = new List<Guid>();
         }
 
         public Page(byte[] data, BTreeAddress address) : this(data, address.TableId, address.DatabaseId)
@@ -113,6 +128,14 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Clears the pending reconciliation list and marks the Page as reconciled against disk
+        /// </summary>
+        public void MarkAsReconciled()
+        {
+            _pendingXacts.Clear();
+        }
+
         public int GetMaxRowId()
         {
             int maxRowId = 0;
@@ -204,6 +227,7 @@ namespace FrostDB
                 // throw exception here or... ?
             }
 
+            _pendingXacts.Add(row.XactId);
             // to do: reconcile the xact on disk
             throw new NotImplementedException();
 
@@ -482,6 +506,15 @@ namespace FrostDB
                     currentRowNum++;
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines if this page has xacts applied to it. If true, means the page needs to be saved to disk.
+        /// </summary>
+        /// <returns>True if pending save to disk, otherwise false</returns>
+        private bool PendingReconciliation()
+        {
+            return _pendingXacts.Count > 0;
         }
         #endregion
 
