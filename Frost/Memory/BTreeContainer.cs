@@ -104,18 +104,29 @@ namespace FrostDB
                         var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema, _process);
                         if (page.AddRow(row, GetMaxRowId() + 1))
                         {
-                            _tree.Add(page.Id, page);
+                            AddPageToTree(page);
                         };
                     }
                     else
                     {
                         // this is scratch. Trying to work out how and when to get a page from disk.
                         // basically, if there are more pages left on disk, pull them into memory.
+                        // need to do some refactoring here of this code
 
                         if (!TreeIsFullyLoaded())
                         {
-                            int nextPage = GetNextAvailablePageId();
-                            Page page = _storage.GetPage(nextPage, _address);
+                            Page page;
+                            do
+                            {
+                                // to do: we need to keep track of the page ids that we haven't loaded 
+                                // into memory
+                                int nextPage = GetNextAvailablePageId();
+                                page = _storage.GetPage(nextPage, _address);
+                                AddPageToTree(page);
+                            }
+                            while (!page.CanInsertRow(row.Size));
+
+                            page.AddRow(row, GetMaxRowId() + 1);
 
                         }
 
@@ -299,8 +310,19 @@ namespace FrostDB
         {
             return _storage.GetTotalNumberOfDataPages();
         }
+
+        /// <summary>
+        /// Adds the specified page to the tree 
+        /// </summary>
+        /// <param name="page">The page to be added</param>
+        private void AddPageToTree(Page page)
+        {
+            lock (_treeLock)
+            {
+                _tree.Add(page.Id, page);
+            }
+        }
+
         #endregion
-
-
     }
 }
