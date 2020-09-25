@@ -352,7 +352,7 @@ namespace FrostDB
         {
             return _storage.AddPage(page);
         }
-        
+
         /// <summary>
         /// Attempts to reconcile the page's data in memory against what is in storage (this may be throwaway)
         /// </summary>
