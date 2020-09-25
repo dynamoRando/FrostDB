@@ -239,25 +239,40 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Returns the next page id in the tree that's currently loaded. This does not return the 
-        /// next page id if attempting to create a new page - use GetNextPageId() instead.
+        /// Returns a random page id of a page that is still loaded on disk (not currently in memory).
+        /// Use this function for determining any page id that you need to pull from disk into memory.
+        /// If you need the next page id for creating a new page, use GetNextPageId() instead.
         /// </summary>
-        /// <returns>The next page id in the tree</returns>
+        /// <returns>A page id that is currently still on disk and not in memory</returns>
         private int GetNextAvailablePageId()
         {
-            // TO DO: Is this a bug? Should we assume that page numbers are always sequential?
-            // what happens if we were to delete a page?
-            return GetMaxPageId() + 1;
+            return GetPagesOnDisk().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the list of page ids that are still on disk (not in memory)
+        /// </summary>
+        /// <returns>The list of page ids still on disk</returns>
+        private List<int> GetPagesOnDisk()
+        {
+            List<int> keysInMemory = null;
+
+            lock (_treeLock)
+            {
+                keysInMemory = _tree.Keys.ToList();
+            }
+
+            return _storage.GetPagesLeftOnDisk(keysInMemory);
         }
 
         /// <summary>
         /// Returns the next page id in the tree. Use if creating a new page to be added to the tree. For the next 
-        /// available page id in the currently loaded tree in memory, use GetNextAvailablePageId() instead.
+        /// available page id on disk that's not in the currently loaded tree, use GetNextAvailablePageId() instead.
         /// </summary>
         /// <returns></returns>
         private int GetNextPageId()
         {
-            return _storage.GetMaxPageIdFromFile();
+            return _storage.GetMaxPageIdFromFile() + 1;
         }
 
         /// <summary>

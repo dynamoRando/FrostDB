@@ -1,6 +1,7 @@
 ﻿using FrostDB.Storage;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FrostDB
 {
@@ -79,6 +80,12 @@ namespace FrostDB
         public int GetMaxPageIdFromFile()
         {
             return _dataDirectory.GetMaxPageIdInFile();
+        }
+
+        public List<int> GetPagesLeftOnDisk(List<int> pagesInMemory)
+        {
+            var pagesOnDisk = _dataDirectory.Lines.Select(line => line.PageNumber);
+            return pagesInMemory.Except(pagesOnDisk).Union(pagesOnDisk.Except(pagesInMemory)).ToList();
         }
 
         /// <summary>
