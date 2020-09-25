@@ -129,7 +129,7 @@ namespace FrostDB
 
                             page.AddRow(row, GetMaxRowId() + 1);
 
-                            ReconcilePageWithStorage(page);
+                            UpdatePageOnDisk(page);
 
                         }
 
@@ -357,11 +357,11 @@ namespace FrostDB
         /// Attempts to reconcile the page's data in memory against what is in storage (this may be throwaway)
         /// </summary>
         /// <param name="page">The page to reconcile with storage</param>
-        private void ReconcilePageWithStorage(Page page)
+        private void UpdatePageOnDisk(Page page)
         {
             if (page.IsPendingReconciliation)
             {
-                _storage.ReconcilePage(page);
+                _storage.UpdatePageOnDisk(page);
             }
             throw new NotImplementedException();
         }

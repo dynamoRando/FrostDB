@@ -224,7 +224,7 @@ namespace FrostDB
         /// Attempts to reconcile the page against disk. (This may be throwaway).
         /// </summary>
         /// <param name="page">The page to reconcile.</param>
-        public void ReconcilePage(Page page)
+        public void UpdatePageOnDisk(Page page)
         {
             // to do: Update the page on disk; and if the line number changes update the data directory.
             throw new NotImplementedException();
