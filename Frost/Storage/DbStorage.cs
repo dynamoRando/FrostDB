@@ -82,6 +82,11 @@ namespace FrostDB
             return _dataDirectory.GetMaxPageIdInFile();
         }
 
+        /// <summary>
+        /// Returns the page ids that are still on disk. Uses the Except (opposite of Intersect) of the list provided.
+        /// </summary>
+        /// <param name="pagesInMemory">The page ids in memory to compare what's still on disk.</param>
+        /// <returns>The page ids still on disk.</returns>
         public List<int> GetPagesLeftOnDisk(List<int> pagesInMemory)
         {
             var pagesOnDisk = _dataDirectory.Lines.Select(line => line.PageNumber);
