@@ -67,7 +67,7 @@ namespace FrostDB
         /// <returns>A page object</returns>
         public Page GetPage(int id, BTreeAddress address)
         {
-
+            int lineNumber = _dataDirectory.GetLineNumberForPageId(id);
             // do stuff to get the proper id specified
             byte[] data = null;
 

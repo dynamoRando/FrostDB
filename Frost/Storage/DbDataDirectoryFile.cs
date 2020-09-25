@@ -60,6 +60,11 @@ namespace FrostDB.Storage
         #endregion
 
         #region Public Methods
+        public int GetLineNumberForPageId(int pageId)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsValid()
         {
             throw new NotImplementedException();
