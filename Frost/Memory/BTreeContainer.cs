@@ -115,7 +115,7 @@ namespace FrostDB
                         // this is scratch. Trying to work out how and when to get a page from disk.
                         // basically, if there are more pages left on disk, pull them into memory.
 
-                        if (_totalPages < _tree.Count())
+                        if (_tree.Count() < _totalPages)
                         {
                             int nextPage = GetMaxPageId() + 1;
                             Page page = _storage.GetPage(nextPage, _address);

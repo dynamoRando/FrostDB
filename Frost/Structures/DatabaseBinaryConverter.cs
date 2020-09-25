@@ -26,6 +26,16 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Converts a string value to a binary array (UTF8)
+        /// </summary>
+        /// <param name="value">The string value to convert to bytes</param>
+        /// <returns>A byte array representation of the string</returns>
+        public static byte[] StringToBinary(string value)
+        {
+            return Encoding.UTF8.GetBytes(value);
+        }
+
+        /// <summary>
         /// Converts a decimal or numeric value to a binary array based on the column definition
         /// </summary>
         /// <param name="value">The value to convert</param>
@@ -139,6 +149,16 @@ namespace FrostDB
         public static Guid BinaryToGuid(Span<byte> span)
         {
             return new Guid(span);
+        }
+
+        /// <summary>
+        /// Returns a string based on the supplied binary array (assumes UTF8)
+        /// </summary>
+        /// <param name="bytes">The binary array</param>
+        /// <returns>The string represented by the byte array</returns>
+        public static string BinaryToString(byte[] bytes)
+        {
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

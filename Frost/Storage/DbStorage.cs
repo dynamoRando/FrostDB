@@ -61,6 +61,12 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets a page from disk
+        /// </summary>
+        /// <param name="id">The id of the page to get</param>
+        /// <param name="address">The btree address of the page</param>
+        /// <returns>The page specified</returns>
         public Page GetPage(int id, BTreeAddress address)
         {
             return _data.GetPage(id, address);

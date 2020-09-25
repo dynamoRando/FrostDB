@@ -60,6 +60,11 @@ namespace FrostDB.Storage
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns the line number in the data file for the page id specified
+        /// </summary>
+        /// <param name="pageId">The page id being requested</param>
+        /// <returns>The line number of the page in the data file</returns>
         public int GetLineNumberForPageId(int pageId)
         {
             throw new NotImplementedException();

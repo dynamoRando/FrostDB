@@ -68,11 +68,8 @@ namespace FrostDB
         public Page GetPage(int id, BTreeAddress address)
         {
             int lineNumber = _dataDirectory.GetLineNumberForPageId(id);
-            // do stuff to get the proper id specified
-            byte[] data = null;
-
-            var page = new Page(data, address);
-            throw new NotImplementedException();
+            byte[] data = GetBinaryPageDataFromDisk(lineNumber);
+            return new Page(data, address);
         }
 
         /// <summary>
@@ -82,7 +79,7 @@ namespace FrostDB
         /// <returns>A page from disk</returns>
         public Page GetNextPage(List<PageAddress> excludeAddresses)
         {
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -110,6 +107,25 @@ namespace FrostDB
         #endregion
 
         #region Private Methods
+        /// <summary>
+        /// Returns the byte array in the data file at the specified linenumber
+        /// </summary>
+        /// <param name="lineNumber">The line number of the data file</param>
+        /// <returns>The binary data at the specified line number</returns>
+        private byte[] GetBinaryPageDataFromDisk(int lineNumber)
+        {
+            string line = string.Empty;
+            using (Stream stream = File.Open(FileName(), FileMode.Open))
+            {
+                stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    line = reader.ReadLine();
+                }
+            }
+
+            return DatabaseBinaryConverter.StringToBinary(line);
+        }
 
         // TO DO: Need to decide what to do here. Should we load just the first page?
         private void LoadFileData()
