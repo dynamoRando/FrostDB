@@ -83,8 +83,9 @@ namespace FrostDB
             // to do: write the data to the file
 
             // scratch; need to actually determine the line number of the page we added in the file
-            int lineNumber = 0;
+            int lineNumber = _dataDirectory.GetNextLineNumber();
             _dataDirectory.AddPage(page.Id, lineNumber);
+            AddPage(page.ToBinary(), lineNumber);
 
             throw new NotImplementedException();
         }
@@ -154,6 +155,20 @@ namespace FrostDB
                 }
             }
             return DatabaseBinaryConverter.StringToBinary(line);
+        }
+
+        /// <summary>
+        /// Adds the page binary data to the data file
+        /// </summary>
+        /// <param name="page">The binary data to save</param>
+        /// <param name="lineNumber">The line at which data should be added</param>
+        private void AddPage(byte[] page, int lineNumber)
+        {
+            using (FileStream stream = File.OpenWrite(FileName()))
+            {
+                stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                stream.Write(page, 0, page.Length);
+            }
         }
 
         // TO DO: Need to decide what to do here. Should we load just the first page?

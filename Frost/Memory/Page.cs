@@ -129,6 +129,15 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Return this page's binary data
+        /// </summary>
+        /// <returns>The binary array data for this page</returns>
+        public byte[] ToBinary()
+        {
+            return _data;
+        }
+
+        /// <summary>
         /// Clears the pending reconciliation list and marks the Page as reconciled against disk
         /// </summary>
         public void MarkAsReconciled()

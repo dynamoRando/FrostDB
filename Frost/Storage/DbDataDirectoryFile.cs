@@ -100,6 +100,15 @@ namespace FrostDB.Storage
         }
 
         /// <summary>
+        /// Returns the next line number in the file (use when adding a new page)
+        /// </summary>
+        /// <returns>The next available line number</returns>
+        public int GetNextLineNumber()
+        {
+            return Lines.Max(item => item.PageNumber) + 1;
+        }
+
+        /// <summary>
         /// Returns the line number in the data file for the page id specified
         /// </summary>
         /// <param name="pageId">The page id being requested</param>
