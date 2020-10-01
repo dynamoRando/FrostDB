@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace FrostDB.Storage
 {
@@ -27,10 +28,11 @@ namespace FrostDB.Storage
         private string _databaseName;
         private string _folder;
         private readonly object _fileLock = new object();
+
         #endregion
 
         #region Public Properties
-        public List<DbDataDirectoryFileItem> Lines { get; set; }
+        public ConcurrentBag<DbDataDirectoryFileItem> Lines { get; set; }
         public int TotalPages => Lines.Count;
         public int VersionNumber { get; set; }
         #endregion
@@ -50,7 +52,7 @@ namespace FrostDB.Storage
             _databaseName = databaseName;
             _extension = extension;
 
-            Lines = new List<DbDataDirectoryFileItem>();
+            Lines = new ConcurrentBag<DbDataDirectoryFileItem>();
 
             // need to check if file is on disk and it not, create it
             if (!DoesFileExist())
@@ -75,8 +77,18 @@ namespace FrostDB.Storage
         /// <returns>True if successful, otherwise false</returns>
         public bool AddPage(int pageId, int lineNumber)
         {
-            // need to save to disk and then also add to the collection
-            throw new NotImplementedException();
+            Lines.Add(new DbDataDirectoryFileItem { LineNumber = lineNumber, PageNumber = pageId });
+
+            lock (_fileLock)
+            {
+                // page number line number
+                using (StreamWriter sw = File.AppendText(FileName()))
+                {
+                    sw.WriteLine($"{pageId.ToString()} {lineNumber.ToString()}");
+                }
+            }
+
+            return true;    
         }
         /// <summary>
         /// Returns the max page id stored in the data directory file
@@ -147,7 +159,7 @@ namespace FrostDB.Storage
         private void ParseLines(string[] lines)
         {
             // page number line number
-            foreach(var line in lines)
+            foreach (var line in lines)
             {
                 Lines.Add(new DbDataDirectoryFileItem
                 {
