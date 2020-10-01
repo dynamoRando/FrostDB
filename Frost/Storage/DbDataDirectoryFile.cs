@@ -26,6 +26,7 @@ namespace FrostDB.Storage
         private string _extension;
         private string _databaseName;
         private string _folder;
+        private readonly object _fileLock = new object();
         #endregion
 
         #region Public Properties
@@ -55,6 +56,10 @@ namespace FrostDB.Storage
             if (!DoesFileExist())
             {
                 CreateFile();
+            }
+            else
+            {
+                LoadFile();
             }
         }
 
@@ -124,6 +129,31 @@ namespace FrostDB.Storage
             if (VersionNumber == 0)
             {
                 VersionNumber = StorageFileVersions.DATA_DIRECTORY_FILE_VERSION_1;
+            }
+        }
+
+        private void LoadFile()
+        {
+            lock (_fileLock)
+            {
+                if (DoesFileExist())
+                {
+                    var lines = File.ReadAllLines(FileName());
+                    ParseLines(lines);
+                }
+            }
+        }
+
+        private void ParseLines(string[] lines)
+        {
+            // page number line number
+            foreach(var line in lines)
+            {
+                Lines.Add(new DbDataDirectoryFileItem
+                {
+                    PageNumber = Convert.ToInt32(line[0]),
+                    LineNumber = Convert.ToInt32(line[1])
+                });
             }
         }
         #endregion

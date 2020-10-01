@@ -23,6 +23,7 @@ namespace FrostDB
         private string _databaseName;
         private DbDataDirectoryFile _dataDirectory;
         private string _dataDirectoryExtension;
+        private readonly object _fileLock = new object();
         #endregion
 
         #region Public Properties
@@ -141,15 +142,17 @@ namespace FrostDB
         private byte[] GetBinaryPageDataFromDisk(int lineNumber)
         {
             string line = string.Empty;
-            using (Stream stream = File.Open(FileName(), FileMode.Open))
+            lock (_fileLock)
             {
-                stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
-                using (StreamReader reader = new StreamReader(stream))
+                using (Stream stream = File.Open(FileName(), FileMode.Open))
                 {
-                    line = reader.ReadLine();
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        line = reader.ReadLine();
+                    }
                 }
             }
-
             return DatabaseBinaryConverter.StringToBinary(line);
         }
 
