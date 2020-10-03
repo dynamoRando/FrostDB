@@ -16,6 +16,7 @@ namespace FrostDB
     public class SchemaFile : IStorageFile
     {
         #region Private Fields
+        private int _databaseId;
         private int _numOfColumns;
         private int _currentColumn = 0;
         private string _schemaFileExtension;
@@ -44,8 +45,10 @@ namespace FrostDB
         /// <param name="schemaFileFolder">The location of the schema file folder for the Frost process</param>
         /// <param name="fileExtension">The filename extension for schema files</param>
         /// <param name="databaseName">The name of the database</param>
-        public SchemaFile(string schemaFileFolder, string fileExtension, string databaseName)
+        /// <param name="databaseId">The id of the database</param>
+        public SchemaFile(string schemaFileFolder, string fileExtension, string databaseName, int databaseId)
         {
+            _databaseId = databaseId;
             _schemaFileFolder = schemaFileFolder;
             _schemaFileExtension = fileExtension;
             _databaseName = databaseName;
@@ -141,6 +144,8 @@ namespace FrostDB
             using (var file = new StreamWriter(FileName()))
             {
                 file.WriteLine("version " + VersionNumber.ToString());
+                ////database id (int) name
+                file.WriteLine($"database { _databaseId.ToString()} { _databaseName}");
             }
         }
 
@@ -169,7 +174,7 @@ namespace FrostDB
         {
             _tableSchema = null;
 
-            var file = Path.Combine(_schemaFileFolder, _databaseName + "." + _schemaFileExtension);
+            var file = FileName();
             var lines = File.ReadAllLines(file);
             _numOfColumns = GetNumOfColumnsInFile(lines);
             Array.ForEach(lines, line => ParseLine(line));
@@ -263,6 +268,7 @@ namespace FrostDB
             _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
             _dbSchema.DatabaseName = items[2];
         }
+
         #endregion
 
     }

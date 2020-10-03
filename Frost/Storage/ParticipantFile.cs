@@ -115,7 +115,7 @@ namespace FrostDB
         /// <returns>The filename</returns>
         private string FileName()
         {
-            return Path.Combine(_participantFileFolder, _databaseName + "." + _participantFileExtension);
+            return Path.Combine(_participantFileFolder, _databaseName + _participantFileExtension);
         }
 
         /// <summary>

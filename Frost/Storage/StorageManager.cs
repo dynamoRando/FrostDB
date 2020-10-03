@@ -52,7 +52,7 @@ namespace FrostDB
         /// <param name="database"></param>
         public void AddNewDatabase(Database2 database)
         {
-            database.Storage.CreateFiles();
+            database.Storage.CreateFiles(database.DatabaseId);
             _directory.AddDatabaseToDirectory(database, true);
         }
 
@@ -89,7 +89,7 @@ namespace FrostDB
             if (File.Exists(file))
             {
                 var items = File.ReadAllLines(file);
-                _directory = new DbDirectory(items);
+                _directory = new DbDirectory(items, file);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace FrostDB
                 }
 
                 var items = File.ReadAllLines(file);
-                _directory = new DbDirectory(items);
+                _directory = new DbDirectory(items, file);
             }
 
             return _directory.OnlineDatabases;

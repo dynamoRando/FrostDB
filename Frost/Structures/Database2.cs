@@ -77,7 +77,8 @@ namespace FrostDB
             _storage = storage;
             _schema = fill.Schema;
             FillTables(fill);
-            throw new NotImplementedException();
+
+            // to do: anything else?
         }
         #endregion
 
@@ -218,8 +219,6 @@ namespace FrostDB
             {
                 this.Tables.Add(new Table2(_process, table, this.Storage, _process.Cache));
             }
-
-            throw new NotImplementedException();
         }
         #endregion
 

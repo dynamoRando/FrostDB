@@ -39,12 +39,13 @@ namespace FrostDB
         #region Public Properties
         public EventManager EventManager => _eventManager;
         public DatabaseManager DatabaseManager => _dbManager;
+        internal DatabaseManager2 DatabaseManager2 => _dbManager2;
         public PartialDatabaseManager PartialDatabaseManager => _pdbManager;
         public Guid? Id { get => Configuration.Id; }
         public string Name { get => Configuration.Name; }
         public IProcessConfiguration Configuration { get; private set; }
         public List<Database> Databases => DatabaseManager.Databases;
-        public List<Database2> Databases2 => DatabaseManager.Databases2;
+        public List<string> Databases2 => DatabaseManager2.DatabaseNames;
         public List<PartialDatabase> PartialDatabases => PartialDatabaseManager.Databases;
         public List<Contract> Contracts => _contractManager.Contracts;
         public ContractManager ContractManager => (ContractManager)_contractManager;
@@ -130,7 +131,7 @@ namespace FrostDB
 
         public virtual void AddDatabase2(string databaseName)
         {
-            DatabaseManager.AddDatabase2(new Database2(this, databaseName));
+            _dbManager2.AddDatabase(new Database2(this, databaseName));
         }
 
         public virtual void AddPartialDatabase(string databaseName)
@@ -186,17 +187,26 @@ namespace FrostDB
 
         public bool HasDatabase2(string databaseName)
         {
-            return Databases2.Any(database => database.Name.ToUpper() == databaseName.ToUpper());
+            return _dbManager2.HasDatabase(databaseName.ToUpper());
+        }
+
+        public List<string> GetDatabaseNames()
+        {
+            var names = new List<string>();
+            names.AddRange(_dbManager2.DatabaseNames);
+            names.AddRange(Databases.Select(d => d.Name).ToList());
+
+            return names;
         }
 
         public Database2 GetDatabase2(string databaseName)
         {
-            return Databases2.Where(d => d.Name == databaseName).FirstOrDefault();
+            return _dbManager2.GetDatabase(databaseName.ToUpper());
         }
 
         public Database2 GetDatabase2(int databaseId)
         {
-            return Databases2.Where(d => d.DatabaseId == databaseId).FirstOrDefault();
+            return _dbManager2.GetDatabase(databaseId);
         }
 
         public bool HasDatabase(string databaseName)
@@ -344,6 +354,11 @@ namespace FrostDB
         public void StopConsoleServer()
         {
             _networkManager.StopConsoleServer();
+        }
+
+        public void Setup()
+        {
+            SetupVersion2();
         }
         #endregion
 

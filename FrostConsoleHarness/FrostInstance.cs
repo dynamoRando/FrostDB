@@ -45,6 +45,8 @@ namespace FrostConsoleHarness
                 Instance.StartConsoleServer();
 
                 Instance.LoadDatabases2();
+
+                Instance.Setup();
             }
         }
     }

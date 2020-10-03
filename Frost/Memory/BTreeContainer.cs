@@ -96,9 +96,6 @@ namespace FrostDB
                 lock (_treeLock)
                 {
                     int nextPageId = 0;
-                    // assume that we've already checked for this in Table2.cs
-                    // this is a design change where we will let the Structure (Database / Table) orchestrate the 
-                    // reconciliation between cache and disk
 
                     if (TreeIsEmpty())
                     {
@@ -125,15 +122,6 @@ namespace FrostDB
                             AddRowToNewPage(row);
                         }
                     }
-
-                    // this is scratch. Trying to work out how and when to get a page from disk.
-                    // basically, if there are more pages left on disk, pull them into memory.
-                    // need to do some refactoring here of this code
-
-                    // need to find the next available Page in the tree that has room for the row
-                    // then add the row to that page
-
-                    // need to go ahead and update the tree and also the data file and db directory file
                 }
 
                 SetContainerState(BTreeContainerState.Ready);

@@ -20,6 +20,8 @@ namespace FrostDB
     {
         #region Private Fields
         private DbDirectoryItem[] _databases;
+        private string _fileName;
+        private readonly object _fileLock = new object();
         #endregion
 
         #region Public Properties
@@ -32,9 +34,10 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbDirectory(string[] lines)
+        public DbDirectory(string[] lines, string fileName)
         {
             _databases = new DbDirectoryItem[lines.Length];
+            _fileName = fileName;
             ParseLines(lines);
         }
         #endregion
@@ -47,9 +50,14 @@ namespace FrostDB
         /// <param name="isOnline">True if the database is online, otherwise false</param>
         public void AddDatabaseToDirectory(Database2 database, bool isOnline)
         {
-            // need to write to disk the new database and it's online status
-
-            throw new NotImplementedException();
+            // databaseName <bool> isOnline
+            lock (_fileLock)
+            {
+                using (var sw = File.AppendText(_fileName))
+                {
+                    sw.WriteLine($"{database.Name},{isOnline.ToString()}");
+                }
+            }
         }
 
         public string[] OnlineDatabases => GetOnlineDatabases();

@@ -157,6 +157,11 @@ namespace FrostDB
                 config.FrostDbXactFileExtension = _default.FrostDbXactFileExtension;
             }
 
+            if (string.IsNullOrEmpty(config.ParticipantFileExtension))
+            {
+                config.ParticipantFileExtension = _default.ParticpantFileExtension;
+            }
+
             SaveConfiguration(config);
         }
         #endregion
