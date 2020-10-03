@@ -95,47 +95,39 @@ namespace FrostDB
 
                 lock (_treeLock)
                 {
+                    int nextPageId = 0;
                     // assume that we've already checked for this in Table2.cs
                     // this is a design change where we will let the Structure (Database / Table) orchestrate the 
                     // reconciliation between cache and disk
 
-                    if (_tree.Count == 0)
+                    if (TreeIsEmpty())
                     {
-                        var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema, _process);
-                        if (page.AddRow(row, GetMaxRowId() + 1))
+                        nextPageId = GetNextAvailablePageId();
+
+                        // brand new table, need to add the 1st page.
+                        if (nextPageId == 0)
                         {
-                            AddPageToTree(page);
-                            AddPageToStorage(page);
-                        };
+                            AddRowToNewPage(row);
+                        }
+                        else
+                        {
+                            InsertRowIntoFirstAvailablePage(row);
+                        }
                     }
                     else
                     {
-                        // this is scratch. Trying to work out how and when to get a page from disk.
-                        // basically, if there are more pages left on disk, pull them into memory.
-                        // need to do some refactoring here of this code
-
                         if (!TreeIsFullyLoaded())
                         {
-                            Page page;
-                            do
-                            {
-                                // to do: we need to keep track of the page ids that we haven't loaded 
-                                // into memory
-                                int nextPage = GetNextAvailablePageId();
-                                page = _storage.GetPage(nextPage, _address);
-                                AddPageToTree(page);
-                            }
-                            while (!page.CanInsertRow(row.Size));
-
-                            page.AddRow(row, GetMaxRowId() + 1);
-
-                            UpdatePageOnDisk(page);
-
+                             InsertRowIntoFirstAvailablePage(row);
                         }
-
-                        // need to find the next available Page in the tree that has room for the row
-                        // then add the row to that page
                     }
+
+                    // this is scratch. Trying to work out how and when to get a page from disk.
+                    // basically, if there are more pages left on disk, pull them into memory.
+                    // need to do some refactoring here of this code
+
+                    // need to find the next available Page in the tree that has room for the row
+                    // then add the row to that page
 
                     // need to go ahead and update the tree and also the data file and db directory file
                 }
@@ -144,6 +136,54 @@ namespace FrostDB
             }
 
             return result;
+        }
+
+        private void AddRowToNewPage(RowInsert row)
+        {
+            var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema, _process);
+            if (page.AddRow(row, GetMaxRowId() + 1))
+            {
+                AddPageToTree(page);
+                AddPageToStorage(page);
+            }
+        }
+
+        /// <summary>
+        /// Pulls pages from disk into the tree and then attempts to insert the row into the first page it can fit into 
+        /// and then updates the page on disk
+        /// </summary>
+        /// <param name="row">The row to insert</param>
+        private void InsertRowIntoFirstAvailablePage(RowInsert row)
+        {
+            int nextPageId;
+            Page page;
+            do
+            {
+                // to do: we need to keep track of the page ids that we haven't loaded 
+                // into memory
+                nextPageId = GetNextAvailablePageId();
+                page = _storage.GetPage(nextPageId, _address);
+                AddPageToTree(page);
+
+                if (TreeIsFullyLoaded())
+                {
+                    break;
+                }
+
+                // to do: what if the pages on disk are filled up and we need to add a brand new page here?
+                // in other words, we can never exit the loop?
+            }
+            while (!page.CanInsertRow(row.Size));
+
+            if (TreeIsFullyLoaded() && !page.CanInsertRow(row.Size))
+            {
+                AddRowToNewPage(row);
+            }
+            else
+            {
+                page.AddRow(row, GetMaxRowId() + 1);
+                UpdatePageOnDisk(page);
+            }
         }
 
         /// <summary>
@@ -245,11 +285,20 @@ namespace FrostDB
         /// Returns a random page id of a page that is still loaded on disk (not currently in memory).
         /// Use this function for determining any page id that you need to pull from disk into memory.
         /// If you need the next page id for creating a new page, use GetNextPageId() instead.
+        /// If this is a brand new table, it will return 0.
         /// </summary>
         /// <returns>A page id that is currently still on disk and not in memory</returns>
         private int GetNextAvailablePageId()
         {
-            return GetPagesOnDisk().FirstOrDefault();
+            List<int> pages = GetPagesOnDisk();
+            if (pages.Count == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return pages.FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -266,6 +315,15 @@ namespace FrostDB
             }
 
             return _storage.GetPagesLeftOnDisk(keysInMemory);
+        }
+
+        /// <summary>
+        /// Determines if there are no pages in the tree
+        /// </summary>
+        /// <returns>True if the page count is 0, otherwise false</returns>
+        private bool TreeIsEmpty()
+        {
+            return _tree.Count == 0;
         }
 
         /// <summary>
@@ -335,12 +393,7 @@ namespace FrostDB
         /// <param name="page">The page to be added</param>
         private void AddPageToTree(Page page)
         {
-            lock (_treeLock)
-            {
-                _tree.Add(page.Id, page);
-            }
-
-            // TO DO: Should we add the page to disk?
+            _tree.Add(page.Id, page);
         }
 
         /// <summary>
