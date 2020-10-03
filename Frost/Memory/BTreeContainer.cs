@@ -138,6 +138,10 @@ namespace FrostDB
             return result;
         }
 
+        /// <summary>
+        /// Creates a new page and then adds the row to it; then adds the page to the tree and to storage
+        /// </summary>
+        /// <param name="row">The row to add</param>
         private void AddRowToNewPage(RowInsert row)
         {
             var page = new Page(GetNextPageId(), _address.TableId, _address.DatabaseId, _schema, _process);
