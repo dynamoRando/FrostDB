@@ -80,14 +80,10 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool AddPage(Page page)
         {
-            // to do: write the data to the file
-
-            // scratch; need to actually determine the line number of the page we added in the file
             int lineNumber = _dataDirectory.GetNextLineNumber();
             _dataDirectory.AddPage(page.Id, lineNumber);
             AddPage(page.ToBinary(), lineNumber);
-
-            throw new NotImplementedException();
+            return true;
         }
 
         /// <summary>
