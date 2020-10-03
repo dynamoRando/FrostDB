@@ -171,12 +171,6 @@ namespace FrostDB
             }
         }
 
-        // TO DO: Need to decide what to do here. Should we load just the first page?
-        private void LoadFileData()
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Creates the data file for this database on disk.
         /// </summary>

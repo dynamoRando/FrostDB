@@ -120,6 +120,10 @@ namespace FrostDB
                         {
                              InsertRowIntoFirstAvailablePage(row);
                         }
+                        else
+                        {
+                            AddRowToNewPage(row);
+                        }
                     }
 
                     // this is scratch. Trying to work out how and when to get a page from disk.
