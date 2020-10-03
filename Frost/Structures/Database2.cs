@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FrostDB.Interface;
 using MoreLinq;
 
 namespace FrostDB
@@ -71,6 +72,7 @@ namespace FrostDB
         /// <param name="fill">A DBFill object (usually loaded from disk.)</param>
         public Database2(Process process, DbFill fill, DbStorage storage)
         {
+            _tables = new List<Table2>();
             _process = process;
             _name = fill.Schema.DatabaseName;
             _databaseId = fill.Schema.DatabaseId;

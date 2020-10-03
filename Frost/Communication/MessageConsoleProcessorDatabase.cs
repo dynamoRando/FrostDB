@@ -98,17 +98,27 @@ namespace FrostDB
         private IMessage HandleGetDatabaseInfo(Message message)
         {
             string dbName = message.Content;
+            DatabaseInfo info = new DatabaseInfo();
+            string messageContent = string.Empty;
+            Type type = null;
+
             var db = _process.GetDatabase(dbName);
 
-            DatabaseInfo info = new DatabaseInfo();
+            if (db is null)
+            {
+                var db2 = _process.GetDatabase2(dbName);
+                db2.Tables.ForEach(t => info.AddToTables((t.TableId.ToString(), t.Name)));
+            }
+            else
+            {
+                info.Name = db.Name;
+                info.Id = db.Id.ToString();
 
-            info.Name = db.Name;
-            info.Id = db.Id;
+                db.Tables.ForEach(t => info.AddToTables((t.Id.ToString(), t.Name)));
 
-            db.Tables.ForEach(t => info.AddToTables((t.Id, t.Name)));
+                type = info.GetType();
 
-            Type type = info.GetType();
-            string messageContent = string.Empty;
+            }
 
             messageContent = JsonConvert.SerializeObject(info);
             return _messageBuilder.BuildMessage(message.Origin, messageContent, MessageConsoleAction.Database.Get_Database_Info_Response, type, message.Id, MessageActionType.Database);

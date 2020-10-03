@@ -6,19 +6,19 @@ namespace FrostCommon.ConsoleMessages
 {
     public class DatabaseInfo
     {
-        public Guid? Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         /// <summary>
         /// A list of tables in the database. The TableId, and the Name of the table
         /// </summary>
-        public List<(Guid?, string)> Tables { get; }
+        public List<(string, string)> Tables { get; }
 
         public DatabaseInfo()
         {
-            Tables = new List<(Guid?, string)>();
+            Tables = new List<(string, string)>();
         }
 
-        public void AddToTables((Guid?, string) value)
+        public void AddToTables((string?, string) value)
         {
             Tables.Add(value);
         }
