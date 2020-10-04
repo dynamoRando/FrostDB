@@ -10,7 +10,7 @@ namespace FrostDB
     /// <summary>
     /// A FrostDb Database
     /// </summary>
-    public class Database2
+    public class Database2 : IFrostDb
     {
         /*
          * This database object will return tables and rows and is responsible for holding the
@@ -85,6 +85,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public IReadOnlyList<string> GetTableNames()
+        {
+            var tables = new List<string>(_tables.Count);
+            _tables.ForEach(table => tables.Add(table.Name));
+            return tables.AsReadOnly();
+        }
         /// <summary>
         /// Adds a table to the database based on the passed in table schema
         /// </summary>
@@ -159,7 +165,14 @@ namespace FrostDB
         /// <returns>The max id</returns>
         public int GetMaxTableId()
         {
-            return Tables.MaxBy(t => t.TableId).First().TableId;
+            if (Tables.Count == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return Tables.MaxBy(t => t.TableId).First().TableId;
+            }
         }
 
         /// <summary>

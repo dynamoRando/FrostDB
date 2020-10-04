@@ -24,10 +24,6 @@ namespace FrostDB
         private int _databaseId;
         private DbStorage _storage;
         private Cache _cache;
-
-        // this is an in memory conversion from the pages and should be destructive
-        // i.e. always destroyed and rebuilt from the pager
-        private List<Row2> _rows;
         #endregion
 
         #region Public Properties
@@ -65,7 +61,6 @@ namespace FrostDB
             _columns = schema.Columns;
             _tableId = schema.TableId;
             _databaseId = schema.DatabaseId;
-            _rows = new List<Row2>();
             _storage = dbStorage;
             _cache = pager;
         }

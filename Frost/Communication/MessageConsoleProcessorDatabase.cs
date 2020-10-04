@@ -143,7 +143,7 @@ namespace FrostDB
                 {
                     continue;
                 }
-                var col = new Column(c.Item1, c.Item2);
+                var col = new Column(c.Item1, Type.GetType(c.Item2));
                 columns.Add(col);
             }
 

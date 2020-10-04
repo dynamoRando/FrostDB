@@ -79,10 +79,11 @@ namespace FrostDB
             using (var file = new StreamWriter(FileName()))
             {
                 file.WriteLine("version " + VersionNumber.ToString());
+                file.WriteLine($"database { _databaseId.ToString()} { _databaseName}");
                 foreach (var table in schema.Tables)
                 {
-                    // table tableId tableName
-                    file.WriteLine($"table {table.TableId.ToString()} {table.Name}");
+                    // table tableId tableName numOfColumns
+                    file.WriteLine($"table {table.TableId.ToString()} {table.Name} {table.Columns.Length.ToString()}");
                     foreach (var column in table.Columns)
                     {
                         // column columnName columnDataType
@@ -144,7 +145,7 @@ namespace FrostDB
             using (var file = new StreamWriter(FileName()))
             {
                 file.WriteLine("version " + VersionNumber.ToString());
-                ////database id (int) name
+                //database id (int) name
                 file.WriteLine($"database { _databaseId.ToString()} { _databaseName}");
             }
         }
@@ -178,6 +179,12 @@ namespace FrostDB
             var lines = File.ReadAllLines(file);
             _numOfColumns = GetNumOfColumnsInFile(lines);
             Array.ForEach(lines, line => ParseLine(line));
+
+            // if there was only 1 table in the file
+            if (_dbSchema.Tables.Count == 0)
+            {
+                _dbSchema.Tables.Add(_tableSchema);
+            }
         }
 
         private int GetNumOfColumnsInFile(string[] lines)
@@ -230,7 +237,7 @@ namespace FrostDB
         /// Creates a new table schema from the text line
         /// </summary>
         /// <param name="line">The line from the file</param>
-        /// <returns>A table schema object</returns>
+        /// <returns>A tablre schema object</returns>
         private TableSchema2 GetTableSchema(string line)
         {
             // table tableId tableName numOfColumns

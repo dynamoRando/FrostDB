@@ -211,7 +211,15 @@ namespace FrostDB
 
         public bool HasDatabase(string databaseName)
         {
-            return Databases.Any(d => d.Name.ToUpper() == databaseName.ToUpper());
+            bool hasDatabase = false;
+            hasDatabase = Databases.Any(d => d.Name.ToUpper() == databaseName.ToUpper());
+
+            if (!hasDatabase)
+            {
+                hasDatabase = _dbManager2.HasDatabase(databaseName);
+            }
+
+            return hasDatabase;
         }
 
         public bool HasPartialDatabase(string databaseName)

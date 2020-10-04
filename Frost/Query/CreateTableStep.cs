@@ -55,7 +55,6 @@ namespace FrostDB
                 var schema = new TableSchema2(columns, db.GetNextTableId(), TableName, databaseName, db.DatabaseId);
                 var table = new Table2(process, schema, db.Storage, process.Cache);
                 db.AddTable(table);
-                throw new NotImplementedException();
             }
             else
             {
@@ -82,17 +81,17 @@ namespace FrostDB
             result.Ordinal = ordinal;
 
             var values = text.Split(" ");
-            if (values.Length == 3)
+            if (values.Length == 4)
             {
                 result.Name = values[0];
                 result.DataType = values[1];
-                if (values[2] == "NULL")
-                {
-                    result.IsNullable = true;
-                }
-                else if (values[2] == "NOT NULL")
+                if (values[2] == "NOT")
                 {
                     result.IsNullable = false;
+                }
+                else if (values[2] == "NULL")
+                {
+                    result.IsNullable = true;
                 }
             }
             else if (values.Length == 2)
@@ -100,6 +99,19 @@ namespace FrostDB
                 result.Name = values[0];
                 result.DataType = values[1];
                 result.IsNullable = true;
+            }
+            else if (values.Length == 3)
+            {
+                result.Name = values[0];
+                result.DataType = values[1];
+                if (values[2] == "NOT")
+                {
+                    result.IsNullable = false;
+                }
+                else if (values[2] == "NULL")
+                {
+                    result.IsNullable = true;
+                }
             }
             return result;
         }

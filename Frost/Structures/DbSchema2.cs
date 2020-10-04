@@ -25,7 +25,7 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbSchema2(int id, string databaseName)
+        public DbSchema2(int id, string databaseName) : this()
         {
             DatabaseId = id;
             DatabaseName = databaseName;

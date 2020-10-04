@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FrostDB.Interface;
+using MoreLinq;
 
 namespace FrostDB
 {
@@ -57,6 +58,8 @@ namespace FrostDB
         {
             Database db = null;
             Table table = null;
+            TableInfo info = new TableInfo();
+
             if (message.TwoGuidTuple.Item1.HasValue)
             {
                 var databaseTable = message.TwoGuidTuple;
@@ -67,15 +70,23 @@ namespace FrostDB
             {
                 var databaseTable = message.TwoStringTuple;
                 db = (Database)_process.GetDatabase(databaseTable.Item1);
-                table = _process.GetTable(databaseTable.Item1, databaseTable.Item2);
+                if (db != null)
+                {
+                    table = _process.GetTable(databaseTable.Item1, databaseTable.Item2);
+                    info.TableName = table.Name;
+                    info.DatabaseName = db.Name;
+
+                    table.Columns.ForEach(c => info.Columns.Add((c.Name, c.DataType.ToString())));
+                }
+                else
+                {
+                    var item = _process.GetDatabase2(databaseTable.Item1).GetTable(databaseTable.Item2);
+                    info.TableName = item.Name;
+                    info.DatabaseName = item.DatabaseName;
+
+                    item.Columns.ForEach(column => info.Columns.Add((column.Name, column.DataType)));
+                }
             }
-
-            TableInfo info = new TableInfo();
-
-            info.TableName = table.Name;
-            info.DatabaseName = db.Name;
-
-            table.Columns.ForEach(c => info.Columns.Add((c.Name, c.DataType)));
 
             Type type = info.GetType();
             string messageContent = string.Empty;
