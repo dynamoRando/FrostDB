@@ -166,26 +166,26 @@ namespace FrostDB
             _databases.Remove(db);
         }
 
-        /// <summary>
-        /// Loads all databases from disk (used in Frost process startup)
-        /// </summary>
-        /// <returns>A list of databases</returns>
-        public int LoadDatabases2()
-        {
-            int count = 0;
-            string databaseFolderLocation = _process.Configuration.DatabaseFolder;
+        ///// <summary>
+        ///// Loads all databases from disk (used in Frost process startup)
+        ///// </summary>
+        ///// <returns>A list of databases</returns>
+        //public int LoadDatabases2()
+        //{
+        //    int count = 0;
+        //    string databaseFolderLocation = _process.Configuration.DatabaseFolder;
 
-            if (!Directory.Exists(databaseFolderLocation))
-            {
-                Directory.CreateDirectory(databaseFolderLocation);
-            }
+        //    if (!Directory.Exists(databaseFolderLocation))
+        //    {
+        //        Directory.CreateDirectory(databaseFolderLocation);
+        //    }
 
-            var dbs = _storageManager.GetDatabases();
-            _databases2.AddRange(dbs);
-            count = dbs.Length;
+        //    var dbs = _storageManager.GetDatabases();
+        //    _databases2.AddRange(dbs);
+        //    count = dbs.Length;
 
-            return count;
-        }
+        //    return count;
+        //}
 
         public int LoadDatabases(string databaseFolderLocation, string databaseExtension)
         {

@@ -44,8 +44,6 @@ namespace FrostConsoleHarness
                 Instance.StartRemoteServer();
                 Instance.StartConsoleServer();
 
-                Instance.LoadDatabases2();
-
                 Instance.Setup();
             }
         }
