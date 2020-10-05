@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+
+// TO DO: Make the xaction file and the log file seperate.
+// As transactions are reconciled, append them to the log file.
 namespace FrostDB
 {
     enum XactLineAction
