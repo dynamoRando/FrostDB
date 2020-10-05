@@ -133,6 +133,11 @@ namespace FrostDB
             return new Location(Id, Address, DataServerPort, Name);
         }
 
+        public Location2 GetLocation2()
+        {
+            return new Location2(Address, DataServerPort);
+        }
+
         #endregion
 
         #region Private Methods

@@ -34,6 +34,7 @@ namespace FrostDB
         private QueryParser _parser;
         private QueryManager _queryManager;
         private Cache _cache;
+        private Participant2 _participant;
         #endregion
 
         #region Public Properties
@@ -366,6 +367,11 @@ namespace FrostDB
         {
             SetupVersion2();
         }
+
+        public Participant2 GetParticipant()
+        {
+            return _participant;
+        }
         #endregion
 
         #region Private Methods
@@ -417,8 +423,9 @@ namespace FrostDB
 
         private void SetupVersion2()
         {
-            _dbManager2 = new DatabaseManager2(Configuration.DatabaseFolder, new StorageManager(this));
             _cache = new Cache(this);
+            _dbManager2 = new DatabaseManager2(Configuration.DatabaseFolder, new StorageManager(this));
+            _participant = new Participant2(this.Configuration.Id, this.Configuration.GetLocation2());
         }
 
         #endregion

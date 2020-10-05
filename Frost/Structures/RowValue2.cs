@@ -64,6 +64,11 @@ namespace FrostDB
                 data = DatabaseBinaryConverter.BooleanToBinary(Value);
             }
 
+            if (Column.DataType.Equals("INT"))
+            {
+                data = BitConverter.GetBytes(Convert.ToInt32(Value));
+            }
+
             return data;
         }
 

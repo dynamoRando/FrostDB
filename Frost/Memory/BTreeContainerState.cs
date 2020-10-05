@@ -12,6 +12,7 @@ namespace FrostDB
         Ready,
         LockedForUpdate,
         LockedForInsert,
-        LockedForDelete
+        LockedForDelete,
+        LockedForStorageSync
     }
 }

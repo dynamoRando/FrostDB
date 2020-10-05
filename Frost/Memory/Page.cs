@@ -152,8 +152,11 @@ namespace FrostDB
             // rent 1
             RowStruct[] rows = RentRowStructArrayFromPool(_totalRows);
             IterateOverData(ref rows);
-            maxRowId = rows.Max(row => row.RowId);
-
+            if (rows.Length != 0)
+            {
+                maxRowId = rows.Max(row => row.RowId);
+            }
+          
             // return 1
             ReturnRowStructArrayToPool(ref rows);
 
@@ -429,7 +432,7 @@ namespace FrostDB
             Array.Copy(endOfRowId, endofDataPreamble, endOfRowId.Length);
             Array.Copy(isLocalId, 0, endofDataPreamble, endOfRowId.Length, isLocalId.Length);
 
-            while (currentOffset < DatabaseConstants.PAGE_SIZE)
+            while ((currentOffset < DatabaseConstants.PAGE_SIZE) && (endofDataPreamble.Length + currentOffset) < DatabaseConstants.PAGE_SIZE)
             {
                 Array.Copy(endofDataPreamble, 0, _data, currentOffset, endofDataPreamble.Length);
                 currentOffset += endofDataPreamble.Length;

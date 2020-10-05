@@ -68,9 +68,16 @@ namespace FrostDB
         /// <returns>A page object</returns>
         public Page GetPage(int id, BTreeAddress address)
         {
+            Page page = null;
             int lineNumber = _dataDirectory.GetLineNumberForPageId(id);
-            byte[] data = GetBinaryPageDataFromDisk(lineNumber);
-            return new Page(data, address);
+
+            if (lineNumber != 0)
+            {
+                byte[] data = GetBinaryPageDataFromDisk(lineNumber);
+                page = new Page(data, address);
+            }
+           
+            return page;
         }
 
         /// <summary>
@@ -104,6 +111,32 @@ namespace FrostDB
         public Page GetNextPage(List<PageAddress> excludeAddresses)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Writes the specified pages to disk
+        /// </summary>
+        /// <param name="pages">The pages to write</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool WritePages(Page[] pages)
+        {
+            lock (_fileLock)
+            {
+                int i = 0;
+                int currentOffset = 0;
+                for (i = 0; i <= pages.Length; i++)
+                {
+                    using (Stream stream = File.Open(FileName(), FileMode.Open))
+                    {
+                        byte[] data = pages[i].ToBinary();
+                        stream.Seek(currentOffset, SeekOrigin.Begin);
+                        stream.Write(data, currentOffset, data.Length);
+                        currentOffset += DatabaseConstants.PAGE_SIZE;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

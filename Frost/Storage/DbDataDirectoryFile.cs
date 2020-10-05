@@ -109,13 +109,23 @@ namespace FrostDB.Storage
         }
 
         /// <summary>
-        /// Returns the line number in the data file for the page id specified
+        /// Returns the line number in the data file for the page id specified. If the line number is not found,
+        /// it will return 0;
         /// </summary>
         /// <param name="pageId">The page id being requested</param>
         /// <returns>The line number of the page in the data file</returns>
         public int GetLineNumberForPageId(int pageId)
         {
-            throw new NotImplementedException();
+            DbDataDirectoryFileItem item = Lines.Where(line => line.PageNumber == pageId).FirstOrDefault();
+
+            if (item == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return item.LineNumber;
+            }
         }
 
         public bool IsValid()

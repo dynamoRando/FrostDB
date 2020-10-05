@@ -228,6 +228,7 @@ namespace FrostDB
             if (line.StartsWith("column"))
             {
                 var column = GetColumn(line);
+                column.Ordinal = _currentColumn;
                 _tableSchema.Columns[_currentColumn] = column;
                 _currentColumn++;
             }

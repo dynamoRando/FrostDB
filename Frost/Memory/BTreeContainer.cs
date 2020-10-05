@@ -75,6 +75,22 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Attempts to save this b-tree's pages to disk
+        /// </summary>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool SyncToDisk()
+        {
+            var list = new List<Page>(_tree.Values.Count);
+
+            foreach(var item in _tree.Values)
+            {
+                list.Add(item);
+            }
+
+            return _storage.UpdateDataFile(list.ToArray());
+        }
+
+        /// <summary>
         /// Tries to add the row data to the btree and also update the data file and db directory data file on disk
         /// </summary>
         /// <param name="row">The row to be added</param>

@@ -48,20 +48,54 @@ namespace FrostDB
                 throw new ArgumentNullException(nameof(insert));
             }
 
+            bool isSuccessful = false;
+
+            BTreeContainer container;
+            BTreeAddress address = insert.Table.BTreeAddress;
+
             if (_cache.ContainsKey(insert.Table.BTreeAddress))
             {
-                BTreeContainer container;
-                if (_cache.TryGetValue(insert.Table.BTreeAddress, out container))
+               
+                if (_cache.TryGetValue(address, out container))
                 {
-                    container.TryInsertRow(insert);
+                    isSuccessful = container.TryInsertRow(insert);
                 }
-
-
-                // try to get the tree and update it
-                // the container should update the btree, the data file, and the data directory file only
+            }
+            else
+            {
+                AddContainerToCache(address);
+                if (_cache.TryGetValue(address, out container))
+                {
+                    isSuccessful = container.TryInsertRow(insert);
+                }
             }
 
-            throw new NotImplementedException();
+            return isSuccessful;
+        }
+
+        /// <summary>
+        /// Attempts to save the specified B-tree to disk
+        /// </summary>
+        /// <param name="address">The specific b-tree to save</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool SyncTreeToDisk(BTreeAddress address)
+        {
+            bool isSuccessful = false;
+            BTreeContainer container;
+            if (_cache.TryGetValue(address, out container))
+            {
+                container.SetContainerState(BTreeContainerState.LockedForStorageSync);
+                isSuccessful = container.SyncToDisk();
+                container.SetContainerState(BTreeContainerState.Ready);
+            }
+            return isSuccessful;
+        }
+
+        public BTreeContainer GetTree(BTreeAddress address)
+        {
+            BTreeContainer container;
+            _cache.TryGetValue(address, out container);
+            return container;
         }
 
         /// <summary>
@@ -81,7 +115,7 @@ namespace FrostDB
             }
             else
             {
-                AddContainerToCache(treeAddress, database.Storage);
+                AddContainerToCache(treeAddress);
                 result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema, false));
             }
 
@@ -91,30 +125,38 @@ namespace FrostDB
 
         #region Private Methods
         /// <summary>
-        /// Adds a container to cache from disk
+        /// Adds a container to cache from disk. If this is a new table, will add a new container to the cache.
         /// </summary>
         /// <param name="address">The address of this btree</param>
-        /// <param name="storage">The DbStorage object where the tree will be loaded from file</param>
-        private void AddContainerToCache(BTreeAddress address, DbStorage storage)
+        private void AddContainerToCache(BTreeAddress address)
         {
-            BTreeContainer container = GetContainerFromDisk(address, storage);
+            BTreeContainer container = GetContainerFromDisk(address);
             _cache.TryAdd(address, container);
         }
 
         /// <summary>
-        /// Tries to load a container from disk file
+        /// Tries to load a container from disk file. If this is a fresh database, will return a new container.
         /// </summary>
         /// <param name="address">The address of the container to get</param>
         /// <returns>A container from disk</returns>
-        private BTreeContainer GetContainerFromDisk(BTreeAddress address, DbStorage storage)
+        private BTreeContainer GetContainerFromDisk(BTreeAddress address)
         {
+            Database2 db = _process.GetDatabase2(address.DatabaseId);
+            DbStorage storage = db.Storage;
             var tree = new TreeDictionary<int, Page>();
-            TableSchema2 schema = _process.GetDatabase2(address.DatabaseId).GetTable(address.TableId).Schema;
+            TableSchema2 schema = db.GetTable(address.TableId).Schema;
 
+            // get the first page
+            Page page = storage.GetPage(1, address);
 
-            // need to get the bytes from disk and build a new BTreeContainer for it
-            // if the disk file is empty, just return a new btree container
-            throw new NotImplementedException();
+            // if this is a brand new table
+            if (page == null)
+            {
+                page = new Page(1, address.TableId, address.DatabaseId, schema, _process);
+            }
+
+            tree.Add(page.Id, page);
+
             return new BTreeContainer(address, tree, storage, schema, _process);
         }
 

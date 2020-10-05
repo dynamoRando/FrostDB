@@ -53,6 +53,14 @@ namespace FrostDB
 
         #region Public Methods
         /// <summary>
+        /// Initalizes all the dependent storage files on disk into memory
+        /// </summary>
+        public void Initialize()
+        {
+            Init();
+        }
+
+        /// <summary>
         /// This method is a stub.
         /// </summary>
         /// <returns>An array of pages.</returns>
@@ -71,6 +79,15 @@ namespace FrostDB
         public Page GetPage(int id, BTreeAddress address)
         {
             return _data.GetPage(id, address);
+        }
+
+        /// <summary>
+        /// Sets the databaseId for this storage value
+        /// </summary>
+        /// <param name="id">The id of the database</param>
+        public void SetDatabaseId(int id)
+        {
+            _databaseId = id;
         }
 
         /// <summary>
@@ -126,10 +143,19 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-       
         public bool UpdateIndexes(RowInsert row)
         {
             return UpdateIndexesForInsert(row);
+        }
+
+        /// <summary>
+        /// Updates the data file with the specified pages. Will overwrite the entire file with the pages provided.
+        /// </summary>
+        /// <param name="pages">The pages to write to the data file.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool UpdateDataFile(Page[] pages)
+        {
+            return _data.WritePages(pages);
         }
 
         /// <summary>
@@ -243,7 +269,8 @@ namespace FrostDB
                 // need to update indexes if appropriate
             }
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return true;
         }
 
         /// <summary>
@@ -327,6 +354,20 @@ namespace FrostDB
         private Table2 GetTable(BTreeAddress address)
         {
             return GetTable(address.DatabaseId, address.TableId);
+        }
+
+        private void Init()
+        {
+            var databaseFolder = _process.Configuration.DatabaseFolder;
+
+            _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName, _databaseId);
+            _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataExtension);
+            _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
+            _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
+            _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
+            _contractFile = new DbContractFile(_process.Configuration.ContractExtension, databaseFolder, _databaseName);
+            _indexFile = new DbDataIndexFile(_process.Configuration.FrostDbIndexFileExtension, databaseFolder, _databaseName);
+            _xactFile = new DbXactFile(databaseFolder, _process.Configuration.FrostDbXactFileExtension, _databaseName);
         }
         #endregion
 

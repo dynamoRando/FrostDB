@@ -16,6 +16,7 @@ namespace FrostDB
         private string _databaseName;
         private ColumnSchema[] _columns;
         private List<RowValue2> _values;
+        private BTreeAddress _address;
         #endregion
 
         #region Public Properties
@@ -24,16 +25,18 @@ namespace FrostDB
         public List<RowValue2> Values => _values;
         public Participant2 Participant { get; set; }
         public ColumnSchema[] Columns => _columns;
+        public BTreeAddress Address => _address;
         #endregion
 
         #region Constructors
-        public RowForm2(string databaseName, string tableName, ColumnSchema[] columns)
+        public RowForm2(string databaseName, string tableName, ColumnSchema[] columns, int databaseId, int tableId)
         {
             _columns = columns;
             _databaseName = databaseName;
             _tableName = tableName;
             _values = new List<RowValue2>();
             SetColumnsForValues();
+            _address = new BTreeAddress { DatabaseId = databaseId, TableId = tableId };
         }
         #endregion
 

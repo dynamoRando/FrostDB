@@ -70,6 +70,7 @@ namespace FrostDB
             {
                 var storage = new DbStorage(_process, db);
                 var dbItem = storage.GetDatabase(db);
+                storage.Initialize();
                 result[i] = dbItem;
                 i++;
             }

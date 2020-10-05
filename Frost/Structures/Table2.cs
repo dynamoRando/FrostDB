@@ -1,4 +1,5 @@
 ﻿using C5;
+using Google.Protobuf.Reflection;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -101,13 +102,18 @@ namespace FrostDB
             return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
         }
 
+        public ColumnSchema GetColumn(int ordinal)
+        {
+            return Columns.Where(column => column.Ordinal == ordinal).FirstOrDefault();
+        }
+
         /// <summary>
         /// Returns an empty row form to be filled out with values to add back to the table.
         /// </summary>
         /// <returns>A row form.</returns>
         public RowForm2 GetNewRow()
         {
-            return new RowForm2(DatabaseName, Name, Columns);
+            return new RowForm2(DatabaseName, Name, Columns, _databaseId, _tableId);
         }
 
         /// <summary>
@@ -135,6 +141,16 @@ namespace FrostDB
 
             return isSuccessful;
         }
+
+        /// <summary>
+        /// Returns true if the table has the specified columnName, otherwise false
+        /// </summary>
+        /// <param name="columnName">The column name to check for</param>
+        /// <returns>True if the table has it, otherwise false</returns>
+        public bool HasColumn(string columnName)
+        {
+            return _schema.Columns.Any(col => col.Name.ToUpper() == columnName.ToUpper());
+        }
         #endregion
 
         #region Private Methods
@@ -145,7 +161,7 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         private bool AddRowLocally(RowForm2 rowForm)
         {
-            RowInsert rowToInsert = new RowInsert(rowForm.Values, this.Schema, rowForm.Participant.Id, !rowForm.IsLocal(_process));
+            RowInsert rowToInsert = new RowInsert(rowForm.Values, this.Schema, rowForm.Participant.Id, !rowForm.IsLocal(_process), rowForm.Address);
 
             if (_storage.RecordTransactionInLog(rowToInsert))
             {
@@ -153,12 +169,14 @@ namespace FrostDB
                 {
                     if (_storage.UpdateIndexes(rowToInsert))
                     {
+                        _cache.SyncTreeToDisk(rowToInsert.Address);
                         _storage.MarkTransactionAsReconciledInLog(rowToInsert);
                     }
                 }
             }
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return true;
         }
 
         /// <summary>

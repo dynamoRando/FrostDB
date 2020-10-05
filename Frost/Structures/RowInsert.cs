@@ -19,6 +19,7 @@ namespace FrostDB
         private TableSchema2 _table;
         private Guid? _participantId;
         private bool _isReferenceInsert;
+        private BTreeAddress _address;
         #endregion
 
         #region Public Properties
@@ -54,6 +55,7 @@ namespace FrostDB
         /// </summary>
         public bool IsReferenceInsert => _isReferenceInsert;
 
+        public BTreeAddress Address => _address;
         #endregion
 
         #region Protected Methods
@@ -63,13 +65,14 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public RowInsert(List<RowValue2> values, TableSchema2 table, Guid? participantId, bool isReferenceInsert)
+        public RowInsert(List<RowValue2> values, TableSchema2 table, Guid? participantId, bool isReferenceInsert, BTreeAddress address)
         {
             _values = values;
             _table = table;
             _participantId = participantId;
             _xactId = Guid.NewGuid();
             SortByBinaryFormat();
+            _address = address;
         }
         #endregion
 

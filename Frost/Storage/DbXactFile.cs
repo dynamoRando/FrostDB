@@ -9,6 +9,97 @@ using System.Threading;
 
 namespace FrostDB
 {
+    enum XactLineAction
+    {
+        Unknown,
+        Insert,
+        Update,
+        Delete
+    }
+
+    // xact xactId tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
+    struct XactLine
+    {
+        internal Guid XactId { get; set; }
+        internal int TableId { get; set; }
+        internal bool IsReconciled { get; set; }
+        // to do : should this be an enum?
+        internal XactLineAction Action { get; set; }
+        List<RowValue2> Data { get; set; }
+
+        public XactLine(RowInsert row)
+        {
+            XactId = row.XactId;
+            TableId = row.Table.TableId;
+            IsReconciled = false;
+            Action = XactLineAction.Insert;
+            Data = row.Values;
+        }
+
+        public XactLine(string line)
+        {
+            var items = line.Split(" ");
+            XactId = Guid.Parse(items[1]);
+            TableId = Convert.ToInt32(items[2]);
+            IsReconciled = Convert.ToBoolean(items[3]);
+            Action = XactLineAction.Unknown;
+            Data = new List<RowValue2>();
+
+            if (items[4].Trim().Equals("Insert"))
+            {
+                Action = XactLineAction.Insert;
+            }
+
+            if (items[4].Trim().Equals("Update"))
+            {
+                Action = XactLineAction.Update;
+            }
+
+            if (items[4].Trim().Equals("Delete"))
+            {
+                Action = XactLineAction.Delete;
+            }
+
+            int dataStart = line.IndexOf("<data>") + 6;
+            int dataEnd = line.IndexOf("</data>");
+
+            var dataItemsLine = line.Substring(dataStart, dataEnd - dataStart).Trim();
+
+            string[] dataItems = dataItemsLine.Split(" ");
+            int x;
+
+            for (x = 0; x < dataItems.Length; x += 2)
+            {
+                var dataItem = new RowValue2();
+                dataItem.Column = new ColumnSchema(dataItems[x], string.Empty);
+                dataItem.Value = dataItems[x + 1];
+                Data.Add(dataItem);
+            }
+        }
+
+        public override string ToString()
+        {
+            var item = new StringBuilder();
+
+            item.Append("xact ");
+            item.Append($"{XactId.ToString()} ");
+            item.Append(TableId.ToString());
+            item.Append(" false ");
+            item.Append("Insert ");
+            item.Append("<data> ");
+
+            Data.ForEach(value =>
+            {
+                item.Append($"{value.Column.Name} ");
+                item.Append($"{value.Value} ");
+            });
+
+            item.Append(" </data>");
+
+            return item.ToString();
+        }
+    }
+
     /*
      * Note: need to make sure that I don't confuse myself. Beginning and Ending a Transaction is not the same
      * as recording and reconciling a transaction.
@@ -113,22 +204,7 @@ namespace FrostDB
                 // to do - need to come up with xact file format
                 // xact xactId tableId isReconciled <action> { Insert | Update | Delete } <data> { RowValues | RowId, RowValues | RowId }
 
-                var item = new StringBuilder();
-
-                item.Append("xact ");
-                item.Append($"{row.XactId.ToString()} ");
-                item.Append(row.Table.TableId.ToString());
-                item.Append(" false ");
-                item.Append("Insert ");
-                item.Append("<data> ");
-
-                row.Values.ForEach(value =>
-                {
-                    item.Append($"{value.Column.Name} ");
-                    item.Append($"{value.Value} ");
-                });
-
-                item.Append(" <data>");
+                var item = new XactLine(row);
 
                 using (var file = File.AppendText(FileName()))
                 {
@@ -146,7 +222,7 @@ namespace FrostDB
             }
 
             // to do - is this right?
-            throw new NotImplementedException();
+            return isSuccessful;
         }
 
         /// <summary>
@@ -173,15 +249,51 @@ namespace FrostDB
             bool isSuccessful;
             _locker.EnterWriteLock();
 
-            // TO DO: Need to actually update the file.
+            // this sucks
 
+            string[] lines = File.ReadAllLines(FileName());
+
+            var xacts = new List<XactLine>(lines.Length);
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("version"))
+                {
+                    continue;
+                }
+
+                if (line.Length == 0)
+                {
+                    continue;
+                }
+
+                var xact = new XactLine(line);
+                if (xact.XactId == row.XactId)
+                {
+                    xact.IsReconciled = true;
+                }
+
+                xacts.Add(xact);
+            }
+
+            string[] linesToWrite = new string[lines.Length];
+
+            int i = 0;
+            foreach (var x in xacts)
+            {
+                linesToWrite[i] = x.ToString();
+                i++;
+            }
+
+            File.WriteAllLines(FileName(), linesToWrite);
 
             // remove the xaction from the pending open transactions
             Guid value;
             isSuccessful = _unreconciledXacts.TryRemove(row.XactId, out value);
 
             _locker.ExitWriteLock();
-            throw new NotImplementedException();
+
+            return isSuccessful;
         }
         #endregion
 

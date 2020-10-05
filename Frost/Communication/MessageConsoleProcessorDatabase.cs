@@ -80,15 +80,20 @@ namespace FrostDB
 
             string dbName = message.Content;
             var db = _process.GetDatabase(dbName);
-            db.AcceptedParticipants.ForEach(p =>
+            Type type = null;
+
+            if (db != null)
             {
-                info.AcceptedContracts.Add(p.Location.IpAddress + ":" + p.Location.PortNumber.ToString());
-            });
+                db.AcceptedParticipants.ForEach(p =>
+                {
+                    info.AcceptedContracts.Add(p.Location.IpAddress + ":" + p.Location.PortNumber.ToString());
+                });
 
-            info.DatabaseId = db.Id;
-            info.DatabaseName = db.Name;
+                info.DatabaseId = db.Id;
+                info.DatabaseName = db.Name;
+            }
 
-            Type type = info.GetType();
+            type = info.GetType();
             string messageContent = string.Empty;
 
             messageContent = JsonConvert.SerializeObject(info);
@@ -155,7 +160,7 @@ namespace FrostDB
                 var item = info.Columns.Where(k => k.Item2.ToString() == "System.Int64").First();
                 table.AddAutoNumColumn(item.Item1);
             }
-            
+
             db.AddTable(table);
             return result;
         }
