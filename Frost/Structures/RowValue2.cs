@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace FrostDB
@@ -44,6 +45,9 @@ namespace FrostDB
         public byte[] GetValueBinaryArray()
         {
             byte[] data = null;
+
+            Debug.WriteLine(this.Value);
+
             if (Column.DataType.Contains("CHAR"))
             {
                 data = DatabaseBinaryConverter.StringToBinary(Value, Column.DataType);
@@ -108,7 +112,7 @@ namespace FrostDB
             byte[] dataLengthBytes = BitConverter.GetBytes(dataLength);
             Array.Resize<byte>(ref data, dataLength + DatabaseConstants.SIZE_OF_INT);
             Array.Copy(dataLengthBytes, 0, data, 0, dataLengthBytes.Length);
-            Array.Copy(originalData, 0, data, DatabaseConstants.SIZE_OF_INT, originalData.Length);
+            Array.Copy(originalData, 0, data, DatabaseConstants.SIZE_OF_INT, dataLength);
 
             ArrayPool<byte>.Shared.Return(originalData, true);
         }

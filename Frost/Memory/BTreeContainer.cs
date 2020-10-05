@@ -82,7 +82,7 @@ namespace FrostDB
         {
             var list = new List<Page>(_tree.Values.Count);
 
-            foreach(var item in _tree.Values)
+            foreach (var item in _tree.Values)
             {
                 list.Add(item);
             }
@@ -121,21 +121,25 @@ namespace FrostDB
                         if (nextPageId == 0)
                         {
                             AddRowToNewPage(row);
+                            result = true;
                         }
                         else
                         {
                             InsertRowIntoFirstAvailablePage(row);
+                            result = true;
                         }
                     }
                     else
                     {
                         if (!TreeIsFullyLoaded())
                         {
-                             InsertRowIntoFirstAvailablePage(row);
+                            InsertRowIntoFirstAvailablePage(row);
+                            result = true;
                         }
                         else
                         {
                             AddRowToNewPage(row);
+                            result = true;
                         }
                     }
                 }

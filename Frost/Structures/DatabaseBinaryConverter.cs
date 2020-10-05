@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Collectathon.DataStructures;
+using Collectathon.DataStructures.Arrays;
 
 namespace FrostDB
 {
@@ -18,11 +21,61 @@ namespace FrostDB
         /// <exception cref="System.InvalidOperationException">Thrown if the column definition size is greater than the actual value</exception>
         public static byte[] StringToBinary(string value, string columnDefinition)
         {
+            byte[] result = null;
             // to do: need to parse the column definition to make sure that the size of the string field is not 
             // longer than the actual value
 
+            // VARCHAR(20)
+            value = value.Replace("'", string.Empty);
+
+            string[] lengthDefinition = columnDefinition.Split('(', ')');
+            int length = Convert.ToInt32(lengthDefinition[1]);
+            int indexLengthStart = columnDefinition.IndexOf('(');
+            string definition = columnDefinition.Substring(0, indexLengthStart);
+
+            if (definition.Equals("VARCHAR"))
+            {
+                var item = new BoundedArray<char>(length);
+                var items = value.ToCharArray();
+                foreach(var x in items)
+                {
+                    item.Add(x);
+                }
+
+                if (item.Length < length)
+                {
+                    int spacesRemaining =  length - item.Length;
+                    for(int x = item.Length + 1; x < length; x++ )
+                    {
+                        item[x] = Char.MinValue; // will I regret this? probably. 
+                    }
+                }
+
+                char[] temp = new char[length];
+                int k = 0;
+                foreach(var y in item)
+                {
+                    temp[k] = y;
+                    k++;
+                }
+
+                result = Encoding.UTF8.GetBytes(temp);
+
+            }
+
+            if (definition.Equals("NVARCHAR"))
+            {
+                throw new NotImplementedException();
+            }
+
+            if (definition.Equals("CHAR"))
+            {
+                throw new NotImplementedException();
+            }
+
+
             // this method should handle the following SQL types: NVARCHAR, VARCHAR, CHAR
-            throw new NotImplementedException();
+            return result;
         }
 
         /// <summary>

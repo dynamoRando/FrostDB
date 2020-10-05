@@ -240,9 +240,7 @@ namespace FrostDB
             }
 
             _pendingXacts.Add(row.XactId);
-            // to do: reconcile the xact on disk
-            throw new NotImplementedException();
-
+           
             // return 1, 2, 3
             ReturnByteArrayToPool(ref preamble);
             ReturnByteArrayToPool(ref rowData);
