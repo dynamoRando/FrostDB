@@ -26,6 +26,8 @@ namespace FrostDB
         // to do : should this be an enum?
         internal XactLineAction Action { get; set; }
         List<RowValue2> Data { get; set; }
+        internal int LineNumber { get; set; }
+        internal int Offset { get; set; }
 
         public XactLine(RowInsert row)
         {
@@ -34,6 +36,8 @@ namespace FrostDB
             IsReconciled = false;
             Action = XactLineAction.Insert;
             Data = row.Values;
+            LineNumber = 0;
+            Offset = 0;
         }
 
         public XactLine(string line)
@@ -75,6 +79,9 @@ namespace FrostDB
                 dataItem.Value = dataItems[x + 1];
                 Data.Add(dataItem);
             }
+
+            LineNumber = 0;
+            Offset = 0;
         }
 
         public override string ToString()
