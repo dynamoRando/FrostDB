@@ -181,7 +181,7 @@ namespace FrostDB
             Array.ForEach(lines, line => ParseLine(line));
 
             // if there was only 1 table in the file
-            if (_dbSchema.Tables.Count == 0 && _tableSchema != null)
+            if (_tableSchema != null && !_dbSchema.Tables.Any(t => t.Name == _tableSchema.Name))
             {
                 _dbSchema.Tables.Add(_tableSchema);
             }
@@ -217,11 +217,13 @@ namespace FrostDB
                 if (_tableSchema is null)
                 {
                     _tableSchema = GetTableSchema(line);
+                    _currentColumn = 0;
                 }
                 else
                 {
                     _dbSchema.Tables.Add(_tableSchema);
                     _tableSchema = GetTableSchema(line);
+                    _currentColumn = 0;
                 }
             }
 
