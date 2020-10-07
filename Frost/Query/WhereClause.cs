@@ -11,8 +11,8 @@ namespace FrostDB
 
         #region Public Properties
         public List<StatementPart> Conditions { get; set; }
-        public string WhereClauseText { get; set; }
-        public string WhereClauseWithWhiteSpace { get; set; }
+        public string Text { get; set; }
+        public string TextWithWhiteSpace { get; set; }
         #endregion
 
         #region Protected Methods
@@ -24,8 +24,8 @@ namespace FrostDB
         #region Constructors
         public WhereClause()
         {
-            WhereClauseText = string.Empty;
-            WhereClauseWithWhiteSpace = string.Empty;
+            Text = string.Empty;
+            TextWithWhiteSpace = string.Empty;
             Conditions = new List<StatementPart>();
         }
         #endregion

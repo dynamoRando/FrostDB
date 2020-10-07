@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-public class SelectStatement : IStatement
+public class SelectStatement : FrostIDMLStatement
 {
     #region Public Properties
     public List<string> SelectList { get; set; }
@@ -35,7 +35,7 @@ public class SelectStatement : IStatement
     #region Private Properties
     private bool CheckIfHasWhereClause()
     {
-        if (WhereClause.WhereClauseWithWhiteSpace.Length > 0)
+        if (WhereClause.TextWithWhiteSpace.Length > 0)
         {
             return true;
         }

@@ -84,9 +84,7 @@ namespace FrostDB
         private IMessage HandleProcessGetDatabases(Message message)
         {
             string messageContent = string.Empty;
-
-            List<string> databases = new List<string>();
-            _process.Databases.ForEach(d => databases.Add(d.Name));
+            List<string> databases = _process.GetDatabaseNames();
             Type type = databases.GetType();
             messageContent = JsonConvert.SerializeObject(databases);
 

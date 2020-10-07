@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrostDB
 {
-    public class DeleteStatement : IStatement
+    public class DeleteStatement : FrostIDMLStatement
     {
 
         #region Private Fields
@@ -41,7 +41,7 @@ namespace FrostDB
         #region Private Methods
         private bool CheckIfHasWhereClause()
         {
-            if (WhereClause.WhereClauseWithWhiteSpace.Length > 0)
+            if (WhereClause.TextWithWhiteSpace.Length > 0)
             {
                 return true;
             }

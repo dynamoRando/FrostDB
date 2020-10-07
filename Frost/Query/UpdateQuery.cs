@@ -262,7 +262,7 @@ namespace FrostDB
 
         private bool CheckHasWhereClause(string statement)
         {
-            if (statement.Contains(QueryKeywords.Where))
+            if (statement.Contains(QueryKeywords.WHERE))
             {
                 return true;
             }

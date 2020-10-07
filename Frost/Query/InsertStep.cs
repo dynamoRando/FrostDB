@@ -38,47 +38,98 @@ public class InsertStep : IPlanStep
         if (_process.HasDatabase(DatabaseName))
         {
             var db = _process.GetDatabase(DatabaseName);
-            if (db.HasTable(TableName))
-            {
-                table = db.GetTable(TableName);
-                bool hasAllColumns = true;
 
-                foreach (var columnName in Columns)
+            if (db != null)
+            {
+                if (db.HasTable(TableName))
                 {
-                    if (!table.HasColumn(columnName))
+                    table = db.GetTable(TableName);
+                    bool hasAllColumns = true;
+
+                    foreach (var columnName in Columns)
                     {
-                        result.IsValid = false;
-                        result.ErrorMessage = $"Column: {columnName} not found";
-                        hasAllColumns = false;
+                        if (!table.HasColumn(columnName))
+                        {
+                            result.IsValid = false;
+                            result.ErrorMessage = $"Column: {columnName} not found";
+                            hasAllColumns = false;
+                        }
+
+                        if (!hasAllColumns)
+                        {
+                            break;
+                        }
                     }
 
-                    if (!hasAllColumns)
+                    if (hasAllColumns)
                     {
-                        break;
+                        if (Columns.Count == Values.Count)
+                        {
+                            var row = table.GetNewRowForLocal();
+                            foreach (var value in Values)
+                            {
+                                int valueIndex = Values.IndexOf(value);
+                                var col = table.GetColumn(Columns[valueIndex]);
+
+
+                                row.Row.AddValue(col.Id, value, col.Name, col.DataType);
+                            }
+                            table.AddRow(row);
+                            result.RowsAffected++;
+                            result.IsValid = true;
+                        }
+                        else
+                        {
+                            result.IsValid = false;
+                            result.ErrorMessage = "Column Value Count Mismatch";
+                        }
                     }
                 }
-
-                if (hasAllColumns)
+            }
+            else if (_process.HasDatabase2(DatabaseName))
+            {
+                var database = _process.GetDatabase2(DatabaseName);
+                if (database.HasTable(TableName))
                 {
-                    if (Columns.Count == Values.Count)
+                    var tbl = database.GetTable(TableName);
+                    bool hasAllColumns = true;
+
+                    foreach (var columnName in Columns)
                     {
-                        var row = table.GetNewRowForLocal();
-                        foreach (var value in Values)
+                        if (!tbl.HasColumn(columnName))
                         {
-                            int valueIndex = Values.IndexOf(value);
-                            var col = table.GetColumn(Columns[valueIndex]);
-
-
-                            row.Row.AddValue(col.Id, value, col.Name, col.DataType);
+                            result.IsValid = false;
+                            result.ErrorMessage = $"Column: {columnName} not found";
+                            hasAllColumns = false;
                         }
-                        table.AddRow(row);
-                        result.RowsAffected++;
-                        result.IsValid = true;
+
+                        if (!hasAllColumns)
+                        {
+                            break;
+                        }
                     }
-                    else
+
+                    if (hasAllColumns)
                     {
-                        result.IsValid = false;
-                        result.ErrorMessage = "Column Value Count Mismatch";
+                        if (Columns.Count == Values.Count)
+                        {
+                            var row = tbl.GetNewRow();
+                            foreach (var value in Values)
+                            {
+                                int valueIndex = Values.IndexOf(value);
+                                ColumnSchema col = tbl.GetColumn(valueIndex);
+                                row.SetValue(col.Name, value);
+                            }
+                            row.Participant = _process.GetParticipant();
+                            tbl.AddRow(row);
+                            result.RowsAffected++;
+                            result.IsValid = true;
+                        }
+                        else
+                        {
+                            result.IsValid = false;
+                            result.ErrorMessage = "Column Value Count Mismatch";
+                        }
                     }
                 }
             }

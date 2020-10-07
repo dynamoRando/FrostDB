@@ -12,7 +12,7 @@
 <h2>Contract Description</h2>
 <input type="text" id="contractDescription" @bind="ContractDescription"/>
 <h2>Database Schema</h2>
-<select name="tableColumns" multiple @bind="DatabaseTables">
+<select name="tableColumns" multiple="multiple" @bind="DatabaseTables">
 @foreach (var table in DatabaseTableNames)
 {
     <option value=@table>@table</option>
@@ -20,7 +20,7 @@
 </select>
 <h2>Participant Overview</h2>
 <h2>Participant Tables and Permissions (Read, Write, Modify, Delete)</h2>
-<select name="participantTableColumns" multiple @onchange="GetParticipantPermission">
+<select name="participantTableColumns" multiple="multiple" @onchange="GetParticipantPermission">
 @foreach (var table in ParticipantTableNames)
 {
     <option value=@table>@table</option>
@@ -43,7 +43,7 @@
 
 <h2>Database Author Overview</h2>
 <h2>Database Author Tables and Permissions (Read, Write, Modify, Delete)</h2>
-<select name="authorTableColumns" multiple @onchange="GetAuthorPermission">
+<select name="authorTableColumns" multiple="multiple" @onchange="GetAuthorPermission">
 @foreach (var table in AuthorTableNames)
 {
     <option value=@table>@table</option>

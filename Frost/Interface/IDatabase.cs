@@ -17,6 +17,7 @@ namespace FrostDB.Interface
         bool HasTable(string tableName);
         bool HasTable(Guid? tableName);
         void AddTable(Table table);
+        void AddTable(Table2 table);
         void RemoveTable(string tableName);
         void RemoveTable(Guid? tableId);
         void UpdateSchema();
