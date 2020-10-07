@@ -181,7 +181,7 @@ namespace FrostDB
             Array.ForEach(lines, line => ParseLine(line));
 
             // if there was only 1 table in the file
-            if (_dbSchema.Tables.Count == 0)
+            if (_dbSchema.Tables.Count == 0 && _tableSchema != null)
             {
                 _dbSchema.Tables.Add(_tableSchema);
             }
