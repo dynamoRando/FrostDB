@@ -6,81 +6,116 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Xml.XPath;
 
 public class TSqlParserListenerExtended : TSqlParserBaseListener
 {
     #region Private Fields
-    IStatement _statement;
+    FrostIDMLStatement _dmlStatement;
+    FrostIDDLStatement _ddlStatement;
     ICharStream _charStream;
     private string _input;
     #endregion
 
     #region Constructors
     public TSqlParserListenerExtended() { }
-    public TSqlParserListenerExtended(IStatement statement, string input)
+    public TSqlParserListenerExtended(FrostIDMLStatement statement, string input)
     {
-        _statement = statement;
+        _dmlStatement = statement;
         _input = input;
     }
-    public TSqlParserListenerExtended(SelectStatement statement, string input)
+
+    public TSqlParserListenerExtended(FrostIDDLStatement statement, string input)
     {
-        _statement = statement;
+        _ddlStatement = statement;
         _input = input;
     }
+
     #endregion
 
     #region Public Properties
     public CommonTokenStream TokenStream { get; set; }
-    public IStatement Statement => _statement;
+    public FrostIDMLStatement DMLStatement => _dmlStatement;
+    public FrostIDDLStatement DDLStatement => _ddlStatement;
     #endregion
 
     #region Public Methods
     public override void EnterTable_name([NotNull] TSqlParser.Table_nameContext context)
     {
         base.EnterTable_name(context);
-        _statement.Tables.Add(context.GetText());
+        if (_dmlStatement != null)
+        {
+            _dmlStatement.Tables.Add(context.GetText());
+        }
+        else
+        {
+            if (_ddlStatement is CreateTableStatement)
+            {
+                (_ddlStatement as CreateTableStatement).TableName = context.GetText();
+            }
+        }
     }
 
     public SelectStatement GetStatementAsSelect()
     {
-        return _statement as SelectStatement;
+        return _dmlStatement as SelectStatement;
     }
 
     public InsertStatement GetStatementAsInsert()
     {
-        return _statement as InsertStatement;
+        return _dmlStatement as InsertStatement;
     }
 
     public UpdateStatement GetStatementAsUpdate()
     {
-        return _statement as UpdateStatement;
+        return _dmlStatement as UpdateStatement;
     }
 
     public DeleteStatement GetStatementAsDelete()
     {
-        return _statement as DeleteStatement;
+        return _dmlStatement as DeleteStatement;
+    }
+
+    public CreateTableStatement GetStatementAsCreateTable()
+    {
+        return _ddlStatement as CreateTableStatement;
+    }
+
+    public CreateDatabaseStatement GetStatementAsCreateDatabase()
+    {
+        return _ddlStatement as CreateDatabaseStatement;
+    }
+
+    public bool IsStatementCreateDatabase()
+    {
+        return _ddlStatement is CreateDatabaseStatement;
+    }
+
+    public bool IsStatementCreateTable()
+    {
+        return _ddlStatement is CreateTableStatement;
     }
 
     public bool IsStatementInsert()
     {
-        return _statement is InsertStatement;
+        return _dmlStatement is InsertStatement;
     }
 
     public bool IsStatementSelect()
     {
-        return _statement is SelectStatement;
+        return _dmlStatement is SelectStatement;
     }
 
     public bool IsStatementUpdate()
     {
-        return _statement is UpdateStatement;
+        return _dmlStatement is UpdateStatement;
     }
 
     public bool IsStatementDelete()
     {
-        return _statement is DeleteStatement;
+        return _dmlStatement is DeleteStatement;
     }
 
     public override void ExitSearch_condition([NotNull] TSqlParser.Search_conditionContext context)
@@ -88,19 +123,14 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         base.ExitSearch_condition(context);
         // this will set the full statement on the final exit
 
-        _statement.WhereClause.WhereClauseText = context.GetText();
-
-        int a = context.Start.StartIndex;
-        int b = context.Stop.StopIndex;
-        Interval interval = new Interval(a, b);
-        _charStream = context.Start.InputStream;
-        _statement.WhereClause.WhereClauseWithWhiteSpace = _charStream.GetText(interval);
+        _dmlStatement.WhereClause.Text = context.GetText();
+        _dmlStatement.WhereClause.TextWithWhiteSpace = GetWhiteSpaceFormat(context);
     }
 
     public override void EnterSelect_statement([NotNull] TSqlParser.Select_statementContext context)
     {
         base.EnterSelect_statement(context);
-        _statement.RawStatement = context.GetText();
+        _dmlStatement.RawStatement = context.GetText();
     }
 
     public override void EnterSelect_list([NotNull] TSqlParser.Select_listContext context)
@@ -128,16 +158,11 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
         Console.WriteLine(context.GetText());
 
         var part = new StatementPart();
-        part.StatementTableName = _statement.Tables.FirstOrDefault();
+        part.StatementTableName = _dmlStatement.Tables.FirstOrDefault();
         part.Text = context.GetText();
         part.StatementOrigin = "EnterPredicate";
 
-        int a = context.Start.StartIndex;
-        int b = context.Stop.StopIndex;
-        Interval interval = new Interval(a, b);
-        _charStream = context.Start.InputStream;
-
-        part.TextWithWhiteSpace = _charStream.GetText(interval);
+        part.TextWithWhiteSpace = GetWhiteSpaceFormat(context);
 
         var parent = context.Parent.Parent;
         if (parent != null)
@@ -157,10 +182,10 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
         if (!part.ParseStatementPart())
         {
-            _statement.IsValid = false;
+            _dmlStatement.IsValid = false;
         }
 
-        _statement.WhereClause.Conditions.Add(part);
+        _dmlStatement.WhereClause.Conditions.Add(part);
     }
 
     // begin insert functions
@@ -252,13 +277,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
             var statement = GetStatementAsUpdate();
             var element = new UpdateStatementElement();
             element.RawString = context.GetText();
-            
-            int a = context.Start.StartIndex;
-            int b = context.Stop.StopIndex;
-            Interval interval = new Interval(a, b);
-            _charStream = context.Start.InputStream;
-
-            element.RawStringWithWhitespace = _charStream.GetText(interval);
+            element.RawStringWithWhitespace = GetWhiteSpaceFormat(context);
             statement.Elements.Add(element);
         }
 
@@ -275,7 +294,7 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
                 statement.WhereClause = new WhereClause();
             }
 
-            statement.WhereClause.WhereClauseText = context.GetText();
+            statement.WhereClause.Text = context.GetText();
 
         }
         Debug.WriteLine(context.GetText());
@@ -301,9 +320,76 @@ public class TSqlParserListenerExtended : TSqlParserBaseListener
 
     // end delete functions
 
+    // create table functions
+    public override void EnterCreate_table([NotNull] TSqlParser.Create_tableContext context)
+    {
+        base.EnterCreate_table(context);
+        var createTable = new CreateTableStatement();
+        createTable.RawStatement = context.GetText();
+        _ddlStatement = createTable;
+        Debug.WriteLine(context.GetText());
+    }
+
+    public override void EnterData_type([NotNull] TSqlParser.Data_typeContext context)
+    {
+        base.EnterData_type(context);
+        Debug.WriteLine(context.GetText());
+    }
+
+    public override void EnterColumn_definition([NotNull] TSqlParser.Column_definitionContext context)
+    {
+        base.EnterColumn_definition(context);
+        if (_ddlStatement != null)
+        {
+            if (_ddlStatement is CreateTableStatement)
+            {
+                (_ddlStatement as CreateTableStatement).ColumnNamesAndTypes.Add(GetWhiteSpaceFormat(context));
+            }
+        }
+        Debug.WriteLine(context.GetText());
+    }
+
+    public override void EnterNull_notnull([NotNull] TSqlParser.Null_notnullContext context)
+    {
+        base.EnterNull_notnull(context);
+        Debug.WriteLine(context.GetText());
+    }
+
+    public override void EnterNull_or_default([NotNull] TSqlParser.Null_or_defaultContext context)
+    {
+        base.EnterNull_or_default(context);
+        Debug.WriteLine(context.GetText());
+    }
+
+    // end create table functions
+
+    // begin create database functions
+    public override void EnterCreate_database([NotNull] TSqlParser.Create_databaseContext context)
+    {
+        base.EnterCreate_database(context);
+        Debug.WriteLine(context.GetText());
+
+        if (IsStatementCreateDatabase())
+        {
+            CreateDatabaseStatement statement = GetStatementAsCreateDatabase();
+            statement.RawTextWithWhitespace = GetWhiteSpaceFormat(context);
+            statement.DatabaseName = statement.RawTextWithWhitespace.Replace(QueryKeywords.CREATE_DATABASE, string.Empty).Trim();
+        }
+
+    }
+    // end create database functions
     #endregion
 
     #region Private Properties
+    private string GetWhiteSpaceFormat(ParserRuleContext context)
+    {
+        int a = context.Start.StartIndex;
+        int b = context.Stop.StopIndex;
+        Interval interval = new Interval(a, b);
+        _charStream = context.Start.InputStream;
+
+        return _charStream.GetText(interval);
+    }
     private string GetWhitespaceStringFromTokenInterval(Interval interval)
     {
         try

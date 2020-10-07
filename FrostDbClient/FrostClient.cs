@@ -166,7 +166,7 @@ namespace FrostDbClient
             SendMessage(BuildMessage(Json.SeralizeObject(info), MessageConsoleAction.Table.Add_Column, MessageActionType.Table));
         }
 
-        public void AddTableToDb(string databaseName, string tableName, List<(string, Type)> columns)
+        public void AddTableToDb(string databaseName, string tableName, List<(string, string)> columns)
         {
             var info = new TableInfo();
             info.Columns.AddRange(columns);

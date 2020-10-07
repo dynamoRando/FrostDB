@@ -90,3 +90,7 @@ This project is being written by a SQL Server developer, and as such, is very SQ
 I have had zero training in lower level engineering concepts, such as TCP/IP communications, or writing a lexer, or binary trees. I'm faking it till I make it.
 
 Originally this project was named "Whiskey Tango Foxtrot" because I didn't know what I was doing. It was then shortened to "Foxtrot" but to avoid confusion with the Firefox browser I randomly chose "Frost" as a replacement name.
+
+# Referenced Projects
+* [C5](https://github.com/sestoft/C5)
+* [Collectathon](https://github.com/Entomy/Collectathon)

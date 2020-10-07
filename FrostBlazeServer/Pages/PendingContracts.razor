@@ -8,7 +8,7 @@
 <h2>Pending Contracts</h2>
 <input type="button" @onclick="LoadPendingContracts" value="Load Pending"/>
 <p>
-<select name="pendingContracts" multiple @onchange="ShowContractInfo" value="SelectedContract">
+<select name="pendingContracts" multiple="multiple" @onchange="ShowContractInfo" value="SelectedContract">
 @foreach (var contract in PendingContractsList)
 {
     <option value=@contract>@contract</option>

@@ -17,5 +17,14 @@ namespace FrostDB.Interface
         int ConsolePortNumber { get; }
         string ContractExtension { get; }
         bool ConfigFileExists();
+        string DatabaseDirectoryFileName { get; }
+        string SchemaFileExtension { get; }
+        string ParticpantFileExtension { get; }
+        string FrostBinaryDataExtension { get; }
+        string FrostBinaryDataDirectoryExtension { get; }
+        string FrostSystemFolder { get; }
+        string FrostSecurityFileExtension { get; }
+        string FrostDbIndexFileExtension { get; }
+        string FrostDbXactFileExtension { get; }
     }
 }

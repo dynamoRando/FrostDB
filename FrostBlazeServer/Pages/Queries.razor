@@ -20,14 +20,14 @@
     }
 </select>
 <h2>Table Columns</h2>
-<select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
+<select name="tableColumnsSelected" multiple="multiple" @bind="NewColumnForTable">
     @foreach (var column in ColumnNames)
     {
         <option value=@column>@column</option>
     }
 </select>
 <h2>Table Participants</h2>
-<select name="tableParticipants" multiple @bind="SelectedParticipant">
+<select name="tableParticipants" multiple="multiple" @bind="SelectedParticipant">
     @foreach (var participant in Participants)
     {
         <option value=@participant>@participant</option>

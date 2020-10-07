@@ -30,7 +30,7 @@
 
 <p>
     <h2>Columns</h2>
-    <select name="tableColumnsSelected" multiple @bind="NewColumnForTable">
+    <select name="tableColumnsSelected" multiple="multiple" @bind="NewColumnForTable">
         @foreach (var column in ColumnNames)
         {
             <option value=@column>@column</option>
@@ -61,7 +61,7 @@
                 </select>
     <input type="button" @onclick="AddColumnToTable" value="Add Column To Table" />
     <input type="button" @onclick="ClearItemsFromTable" value="Reset Columns" />
-    Columns: <select name="tableColumns" multiple @bind="NewColumnForTable">
+    Columns: <select name="tableColumns" multiple="multiple" @bind="NewColumnForTable">
         @foreach (var column in NewColumnsForTable)
         {
             <option value=@column>@column</option>
@@ -76,7 +76,7 @@
     string _dateTimeType = "System.DateTime";
     string _stringType = "System.String";
     string _identityType = "System.Int64";
-    List<(string, Type)> _columns = new List<(string, Type)>();
+    List<(string, string)> _columns = new List<(string, string)>();
     private string NewColumnForTable = string.Empty;
     private List<string> NewColumnsForTable = new List<string>();
     private List<string> ColumnNames = new List<string>();
@@ -114,7 +114,7 @@
     {
         string col = NewColumnName + "-" + SelectedDataType;
 
-        var item = (NewColumnName, Type.GetType(SelectedDataType));
+        var item = (NewColumnName, Type.GetType(SelectedDataType).ToString());
 
         _columns.Add(item);
         NewColumnsForTable.Add(col);
