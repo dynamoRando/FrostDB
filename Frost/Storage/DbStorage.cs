@@ -224,7 +224,6 @@ namespace FrostDB
         public Database2 GetDatabase(string databaseName)
         {
             _databaseName = databaseName;
-            // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
             _databaseId = fill.Schema.DatabaseId;

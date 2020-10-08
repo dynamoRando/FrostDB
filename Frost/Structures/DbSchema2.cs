@@ -13,6 +13,7 @@ namespace FrostDB
         #endregion
 
         #region Public Properties
+        public Guid GlobalId { get; set; }
         public string DatabaseName { get; set; }
         public int DatabaseId { get; set; }
         public List<TableSchema2> Tables { get; set; }
@@ -25,10 +26,11 @@ namespace FrostDB
         #endregion
 
         #region Constructors
-        public DbSchema2(int id, string databaseName) : this()
+        public DbSchema2(int id, string databaseName, Guid globalId) : this()
         {
             DatabaseId = id;
             DatabaseName = databaseName;
+            GlobalId = globalId;
         }
 
         public DbSchema2()

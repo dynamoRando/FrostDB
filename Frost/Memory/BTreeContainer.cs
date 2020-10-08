@@ -234,16 +234,12 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Returns all rows from this tree in this container
+        /// Returns the total number of rows in this container
         /// </summary>
-        /// <param name="schema">The table schema to convert the rows to</param>
-        /// <param name="dirtyRead">true if unprotected read, otherwise false</param>
-        /// <returns>A list of rows</returns>
-        public RowStruct[] GetAllRows(TableSchema2 schema, bool dirtyRead)
+        /// <returns>The total number of rows</returns>
+        public int RowCount()
         {
-            RowStruct[] result;
             int totalRows = 0;
-
             lock (_treeLock)
             {
                 _tree.ForEach(item =>
@@ -252,6 +248,20 @@ namespace FrostDB
                 });
             }
 
+            return totalRows;
+        }
+
+        /// <summary>
+        /// Returns all rows from this tree in this container
+        /// </summary>
+        /// <param name="schema">The table schema to convert the rows to</param>
+        /// <param name="dirtyRead">true if unprotected read, otherwise false</param>
+        /// <returns>A list of rows</returns>
+        public RowStruct[] GetAllRows(TableSchema2 schema, bool dirtyRead)
+        {
+            RowStruct[] result;
+            int totalRows = RowCount();
+            
             result = new RowStruct[totalRows];
             var resultSpan = new Span<RowStruct>(result);
 

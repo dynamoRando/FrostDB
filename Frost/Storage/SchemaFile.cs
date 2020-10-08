@@ -79,7 +79,7 @@ namespace FrostDB
             using (var file = new StreamWriter(FileName()))
             {
                 file.WriteLine("version " + VersionNumber.ToString());
-                file.WriteLine($"database { _databaseId.ToString()} { _databaseName}");
+                file.WriteLine($"database { _databaseId.ToString()} { _databaseName} {schema.GlobalId.ToString()}");
                 foreach (var table in schema.Tables)
                 {
                     // table tableId tableName numOfColumns
@@ -273,10 +273,11 @@ namespace FrostDB
 
         private void ParseDatabase(string line)
         {
-            //database id (int) name
+            //database id (int) name GUID
             var items = line.Split(" ");
             _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
             _dbSchema.DatabaseName = items[2];
+            _dbSchema.GlobalId = Guid.Parse(items[3]);
         }
 
         #endregion

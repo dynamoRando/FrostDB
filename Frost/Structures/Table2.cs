@@ -1,6 +1,9 @@
 ﻿using C5;
+using FrostCommon;
+using FrostCommon.DataMessages;
 using Google.Protobuf.Reflection;
 using MoreLinq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +28,7 @@ namespace FrostDB
         private int _databaseId;
         private DbStorage _storage;
         private Cache _cache;
+        private BTreeAddress _address;
         #endregion
 
         #region Public Properties
@@ -64,6 +68,7 @@ namespace FrostDB
             _databaseId = schema.DatabaseId;
             _storage = dbStorage;
             _cache = pager;
+            _address = new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId };
         }
         #endregion
 
@@ -99,7 +104,20 @@ namespace FrostDB
         /// <returns>A list of rows in the table.</returns>
         public List<RowStruct> GetAllRows()
         {
-            return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
+            throw new NotImplementedException();
+
+            var rows = _cache.GetAllRowsSpan(_address);
+            List<RowStruct> remoteRows = new List<RowStruct>();
+
+            foreach(var row in rows)
+            {
+                if (!row.IsLocal)
+                {
+                    // need to get the row from the participant (network call)
+                    var remoteRow = GetRemoteRow(row.ParticipantId);
+                    remoteRows.Add(remoteRow);
+                }
+            }
         }
 
         public ColumnSchema GetColumn(int ordinal)
@@ -113,7 +131,7 @@ namespace FrostDB
         /// <returns>A row form.</returns>
         public RowForm2 GetNewRow()
         {
-            return new RowForm2(DatabaseName, Name, Columns, _databaseId, _tableId);
+            return new RowForm2(DatabaseName, Name, Columns, _address);
         }
 
         /// <summary>
@@ -196,6 +214,32 @@ namespace FrostDB
         private Database2 GetDatabase()
         {
             return _process.GetDatabase2(_databaseId);
+        }
+
+        /// <summary>
+        /// Gets the row from the specified participant
+        /// </summary>
+        /// <param name="participantId">The participant id</param>
+        /// <returns>The row from the participant</returns>
+        private RowStruct GetRemoteRow(Guid participantId)
+        {
+            throw new NotImplementedException();
+            //Row row = new Row();
+            //RemoteRowInfo request = BuildRemoteRowInfo();
+            //string content = JsonConvert.SerializeObject(request);
+            //Guid? requestId = Guid.NewGuid();
+            //Message rowMessage = null;
+
+            //var getRowMessage = _process.Network.BuildMessage(Participant.Location, content, MessageDataAction.Process.Get_Remote_Row, MessageType.Data, requestId, MessageActionType.Table, request.GetType());
+            //rowMessage = _process.Network.SendMessage(getRowMessage);
+
+            //if (rowMessage != null)
+            //{
+            //    if (rowMessage.Content != null)
+            //    {
+            //        row = rowMessage.GetContentAs<Row>();
+            //    }
+            //}
         }
         #endregion
 
