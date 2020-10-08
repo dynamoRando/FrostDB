@@ -36,23 +36,43 @@ namespace FrostDB
             var result = new StepResult();
             _process = process;
             var tablename = _selectStatement.Tables.First() ?? string.Empty;
-            
+
             if (_process.HasDatabase(databaseName))
             {
                 var db = _process.GetDatabase(databaseName);
-                if (db.HasTable(tablename))
+                if (db != null)
                 {
-                    var table = db.GetTable(tablename);
-                    foreach(var row in table.Rows)
+                    if (db.HasTable(tablename))
                     {
-                        var r = row.Get(_process);
-                        result.Rows.Add(r);
+                        var table = db.GetTable(tablename);
+                        foreach (var row in table.Rows)
+                        {
+                            var r = row.Get(_process);
+                            result.Rows.Add(r);
+                        }
+                    }
+                    else
+                    {
+                        result.IsValid = false;
+                        result.ErrorMessage = "Table Not Found";
                     }
                 }
                 else
                 {
-                    result.IsValid = false;
-                    result.ErrorMessage = "Table Not Found";
+                    var database = _process.GetDatabase2(databaseName);
+                    if (database != null)
+                    {
+                        if (database.HasTable(tablename))
+                        {
+                            var table = database.GetTable(tablename);
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            result.IsValid = false;
+                            result.ErrorMessage = "Table Not Found";
+                        }
+                    }
                 }
             }
             else
@@ -68,7 +88,7 @@ namespace FrostDB
         {
             var result = string.Empty;
 
-            foreach(var column in Columns)
+            foreach (var column in Columns)
             {
                 result += $"Searching column: {column}" + Environment.NewLine;
             }

@@ -124,13 +124,13 @@ namespace FrostDB
             {
                 int i = 0;
                 int currentOffset = 0;
-                for (i = 0; i <= pages.Length; i++)
+                for (i = 0; i < pages.Length; i++)
                 {
                     using (Stream stream = File.Open(FileName(), FileMode.Open))
                     {
                         byte[] data = pages[i].ToBinary();
                         stream.Seek(currentOffset, SeekOrigin.Begin);
-                        stream.Write(data, currentOffset, data.Length);
+                        stream.Write(data, 0, data.Length);
                         currentOffset += DatabaseConstants.PAGE_SIZE;
                     }
                 }

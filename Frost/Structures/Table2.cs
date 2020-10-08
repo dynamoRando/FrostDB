@@ -97,7 +97,7 @@ namespace FrostDB
         /// Returns all rows of the table.
         /// </summary>
         /// <returns>A list of rows in the table.</returns>
-        public List<Row2> GetAllRows()
+        public List<RowStruct> GetAllRows()
         {
             return _process.GetDatabase2(_databaseId).Storage.GetAllRows(new BTreeAddress { DatabaseId = _databaseId, TableId = _tableId });
         }

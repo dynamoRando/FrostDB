@@ -184,8 +184,9 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public List<Row2> GetAllRows(BTreeAddress treeAddress)
+        public List<RowStruct> GetAllRows(BTreeAddress treeAddress)
         {
+            // to do: we need to make sure we also account for getting remote rows
             throw new NotImplementedException();
         }
 
