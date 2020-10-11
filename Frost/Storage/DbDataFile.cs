@@ -76,7 +76,7 @@ namespace FrostDB
                 byte[] data = GetBinaryPageDataFromDisk(lineNumber);
                 page = new Page(data, address);
             }
-           
+
             return page;
         }
 

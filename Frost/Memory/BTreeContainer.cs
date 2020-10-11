@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace FrostDB
 {
@@ -37,6 +38,7 @@ namespace FrostDB
             _storage = storage;
             _schema = schema;
             _process = process;
+            SyncToDisk();
         }
         #endregion
 
@@ -87,7 +89,10 @@ namespace FrostDB
                 list.Add(item);
             }
 
-            return _storage.UpdateDataFile(list.ToArray());
+            bool dataFileUpdated = _storage.UpdateDataFile(list.ToArray());
+            bool dataDirectryUpdated = _storage.UpdateDataDirectory(list.ToArray());
+
+            return dataFileUpdated && dataDirectryUpdated;
         }
 
         /// <summary>
@@ -138,7 +143,14 @@ namespace FrostDB
                         }
                         else
                         {
-                            AddRowToNewPage(row);
+                            if (TreeHasRoomForRow(row))
+                            {
+                                InsertRowIntoFirstAvailablePage(row);
+                            }
+                            else
+                            {
+                                AddRowToNewPage(row);
+                            }
                             result = true;
                         }
                     }
@@ -148,6 +160,11 @@ namespace FrostDB
             }
 
             return result;
+        }
+
+        private bool TreeHasRoomForRow(RowInsert row)
+        {
+            return _tree.Values.Any(page => page.CanInsertRow(row.Size));
         }
 
         /// <summary>
@@ -172,25 +189,38 @@ namespace FrostDB
         private void InsertRowIntoFirstAvailablePage(RowInsert row)
         {
             int nextPageId;
-            Page page;
-            do
+            Page page = null;
+            if (!TreeIsFullyLoaded())
             {
-                // to do: we need to keep track of the page ids that we haven't loaded 
-                // into memory
-                nextPageId = GetNextAvailablePageId();
-                page = _storage.GetPage(nextPageId, _address);
-                AddPageToTree(page);
-
-                if (TreeIsFullyLoaded())
+                do
                 {
-                    break;
+                    // to do: we need to keep track of the page ids that we haven't loaded 
+                    // into memory
+                    nextPageId = GetNextAvailablePageId();
+                    page = _storage.GetPage(nextPageId, _address);
+                    AddPageToTree(page);
+
+                    if (TreeIsFullyLoaded())
+                    {
+                        break;
+                    }
+
+                    // to do: what if the pages on disk are filled up and we need to add a brand new page here?
+                    // in other words, we can never exit the loop?
                 }
-
-                // to do: what if the pages on disk are filled up and we need to add a brand new page here?
-                // in other words, we can never exit the loop?
+                while (!page.CanInsertRow(row.Size));
             }
-            while (!page.CanInsertRow(row.Size));
-
+            else
+            {
+                foreach(var item in _tree.Values)
+                {
+                    if (item.CanInsertRow(row.Size))
+                    {
+                        page = item;
+                    }    
+                }
+            }
+            
             if (TreeIsFullyLoaded() && !page.CanInsertRow(row.Size))
             {
                 AddRowToNewPage(row);
@@ -261,7 +291,7 @@ namespace FrostDB
         {
             RowStruct[] result;
             int totalRows = RowCount();
-            
+
             result = new RowStruct[totalRows];
             var resultSpan = new Span<RowStruct>(result);
 

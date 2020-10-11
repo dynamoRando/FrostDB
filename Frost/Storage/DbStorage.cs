@@ -159,6 +159,16 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Updates the data directory with the specified pages in numerical order. Will overwrite the entire directory with the pages provided.
+        /// </summary>
+        /// <param name="pages">The pages to write to the data file</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool UpdateDataDirectory(Page[] pages)
+        {
+            return _dataDirectory.WritePages(pages);
+        }
+
+        /// <summary>
         /// Records this insert action in the xact log. Will record it as unreconciled against cache.
         /// </summary>
         /// <param name="row">The row to record</param>

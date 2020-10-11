@@ -184,8 +184,9 @@ namespace FrostDB
             }
 
             tree.Add(page.Id, page);
+            var container = new BTreeContainer(address, tree, storage, schema, _process);
 
-            return new BTreeContainer(address, tree, storage, schema, _process);
+            return container;
         }
 
         /// <summary>

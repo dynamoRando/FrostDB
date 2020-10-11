@@ -190,7 +190,7 @@ namespace FrostDB
         private int GetNumOfColumnsInFile(string[] lines)
         {
             int totalColumns = 0;
-            foreach(var line in lines)
+            foreach (var line in lines)
             {
                 if (line.StartsWith("column"))
                 {
@@ -206,6 +206,8 @@ namespace FrostDB
             {
                 ParseVersion(line);
             }
+
+            // to do: need to break out parsing by file version; seperate class for each file version
 
             if (line.StartsWith("database"))
             {
@@ -275,9 +277,17 @@ namespace FrostDB
         {
             //database id (int) name GUID
             var items = line.Split(" ");
-            _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
-            _dbSchema.DatabaseName = items[2];
-            _dbSchema.GlobalId = Guid.Parse(items[3]);
+            if (items.Length == 3)
+            {
+                _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
+                _dbSchema.DatabaseName = items[2];
+            }
+            if (items.Length == 4)
+            {
+                _dbSchema.DatabaseId = Convert.ToInt32(items[1]);
+                _dbSchema.DatabaseName = items[2];
+                _dbSchema.GlobalId = Guid.Parse(items[3]);
+            }
         }
 
         #endregion
