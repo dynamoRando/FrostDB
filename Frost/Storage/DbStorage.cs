@@ -143,6 +143,26 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Returns the line number from the data directory for the specified pageId
+        /// </summary>
+        /// <param name="pageId">The pageId you wish to lookup the line number for</param>
+        /// <returns>The line number of the specified pageId.</returns>
+        public int GetLineNumberForPage(int pageId)
+        {
+            return  _dataDirectory.GetLineNumberForPage(pageId);
+        }
+
+        /// <summary>
+        /// Saves the specified page onto disk
+        /// </summary>
+        /// <param name="page">The page to save to disk</param>
+        /// <param name="lineNumber">The linenumber to save the page to</param>
+        public void UpdatePageOnDisk(Page page, int lineNumber)
+        {
+            _data.UpdatePage(page, lineNumber);
+        }
+
         public bool UpdateIndexes(RowInsert row)
         {
             return UpdateIndexesForInsert(row);
@@ -253,15 +273,6 @@ namespace FrostDB
             return _data.AddPage(page);
         }
 
-        /// <summary>
-        /// Attempts to reconcile the page against disk. (This may be throwaway).
-        /// </summary>
-        /// <param name="page">The page to reconcile.</param>
-        public void UpdatePageOnDisk(Page page)
-        {
-            // to do: Update the page on disk; and if the line number changes update the data directory.
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Private Methods

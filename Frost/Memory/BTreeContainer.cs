@@ -82,17 +82,43 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false.</returns>
         public bool SyncToDisk()
         {
-            var list = new List<Page>(_tree.Values.Count);
+            bool dataFileUpdated = false;
+            bool dataDirectoryUpdated = false;
 
-            foreach (var item in _tree.Values)
+            lock (_treeLock)
             {
-                list.Add(item);
+                // to do: should we save the entire tree to disk if it's fully in memory, 
+                // or just the pages that are needed?
+                if (TreeIsFullyLoaded())
+                {
+                    var list = new List<Page>(_tree.Values.Count);
+
+                    foreach (var item in _tree.Values)
+                    {
+                        list.Add(item);
+                    }
+
+                    dataFileUpdated = _storage.UpdateDataFile(list.ToArray());
+                    dataDirectoryUpdated = _storage.UpdateDataDirectory(list.ToArray());
+                }
+                else
+                {
+                    foreach (var page in _tree.Values)
+                    {
+                        if (page.IsPendingReconciliation)
+                        {
+                            int lineNumber = _storage.GetLineNumberForPage(page.Id);
+                            _storage.UpdatePageOnDisk(page, lineNumber);
+                            page.MarkAsReconciled();
+                        }
+                    }
+
+                    dataFileUpdated = true;
+                    dataDirectoryUpdated = true;
+                }
             }
 
-            bool dataFileUpdated = _storage.UpdateDataFile(list.ToArray());
-            bool dataDirectryUpdated = _storage.UpdateDataDirectory(list.ToArray());
-
-            return dataFileUpdated && dataDirectryUpdated;
+            return dataFileUpdated && dataDirectoryUpdated;
         }
 
         /// <summary>
@@ -212,15 +238,15 @@ namespace FrostDB
             }
             else
             {
-                foreach(var item in _tree.Values)
+                foreach (var item in _tree.Values)
                 {
                     if (item.CanInsertRow(row.Size))
                     {
                         page = item;
-                    }    
+                    }
                 }
             }
-            
+
             if (TreeIsFullyLoaded() && !page.CanInsertRow(row.Size))
             {
                 AddRowToNewPage(row);
@@ -228,7 +254,6 @@ namespace FrostDB
             else
             {
                 page.AddRow(row, GetMaxRowId() + 1);
-                UpdatePageOnDisk(page);
             }
         }
 
@@ -460,19 +485,6 @@ namespace FrostDB
         private bool AddPageToStorage(Page page)
         {
             return _storage.AddPage(page);
-        }
-
-        /// <summary>
-        /// Attempts to reconcile the page's data in memory against what is in storage (this may be throwaway)
-        /// </summary>
-        /// <param name="page">The page to reconcile with storage</param>
-        private void UpdatePageOnDisk(Page page)
-        {
-            if (page.IsPendingReconciliation)
-            {
-                _storage.UpdatePageOnDisk(page);
-            }
-            throw new NotImplementedException();
         }
 
         #endregion

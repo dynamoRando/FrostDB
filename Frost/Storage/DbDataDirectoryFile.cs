@@ -79,12 +79,22 @@ namespace FrostDB.Storage
 
         #region Public Methods
 
+        /// <summary>
+        /// Returns the line number from the data directory for the specified pageId
+        /// </summary>
+        /// <param name="pageId">The pageId you wish to lookup the line number for</param>
+        /// <returns>The line number of the specified pageId.</returns>
+        public int GetLineNumberForPage(int pageId)
+        {
+            return Lines.Where(line => line.PageNumber == pageId).FirstOrDefault().LineNumber;
+        }
+
         public bool WritePages(Page[] pages)
         {
             int lineNumber = 1;
             Lines.Clear();
 
-            foreach(var page in pages)
+            foreach (var page in pages)
             {
                 Lines.Add(new DbDataDirectoryFileItem { PageNumber = page.Id, LineNumber = lineNumber });
                 lineNumber++;
@@ -203,7 +213,7 @@ namespace FrostDB.Storage
 
         private void SaveLines()
         {
-            lock(_fileLock)
+            lock (_fileLock)
             {
                 using (var file = new StreamWriter(FileName()))
                 {

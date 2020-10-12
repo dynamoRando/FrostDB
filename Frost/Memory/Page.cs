@@ -156,7 +156,7 @@ namespace FrostDB
             {
                 maxRowId = rows.Max(row => row.RowId);
             }
-          
+
             // return 1
             ReturnRowStructArrayToPool(ref rows);
 
@@ -179,7 +179,7 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Attempts to add a row to this page and then reconcile the xact on disk
+        /// Attempts to add a row to this page. By doing this, this will mark the page as pending reconciliation (to disk).
         /// </summary>
         /// <param name="row">The row to be added</param>
         /// <param name="rowId">The id for this row. This should be the next available rowId</param>
@@ -240,7 +240,7 @@ namespace FrostDB
             }
 
             _pendingXacts.Add(row.XactId);
-           
+
             // return 1, 2, 3
             ReturnByteArrayToPool(ref preamble);
             ReturnByteArrayToPool(ref rowData);
@@ -498,6 +498,12 @@ namespace FrostDB
                     // we will however not adjust the offset since the method LocalRowBodyFromBinary includes parsing the rowSize prefix (an int32 size (4 bytes)).
 
                     sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
+
+                    if (sizeOfRow <= 0)
+                    {
+                        throw new InvalidOperationException("The size of the row was not saved on the page");
+                    }
+
                     int rowSize; // this isn't really needed, but it's a required param of the method below
                     Row2.LocalRowBodyFromBinary(dataSpan.Slice(currentOffset, sizeOfRow), out rowSize, ref values, _schema.Columns);
 

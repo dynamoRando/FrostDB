@@ -187,6 +187,7 @@ namespace FrostDB
                 {
                     if (_storage.UpdateIndexes(rowToInsert))
                     {
+                        // to do: if this is a huge table, re-writing the entire tree to disk may be a bad idea
                         _cache.SyncTreeToDisk(rowToInsert.Address);
                         _storage.MarkTransactionAsReconciledInLog(rowToInsert);
                     }

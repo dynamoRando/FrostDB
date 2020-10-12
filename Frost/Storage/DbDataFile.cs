@@ -97,10 +97,21 @@ namespace FrostDB
         /// Attempts to update the specified page in the binary data file
         /// </summary>
         /// <param name="page">The page to update</param>
+        /// <param name="lineNumber">The line number to write the page to</param>
         /// <returns>True if successful, otherwise false</returns>
-        public bool UpdatePage(Page page)
+        public bool UpdatePage(Page page, int lineNumber)
         {
-            throw new NotImplementedException();
+            lock (_fileLock)
+            {
+                using (Stream stream = File.Open(FileName(), FileMode.Open))
+                {
+                    byte[] data = page.ToBinary();
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                    stream.Write(data, 0, data.Length);
+                }
+
+            }
+            return true;
         }
 
         /// <summary>
