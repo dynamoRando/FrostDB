@@ -95,7 +95,7 @@ namespace FrostDB
             item.Append($"{XactId.ToString()} ");
             item.Append(TableId.ToString());
             item.Append($" {IsReconciled.ToString()} ");
-            item.Append($"{nameof(Action)} ");
+            item.Append($"{Action.ToString("F")} ");
             item.Append("<data> ");
 
             Data.ForEach(value =>
