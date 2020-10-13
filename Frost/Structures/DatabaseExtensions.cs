@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace FrostDB
 {
@@ -24,6 +26,8 @@ namespace FrostDB
             {
                 totalSize += value.GetValueBinaryLength();
             }
+
+            Debug.WriteLine($"{MethodBase.GetCurrentMethod().Name} totalSize: {totalSize.ToString()}");
 
             return totalSize;
         }
@@ -126,6 +130,8 @@ namespace FrostDB
             {
                 result += item.Length;
             }
+
+            Debug.WriteLine($"{MethodBase.GetCurrentMethod().Name} result: {result.ToString()}");
 
             return result;
         }
