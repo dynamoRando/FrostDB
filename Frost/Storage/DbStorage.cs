@@ -384,6 +384,7 @@ namespace FrostDB
             _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName, _databaseId);
             _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
+            _data.SetDataDirectory(_dataDirectory);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
             _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
             _contractFile = new DbContractFile(_process.Configuration.ContractExtension, databaseFolder, _databaseName);

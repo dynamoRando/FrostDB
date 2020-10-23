@@ -33,6 +33,7 @@ namespace FrostDB
         private TableSchema2 _schema;
         private Process _process;
         private List<Guid> _pendingXacts;
+        private PageDebug _debug;
         #endregion
 
         #region Public Properties
@@ -94,6 +95,7 @@ namespace FrostDB
             InitalizeDataWithEndOfRowData();
 
             _pendingXacts = new List<Guid>();
+            _debug = new PageDebug(this);
 
             Debug.WriteLine($"Constructing new page in memory with id: {_id.ToString()}");
         }
@@ -118,6 +120,7 @@ namespace FrostDB
             SetPreamble(false);
 
             _pendingXacts = new List<Guid>();
+            _debug = new PageDebug(this);
 
             Debug.WriteLine($"Constructing new page from disk with id: {_id.ToString()}");
         }
@@ -136,6 +139,11 @@ namespace FrostDB
         public byte[] ToBinary()
         {
             return _data;
+        }
+
+        public ReadOnlySpan<byte> ToSpan()
+        {
+            return new ReadOnlySpan<byte>(_data);
         }
 
         /// <summary>
@@ -249,6 +257,8 @@ namespace FrostDB
             ReturnByteArrayToPool(ref rowData);
             ReturnByteArrayToPool(ref totalRowData);
 
+            _debug.Output();
+
             return result;
         }
 
@@ -273,6 +283,16 @@ namespace FrostDB
         {
             throw new NotImplementedException();
         }
+
+        public int GetTotalBytesUsedOffset()
+        {
+            return SizeOfId;
+        }
+
+        public int GetTotalRowsOffset()
+        {
+            return SizeOfId + SizeOfBytesUsed;
+        }
         #endregion
 
         #region Private Methods
@@ -281,16 +301,6 @@ namespace FrostDB
             SetId();
             SetTotalRows(isBrandNewPage);
             SetTotalBytesUsed(isBrandNewPage);
-        }
-
-        private int GetTotalBytesUsedOffset()
-        {
-            return SizeOfId;
-        }
-
-        public int GetTotalRowsOffset()
-        {
-            return SizeOfId + SizeOfBytesUsed;
         }
 
         /// <summary>

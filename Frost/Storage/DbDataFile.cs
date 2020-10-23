@@ -51,8 +51,6 @@ namespace FrostDB
             _databaseName = databaseName;
             _dataDirectoryExtension = dataDirectoryExtension;
 
-            _dataDirectory = new DbDataDirectoryFile(this, folder, databaseName, _dataDirectoryExtension);
-
             if (!DoesFileExist())
             {
                 CreateFile();
@@ -61,6 +59,11 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void SetDataDirectory(DbDataDirectoryFile file)
+        {
+            _dataDirectory = file;
+        }
+
         /// <summary>
         /// Gets a page with the specified id from the data file on disk
         /// </summary>

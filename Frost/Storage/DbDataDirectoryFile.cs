@@ -9,8 +9,7 @@ using MoreLinq;
 
 namespace FrostDB.Storage
 {
-
-    class DbDataDirectoryFileItem
+    public class DbDataDirectoryFileItem
     {
         public int PageNumber { get; set; }
         public int LineNumber { get; set; }
@@ -28,7 +27,7 @@ namespace FrostDB.Storage
     /// <summary>
     /// Contains page id and line number for the data file
     /// </summary>
-    class DbDataDirectoryFile : IStorageFile
+    public class DbDataDirectoryFile : IStorageFile
     {
 
         // page number, line number
@@ -242,10 +241,11 @@ namespace FrostDB.Storage
                 }
                 else
                 {
+                    var items = line.Split(" ");
                     Lines.Add(new DbDataDirectoryFileItem
                     {
-                        PageNumber = Convert.ToInt32(line[0]),
-                        LineNumber = Convert.ToInt32(line[1])
+                        PageNumber = Convert.ToInt32(items[0]),
+                        LineNumber = Convert.ToInt32(items[1])
                     });
                 }
             }
