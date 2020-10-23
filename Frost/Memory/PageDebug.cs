@@ -44,8 +44,10 @@ namespace FrostDB
                 DatabaseConstants.SIZE_OF_ROW_SIZE));
 
             builder.Append("******* PAGE DEBUG *******");
+            builder.Append(Environment.NewLine);
             builder.Append($"Page Header: PageId: {pageId.ToString()} " +
                 $"TotalBytesUsed: {totalBytesUsed.ToString()} TotalRows: {totalRows.ToString()}");
+            builder.Append(Environment.NewLine);
             builder.Append("******* END PAGE DEBUG *******");
             return builder.ToString();
         }
