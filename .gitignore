@@ -86,3 +86,6 @@ FrostConsoleHarness/obj/project.packagespec.json
 /BTreeCore/bin/Debug/netstandard2.0
 /BTreeCore/obj
 /FrostConsoleHarness/obj/Debug/netcoreapp3.1
+/FrostBlazeServer/bin/Debug/net5.0
+/FrostConsole/bin/Debug/net5.0
+/FrostConsoleHarness/bin/Debug/net5.0

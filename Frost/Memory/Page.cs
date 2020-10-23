@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
-using System.Buffers;
-using Antlr4.Runtime.Atn;
-using log4net.Util;
-using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Buffers;
 
 namespace FrostDB
 {
@@ -97,6 +94,8 @@ namespace FrostDB
             InitalizeDataWithEndOfRowData();
 
             _pendingXacts = new List<Guid>();
+
+            Debug.WriteLine($"Constructing new page in memory with id: {_id.ToString()}");
         }
 
         /// <summary>
@@ -119,6 +118,8 @@ namespace FrostDB
             SetPreamble(false);
 
             _pendingXacts = new List<Guid>();
+
+            Debug.WriteLine($"Constructing new page from disk with id: {_id.ToString()}");
         }
 
         public Page(byte[] data, BTreeAddress address) : this(data, address.TableId, address.DatabaseId)
@@ -223,6 +224,8 @@ namespace FrostDB
             // combine the preamble and the row data together
             Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
             Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
+
+            Debug.WriteLine($"Total Row Length: {totalRowData.Length.ToString()}");
 
             // to do: add totalRowData to this Page's data
             if (CanInsertNewRow(totalRowData.Length))
