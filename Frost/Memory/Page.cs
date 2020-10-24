@@ -242,6 +242,7 @@ namespace FrostDB
                 _totalBytesUsed += totalRowData.Length;
                 _totalRows++;
                 SaveTotalRows();
+                SaveTotalBytesUsed();
                 result = true;
             }
             else
@@ -354,6 +355,15 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Saves the total bytes used field _totalBytesUsed to this page's _data field.
+        /// </summary>
+        private void SaveTotalBytesUsed()
+        {
+            byte[] item = BitConverter.GetBytes(_totalBytesUsed);
+            Array.Copy(item, 0, _data, GetTotalBytesUsedOffset(), item.Length);
+        }
+
+        /// <summary>
         /// Saves _totalRows to this page's _data
         /// </summary>
         private void SaveTotalRows()
@@ -373,8 +383,7 @@ namespace FrostDB
             if (isBrandNewPage)
             {
                 _totalBytesUsed = 0;
-                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
-                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
+                SaveTotalBytesUsed();
             }
             else
             {
@@ -384,8 +393,7 @@ namespace FrostDB
                 _totalBytesUsed = rows.Sum(row => row.RowSize);
 
                 // copy _totalBytesUsed to it's location in _data [in the Page preamble]
-                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
-                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
+                SaveTotalBytesUsed();
 
                 // return 1
                 ReturnRowStructArrayToPool(ref rows);

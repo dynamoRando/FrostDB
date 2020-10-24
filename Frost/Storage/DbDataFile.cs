@@ -109,7 +109,7 @@ namespace FrostDB
                 using (Stream stream = File.Open(FileName(), FileMode.Open))
                 {
                     byte[] data = page.ToBinary();
-                    stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                     stream.Write(data, 0, data.Length);
                 }
 
@@ -137,7 +137,7 @@ namespace FrostDB
             lock (_fileLock)
             {
                 int i = 0;
-                int currentOffset = 0;
+                int currentOffset = GetLineNumberByteOffset();
                 for (i = 0; i < pages.Length; i++)
                 {
                     using (Stream stream = File.Open(FileName(), FileMode.Open))
@@ -190,7 +190,7 @@ namespace FrostDB
             {
                 using (Stream stream = File.Open(FileName(), FileMode.Open))
                 {
-                    stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                     using (StreamReader reader = new StreamReader(stream))
                     {
                         line = reader.ReadLine();
@@ -209,7 +209,7 @@ namespace FrostDB
         {
             using (FileStream stream = File.OpenWrite(FileName()))
             {
-                stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                 stream.Write(page, 0, page.Length);
             }
         }
@@ -223,9 +223,19 @@ namespace FrostDB
 
             using (var file = new StreamWriter(FileName()))
             {
-                file.WriteLine("version " + VersionNumber.ToString());
+                file.WriteLine(GetVersionHeaderString());
             }
         }
+
+        /// <summary>
+        /// Returns the version header for the file
+        /// </summary>
+        /// <returns>The string versio header for the file</returns>
+        private string GetVersionHeaderString()
+        {
+            return $"version {VersionNumber.ToString()} {Environment.NewLine}";
+        }
+
         /// <summary>
         /// Checks if the database file exists, otherwise false.
         /// </summary>
@@ -250,6 +260,22 @@ namespace FrostDB
             {
                 VersionNumber = StorageFileVersions.DATA_FILE_VERSION_1;
             }
+        }
+
+        /// <summary>
+        /// Tries to account for header information in the database (version number)
+        /// </summary>
+        /// <param name="lineNumber">The line number of data you're interested int</param>
+        /// <returns>The line number offset for header information in the file</returns>
+        private int GetLineNumberOffset(int lineNumber)
+        {
+            return lineNumber++;
+        }
+
+        private int GetLineNumberByteOffset()
+        {
+            byte[] versionBinary = DatabaseBinaryConverter.StringToBinary(GetVersionHeaderString());
+            return versionBinary.Length;
         }
         #endregion
 
