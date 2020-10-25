@@ -249,6 +249,16 @@ namespace FrostDB
             byte[] item = DatabaseBinaryConverter.GuidToBinary(participantId.Value);
             Array.Copy(item, 0, array, 0, item.Length);
         }
+
+        public static int GetRowIdOffset()
+        {
+            return 0;
+        }
+
+        public static int GetSizeOfRowOffSet()
+        {
+            return 0;
+        }
         #endregion
 
         #region Private Methods
@@ -274,16 +284,7 @@ namespace FrostDB
             GetParticipantId();
         }
 
-        private int GetRowIdOffset()
-        {
-            return 0;
-        }
-
-        private int GetSizeOfRowOffSet()
-        {
-            return 0;
-        }
-
+        
         private int GetSizeOfRow()
         {
             if (IsLocal)

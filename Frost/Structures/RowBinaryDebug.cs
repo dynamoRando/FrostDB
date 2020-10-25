@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+
+namespace FrostDB
+{
+    /*
+        * Row Byte Array Layout:
+        * RowId IsLocal {{SizeOfRow | ParticipantId} | RowData}
+        * RowId IsLocal - preamble (used in inital load of the Row)
+        * 
+        * if IsLocal == true, then need to request the rest of the byte array
+        * 
+        * if IsLocal == false, then need to request the rest of the byte array, i.e. the size of the ParticipantId
+        * 
+        * SizeOfRow is the size of the rest of the row in bytes minus the preamble.  It includes the int32 byte size value itself.
+        * For a remote row, this is just the size of the ParticipantId (a guid)
+        * For a local row, this is the total size of all the data
+        * 
+        * If IsLocal == true, format is as follows -
+        * [data_col1] [data_col2] [data_colX] - fixed size columns first
+        * [SizeOfVar] [varData] [SizeOfVar] [varData] - variable size columns
+        * [ -1 preamble] - signals the end of row data (a preamble whose RowId == -1 and IsLocal == true)
+        */
+
+    internal class RowBinaryDebug
+    { 
+        #region Private Fields
+        #endregion
+
+        #region Public Properties
+        #endregion
+
+        #region Constructors
+        #endregion
+
+        #region Public Methods
+        public static void Debug(ReadOnlySpan<byte> rowData)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append($"**** Row Debug ****");
+            builder.Append(Environment.NewLine);
+
+            var rowSpan = rowData.Slice(0, DatabaseConstants.SIZE_OF_ROW_ID);
+            int rowId = DatabaseBinaryConverter.BinaryToInt(rowSpan);
+            builder.Append($"RowId: {rowId.ToString()} ");
+
+            var isLocalSpan = rowData.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL);
+            bool isLocal = DatabaseBinaryConverter.BinaryToBoolean(isLocalSpan);
+            builder.Append($"IsLocal: {isLocal.ToString()}");
+
+
+            builder.Append(Environment.NewLine);
+            builder.Append($"**** END Row Debug ****");
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Private Methods
+        #endregion
+
+    }
+}
