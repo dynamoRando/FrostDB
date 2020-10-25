@@ -36,25 +36,48 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static void Debug(ReadOnlySpan<byte> rowData)
+        public static void DebugRow(ReadOnlySpan<byte> rowData)
         {
             StringBuilder builder = new StringBuilder();
+            int currentOffset = 0;
 
-            builder.Append($"**** Row Debug ****");
+            builder.Append($"**** ROW DEBUG ****");
             builder.Append(Environment.NewLine);
 
             var rowSpan = rowData.Slice(0, DatabaseConstants.SIZE_OF_ROW_ID);
             int rowId = DatabaseBinaryConverter.BinaryToInt(rowSpan);
             builder.Append($"RowId: {rowId.ToString()} ");
 
-            var isLocalSpan = rowData.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL);
+            currentOffset += DatabaseConstants.SIZE_OF_ROW_ID;
+
+            var isLocalSpan = rowData.Slice(currentOffset, DatabaseConstants.SIZE_OF_IS_LOCAL);
             bool isLocal = DatabaseBinaryConverter.BinaryToBoolean(isLocalSpan);
-            builder.Append($"IsLocal: {isLocal.ToString()}");
+            builder.Append($"IsLocal: {isLocal.ToString()} ");
+
+            if (isLocal)
+            {
+                currentOffset += DatabaseConstants.SIZE_OF_IS_LOCAL;
+                var sizeOfRowSpan = rowData.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE);
+                int sizeOfRow = DatabaseBinaryConverter.BinaryToInt(sizeOfRowSpan);
+
+                builder.Append($"SizeOfRow: {sizeOfRow.ToString()} ");
+
+                currentOffset += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+            }
+            else
+            {
+                var guidSpan = rowData.Slice(DatabaseConstants.SIZE_OF_ROW_ID + DatabaseConstants.SIZE_OF_IS_LOCAL,
+                    DatabaseConstants.PARTICIPANT_ID_SIZE);
+                Guid participantId = DatabaseBinaryConverter.BinaryToGuid(guidSpan);
+                builder.Append($"ParticipantId: {participantId.ToString()} ");
+            }
 
 
             builder.Append(Environment.NewLine);
-            builder.Append($"**** END Row Debug ****");
-            throw new NotImplementedException();
+            builder.Append($"**** END ROW DEBUG ****");
+
+            Debug.WriteLine(builder.ToString());
         }
         #endregion
 

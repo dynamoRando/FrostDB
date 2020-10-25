@@ -205,6 +205,16 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Converts a byte array to a Guid
+        /// </summary>
+        /// <param name="span">The Guid binary array</param>
+        /// <returns>A Guid</returns>
+        public static Guid BinaryToGuid(ReadOnlySpan<byte> span)
+        {
+            return new Guid(span);
+        }
+
+        /// <summary>
         /// Returns a string based on the supplied binary array (assumes UTF8)
         /// </summary>
         /// <param name="bytes">The binary array</param>

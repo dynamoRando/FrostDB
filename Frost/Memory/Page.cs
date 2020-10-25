@@ -235,6 +235,8 @@ namespace FrostDB
 
             Debug.WriteLine($"Total Row Length: {totalRowData.Length.ToString()}");
 
+            RowBinaryDebug.DebugRow(new ReadOnlySpan<byte>(totalRowData));
+
             // to do: add totalRowData to this Page's data
             if (CanInsertNewRow(totalRowData.Length))
             {

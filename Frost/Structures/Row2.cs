@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Text;
 
 namespace FrostDB
@@ -225,7 +226,12 @@ namespace FrostDB
             int currentOffset = 0;
 
             // prefix the array with the total size of all the values
-            byte[] rowSizeArray = BitConverter.GetBytes(values.ComputeTotalSize());
+
+            int totalRowSize = values.ComputeTotalSize();
+
+            Debug.WriteLine($"Total Row Size Computed: {totalRowSize.ToString()}");
+
+            byte[] rowSizeArray = BitConverter.GetBytes(totalRowSize);
             Array.Copy(rowSizeArray, 0, array, currentOffset, rowSizeArray.Length);
             currentOffset += rowSizeArray.Length;
 
