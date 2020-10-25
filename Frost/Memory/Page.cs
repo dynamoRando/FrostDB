@@ -64,6 +64,8 @@ namespace FrostDB
         /// Indicates that the page has xacts applied to it, thus needing to save the entire page to disk
         /// </summary>
         public bool IsPendingReconciliation => PendingReconciliation();
+
+        public TableSchema2 Schema => _schema;
         #endregion
 
         #region Protected Methods

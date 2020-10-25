@@ -11,5 +11,29 @@ namespace FrostDB
         public int RowSize { get; set; }
         public Guid ParticipantId { get; set; }
         public RowValue2[] Values { get; set; }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($"RowId: {RowId.ToString()} {Environment.NewLine}");
+            builder.Append($"IsLocal: {IsLocal.ToString()} {Environment.NewLine}");
+            builder.Append($"RowSize: {RowSize.ToString()} {Environment.NewLine}");
+
+            if (ParticipantId != null)
+            {
+                builder.Append($"ParticipantId: {ParticipantId.ToString()} {Environment.NewLine}");
+            }
+
+            if (Values != null)
+            {
+                foreach (var value in Values)
+                {
+                    builder.Append($"{value.Column.Name} : {value.Value} {Environment.NewLine}");
+                }
+            }
+
+            return builder.ToString();
+        }
     }
 }

@@ -138,6 +138,45 @@ namespace FrostDB
             row.Values.ToBinaryFormat();
         }
 
+        public static void Foo()
+        {
+            var span = new Span<byte>();
+
+        }
+
+        public static void LocalRowBodyFromBinary(ReadOnlySpan<byte> span, out int sizeOfRow, ref RowValue2[] values, ColumnSchema[] schema)
+        {
+            int colIdx = 0;
+            int currentOffset = 0;
+            RowValue2 item = null;
+
+            schema.OrderByByteFormat();
+
+            sizeOfRow = BitConverter.ToInt32(span.Slice(0, DatabaseConstants.SIZE_OF_ROW_SIZE));
+
+            currentOffset += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+            foreach (var column in schema)
+            {
+                if (!column.IsVariableLength)
+                {
+                    item = column.Parse(span.Slice(currentOffset, column.Size));
+                    values[colIdx] = item;
+                    colIdx++;
+                    currentOffset += column.Size;
+                }
+                else
+                {
+                    int sizeOfValue = DatabaseBinaryConverter.BinaryToInt(span.Slice(currentOffset, DatabaseConstants.SIZE_OF_INT));
+                    currentOffset += DatabaseConstants.SIZE_OF_INT;
+                    item = column.Parse(span.Slice(currentOffset, sizeOfValue));
+                    currentOffset += sizeOfValue;
+                }
+
+            }
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Converts a binary array to the body of a local row. The array should include the row size prefix.
         /// </summary>
@@ -173,7 +212,7 @@ namespace FrostDB
                     item = column.Parse(span.Slice(currentOffset, sizeOfValue));
                     currentOffset += sizeOfValue;
                 }
-                
+
             }
 
 
@@ -290,7 +329,7 @@ namespace FrostDB
             GetParticipantId();
         }
 
-        
+
         private int GetSizeOfRow()
         {
             if (IsLocal)
@@ -385,6 +424,12 @@ namespace FrostDB
 
         #region Public Methods
         public static void Parse(Span<byte> data, out int rowId, out bool isLocal)
+        {
+            rowId = BitConverter.ToInt32(data);
+            isLocal = BitConverter.ToBoolean(data.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL));
+        }
+
+        public static void Parse(ReadOnlySpan<byte> data, out int rowId, out bool isLocal)
         {
             rowId = BitConverter.ToInt32(data);
             isLocal = BitConverter.ToBoolean(data.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL));
