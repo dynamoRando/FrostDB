@@ -113,6 +113,18 @@ namespace FrostDB
                 Row2.ParticipantToBinaryFormat(ref array, ParticipantId.Value);
             }
         }
+
+        public void ToBinaryFormat(ref RentedByteArray array)
+        {
+            if (!IsReferenceInsert)
+            {
+                Row2.ValuesToBinaryFormat(ref array, Values);
+            }
+            else
+            {
+                Row2.ParticipantToBinaryFormat(ref array, ParticipantId.Value);
+            }
+        }
         #endregion
 
         #region Private Methods

@@ -48,7 +48,7 @@ namespace FrostDB.Storage
 
         #region Constructors
         /// <summary>
-        /// Creates a file holding the page id and line number in the binrary data file.
+        /// Creates a file holding the page id and line number in the binary data file.
         /// </summary>
         /// <param name="dataFile">The actual binary data file of the db</param>
         /// <param name="folder">The folder in which dbs are held</param>
@@ -239,6 +239,10 @@ namespace FrostDB.Storage
                 {
                     var items = line.Split(" ");
                     VersionNumber = Convert.ToInt32(items[1]);
+                }
+                if (line.StartsWith(string.Empty))
+                {
+                    continue;
                 }
                 else
                 {

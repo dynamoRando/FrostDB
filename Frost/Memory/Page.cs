@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Linq;
 using System.Buffers;
+using Antlr4.Runtime.Atn;
 
 namespace FrostDB
 {
@@ -207,10 +208,10 @@ namespace FrostDB
             row.OrderByByteFormat();
 
             // rent 1
-            byte[] preamble = RentByteArrayFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+            RentedByteArray preamble = RentByteArrayFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
             Row2.BuildRowPreamble(ref preamble, rowId, !row.IsReferenceInsert);
 
-            byte[] rowData = null;
+            RentedByteArray rowData;
             if (row.IsReferenceInsert)
             {
                 // need to save off the GUID id
@@ -229,21 +230,21 @@ namespace FrostDB
             }
 
             // rent 3
-            byte[] totalRowData = RentByteArrayFromPool(preamble.Length + rowData.Length);
+            RentedByteArray totalRowData = RentByteArrayFromPool(preamble.RequestedSize + rowData.RequestedSize);
 
             // combine the preamble and the row data together
-            Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
-            Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
+            Array.Copy(preamble.Array, 0, totalRowData.Array, 0, preamble.RequestedSize);
+            Array.Copy(rowData.Array, 0, totalRowData.Array, preamble.RequestedSize, rowData.RequestedSize);
 
             Debug.WriteLine($"Total Row Length: {totalRowData.Length.ToString()}");
 
-            RowBinaryDebug.DebugRow(new ReadOnlySpan<byte>(totalRowData));
+            RowBinaryDebug.DebugRow(new ReadOnlySpan<byte>(totalRowData.Array));
 
             // to do: add totalRowData to this Page's data
-            if (CanInsertNewRow(totalRowData.Length))
+            if (CanInsertNewRow(totalRowData.RequestedSize))
             {
-                Array.Copy(totalRowData, 0, _data, GetNextAvailableRowOffset(), totalRowData.Length);
-                _totalBytesUsed += totalRowData.Length;
+                Array.Copy(totalRowData.Array, 0, _data, GetNextAvailableRowOffset(), totalRowData.RequestedSize);
+                _totalBytesUsed += totalRowData.RequestedSize;
                 _totalRows++;
                 SaveTotalRows();
                 SaveTotalBytesUsed();
@@ -429,9 +430,12 @@ namespace FrostDB
         /// </summary>
         /// <param name="arraySize">The size of the array to rent</param>
         /// <returns>An array of specified size from the ArrayPool</returns>
-        private static byte[] RentByteArrayFromPool(int arraySize)
+        private static RentedByteArray RentByteArrayFromPool(int arraySize)
         {
-            return ArrayPool<byte>.Shared.Rent(arraySize);
+            var item = new RentedByteArray();
+            item.Array = ArrayPool<byte>.Shared.Rent(arraySize);
+            item.RequestedSize = arraySize;
+            return item;
         }
 
         /// <summary>
@@ -444,6 +448,16 @@ namespace FrostDB
             ArrayPool<byte>.Shared.Return(array, shouldClean);
         }
 
+        /// <summary>
+        /// Returns a rented byte array to the ArrayPool
+        /// </summary>
+        /// <param name="array">The array to return to the ArrayPool</param>
+        /// <param name="shouldClean">True if the ArrayPool should clear the contents of the array before returning to the pool, otherwise false.</param>
+        private static void ReturnByteArrayToPool(ref RentedByteArray array, bool shouldClean = true)
+        {
+            ArrayPool<byte>.Shared.Return(array.Array, shouldClean);
+        }
+
         private void InitalizeDataWithEndOfRowData()
         {
             byte[] endOfRowId = BitConverter.GetBytes(DatabaseConstants.END_OF_ROW_DATA_ID);
@@ -451,7 +465,7 @@ namespace FrostDB
             int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
 
             // rent 1
-            byte[] endofDataPreamble = RentByteArrayFromPool(endOfRowId.Length + isLocalId.Length);
+            byte[] endofDataPreamble = RentByteArrayFromPool(endOfRowId.Length + isLocalId.Length).Array;
             Array.Copy(endOfRowId, endofDataPreamble, endOfRowId.Length);
             Array.Copy(isLocalId, 0, endofDataPreamble, endOfRowId.Length, isLocalId.Length);
 
