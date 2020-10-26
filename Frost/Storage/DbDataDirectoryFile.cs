@@ -237,7 +237,8 @@ namespace FrostDB.Storage
             {
                 if (line.StartsWith("version"))
                 {
-                    continue;
+                    var items = line.Split(" ");
+                    VersionNumber = Convert.ToInt32(items[1]);
                 }
                 else
                 {
