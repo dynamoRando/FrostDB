@@ -223,5 +223,15 @@ namespace FrostDB
         {
             return Encoding.UTF8.GetString(bytes);
         }
+
+        public static string BinaryToString(ReadOnlySpan<byte> bytes)
+        {
+            return Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string BinaryToString(Span<byte> bytes)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

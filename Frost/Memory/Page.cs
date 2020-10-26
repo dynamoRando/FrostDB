@@ -504,7 +504,7 @@ namespace FrostDB
         /// <param name="rows">An array of RowStruct to populate</param>
         private void IterateOverData(ref RowStruct[] rows)
         {
-            var dataSpan = new Span<byte>(_data);
+            var dataSpan = new ReadOnlySpan<byte>(_data);
             int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
             int currentRowNum = 0;
 

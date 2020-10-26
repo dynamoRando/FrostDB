@@ -138,11 +138,6 @@ namespace FrostDB
             row.Values.ToBinaryFormat();
         }
 
-        public static void Foo()
-        {
-            var span = new Span<byte>();
-
-        }
 
         public static void LocalRowBodyFromBinary(ReadOnlySpan<byte> span, out int sizeOfRow, ref RowValue2[] values, ColumnSchema[] schema)
         {
@@ -170,11 +165,11 @@ namespace FrostDB
                     int sizeOfValue = DatabaseBinaryConverter.BinaryToInt(span.Slice(currentOffset, DatabaseConstants.SIZE_OF_INT));
                     currentOffset += DatabaseConstants.SIZE_OF_INT;
                     item = column.Parse(span.Slice(currentOffset, sizeOfValue));
+                    values[colIdx] = item;
+                    colIdx++;
                     currentOffset += sizeOfValue;
                 }
-
             }
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -212,7 +207,6 @@ namespace FrostDB
                     item = column.Parse(span.Slice(currentOffset, sizeOfValue));
                     currentOffset += sizeOfValue;
                 }
-
             }
 
 
@@ -275,7 +269,8 @@ namespace FrostDB
 
             // prefix the array with the total size of all the values
 
-            int totalRowSize = values.ComputeTotalSize();
+            //int totalRowSize = values.ComputeTotalSize();
+            int totalRowSize = values.ComputeTotalSize() + DatabaseConstants.SIZE_OF_ROW_SIZE;
 
             Debug.WriteLine($"Total Row Size Computed: {totalRowSize.ToString()}");
 

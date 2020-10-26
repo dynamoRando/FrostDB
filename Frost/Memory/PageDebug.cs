@@ -75,7 +75,7 @@ namespace FrostDB
                 RowPreamble.Parse(data.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_PREAMBLE), out rowId, out isLocal);
 
                 // check for end of data row identifier
-                if (isLocal && rowId == DatabaseConstants.END_OF_ROW_DATA_ID)
+                if (isLocal && (rowId <= DatabaseConstants.END_OF_ROW_DATA_ID))
                 {
                     break;
                 }

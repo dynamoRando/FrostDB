@@ -27,6 +27,8 @@ namespace FrostDB
                 totalSize += value.GetValueBinaryLength();
             }
 
+            totalSize += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
             Debug.WriteLine($"{MethodBase.GetCurrentMethod().Name} totalSize: {totalSize.ToString()}");
 
             return totalSize;

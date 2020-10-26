@@ -89,7 +89,7 @@ namespace FrostDB
 
                 if (DataType.Contains("VARCHAR"))
                 {
-                    throw new NotImplementedException();
+                    value.Value = DatabaseBinaryConverter.BinaryToString(span).Trim();
                 }
 
                 if (DataType.Contains("DECIMAL"))
