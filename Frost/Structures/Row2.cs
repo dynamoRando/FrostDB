@@ -247,6 +247,12 @@ namespace FrostDB
             Array.Copy(isLocal, 0, array, rowIdData.Length, isLocal.Length);
         }
 
+        /// <summary>
+        /// Copies the rowId and isLocalRow values to the supplied array. This essentially builds a row pre-amble.
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="rowId">The row id</param>
+        /// <param name="isLocalRow">True if this is a local row, otherwise false.  </param>
         public static void BuildRowPreamble(ref RentedByteArray array, int rowId, bool isLocalRow)
         {
             byte[] rowIdData = BitConverter.GetBytes(rowId);
@@ -287,6 +293,12 @@ namespace FrostDB
             }
         }
 
+        /// <summary>
+        /// Saves the list of values provided to the supplied array + the total size of the values. The array must be sized correctly (use ComputeTotalSize() of List of RowValue2 + size of an INT).
+        /// This will prefix the array with the total size of the values. This essentially builds a row body (not the pre-amble).
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="values">A list of RowValues to to save to the array</param>
         public static void ValuesToBinaryFormat(ref RentedByteArray array, List<RowValue2> values)
         {
             values.OrderByByteFormat();

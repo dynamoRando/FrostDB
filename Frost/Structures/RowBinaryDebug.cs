@@ -36,7 +36,7 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
-        public static void DebugRow(ReadOnlySpan<byte> rowData)
+        public static void DebugRow(ReadOnlySpan<byte> rowData, TableSchema2 schema)
         {
             StringBuilder builder = new StringBuilder();
             int currentOffset = 0;
@@ -63,6 +63,10 @@ namespace FrostDB
                 builder.Append($"SizeOfRow: {sizeOfRow.ToString()} ");
 
                 currentOffset += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+                // to do: using the schema, iterate over the row data and print out
+                schema.Columns.OrderByByteFormat();
+
 
             }
             else

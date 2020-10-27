@@ -13,7 +13,7 @@ namespace FrostDB
     {
         #region Public Methods
         /// <summary>
-        /// Computes the total binary size of the values
+        /// Computes the total binary size of the values. Includes 4 byte int length prefix to account for storing the size value itself.
         /// </summary>
         /// <param name="values">A list of row values</param>
         /// <returns>The total binary size of the values</returns>
@@ -27,7 +27,7 @@ namespace FrostDB
                 totalSize += value.GetValueBinaryLength();
             }
 
-            totalSize += DatabaseConstants.SIZE_OF_ROW_SIZE;
+            totalSize += DatabaseConstants.SIZE_OF_INT;
 
             Debug.WriteLine($"{MethodBase.GetCurrentMethod().Name} totalSize: {totalSize.ToString()}");
 
