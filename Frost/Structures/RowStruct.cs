@@ -16,13 +16,17 @@ namespace FrostDB
         {
             var builder = new StringBuilder();
 
+            builder.Append("**** RowStruct Debug ****" + Environment.NewLine);
             builder.Append($"RowId: {RowId.ToString()} {Environment.NewLine}");
             builder.Append($"IsLocal: {IsLocal.ToString()} {Environment.NewLine}");
             builder.Append($"RowSize: {RowSize.ToString()} {Environment.NewLine}");
 
             if (ParticipantId != null)
             {
-                builder.Append($"ParticipantId: {ParticipantId.ToString()} {Environment.NewLine}");
+                if (ParticipantId != Guid.Empty)
+                {
+                    builder.Append($"ParticipantId: {ParticipantId.ToString()} {Environment.NewLine}");
+                }
             }
 
             if (Values != null)
@@ -33,6 +37,7 @@ namespace FrostDB
                 }
             }
 
+            builder.Append("**** End RowStruct Debug ****" + Environment.NewLine);
             return builder.ToString();
         }
     }

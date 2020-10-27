@@ -50,6 +50,7 @@ namespace FrostDB
             builder.Append(Environment.NewLine);
             builder.Append($"Row Data: ");
             IterateOverData(data, ref builder);
+            builder.Append(Environment.NewLine);
             builder.Append("******* END PAGE DEBUG *******");
             return builder.ToString();
         }

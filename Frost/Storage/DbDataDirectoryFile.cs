@@ -240,11 +240,11 @@ namespace FrostDB.Storage
                     var items = line.Split(" ");
                     VersionNumber = Convert.ToInt32(items[1]);
                 }
-                if (line.StartsWith(string.Empty))
+                else if (line.Equals(string.Empty))
                 {
                     continue;
                 }
-                else
+                else 
                 {
                     var items = line.Split(" ");
                     Lines.Add(new DbDataDirectoryFileItem

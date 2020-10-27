@@ -236,7 +236,7 @@ namespace FrostDB
             Array.Copy(preamble.Array, 0, totalRowData.Array, 0, preamble.RequestedSize);
             Array.Copy(rowData.Array, 0, totalRowData.Array, preamble.RequestedSize, rowData.RequestedSize);
 
-            Debug.WriteLine($"Total Row Length: {totalRowData.Length.ToString()}");
+            Debug.WriteLine($"Total Row Length: {totalRowData.RequestedSize.ToString()}");
 
             RowBinaryDebug.DebugRow(new ReadOnlySpan<byte>(totalRowData.Array));
 

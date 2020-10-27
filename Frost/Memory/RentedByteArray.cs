@@ -8,6 +8,5 @@ namespace FrostDB
     {
         public byte[] Array { get; set; }
         public int RequestedSize { get; set; }
-        public int Length => RequestedSize;
     }
 }
