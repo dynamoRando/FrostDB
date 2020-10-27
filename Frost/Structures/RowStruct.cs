@@ -37,6 +37,7 @@ namespace FrostDB
                 }
             }
 
+            builder.Append(Environment.NewLine);
             builder.Append("**** End RowStruct Debug ****" + Environment.NewLine);
             return builder.ToString();
         }
