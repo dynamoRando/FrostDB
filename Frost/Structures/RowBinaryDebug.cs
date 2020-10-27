@@ -25,7 +25,7 @@ namespace FrostDB
         */
 
     internal class RowBinaryDebug
-    { 
+    {
         #region Private Fields
         #endregion
 
@@ -67,7 +67,26 @@ namespace FrostDB
                 // to do: using the schema, iterate over the row data and print out
                 schema.Columns.OrderByByteFormat();
 
-
+                foreach (var column in schema.Columns)
+                {
+                    if (column.IsVariableLength)
+                    {
+                        // need to parse the first 4 bytes to get the size, then the data
+                        ReadOnlySpan<byte> dataLengthSpan = rowData.Slice(currentOffset, DatabaseConstants.SIZE_OF_INT);
+                        int dataLength = DatabaseBinaryConverter.BinaryToInt(dataLengthSpan);
+                        currentOffset += DatabaseConstants.SIZE_OF_INT;
+                        ReadOnlySpan<byte> data = rowData.Slice(currentOffset, dataLength);
+                        RowValue2 value = column.Parse(data);
+                        currentOffset += dataLength;
+                        builder.Append($"{value.Column} : {value.Value} : Length {dataLength.ToString()}");
+                    }
+                    else
+                    {
+                        RowValue2 value = column.Parse(rowData.Slice(currentOffset, column.Size));
+                        currentOffset += column.Size;
+                        builder.Append($"{value.Column} : {value.Value} : Length {column.Size.ToString()}");
+                    }
+                }
             }
             else
             {

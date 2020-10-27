@@ -37,15 +37,19 @@ namespace FrostDB
             {
                 var item = new BoundedArray<char>(length);
                 var items = value.ToCharArray();
-                foreach(var x in items)
+                foreach (var x in items)
                 {
                     item.Add(x);
                 }
 
+                // to do: is this wrong? the whole point of varchar is that we don't have to fill the entire thing
+                // so long as we're less than the max size
+
+                /*
                 if (item.Length < length)
                 {
-                    int spacesRemaining =  length - item.Length;
-                    for(int x = item.Length + 1; x < length; x++ )
+                    int spacesRemaining = length - item.Length;
+                    for (int x = item.Length + 1; x < length; x++)
                     {
                         item[x] = Char.MinValue; // will I regret this? probably. 
                     }
@@ -53,13 +57,15 @@ namespace FrostDB
 
                 char[] temp = new char[length];
                 int k = 0;
-                foreach(var y in item)
+                foreach (var y in item)
                 {
                     temp[k] = y;
                     k++;
                 }
+                */
 
-                result = Encoding.UTF8.GetBytes(temp);
+                //result = Encoding.UTF8.GetBytes(temp);
+                result = Encoding.UTF8.GetBytes(item.ToArray());
 
             }
 

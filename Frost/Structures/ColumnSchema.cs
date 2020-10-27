@@ -51,6 +51,12 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Parses a byte array to a RowValue2 for this column data type. This method assumes the byte array passed in is the value. If the column length is variable, you must ensure the array size passed in
+        /// is the array for the total value (do not include the size prefix for variable length columns.)
+        /// </summary>
+        /// <param name="span">The byte array to parse. This array must contain the value to be parsed. Ensure that it does not contain the size prefix for variable length columns.</param>
+        /// <returns>A RowValue2</returns>
         public RowValue2 Parse(ReadOnlySpan<byte> span)
         {
             var value = new RowValue2();
