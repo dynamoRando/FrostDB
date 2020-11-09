@@ -90,7 +90,8 @@ namespace FrostDB.Storage
 
         public bool WritePages(Page[] pages)
         {
-            int lineNumber = 1;
+            // start at second line because the first line is the version number
+            int lineNumber = 2;
             Lines.Clear();
 
             foreach (var page in pages)
