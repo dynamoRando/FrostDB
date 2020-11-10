@@ -24,6 +24,7 @@ namespace FrostDB
         private DbDataDirectoryFile _dataDirectory;
         private string _dataDirectoryExtension;
         private readonly object _fileLock = new object();
+        private List<Page> _pages;
         #endregion
 
         #region Public Properties
@@ -90,8 +91,9 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool AddPage(Page page)
         {
+            // need to re-write this to add the page to the existing file after reading everything in 
             int lineNumber = _dataDirectory.GetNextLineNumber();
-            _dataDirectory.AddPage(page.Id, lineNumber);
+            _dataDirectory.AddPage(page.Id, lineNumber); 
             AddPage(page.ToBinary(), lineNumber);
             return true;
         }
@@ -207,10 +209,22 @@ namespace FrostDB
         /// <param name="lineNumber">The line at which data should be added</param>
         private void AddPage(byte[] page, int lineNumber)
         {
+            /*
+            using (var streamWriter = new StreamWriter(FileName()))
+            {
+                streamWriter.WriteLine(page);
+            }
+            */
+            // this needs to be changed, because we are not able to successfully write to a specific line and read from
+            // a specific line, let's read the entire file into memory (not efficient) and then modify as we need the page
+            // information, and then write back to disk.
+
+
             using (FileStream stream = File.OpenWrite(FileName()))
             {
                 stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                 stream.Write(page, 0, page.Length);
+                
             }
         }
 
