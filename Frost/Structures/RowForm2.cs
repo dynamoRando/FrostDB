@@ -38,6 +38,11 @@ namespace FrostDB
             SetColumnsForValues();
             _address = new BTreeAddress { DatabaseId = databaseId, TableId = tableId };
         }
+
+        public RowForm2(string databaseName, string tableName, ColumnSchema[] columns, BTreeAddress address) 
+            : this(databaseName, tableName, columns, address.DatabaseId, address.TableId)
+        {
+        }
         #endregion
 
         #region Public Methods

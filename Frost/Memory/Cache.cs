@@ -103,23 +103,51 @@ namespace FrostDB
         /// </summary>
         /// <param name="treeAddress">The tree's address (dbId, tableId)</param>
         /// <returns>All rows for the table</returns>
-        public List<RowStruct> GetAllRows(BTreeAddress treeAddress)
+        public RowStruct[] GetAllRows(BTreeAddress treeAddress)
         {
-            var result = new List<RowStruct>();
+            RowStruct[] result = null;
             Database2 database = _process.GetDatabase2(treeAddress.DatabaseId);
             TableSchema2 schema = database.GetTable(treeAddress.TableId).Schema;
 
             if (CacheHasContainer(treeAddress))
             {
-                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema, false));
+                BTreeContainer container = GetContainerFromCache(treeAddress);
+                result = container.GetAllRows(schema, false);
             }
             else
             {
                 AddContainerToCache(treeAddress);
-                result.AddRange(GetContainerFromCache(treeAddress).GetAllRows(schema, false));
+                BTreeContainer container = GetContainerFromCache(treeAddress);
+                result = container.GetAllRows(schema, false);
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns a span pointing to all the rows in the table
+        /// </summary>
+        /// <param name="treeAddress">The tree's address (dbId, tableId)</param>
+        /// <returns>A readonly span of all the rows in the table</returns>
+        public ReadOnlySpan<RowStruct> GetAllRowsSpan(BTreeAddress treeAddress)
+        {
+            RowStruct[] result = null;
+            Database2 database = _process.GetDatabase2(treeAddress.DatabaseId);
+            TableSchema2 schema = database.GetTable(treeAddress.TableId).Schema;
+
+            if (CacheHasContainer(treeAddress))
+            {
+                BTreeContainer container = GetContainerFromCache(treeAddress);
+                result = container.GetAllRows(schema, false);
+            }
+            else
+            {
+                AddContainerToCache(treeAddress);
+                BTreeContainer container = GetContainerFromCache(treeAddress);
+                result = container.GetAllRows(schema, false);
+            }
+
+            return new ReadOnlySpan<RowStruct>(result);
         }
         #endregion
 
@@ -156,8 +184,9 @@ namespace FrostDB
             }
 
             tree.Add(page.Id, page);
+            var container = new BTreeContainer(address, tree, storage, schema, _process);
 
-            return new BTreeContainer(address, tree, storage, schema, _process);
+            return container;
         }
 
         /// <summary>

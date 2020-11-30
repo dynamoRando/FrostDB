@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
+using System.Diagnostics;
+using System.Linq;
 using System.Buffers;
 using Antlr4.Runtime.Atn;
-using log4net.Util;
-using System.Data;
-using System.Linq;
 
 namespace FrostDB
 {
@@ -36,6 +34,7 @@ namespace FrostDB
         private TableSchema2 _schema;
         private Process _process;
         private List<Guid> _pendingXacts;
+        private PageDebug _debug;
         #endregion
 
         #region Public Properties
@@ -66,6 +65,8 @@ namespace FrostDB
         /// Indicates that the page has xacts applied to it, thus needing to save the entire page to disk
         /// </summary>
         public bool IsPendingReconciliation => PendingReconciliation();
+
+        public TableSchema2 Schema => _schema;
         #endregion
 
         #region Protected Methods
@@ -97,6 +98,9 @@ namespace FrostDB
             InitalizeDataWithEndOfRowData();
 
             _pendingXacts = new List<Guid>();
+            _debug = new PageDebug(this);
+
+            Debug.WriteLine($"Constructing new page in memory with id: {_id.ToString()}");
         }
 
         /// <summary>
@@ -119,6 +123,9 @@ namespace FrostDB
             SetPreamble(false);
 
             _pendingXacts = new List<Guid>();
+            _debug = new PageDebug(this);
+
+            Debug.WriteLine($"Constructing new page from disk with id: {_id.ToString()}");
         }
 
         public Page(byte[] data, BTreeAddress address) : this(data, address.TableId, address.DatabaseId)
@@ -135,6 +142,11 @@ namespace FrostDB
         public byte[] ToBinary()
         {
             return _data;
+        }
+
+        public ReadOnlySpan<byte> ToSpan()
+        {
+            return new ReadOnlySpan<byte>(_data);
         }
 
         /// <summary>
@@ -156,7 +168,7 @@ namespace FrostDB
             {
                 maxRowId = rows.Max(row => row.RowId);
             }
-          
+
             // return 1
             ReturnRowStructArrayToPool(ref rows);
 
@@ -179,7 +191,7 @@ namespace FrostDB
         }
 
         /// <summary>
-        /// Attempts to add a row to this page and then reconcile the xact on disk
+        /// Attempts to add a row to this page. By doing this, this will mark the page as pending reconciliation (to disk).
         /// </summary>
         /// <param name="row">The row to be added</param>
         /// <param name="rowId">The id for this row. This should be the next available rowId</param>
@@ -196,10 +208,10 @@ namespace FrostDB
             row.OrderByByteFormat();
 
             // rent 1
-            byte[] preamble = RentByteArrayFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
+            RentedByteArray preamble = RentByteArrayFromPool(DatabaseConstants.SIZE_OF_ROW_PREAMBLE);
             Row2.BuildRowPreamble(ref preamble, rowId, !row.IsReferenceInsert);
 
-            byte[] rowData = null;
+            RentedByteArray rowData;
             if (row.IsReferenceInsert)
             {
                 // need to save off the GUID id
@@ -218,19 +230,24 @@ namespace FrostDB
             }
 
             // rent 3
-            byte[] totalRowData = RentByteArrayFromPool(preamble.Length + rowData.Length);
+            RentedByteArray totalRowData = RentByteArrayFromPool(preamble.RequestedSize + rowData.RequestedSize);
 
             // combine the preamble and the row data together
-            Array.Copy(preamble, 0, totalRowData, 0, preamble.Length);
-            Array.Copy(rowData, 0, totalRowData, preamble.Length, rowData.Length);
+            Array.Copy(preamble.Array, 0, totalRowData.Array, 0, preamble.RequestedSize);
+            Array.Copy(rowData.Array, 0, totalRowData.Array, preamble.RequestedSize, rowData.RequestedSize);
+
+            Debug.WriteLine($"Total Row Length: {totalRowData.RequestedSize.ToString()}");
+
+            RowBinaryDebug.DebugRow(new ReadOnlySpan<byte>(totalRowData.Array), row.Table);
 
             // to do: add totalRowData to this Page's data
-            if (CanInsertNewRow(totalRowData.Length))
+            if (CanInsertNewRow(totalRowData.RequestedSize))
             {
-                Array.Copy(totalRowData, 0, _data, GetNextAvailableRowOffset(), totalRowData.Length);
-                _totalBytesUsed += totalRowData.Length;
+                Array.Copy(totalRowData.Array, 0, _data, GetNextAvailableRowOffset(), totalRowData.RequestedSize);
+                _totalBytesUsed += totalRowData.RequestedSize;
                 _totalRows++;
                 SaveTotalRows();
+                SaveTotalBytesUsed();
                 result = true;
             }
             else
@@ -240,11 +257,13 @@ namespace FrostDB
             }
 
             _pendingXacts.Add(row.XactId);
-           
+
             // return 1, 2, 3
             ReturnByteArrayToPool(ref preamble);
             ReturnByteArrayToPool(ref rowData);
             ReturnByteArrayToPool(ref totalRowData);
+
+            _debug.Output();
 
             return result;
         }
@@ -270,6 +289,16 @@ namespace FrostDB
         {
             throw new NotImplementedException();
         }
+
+        public int GetTotalBytesUsedOffset()
+        {
+            return SizeOfId;
+        }
+
+        public int GetTotalRowsOffset()
+        {
+            return SizeOfId + SizeOfBytesUsed;
+        }
         #endregion
 
         #region Private Methods
@@ -278,16 +307,6 @@ namespace FrostDB
             SetId();
             SetTotalRows(isBrandNewPage);
             SetTotalBytesUsed(isBrandNewPage);
-        }
-
-        private int GetTotalBytesUsedOffset()
-        {
-            return SizeOfId;
-        }
-
-        public int GetTotalRowsOffset()
-        {
-            return SizeOfId + SizeOfBytesUsed;
         }
 
         /// <summary>
@@ -341,6 +360,15 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Saves the total bytes used field _totalBytesUsed to this page's _data field.
+        /// </summary>
+        private void SaveTotalBytesUsed()
+        {
+            byte[] item = BitConverter.GetBytes(_totalBytesUsed);
+            Array.Copy(item, 0, _data, GetTotalBytesUsedOffset(), item.Length);
+        }
+
+        /// <summary>
         /// Saves _totalRows to this page's _data
         /// </summary>
         private void SaveTotalRows()
@@ -360,8 +388,7 @@ namespace FrostDB
             if (isBrandNewPage)
             {
                 _totalBytesUsed = 0;
-                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
-                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
+                SaveTotalBytesUsed();
             }
             else
             {
@@ -371,8 +398,7 @@ namespace FrostDB
                 _totalBytesUsed = rows.Sum(row => row.RowSize);
 
                 // copy _totalBytesUsed to it's location in _data [in the Page preamble]
-                byte[] totalBytesUsedArray = BitConverter.GetBytes(_totalBytesUsed);
-                Array.Copy(totalBytesUsedArray, 0, _data, GetTotalBytesUsedOffset(), totalBytesUsedArray.Length);
+                SaveTotalBytesUsed();
 
                 // return 1
                 ReturnRowStructArrayToPool(ref rows);
@@ -404,9 +430,12 @@ namespace FrostDB
         /// </summary>
         /// <param name="arraySize">The size of the array to rent</param>
         /// <returns>An array of specified size from the ArrayPool</returns>
-        private static byte[] RentByteArrayFromPool(int arraySize)
+        private static RentedByteArray RentByteArrayFromPool(int arraySize)
         {
-            return ArrayPool<byte>.Shared.Rent(arraySize);
+            var item = new RentedByteArray();
+            item.Array = ArrayPool<byte>.Shared.Rent(arraySize);
+            item.RequestedSize = arraySize;
+            return item;
         }
 
         /// <summary>
@@ -419,6 +448,16 @@ namespace FrostDB
             ArrayPool<byte>.Shared.Return(array, shouldClean);
         }
 
+        /// <summary>
+        /// Returns a rented byte array to the ArrayPool
+        /// </summary>
+        /// <param name="array">The array to return to the ArrayPool</param>
+        /// <param name="shouldClean">True if the ArrayPool should clear the contents of the array before returning to the pool, otherwise false.</param>
+        private static void ReturnByteArrayToPool(ref RentedByteArray array, bool shouldClean = true)
+        {
+            ArrayPool<byte>.Shared.Return(array.Array, shouldClean);
+        }
+
         private void InitalizeDataWithEndOfRowData()
         {
             byte[] endOfRowId = BitConverter.GetBytes(DatabaseConstants.END_OF_ROW_DATA_ID);
@@ -426,7 +465,7 @@ namespace FrostDB
             int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
 
             // rent 1
-            byte[] endofDataPreamble = RentByteArrayFromPool(endOfRowId.Length + isLocalId.Length);
+            byte[] endofDataPreamble = RentByteArrayFromPool(endOfRowId.Length + isLocalId.Length).Array;
             Array.Copy(endOfRowId, endofDataPreamble, endOfRowId.Length);
             Array.Copy(isLocalId, 0, endofDataPreamble, endOfRowId.Length, isLocalId.Length);
 
@@ -465,7 +504,7 @@ namespace FrostDB
         /// <param name="rows">An array of RowStruct to populate</param>
         private void IterateOverData(ref RowStruct[] rows)
         {
-            var dataSpan = new Span<byte>(_data);
+            var dataSpan = new ReadOnlySpan<byte>(_data);
             int currentOffset = DatabaseConstants.SIZE_OF_PAGE_PREAMBLE;
             int currentRowNum = 0;
 
@@ -498,6 +537,12 @@ namespace FrostDB
                     // we will however not adjust the offset since the method LocalRowBodyFromBinary includes parsing the rowSize prefix (an int32 size (4 bytes)).
 
                     sizeOfRow = BitConverter.ToInt32(dataSpan.Slice(currentOffset, DatabaseConstants.SIZE_OF_ROW_SIZE));
+
+                    if (sizeOfRow <= 0)
+                    {
+                        throw new InvalidOperationException("The size of the row was not saved on the page");
+                    }
+
                     int rowSize; // this isn't really needed, but it's a required param of the method below
                     Row2.LocalRowBodyFromBinary(dataSpan.Slice(currentOffset, sizeOfRow), out rowSize, ref values, _schema.Columns);
 

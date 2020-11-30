@@ -36,6 +36,7 @@ namespace FrostDB
         private int _databaseId;
         private DbStorage _storage;
         private DbSchema2 _schema;
+        private Guid _globalId;
         #endregion
 
         #region Public Properties
@@ -43,6 +44,7 @@ namespace FrostDB
         public List<Table2> Tables => _tables;
         public int DatabaseId => _databaseId;
         public DbStorage Storage => _storage;
+        public Guid GlobalId => _globalId;
         #endregion
 
         #region Protected Methods
@@ -63,6 +65,7 @@ namespace FrostDB
             _name = name;
             _databaseId = _process.DatabaseManager.GetNextDatabaseId();
             _storage = new DbStorage(_process, name, _databaseId);
+            _globalId = Guid.NewGuid();
         }
 
         /// <summary>
@@ -76,6 +79,7 @@ namespace FrostDB
             _process = process;
             _name = fill.Schema.DatabaseName;
             _databaseId = fill.Schema.DatabaseId;
+            _globalId = fill.Schema.GlobalId;
             _storage = storage;
             _schema = fill.Schema;
             FillTables(fill);
@@ -204,7 +208,7 @@ namespace FrostDB
         private void UpdateSchema()
         {
             
-            var schema = new DbSchema2(_databaseId, _name);
+            var schema = new DbSchema2(_databaseId, _name, _globalId);
 
             _tables.ForEach(table =>
             {

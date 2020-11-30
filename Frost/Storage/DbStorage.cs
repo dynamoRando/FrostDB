@@ -143,6 +143,26 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Returns the line number from the data directory for the specified pageId
+        /// </summary>
+        /// <param name="pageId">The pageId you wish to lookup the line number for</param>
+        /// <returns>The line number of the specified pageId.</returns>
+        public int GetLineNumberForPage(int pageId)
+        {
+            return  _dataDirectory.GetLineNumberForPage(pageId);
+        }
+
+        /// <summary>
+        /// Saves the specified page onto disk
+        /// </summary>
+        /// <param name="page">The page to save to disk</param>
+        /// <param name="lineNumber">The linenumber to save the page to</param>
+        public void UpdatePageOnDisk(Page page, int lineNumber)
+        {
+            _data.UpdatePage(page, lineNumber);
+        }
+
         public bool UpdateIndexes(RowInsert row)
         {
             return UpdateIndexesForInsert(row);
@@ -156,6 +176,16 @@ namespace FrostDB
         public bool UpdateDataFile(Page[] pages)
         {
             return _data.WritePages(pages);
+        }
+
+        /// <summary>
+        /// Updates the data directory with the specified pages in numerical order. Will overwrite the entire directory with the pages provided.
+        /// </summary>
+        /// <param name="pages">The pages to write to the data file</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public bool UpdateDataDirectory(Page[] pages)
+        {
+            return _dataDirectory.WritePages(pages);
         }
 
         /// <summary>
@@ -184,8 +214,9 @@ namespace FrostDB
             throw new NotImplementedException();
         }
 
-        public List<Row2> GetAllRows(BTreeAddress treeAddress)
+        public List<RowStruct> GetAllRows(BTreeAddress treeAddress)
         {
+            // to do: we need to make sure we also account for getting remote rows
             throw new NotImplementedException();
         }
 
@@ -223,7 +254,6 @@ namespace FrostDB
         public Database2 GetDatabase(string databaseName)
         {
             _databaseName = databaseName;
-            // TO DO: Build the DB fill process
             var fill = new DbFill();
             fill.Schema = GetSchema();
             _databaseId = fill.Schema.DatabaseId;
@@ -243,15 +273,6 @@ namespace FrostDB
             return _data.AddPage(page);
         }
 
-        /// <summary>
-        /// Attempts to reconcile the page against disk. (This may be throwaway).
-        /// </summary>
-        /// <param name="page">The page to reconcile.</param>
-        public void UpdatePageOnDisk(Page page)
-        {
-            // to do: Update the page on disk; and if the line number changes update the data directory.
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Private Methods
@@ -363,6 +384,7 @@ namespace FrostDB
             _schema = new SchemaFile(databaseFolder, _process.Configuration.SchemaFileExtension, _databaseName, _databaseId);
             _data = new DbDataFile(_process.Configuration.FrostBinaryDataExtension, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataExtension);
             _dataDirectory = new DbDataDirectoryFile(_data, databaseFolder, _databaseName, _process.Configuration.FrostBinaryDataDirectoryExtension);
+            _data.SetDataDirectory(_dataDirectory);
             _participants = new ParticipantFile(_process.Configuration.ParticipantFileExtension, databaseFolder, _databaseName);
             _security = new DbSecurityFile(_process.Configuration.FrostSecurityFileExtension, databaseFolder, _databaseName);
             _contractFile = new DbContractFile(_process.Configuration.ContractExtension, databaseFolder, _databaseName);

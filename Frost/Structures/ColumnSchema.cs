@@ -51,6 +51,66 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Parses a byte array to a RowValue2 for this column data type. This method assumes the byte array passed in is the value. If the column length is variable, you must ensure the array size passed in
+        /// is the array for the total value (do not include the size prefix for variable length columns.)
+        /// </summary>
+        /// <param name="span">The byte array to parse. This array must contain the value to be parsed. Ensure that it does not contain the size prefix for variable length columns.</param>
+        /// <returns>A RowValue2</returns>
+        public RowValue2 Parse(ReadOnlySpan<byte> span)
+        {
+            var value = new RowValue2();
+            value.Column = this;
+
+            if (!isVariableLengthColumn())
+            {
+                if (DataType.Equals("DATETIME"))
+                {
+                    value.Value = DatabaseBinaryConverter.BinaryToDateTime(span).ToString();
+                }
+
+                if (DataType.Equals("BIT"))
+                {
+                    value.Value = DatabaseBinaryConverter.BinaryToBoolean(span).ToString();
+                }
+
+                if (DataType.Equals("INT"))
+                {
+                    value.Value = DatabaseBinaryConverter.BinaryToInt(span).ToString();
+                }
+
+                if (DataType.Contains("CHAR"))
+                {
+                    // need to get the fixed character width, then parse
+                    // CHAR always pads any values less with whitespace
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                // if it's varaible length, then the array has prefix'ed the actual value with the size (length) of the item. The prefix is the size of an INT32.
+                // example VARCHAR(10)
+                // byte format is 2 <byte array>
+                // in the above if the value was "XX" it means that we only used 2 characters out of a potential maximum of 10 characters wide
+
+                if (DataType.Contains("VARCHAR"))
+                {
+                    value.Value = DatabaseBinaryConverter.BinaryToString(span).Trim();
+                }
+
+                if (DataType.Contains("DECIMAL"))
+                {
+                    throw new NotImplementedException();
+                }
+
+                if (DataType.Contains("NUMERIC"))
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            return value;
+        }
 
         /// <summary>
         /// Parses a byte array to a RowValue2 for this column data type. This method assumes the byte array passed in is the value. If the column length is variable, you must ensure the array size passed in

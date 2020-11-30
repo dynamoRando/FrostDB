@@ -94,8 +94,8 @@ namespace FrostDB
             item.Append("xact ");
             item.Append($"{XactId.ToString()} ");
             item.Append(TableId.ToString());
-            item.Append(" false ");
-            item.Append("Insert ");
+            item.Append($" {IsReconciled.ToString()} ");
+            item.Append($"{Action.ToString("F")} ");
             item.Append("<data> ");
 
             Data.ForEach(value =>
@@ -104,7 +104,7 @@ namespace FrostDB
                 item.Append($"{value.Value} ");
             });
 
-            item.Append(" </data>");
+            item.Append("</data>");
 
             return item.ToString();
         }

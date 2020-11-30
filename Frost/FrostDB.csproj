@@ -7,8 +7,6 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   
-    <!--<OutputPath Condition="'$(OS)' == 'Windows_NT'">C:\Projects\Programming\FrostDB_Output\</OutputPath>-->
-  
   </PropertyGroup>
 
   <ItemGroup>

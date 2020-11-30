@@ -113,6 +113,25 @@ namespace FrostDB
                 Row2.ParticipantToBinaryFormat(ref array, ParticipantId.Value);
             }
         }
+
+        /// <summary>
+        /// Returns the data in binary format for this row. This method takes an array reference (usually passed in from ArrayPool). 
+        /// This array must be sized correctly (use Size attribute + size of INT to account for row size prefix).
+        /// This does not include the row preamble. If local, it will prefix with the size of the row (this does not include the Size of the Row Preamble - only the size of the fixed + variable size data).
+        /// </summary>
+        /// <param name="returnedArray">A source array reference (usually from ArrayPool). This must be sized correctly (use Size attribute).</param>
+        /// <returns>Row values in a binary array</returns>
+        public void ToBinaryFormat(ref RentedByteArray array)
+        {
+            if (!IsReferenceInsert)
+            {
+                Row2.ValuesToBinaryFormat(ref array, Values);
+            }
+            else
+            {
+                Row2.ParticipantToBinaryFormat(ref array, ParticipantId.Value);
+            }
+        }
         #endregion
 
         #region Private Methods

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Text;
 
 namespace FrostDB
@@ -137,6 +138,40 @@ namespace FrostDB
             row.Values.ToBinaryFormat();
         }
 
+
+        public static void LocalRowBodyFromBinary(ReadOnlySpan<byte> span, out int sizeOfRow, ref RowValue2[] values, ColumnSchema[] schema)
+        {
+            int colIdx = 0;
+            int currentOffset = 0;
+            RowValue2 item = null;
+
+            schema.OrderByByteFormat();
+
+            sizeOfRow = BitConverter.ToInt32(span.Slice(0, DatabaseConstants.SIZE_OF_ROW_SIZE));
+
+            currentOffset += DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+            foreach (var column in schema)
+            {
+                if (!column.IsVariableLength)
+                {
+                    item = column.Parse(span.Slice(currentOffset, column.Size));
+                    values[colIdx] = item;
+                    colIdx++;
+                    currentOffset += column.Size;
+                }
+                else
+                {
+                    int sizeOfValue = DatabaseBinaryConverter.BinaryToInt(span.Slice(currentOffset, DatabaseConstants.SIZE_OF_INT));
+                    currentOffset += DatabaseConstants.SIZE_OF_INT;
+                    item = column.Parse(span.Slice(currentOffset, sizeOfValue));
+                    values[colIdx] = item;
+                    colIdx++;
+                    currentOffset += sizeOfValue;
+                }
+            }
+        }
+
         /// <summary>
         /// Converts a binary array to the body of a local row. The array should include the row size prefix.
         /// </summary>
@@ -172,7 +207,6 @@ namespace FrostDB
                     item = column.Parse(span.Slice(currentOffset, sizeOfValue));
                     currentOffset += sizeOfValue;
                 }
-                
             }
 
 
@@ -214,6 +248,21 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Copies the rowId and isLocalRow values to the supplied array. This essentially builds a row pre-amble.
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="rowId">The row id</param>
+        /// <param name="isLocalRow">True if this is a local row, otherwise false.  </param>
+        public static void BuildRowPreamble(ref RentedByteArray array, int rowId, bool isLocalRow)
+        {
+            byte[] rowIdData = BitConverter.GetBytes(rowId);
+            byte[] isLocal = BitConverter.GetBytes(isLocalRow);
+
+            Array.Copy(rowIdData, array.Array, rowIdData.Length);
+            Array.Copy(isLocal, 0, array.Array, rowIdData.Length, isLocal.Length);
+        }
+
+        /// <summary>
         /// Saves the list of values provided to the supplied array + the total size of the values. The array must be sized correctly (use ComputeTotalSize() of List of RowValue2 + size of an INT).
         /// This will prefix the array with the total size of the values. This essentially builds a row body (not the pre-amble).
         /// </summary>
@@ -225,7 +274,13 @@ namespace FrostDB
             int currentOffset = 0;
 
             // prefix the array with the total size of all the values
-            byte[] rowSizeArray = BitConverter.GetBytes(values.ComputeTotalSize());
+
+            //int totalRowSize = values.ComputeTotalSize();
+            int totalRowSize = values.ComputeTotalSize() + DatabaseConstants.SIZE_OF_ROW_SIZE;
+
+            Debug.WriteLine($"Total Row Size Computed: {totalRowSize.ToString()}");
+
+            byte[] rowSizeArray = BitConverter.GetBytes(totalRowSize);
             Array.Copy(rowSizeArray, 0, array, currentOffset, rowSizeArray.Length);
             currentOffset += rowSizeArray.Length;
 
@@ -234,6 +289,36 @@ namespace FrostDB
             {
                 byte[] item = value.GetValueBinaryArrayWithSizePrefix();
                 Array.Copy(item, 0, array, currentOffset, item.Length);
+                currentOffset += item.Length;
+            }
+        }
+
+        /// <summary>
+        /// Saves the list of values provided to the supplied array + the total size of the values. The array must be sized correctly (use ComputeTotalSize() of List of RowValue2 + size of an INT).
+        /// This will prefix the array with the total size of the values. This essentially builds a row body (not the pre-amble).
+        /// </summary>
+        /// <param name="array">The array to save the values to</param>
+        /// <param name="values">A list of RowValues to to save to the array</param>
+        public static void ValuesToBinaryFormat(ref RentedByteArray array, List<RowValue2> values)
+        {
+            values.OrderByByteFormat();
+            int currentOffset = 0;
+
+            // prefix the array with the total size of all the values
+
+            int totalRowSize = values.ComputeTotalSize();
+
+            Debug.WriteLine($"Total Row Size Computed: {totalRowSize.ToString()}");
+
+            byte[] rowSizeArray = BitConverter.GetBytes(totalRowSize);
+            Array.Copy(rowSizeArray, 0, array.Array, currentOffset, rowSizeArray.Length);
+            currentOffset += rowSizeArray.Length;
+
+            // add the row data
+            foreach (var value in values)
+            {
+                byte[] item = value.GetValueBinaryArrayWithSizePrefix();
+                Array.Copy(item, 0, array.Array, currentOffset, item.Length);
                 currentOffset += item.Length;
             }
         }
@@ -248,6 +333,23 @@ namespace FrostDB
             // just save off the participant id (the GUID)
             byte[] item = DatabaseBinaryConverter.GuidToBinary(participantId.Value);
             Array.Copy(item, 0, array, 0, item.Length);
+        }
+
+        public static void ParticipantToBinaryFormat(ref RentedByteArray array, Guid? participantId)
+        {
+            // just save off the participant id (the GUID)
+            byte[] item = DatabaseBinaryConverter.GuidToBinary(participantId.Value);
+            Array.Copy(item, 0, array.Array, 0, item.Length);
+        }
+
+        public static int GetRowIdOffset()
+        {
+            return 0;
+        }
+
+        public static int GetSizeOfRowOffSet()
+        {
+            return 0;
         }
         #endregion
 
@@ -274,15 +376,6 @@ namespace FrostDB
             GetParticipantId();
         }
 
-        private int GetRowIdOffset()
-        {
-            return 0;
-        }
-
-        private int GetSizeOfRowOffSet()
-        {
-            return 0;
-        }
 
         private int GetSizeOfRow()
         {
@@ -378,6 +471,12 @@ namespace FrostDB
 
         #region Public Methods
         public static void Parse(Span<byte> data, out int rowId, out bool isLocal)
+        {
+            rowId = BitConverter.ToInt32(data);
+            isLocal = BitConverter.ToBoolean(data.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL));
+        }
+
+        public static void Parse(ReadOnlySpan<byte> data, out int rowId, out bool isLocal)
         {
             rowId = BitConverter.ToInt32(data);
             isLocal = BitConverter.ToBoolean(data.Slice(DatabaseConstants.SIZE_OF_ROW_ID, DatabaseConstants.SIZE_OF_IS_LOCAL));

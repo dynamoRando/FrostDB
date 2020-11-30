@@ -5,20 +5,29 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
+using MoreLinq;
 
 namespace FrostDB.Storage
 {
-
-    class DbDataDirectoryFileItem
+    public class DbDataDirectoryFileItem
     {
         public int PageNumber { get; set; }
         public int LineNumber { get; set; }
+
+        /// <summary>
+        /// Returns PageNumber LineNumber 
+        /// </summary>
+        /// <returns>The Directory File Item in string format</returns>
+        public override string ToString()
+        {
+            return $"{PageNumber.ToString()} {LineNumber.ToString()}";
+        }
     }
 
     /// <summary>
     /// Contains page id and line number for the data file
     /// </summary>
-    class DbDataDirectoryFile : IStorageFile
+    public class DbDataDirectoryFile : IStorageFile
     {
 
         // page number, line number
@@ -39,7 +48,7 @@ namespace FrostDB.Storage
 
         #region Constructors
         /// <summary>
-        /// Creates a file holding the page id and line number in the binrary data file.
+        /// Creates a file holding the page id and line number in the binary data file.
         /// </summary>
         /// <param name="dataFile">The actual binary data file of the db</param>
         /// <param name="folder">The folder in which dbs are held</param>
@@ -70,6 +79,33 @@ namespace FrostDB.Storage
         #region Public Methods
 
         /// <summary>
+        /// Returns the line number from the data directory for the specified pageId
+        /// </summary>
+        /// <param name="pageId">The pageId you wish to lookup the line number for</param>
+        /// <returns>The line number of the specified pageId.</returns>
+        public int GetLineNumberForPage(int pageId)
+        {
+            return Lines.Where(line => line.PageNumber == pageId).FirstOrDefault().LineNumber;
+        }
+
+        public bool WritePages(Page[] pages)
+        {
+            // start at second line because the first line is the version number
+            int lineNumber = 2;
+            Lines.Clear();
+
+            foreach (var page in pages)
+            {
+                Lines.Add(new DbDataDirectoryFileItem { PageNumber = page.Id, LineNumber = lineNumber });
+                lineNumber++;
+            }
+
+            SaveLines();
+
+            return true;
+        }
+
+        /// <summary>
         /// Adds the specified page id and line number to the directory
         /// </summary>
         /// <param name="pageId">The page id being added</param>
@@ -88,7 +124,7 @@ namespace FrostDB.Storage
                 }
             }
 
-            return true;    
+            return true;
         }
         /// <summary>
         /// Returns the max page id stored in the data directory file
@@ -175,16 +211,49 @@ namespace FrostDB.Storage
             }
         }
 
+        private void SaveLines()
+        {
+            lock (_fileLock)
+            {
+                using (var file = new StreamWriter(FileName()))
+                {
+                    file.WriteLine("version " + VersionNumber.ToString());
+                }
+
+                List<string> lines = new List<string>(Lines.Count);
+
+                Lines.ForEach(line => lines.Add(line.ToString())); ;
+
+                foreach (var line in Lines)
+                {
+                    File.AppendAllLines(FileName(), lines);
+                }
+            }
+        }
+
         private void ParseLines(string[] lines)
         {
             // page number line number
             foreach (var line in lines)
             {
-                Lines.Add(new DbDataDirectoryFileItem
+                if (line.StartsWith("version"))
                 {
-                    PageNumber = Convert.ToInt32(line[0]),
-                    LineNumber = Convert.ToInt32(line[1])
-                });
+                    var items = line.Split(" ");
+                    VersionNumber = Convert.ToInt32(items[1]);
+                }
+                else if (line.Equals(string.Empty))
+                {
+                    continue;
+                }
+                else 
+                {
+                    var items = line.Split(" ");
+                    Lines.Add(new DbDataDirectoryFileItem
+                    {
+                        PageNumber = Convert.ToInt32(items[0]),
+                        LineNumber = Convert.ToInt32(items[1])
+                    });
+                }
             }
         }
         #endregion

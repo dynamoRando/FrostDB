@@ -24,6 +24,7 @@ namespace FrostDB
         private DbDataDirectoryFile _dataDirectory;
         private string _dataDirectoryExtension;
         private readonly object _fileLock = new object();
+        private List<Page> _pages;
         #endregion
 
         #region Public Properties
@@ -51,8 +52,6 @@ namespace FrostDB
             _databaseName = databaseName;
             _dataDirectoryExtension = dataDirectoryExtension;
 
-            _dataDirectory = new DbDataDirectoryFile(this, folder, databaseName, _dataDirectoryExtension);
-
             if (!DoesFileExist())
             {
                 CreateFile();
@@ -61,6 +60,11 @@ namespace FrostDB
         #endregion
 
         #region Public Methods
+        public void SetDataDirectory(DbDataDirectoryFile file)
+        {
+            _dataDirectory = file;
+        }
+
         /// <summary>
         /// Gets a page with the specified id from the data file on disk
         /// </summary>
@@ -76,7 +80,7 @@ namespace FrostDB
                 byte[] data = GetBinaryPageDataFromDisk(lineNumber);
                 page = new Page(data, address);
             }
-           
+
             return page;
         }
 
@@ -87,8 +91,9 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false</returns>
         public bool AddPage(Page page)
         {
+            // need to re-write this to add the page to the existing file after reading everything in 
             int lineNumber = _dataDirectory.GetNextLineNumber();
-            _dataDirectory.AddPage(page.Id, lineNumber);
+            _dataDirectory.AddPage(page.Id, lineNumber); 
             AddPage(page.ToBinary(), lineNumber);
             return true;
         }
@@ -97,10 +102,21 @@ namespace FrostDB
         /// Attempts to update the specified page in the binary data file
         /// </summary>
         /// <param name="page">The page to update</param>
+        /// <param name="lineNumber">The line number to write the page to</param>
         /// <returns>True if successful, otherwise false</returns>
-        public bool UpdatePage(Page page)
+        public bool UpdatePage(Page page, int lineNumber)
         {
-            throw new NotImplementedException();
+            lock (_fileLock)
+            {
+                using (Stream stream = File.Open(FileName(), FileMode.Open))
+                {
+                    byte[] data = page.ToBinary();
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
+                    stream.Write(data, 0, data.Length);
+                }
+
+            }
+            return true;
         }
 
         /// <summary>
@@ -123,14 +139,14 @@ namespace FrostDB
             lock (_fileLock)
             {
                 int i = 0;
-                int currentOffset = 0;
-                for (i = 0; i <= pages.Length; i++)
+                int currentOffset = GetLineNumberByteOffset();
+                for (i = 0; i < pages.Length; i++)
                 {
                     using (Stream stream = File.Open(FileName(), FileMode.Open))
                     {
                         byte[] data = pages[i].ToBinary();
                         stream.Seek(currentOffset, SeekOrigin.Begin);
-                        stream.Write(data, currentOffset, data.Length);
+                        stream.Write(data, 0, data.Length);
                         currentOffset += DatabaseConstants.PAGE_SIZE;
                     }
                 }
@@ -176,7 +192,7 @@ namespace FrostDB
             {
                 using (Stream stream = File.Open(FileName(), FileMode.Open))
                 {
-                    stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                    stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                     using (StreamReader reader = new StreamReader(stream))
                     {
                         line = reader.ReadLine();
@@ -193,10 +209,22 @@ namespace FrostDB
         /// <param name="lineNumber">The line at which data should be added</param>
         private void AddPage(byte[] page, int lineNumber)
         {
+            /*
+            using (var streamWriter = new StreamWriter(FileName()))
+            {
+                streamWriter.WriteLine(page);
+            }
+            */
+            // this needs to be changed, because we are not able to successfully write to a specific line and read from
+            // a specific line, let's read the entire file into memory (not efficient) and then modify as we need the page
+            // information, and then write back to disk.
+
+
             using (FileStream stream = File.OpenWrite(FileName()))
             {
-                stream.Seek(DatabaseConstants.PAGE_SIZE * (lineNumber - 1), SeekOrigin.Begin);
+                stream.Seek(DatabaseConstants.PAGE_SIZE * (GetLineNumberOffset(lineNumber) - 1), SeekOrigin.Begin);
                 stream.Write(page, 0, page.Length);
+                
             }
         }
 
@@ -209,9 +237,19 @@ namespace FrostDB
 
             using (var file = new StreamWriter(FileName()))
             {
-                file.WriteLine("version " + VersionNumber.ToString());
+                file.WriteLine(GetVersionHeaderString());
             }
         }
+
+        /// <summary>
+        /// Returns the version header for the file
+        /// </summary>
+        /// <returns>The string versio header for the file</returns>
+        private string GetVersionHeaderString()
+        {
+            return $"version {VersionNumber.ToString()} {Environment.NewLine}";
+        }
+
         /// <summary>
         /// Checks if the database file exists, otherwise false.
         /// </summary>
@@ -236,6 +274,22 @@ namespace FrostDB
             {
                 VersionNumber = StorageFileVersions.DATA_FILE_VERSION_1;
             }
+        }
+
+        /// <summary>
+        /// Tries to account for header information in the database (version number)
+        /// </summary>
+        /// <param name="lineNumber">The line number of data you're interested int</param>
+        /// <returns>The line number offset for header information in the file</returns>
+        private int GetLineNumberOffset(int lineNumber)
+        {
+            return lineNumber++;
+        }
+
+        private int GetLineNumberByteOffset()
+        {
+            byte[] versionBinary = DatabaseBinaryConverter.StringToBinary(GetVersionHeaderString());
+            return versionBinary.Length;
         }
         #endregion
 

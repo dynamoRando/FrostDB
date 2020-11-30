@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace FrostDB
 {
@@ -37,6 +38,7 @@ namespace FrostDB
             _storage = storage;
             _schema = schema;
             _process = process;
+            SyncToDisk();
         }
         #endregion
 
@@ -80,14 +82,43 @@ namespace FrostDB
         /// <returns>True if successful, otherwise false.</returns>
         public bool SyncToDisk()
         {
-            var list = new List<Page>(_tree.Values.Count);
+            bool dataFileUpdated = false;
+            bool dataDirectoryUpdated = false;
 
-            foreach (var item in _tree.Values)
+            lock (_treeLock)
             {
-                list.Add(item);
+                // to do: should we save the entire tree to disk if it's fully in memory, 
+                // or just the pages that are needed?
+                if (TreeIsFullyLoaded())
+                {
+                    var list = new List<Page>(_tree.Values.Count);
+
+                    foreach (var item in _tree.Values)
+                    {
+                        list.Add(item);
+                    }
+
+                    dataFileUpdated = _storage.UpdateDataFile(list.ToArray());
+                    dataDirectoryUpdated = _storage.UpdateDataDirectory(list.ToArray());
+                }
+                else
+                {
+                    foreach (var page in _tree.Values)
+                    {
+                        if (page.IsPendingReconciliation)
+                        {
+                            int lineNumber = _storage.GetLineNumberForPage(page.Id);
+                            _storage.UpdatePageOnDisk(page, lineNumber);
+                            page.MarkAsReconciled();
+                        }
+                    }
+
+                    dataFileUpdated = true;
+                    dataDirectoryUpdated = true;
+                }
             }
 
-            return _storage.UpdateDataFile(list.ToArray());
+            return dataFileUpdated && dataDirectoryUpdated;
         }
 
         /// <summary>
@@ -138,7 +169,14 @@ namespace FrostDB
                         }
                         else
                         {
-                            AddRowToNewPage(row);
+                            if (TreeHasRoomForRow(row))
+                            {
+                                InsertRowIntoFirstAvailablePage(row);
+                            }
+                            else
+                            {
+                                AddRowToNewPage(row);
+                            }
                             result = true;
                         }
                     }
@@ -148,6 +186,11 @@ namespace FrostDB
             }
 
             return result;
+        }
+
+        private bool TreeHasRoomForRow(RowInsert row)
+        {
+            return _tree.Values.Any(page => page.CanInsertRow(row.Size));
         }
 
         /// <summary>
@@ -172,24 +215,37 @@ namespace FrostDB
         private void InsertRowIntoFirstAvailablePage(RowInsert row)
         {
             int nextPageId;
-            Page page;
-            do
+            Page page = null;
+            if (!TreeIsFullyLoaded())
             {
-                // to do: we need to keep track of the page ids that we haven't loaded 
-                // into memory
-                nextPageId = GetNextAvailablePageId();
-                page = _storage.GetPage(nextPageId, _address);
-                AddPageToTree(page);
-
-                if (TreeIsFullyLoaded())
+                do
                 {
-                    break;
-                }
+                    // to do: we need to keep track of the page ids that we haven't loaded 
+                    // into memory
+                    nextPageId = GetNextAvailablePageId();
+                    page = _storage.GetPage(nextPageId, _address);
+                    AddPageToTree(page);
 
-                // to do: what if the pages on disk are filled up and we need to add a brand new page here?
-                // in other words, we can never exit the loop?
+                    if (TreeIsFullyLoaded())
+                    {
+                        break;
+                    }
+
+                    // to do: what if the pages on disk are filled up and we need to add a brand new page here?
+                    // in other words, we can never exit the loop?
+                }
+                while (!page.CanInsertRow(row.Size));
             }
-            while (!page.CanInsertRow(row.Size));
+            else
+            {
+                foreach (var item in _tree.Values)
+                {
+                    if (item.CanInsertRow(row.Size))
+                    {
+                        page = item;
+                    }
+                }
+            }
 
             if (TreeIsFullyLoaded() && !page.CanInsertRow(row.Size))
             {
@@ -198,7 +254,6 @@ namespace FrostDB
             else
             {
                 page.AddRow(row, GetMaxRowId() + 1);
-                UpdatePageOnDisk(page);
             }
         }
 
@@ -234,6 +289,24 @@ namespace FrostDB
         }
 
         /// <summary>
+        /// Returns the total number of rows in this container
+        /// </summary>
+        /// <returns>The total number of rows</returns>
+        public int RowCount()
+        {
+            int totalRows = 0;
+            lock (_treeLock)
+            {
+                _tree.ForEach(item =>
+                {
+                    totalRows += item.Value.TotalRows;
+                });
+            }
+
+            return totalRows;
+        }
+
+        /// <summary>
         /// Returns all rows from this tree in this container
         /// </summary>
         /// <param name="schema">The table schema to convert the rows to</param>
@@ -242,15 +315,7 @@ namespace FrostDB
         public RowStruct[] GetAllRows(TableSchema2 schema, bool dirtyRead)
         {
             RowStruct[] result;
-            int totalRows = 0;
-
-            lock (_treeLock)
-            {
-                _tree.ForEach(item =>
-                {
-                    totalRows += item.Value.TotalRows;
-                });
-            }
+            int totalRows = RowCount();
 
             result = new RowStruct[totalRows];
             var resultSpan = new Span<RowStruct>(result);
@@ -420,19 +485,6 @@ namespace FrostDB
         private bool AddPageToStorage(Page page)
         {
             return _storage.AddPage(page);
-        }
-
-        /// <summary>
-        /// Attempts to reconcile the page's data in memory against what is in storage (this may be throwaway)
-        /// </summary>
-        /// <param name="page">The page to reconcile with storage</param>
-        private void UpdatePageOnDisk(Page page)
-        {
-            if (page.IsPendingReconciliation)
-            {
-                _storage.UpdatePageOnDisk(page);
-            }
-            throw new NotImplementedException();
         }
 
         #endregion
