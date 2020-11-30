@@ -93,4 +93,4 @@ Originally this project was named "Whiskey Tango Foxtrot" because I didn't know 
 
 # Referenced Projects
 * [C5](https://github.com/sestoft/C5)
-* [Collectathon](https://github.com/Entomy/Collectathon)
+* [Collectathon](https://github.com/Entomy/LibLangly)
