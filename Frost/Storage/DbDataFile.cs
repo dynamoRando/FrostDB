@@ -7,6 +7,18 @@ using System.Text;
 
 namespace FrostDB
 {
+    public struct DbDataFileStruct
+    {
+        public int VersionNumber { get; set; }
+        public List<Page> Data { get; set; }
+
+        public DbDataFileStruct(int versionNumber, List<Page> data)
+        {
+            VersionNumber = versionNumber;
+            Data = data;
+        }
+    }
+
     /// <summary>
     /// Represents the binary data for this database on disk.
     /// </summary>
@@ -82,6 +94,17 @@ namespace FrostDB
             }
 
             return page;
+        }
+
+        public void foo()
+        {
+            using (var stream = new FileStream(FileName(), FileMode.Open))
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    
+                }
+            }
         }
 
         /// <summary>

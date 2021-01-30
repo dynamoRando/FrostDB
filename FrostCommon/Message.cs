@@ -68,20 +68,22 @@ namespace FrostCommon
         /// </value>
         public string Content { get; } // can be a row, can be a contract, etc
         /// <summary>
-        /// Gets or sets the two unique identifier tuple.
+        /// Gets or sets the two unique identifier tuple. Usually used to send a database id + table id for more information
         /// </summary>
         /// <value>
         /// The two unique identifier tuple.
         /// </value>
         public (Guid?, Guid?) TwoGuidTuple { get; set; }
         /// <summary>
+        /// A two string tuple. Usually used to send a database name and a table name for more information.
+        /// </summary>
+        public (string, string) TwoStringTuple { get; set; }
+        /// <summary>
         /// A "verb" describing the action to take on the messsage. This is usually a string const in MessageDataAction.cs or MessageConsoleAction.cs
         /// </summary>
         /// <value>
         /// The action.
         /// </value>
-        /// 
-        public (string, string) TwoStringTuple { get; set; }
         public string Action { get; set; } // describes what action to take on the content, see class named MessageAction
         /// <summary>
         /// Gets or sets the json data.
