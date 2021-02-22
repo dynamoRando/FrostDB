@@ -1,3 +1,6 @@
+#No Longer Maintained
+I've decided that this codebase is no longer useful to maintain, and I am leaving it up here for reference purposes.
+
 # FrostDB
 A **proof of concept** implementation of an idea I had called a [Cooperative Database System](https://github.com/dynamoRando/CooperativeDatabaseSystems) or CDBS. This is an older paper I had with some of the inital concepts. I've worked to try and simplify these concepts for a minimum viable product in Frost.
 
